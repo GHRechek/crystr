@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { setFlash, EDGE } from "@/lib/flash";
 import { COSTS, untilReady } from "@/lib/crystr";
-import { normalize } from "@/lib/avatar";
+import { normalizeFace } from "@/lib/faces/core";
 
 type Rpc = {
   ok: boolean;
@@ -430,7 +430,7 @@ export async function saveAvatar(fd: FormData) {
 
   const { error } = await supabase
     .from("profiles")
-    .update({ avatar_config: normalize(parsed), updated_at: new Date().toISOString() })
+    .update({ avatar_config: normalizeFace(parsed), updated_at: new Date().toISOString() })
     .eq("id", user.id);
 
   if (error) {

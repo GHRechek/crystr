@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { requireMe, getLedger, getTopFriends } from "@/lib/data";
 import { Avatar } from "@/components/bits";
-import { FaceMenu } from "./face-menu";
-import { avatarSvg, avatarFromId, normalize } from "@/lib/avatar";
+import { ProfileHead } from "./face-menu";
+import { faceFromId, normalizeFace, packFace } from "@/lib/faces/core";
 import { ago, COSTS } from "@/lib/crystr";
 
 export default async function ProfilePage() {
@@ -13,43 +13,28 @@ export default async function ProfilePage() {
     1,
     Math.round((Date.now() - new Date(profile.created_at).getTime()) / 86_400_000),
   );
-  const faceSvg = avatarSvg(
-    profile.avatar_config ? normalize(profile.avatar_config) : avatarFromId(userId),
-    64,
+  const facePack = packFace(
+    profile.avatar_config ? normalizeFace(profile.avatar_config) : faceFromId(userId),
   );
   const slots = [...top, ...Array(Math.max(0, 6 - top.length)).fill(null)].slice(0, 6);
 
   return (
     <div style={{ paddingBottom: 24 }}>
-      <div
-        style={{
-          height: 112,
-          backgroundColor: "var(--inset)",
-          backgroundImage: "repeating-linear-gradient(135deg,#2a2146 0 8px,#1b1d29 8px 16px)",
-          display: "grid",
-          placeItems: "center",
-        }}
-      >
-        <span className="px" style={{ fontSize: 8.5, color: "var(--muted)" }}>
-          BANNER — DROP A 390×112 TILE
-        </span>
-      </div>
+      <ProfileHead
+        src={`/face/${facePack}.png`}
+        handle={profile.handle}
+        joined={`JOINED THE NEW WORLD · ${days} ${days === 1 ? "DAY" : "DAYS"}`}
+        mood={profile.mood}
+      />
 
       <div
         style={{
-          padding: "0 16px",
-          marginTop: -26,
+          padding: "12px 16px 0",
           display: "flex",
           flexDirection: "column",
           gap: 12,
         }}
       >
-        <FaceMenu
-          svg={faceSvg}
-          handle={profile.handle}
-          joined={`JOINED THE NEW WORLD · ${days} ${days === 1 ? "DAY" : "DAYS"}`}
-          mood={profile.mood}
-        />
 
         <Link href="/me/edit" className="btn btn-sm" style={{ alignSelf: "flex-start" }}>
           EDIT PROFILE

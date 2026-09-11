@@ -4,26 +4,57 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { saveAvatar } from "@/lib/actions";
 import {
-  AVATAR_CREDIT,
-  COLOR_GROUPS,
-  SHAPE_GROUPS,
-  avatarSvg,
-  randomAvatar,
-  type AvatarConfig,
-} from "@/lib/avatar";
+  ALLOWED,
+  BACKGROUNDS,
+  COLOR_KEYS,
+  DRAW_ORDER,
+  NONE,
+  RAMPS,
+  keyFor,
+  packFace,
+  randomFace,
+  type FaceConfig,
+} from "@/lib/faces/core";
 
-export function AvatarBuilder({ start, fresh }: { start: AvatarConfig; fresh: boolean }) {
-  const [c, setC] = useState<AvatarConfig>(start);
+const LABELS: Record<string, string> = {
+  body: "BUILD",
+  cloths: "WHAT YOU WEAR",
+  neck: "COLLAR",
+  mouth: "MOUTH",
+  nose: "NOSE",
+  beard: "BEARD",
+  eyes: "EYES",
+  brows: "BROWS",
+  glasses: "GLASSES",
+  hairBase: "HAIR",
+  hairFront: "FRINGE",
+  hairBack: "HAIR BEHIND",
+  ears: "EARS",
+  horns: "HORNS",
+};
 
-  const preview = useMemo(() => avatarSvg(c, 168), [c]);
+/** The order the controls read in — face first, then the fantasy bits. */
+const SHAPE_ORDER = [
+  "hairBase", "hairFront", "hairBack", "eyes", "brows", "nose", "mouth",
+  "ears", "horns", "beard", "glasses", "cloths", "neck", "body",
+];
 
-  const step = (key: string, values: string[], by: number) =>
+export function AvatarBuilder({ start, fresh }: { start: FaceConfig; fresh: boolean }) {
+  const [c, setC] = useState<FaceConfig>(start);
+
+  const packed = useMemo(() => packFace(c), [c]);
+
+  const step = (key: string, by: number) =>
     setC((prev) => {
-      const list = values;
+      const list = ALLOWED[key];
       const at = Math.max(0, list.indexOf(prev[key]));
       const next = (((at + by) % list.length) + list.length) % list.length;
       return { ...prev, [key]: list[next] };
     });
+
+  const shapeKeys = SHAPE_ORDER.filter((k) =>
+    DRAW_ORDER.some((l) => keyFor(l.dir) === k),
+  );
 
   return (
     <form action={saveAvatar} className="pad" style={{ gap: 12 }}>
@@ -39,15 +70,14 @@ export function AvatarBuilder({ start, fresh }: { start: AvatarConfig; fresh: bo
         </div>
       </div>
 
-      {/* Sticks to the top of the screen so the face stays in view while you
-          work down the options — otherwise every change is a scroll away. */}
+      {/* Sticks to the top so the face stays in view while you work down the
+          options — otherwise every change is a scroll away. */}
       <div
         style={{
           position: "sticky",
           top: 0,
           zIndex: 3,
           display: "flex",
-          justifyContent: "center",
           alignItems: "center",
           gap: 12,
           padding: "8px 0 10px",
@@ -59,18 +89,26 @@ export function AvatarBuilder({ start, fresh }: { start: AvatarConfig; fresh: bo
       >
         <div
           style={{
-            width: 96,
-            height: 96,
+            width: 104,
+            height: 104,
             flex: "none",
             boxShadow: "0 0 0 1px var(--edge)",
             borderRadius: "var(--px-r)",
             overflow: "hidden",
             lineHeight: 0,
           }}
-          dangerouslySetInnerHTML={{ __html: preview }}
-        />
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={`/face/${packed}.png`}
+            alt="Your portrait"
+            width={104}
+            height={104}
+            style={{ width: "100%", height: "100%", imageRendering: "pixelated" }}
+          />
+        </div>
         <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 7 }}>
-          <button type="button" className="btn btn-sm" onClick={() => setC(randomAvatar())}>
+          <button type="button" className="btn btn-sm" onClick={() => setC(randomFace())}>
             ⟳ SOMEONE ELSE
           </button>
           <button type="submit" className="btn btn-sm btn-purple">
@@ -86,39 +124,66 @@ export function AvatarBuilder({ start, fresh }: { start: AvatarConfig; fresh: bo
         </div>
       ) : null}
 
-      {COLOR_GROUPS.map((row) => (
+      {COLOR_KEYS.map((row) => (
         <div className="field" key={row.key}>
           <span className="flabel">{row.label}</span>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-            {row.values.map((col) => (
-              <button
-                key={col}
-                type="button"
-                aria-label={`${row.label} ${col}`}
-                aria-pressed={c[row.key] === col}
-                onClick={() => setC((p) => ({ ...p, [row.key]: col }))}
-                style={{
-                  width: 28,
-                  height: 28,
-                  padding: 0,
-                  cursor: "pointer",
-                  background: `#${col}`,
-                  borderRadius: "var(--px-r)",
-                  border:
-                    c[row.key] === col ? "2px solid var(--pur-bright)" : "1px solid var(--edge)",
-                }}
-              />
-            ))}
+            {ALLOWED[row.key].map((name) => {
+              const ramp = RAMPS[name];
+              const on = c[row.key] === name;
+              return (
+                <button
+                  key={name}
+                  type="button"
+                  aria-label={`${row.label} ${name}`}
+                  aria-pressed={on}
+                  onClick={() => setC((p) => ({ ...p, [row.key]: name }))}
+                  style={{
+                    width: 30,
+                    height: 30,
+                    padding: 0,
+                    cursor: "pointer",
+                    borderRadius: "var(--px-r)",
+                    border: on ? "2px solid var(--pur-bright)" : "1px solid var(--edge)",
+                    background: `linear-gradient(135deg, ${ramp[0]} 0 50%, ${ramp[1]} 50% 100%)`,
+                  }}
+                />
+              );
+            })}
           </div>
         </div>
       ))}
 
-      {SHAPE_GROUPS.map((g) => {
-        const list = g.optional ? ["none", ...g.values] : g.values;
-        const at = Math.max(0, list.indexOf(c[g.key]));
+      <div className="field">
+        <span className="flabel">BEHIND YOU</span>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+          {BACKGROUNDS.map((hex) => (
+            <button
+              key={hex}
+              type="button"
+              aria-label={`Background ${hex}`}
+              aria-pressed={c.bg === hex}
+              onClick={() => setC((p) => ({ ...p, bg: hex }))}
+              style={{
+                width: 30,
+                height: 30,
+                padding: 0,
+                cursor: "pointer",
+                background: hex,
+                borderRadius: "var(--px-r)",
+                border: c.bg === hex ? "2px solid var(--pur-bright)" : "1px solid var(--edge)",
+              }}
+            />
+          ))}
+        </div>
+      </div>
+
+      {shapeKeys.map((key) => {
+        const list = ALLOWED[key];
+        const at = Math.max(0, list.indexOf(c[key]));
         return (
           <div
-            key={g.key}
+            key={key}
             style={{
               display: "flex",
               alignItems: "center",
@@ -128,29 +193,29 @@ export function AvatarBuilder({ start, fresh }: { start: AvatarConfig; fresh: bo
             }}
           >
             <div className="px" style={{ fontSize: 9, color: "var(--dim)", flex: 1 }}>
-              {g.label}
+              {LABELS[key] ?? key.toUpperCase()}
             </div>
             <button
               type="button"
               className="btn btn-sm"
               style={{ minWidth: 38 }}
-              onClick={() => step(g.key, list, -1)}
-              aria-label={`${g.label} previous`}
+              onClick={() => step(key, -1)}
+              aria-label={`${LABELS[key]} previous`}
             >
               ◀
             </button>
             <div
               className="px"
-              style={{ fontSize: 9, color: "var(--muted)", width: 44, textAlign: "center" }}
+              style={{ fontSize: 9, color: "var(--muted)", width: 46, textAlign: "center" }}
             >
-              {c[g.key] === "none" ? "NONE" : `${at + 1}/${list.length}`}
+              {c[key] === NONE ? "NONE" : `${at + 1}/${list.length}`}
             </div>
             <button
               type="button"
               className="btn btn-sm"
               style={{ minWidth: 38 }}
-              onClick={() => step(g.key, list, 1)}
-              aria-label={`${g.label} next`}
+              onClick={() => step(key, 1)}
+              aria-label={`${LABELS[key]} next`}
             >
               ▶
             </button>
@@ -163,8 +228,7 @@ export function AvatarBuilder({ start, fresh }: { start: AvatarConfig; fresh: bo
       </button>
 
       <div className="empty" style={{ paddingTop: 2, lineHeight: 1.7 }}>
-        {AVATAR_CREDIT.style.toUpperCase()} BY {AVATAR_CREDIT.creator.toUpperCase()} ·{" "}
-        {AVATAR_CREDIT.license}
+        PORTRAIT ART BY V-KTOR · MIT
       </div>
     </form>
   );

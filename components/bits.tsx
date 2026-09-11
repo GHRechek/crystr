@@ -1,8 +1,9 @@
-import { avatarSvg, avatarSvgForSeed, normalize } from "@/lib/avatar";
+import { faceFromId, normalizeFace, packFace } from "@/lib/faces/core";
 import type { Author } from "@/lib/data";
 
-/** The portrait. A built one if they've made it, otherwise one derived from
- *  their id so everyone has a face from the moment they arrive. */
+/** The portrait. A built face if they've made one, otherwise one derived from
+ *  their id so everyone has a face the moment they arrive. The image itself is
+ *  composed by /face/<packed>.png and cached forever. */
 export function Avatar({
   person,
   size = 34,
@@ -33,12 +34,15 @@ export function Avatar({
     );
   }
 
-  const svg = person?.avatar_config
-    ? avatarSvg(normalize(person.avatar_config), size)
-    : avatarSvgForSeed(person?.id ?? "nobody", size);
+  const config = person?.avatar_config
+    ? normalizeFace(person.avatar_config)
+    : faceFromId(person?.id ?? "nobody");
 
   return (
-    <div className="avatar" style={box} dangerouslySetInnerHTML={{ __html: svg }} />
+    <div className="avatar" style={box}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={`/face/${packFace(config)}.png`} alt="" width={size} height={size} />
+    </div>
   );
 }
 

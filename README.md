@@ -112,21 +112,29 @@ The repo is linked to the `crystr` Vercel project on the VLVT team. Pushing to
 
 ## Portraits
 
-There is no avatar upload. `/me/avatar` builds a face from DiceBear's **Pixel
-Art** style (CC0 1.0 — public domain, by DiceBear): 45 hair variants, 12 eyes,
-23 mouths, 23 pieces of clothing, plus optional hat, glasses, beard and
-accessories, with curated colour ramps for skin, hair, eyes, clothes and
-ground. It renders as a 16x16 SVG with `crispEdges`, which is the 16-bit look
-the design asked for and stays sharp at 28px in a whisper list.
+There is no avatar upload. `/me/avatar` builds a face from layered 96x96
+pixel art — 51 hairstyles, 19 fringes, 14 eyes, 11 mouths, 15 ears, 20
+outfits, plus brows, nose, beard, glasses and horns, with six colour ramps
+(skin, hair, eyes, clothes, second cloth, trim) and a ground.
 
-The choices live in `profiles.avatar_config` and are validated against the
-style's own enums on the way in, so nothing is uploaded and no hand-edited
-config can reach the renderer. DiceBear renders locally from the npm package
-— no calls to their API.
+**Artwork:** [V-ktor/pixel-art-portraits](https://github.com/V-ktor/pixel-art-portraits),
+MIT — vendored under `assets/faces/` with its licence. The layers are indexed
+PNGs whose channels are palette slots rather than colours (red = the ramp's
+dark step, green = light, blue = shadow, grey = line work lerping black to
+white). `lib/faces/core.ts` reproduces the original Godot shader per pixel, so
+a face composed here looks like one composed in the tool the art was drawn
+for. Clothing is the one layer whose files are sub-layers of a single outfit
+(`_primary`, `_secondary`, `_details`), grouped in the manifest so a chosen
+outfit always draws its whole self.
 
-Anyone who hasn't built a face gets one derived from their user id
-(`avatarFromId`), which is a real config, so opening the builder starts you on
-exactly the face the rest of the app has been showing.
+`/face/<packed>.png` composes a portrait and caches it immutably. The URL
+fully describes what it draws — a changed face is a changed URL — so there is
+no lookup, no auth, and nothing identifying in the path. Run
+`node scripts/build-face-manifest.mjs` after changing the asset set.
+
+Anyone who hasn't built a face gets one derived from their user id, which is
+a real config, so opening the builder starts you on the face the rest of the
+app has been showing.
 
 ## Still placeholder
 

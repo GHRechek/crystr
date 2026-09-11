@@ -1,15 +1,15 @@
 import { requireMe } from "@/lib/data";
-import { normalize, avatarFromId } from "@/lib/avatar";
+import { faceFromId, normalizeFace } from "@/lib/faces/core";
 import { AvatarBuilder } from "./builder";
 
 export default async function AvatarPage() {
   const { userId, profile } = await requireMe();
 
-  // Open on the face they already have — built, or the one derived from
-  // their id that the rest of the app has been showing.
+  // Open on the face they already have — built, or the one derived from their
+  // id that the rest of the app has been showing.
   const start = profile.avatar_config
-    ? normalize(profile.avatar_config)
-    : avatarFromId(userId);
+    ? normalizeFace(profile.avatar_config)
+    : faceFromId(userId);
 
   return <AvatarBuilder start={start} fresh={!profile.avatar_config} />;
 }

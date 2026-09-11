@@ -705,15 +705,12 @@ select {
   }
 }
 
-/* The mood, as a thought bubble off the portrait. The tail is two stepped
-   squares rather than a smooth triangle — a pointed tail would be the one
-   curve in a 16-bit interface. */
+/* The mood, as a thought bubble hanging in the banner above the portrait.
+   The tail is two stepped squares rather than a smooth triangle — a curve
+   would be the one round thing in a 16-bit interface. */
 .thought {
-  position: relative;
-  align-self: flex-start;
   max-width: 100%;
-  margin: 16px 0 0 30px;
-  padding: 9px 12px;
+  padding: 8px 11px;
   text-align: left;
   background: var(--surface);
   border: 0;
@@ -721,9 +718,12 @@ select {
   box-shadow: 0 0 0 1px var(--edge);
   font-family: inherit;
   font-size: 12.5px;
-  line-height: 1.5;
+  line-height: 1.45;
   color: var(--text-2);
   cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .thought:hover {
   background: var(--surface-2);
@@ -740,12 +740,12 @@ select {
 .thought::before {
   width: 11px;
   height: 11px;
-  left: 10px;
-  top: -8px;
+  left: -6px;
+  bottom: -7px;
 }
 .thought::after {
   width: 6px;
   height: 6px;
-  left: -2px;
-  top: -17px;
+  left: -16px;
+  bottom: -16px;
 }
