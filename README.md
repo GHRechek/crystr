@@ -113,9 +113,18 @@ The repo is linked to the `crystr` Vercel project on the VLVT team. Pushing to
 ## Portraits
 
 There is no avatar upload. `/me/avatar` builds a face from layered 96x96
-pixel art — 51 hairstyles, 19 fringes, 14 eyes, 11 mouths, 15 ears, 20
-outfits, plus brows, nose, beard, glasses and horns, with six colour ramps
-(skin, hair, eyes, clothes, second cloth, trim) and a ground.
+pixel art — 20 hairstyles, 11 lengths behind, 14 eyes, 11 mouths, 15 ears,
+20 outfits, plus brows, nose, beard, glasses, horns and things worn in your
+hair, with six colour ramps (skin, hair, eyes, clothes, second cloth, trim)
+and a ground.
+
+The asset set is curated rather than exposed wholesale: hair went from 51
+"options" to 20 real hairstyles. In the source, `hair/base/<name>` is the
+layer *under* the face, `hair/front/<name>` is what covers the forehead, and
+`<name>_decoration01` is a clip belonging to that style — chosen separately
+you get bald heads wearing hairclips. A hairstyle is now one choice that
+draws its whole self, and `earrings`/`headset`/`ribbon`/`ear_cover*`, which
+were filed under hairstyles, are their own optional layer.
 
 **Artwork:** [V-ktor/pixel-art-portraits](https://github.com/V-ktor/pixel-art-portraits),
 MIT — vendored under `assets/faces/` with its licence. The layers are indexed

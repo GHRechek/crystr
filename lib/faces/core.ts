@@ -65,6 +65,8 @@ export type LayerSpec = {
   role: Role;
   /** A companion <name>_shadow.png, drawn in skin, over the top. */
   shadowRole?: Role;
+  /** Drawn from the hairstyle rather than chosen — it has no picker. */
+  derived?: boolean;
 };
 
 /** Back to front, matching the original scene's draw order. */
@@ -80,13 +82,17 @@ export const DRAW_ORDER: LayerSpec[] = [
   { dir: "eyes", role: "eye", shadowRole: "skin" },
   { dir: "glasses", role: "detail", shadowRole: "skin" },
   { dir: "brows", role: "skin" },
-  { dir: "hair/front", role: "hair", shadowRole: "skin" },
+  // The hairstyle's own front piece and clip, at the depth the original
+  // scene drew them — over the brows, under the ears.
+  { dir: "hair/decoration", role: "detail", derived: true },
+  { dir: "hair/front", role: "hair", shadowRole: "skin", derived: true },
+  { dir: "hair/accessory", role: "detail", shadowRole: "skin" },
   { dir: "ears", role: "hair" },
   { dir: "horns", role: "horn" },
 ];
 
 /** Layers you can leave off entirely. */
-export const OPTIONAL = new Set(["beard", "glasses", "horns", "neck", "hair/back", "hair/front"]);
+export const OPTIONAL = new Set(["beard", "glasses", "horns", "neck", "hair/back", "hair/accessory"]);
 
 export const NONE = "none";
 
@@ -131,7 +137,10 @@ function allowedFor(dir: string): string[] {
 
 export const ALLOWED: Record<string, string[]> = (() => {
   const out: Record<string, string[]> = {};
-  for (const layer of DRAW_ORDER) out[keyFor(layer.dir)] = allowedFor(layer.dir);
+  for (const layer of DRAW_ORDER) {
+    if (layer.derived) continue;
+    out[keyFor(layer.dir)] = allowedFor(layer.dir);
+  }
   for (const c of COLOR_KEYS) out[c.key] = RAMP_KEYS_BY_ROLE[c.role];
   out.bg = BACKGROUNDS;
   return out;
@@ -140,7 +149,8 @@ export const ALLOWED: Record<string, string[]> = (() => {
 export function defaultFace(): FaceConfig {
   const out: FaceConfig = {};
   for (const [key, allowed] of Object.entries(ALLOWED)) out[key] = allowed[0];
-  out.hairBase = ALLOWED.hairBase.includes("female01") ? "female01" : ALLOWED.hairBase[0];
+  out.hairBase = ALLOWED.hairBase.includes("female03") ? "female03" : ALLOWED.hairBase[0];
+  out.hairAccessory = NONE;
   out.beard = NONE;
   out.glasses = NONE;
   out.horns = NONE;
@@ -183,8 +193,8 @@ const ODDS: Record<string, number> = {
   glasses: 20,
   horns: 12,
   neck: 55,
-  "hair/back": 45,
-  "hair/front": 55,
+  "hair/back": 40,
+  "hair/accessory": 15,
 };
 
 export function faceFromId(id: string): FaceConfig {
@@ -291,10 +301,38 @@ export function drawPlan(config: FaceConfig): { path: string; ramp: Ramp }[] {
     details: "detail",
   };
 
+  const style = (MANIFEST["hair/base"] ?? []).find((a: FaceAsset) => a.name === c.hairBase);
+
   for (const layer of DRAW_ORDER) {
+    // The hairstyle carries its own front and clip; neither is chosen.
+    if (layer.dir === "hair/decoration") {
+      if (style?.decoration) {
+        plan.push({ path: `hair/base/${style.name}_decoration01.png`, ramp: ramps.detail });
+      }
+      continue;
+    }
+    if (layer.dir === "hair/front") {
+      if (style?.front) {
+        plan.push({ path: `hair/front/${style.front}.png`, ramp: ramps.hair });
+        if (style.frontShadow) {
+          plan.push({ path: `hair/front/${style.front}_shadow.png`, ramp: ramps.skin });
+        }
+      }
+      continue;
+    }
+
     const name = c[keyFor(layer.dir)];
     if (!name || name === NONE) continue;
     const asset = (MANIFEST[layer.dir] ?? []).find((a: FaceAsset) => a.name === name);
+
+    // Accessories live in two directories, so they carry their own path.
+    if (asset?.path) {
+      plan.push({ path: `${asset.path}.png`, ramp: ramps[layer.role] });
+      if (asset.shadow && layer.shadowRole) {
+        plan.push({ path: `${asset.path}_shadow.png`, ramp: ramps[layer.shadowRole] });
+      }
+      continue;
+    }
 
     if (asset?.parts?.length) {
       // An outfit is its parts, each painted with its own ramp — picking one

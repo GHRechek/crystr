@@ -27,15 +27,15 @@ const LABELS: Record<string, string> = {
   brows: "BROWS",
   glasses: "GLASSES",
   hairBase: "HAIR",
-  hairFront: "FRINGE",
   hairBack: "HAIR BEHIND",
+  hairAccessory: "WORN IN YOUR HAIR",
   ears: "EARS",
   horns: "HORNS",
 };
 
 /** The order the controls read in — face first, then the fantasy bits. */
 const SHAPE_ORDER = [
-  "hairBase", "hairFront", "hairBack", "eyes", "brows", "nose", "mouth",
+  "hairBase", "hairBack", "hairAccessory", "eyes", "brows", "nose", "mouth",
   "ears", "horns", "beard", "glasses", "cloths", "neck", "body",
 ];
 
@@ -53,7 +53,7 @@ export function AvatarBuilder({ start, fresh }: { start: FaceConfig; fresh: bool
     });
 
   const shapeKeys = SHAPE_ORDER.filter((k) =>
-    DRAW_ORDER.some((l) => keyFor(l.dir) === k),
+    DRAW_ORDER.some((l) => !l.derived && keyFor(l.dir) === k),
   );
 
   return (
