@@ -16,6 +16,15 @@ export default async function ProfilePage() {
   const facePack = packFace(
     profile.avatar_config ? normalizeFace(profile.avatar_config) : faceFromId(userId),
   );
+  const details: [string, string][] = (
+    [
+      ["LIKES", profile.likes],
+      ["DISLIKES", profile.dislikes],
+      ["FAVOURITE FOOD", profile.food],
+      ["OBSESSED WITH", profile.obsession],
+    ] satisfies [string, string | null][]
+  ).flatMap(([label, value]) => (value?.trim() ? [[label, value.trim()] as [string, string]] : []));
+
   const slots = [...top, ...Array(Math.max(0, 6 - top.length)).fill(null)].slice(0, 6);
 
   return (
@@ -53,6 +62,32 @@ export default async function ProfilePage() {
             {profile.bio || "Nothing written here yet. The City will assume the worst."}
           </div>
         </div>
+
+        {details.length ? (
+          <div className="tile" style={{ padding: 12 }}>
+            <div
+              className="px"
+              style={{ fontSize: 8.5, color: "var(--blu-soft)", letterSpacing: ".07em", marginBottom: 8 }}
+            >
+              THE DETAILS
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
+              {details.map(([label, value]) => (
+                <div key={label} style={{ display: "flex", gap: 10, alignItems: "baseline" }}>
+                  <div
+                    className="px"
+                    style={{ fontSize: 8, color: "var(--muted)", width: 92, flex: "none" }}
+                  >
+                    {label}
+                  </div>
+                  <div style={{ fontSize: 12.5, lineHeight: 1.5, color: "var(--text-2)", minWidth: 0 }}>
+                    {value}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : null}
 
         <div>
           <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 8 }}>

@@ -61,6 +61,27 @@ export default async function EditProfilePage() {
           />
         </div>
 
+        {(
+          [
+            ["likes", "LIKES", "cold mornings, an honest scale"],
+            ["dislikes", "DISLIKES", "the guild tax, pretending to be weather"],
+            ["food", "FAVOURITE FOOD", "whatever the low market is selling at dusk"],
+            ["obsession", "CURRENT OBSESSION", "the fountain, obviously"],
+          ] as const
+        ).map(([name, label, placeholder]) => (
+          <div className="field" key={name}>
+            <label htmlFor={name}>{label}</label>
+            <input
+              id={name}
+              name={name}
+              className="input"
+              defaultValue={profile[name] ?? ""}
+              maxLength={120}
+              placeholder={placeholder}
+            />
+          </div>
+        ))}
+
         <button type="submit" className="btn btn-lg btn-purple btn-block">
           SAVE
         </button>

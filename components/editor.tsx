@@ -51,6 +51,20 @@ export function Editor({
         />
       </div>
 
+      {!oped ? (
+        <div className="field">
+          <label htmlFor="byline">PUBLISHED AS — BLANK RUNS IT UNDER YOUR OWN NAME</label>
+          <input
+            id="byline"
+            name="byline"
+            className="input input-px"
+            defaultValue={article?.byline_name ?? ""}
+            maxLength={60}
+            placeholder="THE HARBOUR OFFICE"
+          />
+        </div>
+      ) : null}
+
       <div className="field">
         <label htmlFor="headline">HEADLINE</label>
         <textarea

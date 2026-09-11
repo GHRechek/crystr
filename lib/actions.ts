@@ -283,6 +283,7 @@ export async function saveDispatch(fd: FormData) {
     p_body: str(fd, "body"),
     p_banner: fd.get("banner") === "on" || fd.get("banner") === "true",
     p_status: status,
+    p_byline: str(fd, "byline") || null,
   });
 
   if (!r.ok) {
@@ -362,6 +363,10 @@ export async function updateProfile(fd: FormData) {
       handle,
       display_name: str(fd, "display_name") || null,
       bio: str(fd, "bio") || null,
+      likes: str(fd, "likes") || null,
+      dislikes: str(fd, "dislikes") || null,
+      food: str(fd, "food") || null,
+      obsession: str(fd, "obsession") || null,
       updated_at: new Date().toISOString(),
     })
     .eq("id", user.id);

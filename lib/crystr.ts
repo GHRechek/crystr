@@ -141,8 +141,10 @@ export function byline(
   status: string,
   createdAt: string,
   publishedAt: string | null,
+  /** A witch dispatch can run under a name of its own. */
+  override?: string | null,
 ): string {
-  const who = handle.toUpperCase();
+  const who = (override?.trim() || handle).toUpperCase();
   if (status === "published") return `${who} · ${ago(publishedAt || createdAt)}`;
   if (status === "pending") return `${who} · AWAITING A WITCH`;
   if (status === "returned") return `${who} · RETURNED`;

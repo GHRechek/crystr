@@ -176,7 +176,7 @@ export default async function BallPage({
             <div className="headline">{a.headline}</div>
             {a.standfirst ? <div className="standfirst">{a.standfirst}</div> : null}
             <div className="byline" style={{ marginTop: 2 }}>
-              {byline(a.author.handle, a.status, a.created_at, a.published_at)}
+              {byline(a.author.handle, a.status, a.created_at, a.published_at, a.byline_name)}
             </div>
           </div>
         </Link>

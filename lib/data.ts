@@ -9,6 +9,10 @@ export type Profile = {
   avatar_url: string | null;
   avatar_config: unknown;
   mood: string | null;
+  likes: string | null;
+  dislikes: string | null;
+  food: string | null;
+  obsession: string | null;
   mana: number;
   spent_total: number;
   is_witch: boolean;
@@ -60,6 +64,7 @@ export type FeedPost = {
 export type FeedDispatch = {
   kind: "ball";
   id: number;
+  byline_name: string | null;
   kicker: string;
   headline: string;
   standfirst: string;
@@ -83,7 +88,7 @@ export async function getFeed(userId: string): Promise<FeedItem[]> {
       .limit(50),
     supabase
       .from("articles")
-      .select(`id, kicker, headline, standfirst, banner, banner_label, created_at, published_at, author:profiles!articles_author_id_fkey(${AUTHOR_COLS})`)
+      .select(`id, kicker, headline, standfirst, banner, banner_label, created_at, published_at, byline_name, author:profiles!articles_author_id_fkey(${AUTHOR_COLS})`)
       .eq("status", "published")
       .order("published_at", { ascending: false })
       .limit(3),
@@ -325,6 +330,7 @@ export async function getMotions(): Promise<{ open: Motion[]; past: Motion[] }> 
 
 export type Article = {
   id: number;
+  byline_name: string | null;
   kind: "dispatch" | "briefing" | "oped";
   status: "draft" | "pending" | "published" | "returned";
   kicker: string;
@@ -339,7 +345,7 @@ export type Article = {
   published_at: string | null;
 };
 
-const ARTICLE_COLS = `id, kind, status, kicker, headline, standfirst, body, banner, banner_label,
+const ARTICLE_COLS = `id, kind, status, kicker, headline, standfirst, body, banner, banner_label, byline_name,
   author_id, created_at, published_at, author:profiles!articles_author_id_fkey(${AUTHOR_COLS})`;
 
 /** RLS already hides drafts and other people's queued op-eds. */

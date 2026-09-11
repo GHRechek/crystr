@@ -72,7 +72,7 @@ function Card({ item, decay, me }: { item: FeedItem; decay: number; me: string }
           <Avatar bg="linear-gradient(135deg,#4c7df0,#9184d9)" glyph="◉" />
           <div style={{ display: "flex", flexDirection: "column", gap: 1, minWidth: 0 }}>
             <div style={{ fontSize: 13, fontWeight: 500, letterSpacing: "-.01em" }}>
-              crystr ball
+              {item.byline_name?.trim().toLowerCase() || "crystr ball"}
             </div>
             <div className="px" style={{ fontSize: 8.5, color: "var(--muted)" }}>
               {item.kicker} · {ago(item.published_at || item.created_at)}

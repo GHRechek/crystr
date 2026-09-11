@@ -72,7 +72,7 @@ export default async function ArticlePage({ params }: { params: { id: string } }
             borderBottom: "1px solid var(--rule)",
           }}
         >
-          <span>{byline(article.author.handle, article.status, article.created_at, article.published_at)}</span>
+          <span>{byline(article.author.handle, article.status, article.created_at, article.published_at, article.byline_name)}</span>
           <span className="spacer" />
           <span>{readTime(article.body)}</span>
         </div>
