@@ -148,11 +148,13 @@ export function paletteFor(sw: Swatches): Map<number, [number, number, number]> 
 /** Back to front. The sheet names say where they go: *Back behind the head,
  *  "BelowBeard" under the beard, Layered* on top of everything. */
 export const SHEET_ORDER = [
+  // The scalp is the back of the skull, so it goes under everything — draw it
+  // after the back hair and it sits on top of the hair.
+  "Cranium",
   "HairBack",
   "LayeredAccessoryBack",
   "EarsBack",
   "Jaws",
-  "Cranium",
   "EarsFront",
   "Eyes",
   "pupils",

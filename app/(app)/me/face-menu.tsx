@@ -55,6 +55,10 @@ export function ProfileHead({
           display: "flex",
           flexDirection: "column",
           gap: 12,
+          // The banner is a positioned box, so it would paint over a portrait
+          // that only overlaps it by flow order. This puts the face in front.
+          position: "relative",
+          zIndex: 1,
         }}
       >
         <div style={{ display: "flex", alignItems: "flex-end", gap: 11 }}>
