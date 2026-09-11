@@ -47,6 +47,13 @@ const WHITE = "#ffffff";
 
 export const SIZE = 96;
 
+/** The art is drawn head-and-shoulders, which puts the face in about a third
+ *  of the frame — too small at 34px in a list, and tall hair and horns sit
+ *  right against the top edge. Portraits are cropped to this window: centred
+ *  horizontally, taken from the very top so nothing worn on the head is lost,
+ *  and stopping at the collarbone. */
+export const CROP = { x: 16, y: 0, w: 64, h: 64 } as const;
+
 // ------------------------------------------------------------------ layers
 
 /** Which ramp a layer is painted with. */

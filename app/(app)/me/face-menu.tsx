@@ -83,7 +83,7 @@ export function ProfileHead({
             }}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={src} alt="" width={64} height={64} />
+            <img src={src} alt="" width={64} height={64} style={{ imageRendering: "pixelated" }} />
           </button>
 
           <div style={{ paddingBottom: 4, minWidth: 0, flex: 1 }}>

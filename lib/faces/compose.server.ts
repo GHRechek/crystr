@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { PNG } from "pngjs";
-import { drawPlan, over, paint, SIZE, type FaceConfig } from "./core";
+import { CROP, drawPlan, over, paint, SIZE, type FaceConfig } from "./core";
 
 // Composing a portrait means decoding up to ~18 tiny indexed PNGs, painting
 // each through the palette shader and stacking them. Decoded layers are
@@ -46,7 +46,11 @@ export function composeFace(config: FaceConfig, bg: string): Buffer {
     if (px) over(out, paint(px, ramp));
   }
 
-  const png = new PNG({ width: SIZE, height: SIZE });
-  png.data = Buffer.from(out.buffer, out.byteOffset, out.length);
+  // Crop to the head before encoding, so every consumer gets the same framing.
+  const png = new PNG({ width: CROP.w, height: CROP.h });
+  for (let y = 0; y < CROP.h; y++) {
+    const from = ((y + CROP.y) * SIZE + CROP.x) * 4;
+    png.data.set(out.subarray(from, from + CROP.w * 4), y * CROP.w * 4);
+  }
   return PNG.sync.write(png);
 }
