@@ -3,8 +3,13 @@
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 
-export default function LoginPage() {
+export default function LoginPage({
+  searchParams,
+}: {
+  searchParams: { e?: string };
+}) {
   const [busy, setBusy] = useState(false);
+  const problem = searchParams?.e;
 
   async function signInWithGoogle() {
     setBusy(true);
@@ -47,10 +52,19 @@ export default function LoginPage() {
               two minutes of silence.
             </div>
 
-            <div className="notice">
-              Signing in with Google makes you a new arrival in The City. Nothing from
-              any other app comes with you.
-            </div>
+            {problem ? (
+              <div className="banner-mag banner-note">
+                <div className="px" style={{ fontSize: 8.5, marginBottom: 5 }}>
+                  THE GATE REFUSED YOU
+                </div>
+                {problem}
+              </div>
+            ) : (
+              <div className="notice">
+                Signing in with Google makes you a new arrival in The City. Nothing from
+                any other app comes with you.
+              </div>
+            )}
 
             <button
               className="btn btn-lg btn-mag btn-block"

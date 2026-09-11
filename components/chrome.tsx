@@ -68,7 +68,15 @@ export function TabBar() {
       {TABS.map((t) => {
         const active = t.href === "/" ? path === "/" : path.startsWith(t.href);
         return (
-          <Link key={t.href} href={t.href} className="tab" data-active={active}>
+          // Not prefetched: every tab is a dynamic, auth'd route, and six of
+          // them warming at once is what races the session refresh.
+          <Link
+            key={t.href}
+            href={t.href}
+            prefetch={false}
+            className="tab"
+            data-active={active}
+          >
             <span className="glyph" aria-hidden>
               {t.glyph}
             </span>

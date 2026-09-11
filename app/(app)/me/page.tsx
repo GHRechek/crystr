@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { requireMe, getLedger, getTopFriends } from "@/lib/data";
 import { Avatar } from "@/components/bits";
-import { ago, avatarBg, COSTS } from "@/lib/crystr";
+import { ago, COSTS } from "@/lib/crystr";
 
 export default async function ProfilePage() {
   const { userId, profile } = await requireMe();
@@ -44,7 +44,7 @@ export default async function ProfilePage() {
             title="Change your face"
             style={{ boxShadow: "0 0 0 3px var(--device)", borderRadius: "var(--px-r)", lineHeight: 0 }}
           >
-            <Avatar person={profile} you size={64} />
+            <Avatar person={profile} size={64} />
           </Link>
           <div style={{ paddingBottom: 4, minWidth: 0, flex: 1 }}>
             <div style={{ fontSize: 19, fontWeight: 500, letterSpacing: "-.02em" }}>
@@ -107,18 +107,16 @@ export default async function ProfilePage() {
                 key={f?.id ?? `empty-${i}`}
                 style={{ display: "flex", flexDirection: "column", gap: 5, alignItems: "center" }}
               >
-                <div
-                  className="avatar"
-                  style={{
-                    width: "100%",
-                    height: "auto",
-                    aspectRatio: "1",
-                    fontSize: 14,
-                    background: f ? avatarBg(f.id) : "var(--edge)",
-                  }}
-                >
-                  {f ? f.handle[0]?.toUpperCase() : "?"}
-                </div>
+                {f ? (
+                  <Avatar person={f} size={72} fill />
+                ) : (
+                  <div
+                    className="avatar"
+                    style={{ width: "100%", aspectRatio: "1", fontSize: 14, background: "var(--edge)" }}
+                  >
+                    ?
+                  </div>
+                )}
                 <div
                   style={{
                     fontSize: 9.5,

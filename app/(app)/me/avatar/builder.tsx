@@ -1,46 +1,28 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { saveAvatar } from "@/lib/actions";
 import {
-  AvatarSvg,
-  BG,
-  EYE,
-  HAIR,
-  OPTION_COUNTS,
-  SKIN,
-  avatarFromId,
+  AVATAR_CREDIT,
+  COLOR_GROUPS,
+  SHAPE_GROUPS,
+  avatarSvg,
+  randomAvatar,
   type AvatarConfig,
 } from "@/lib/avatar";
-
-const SHAPES: { key: keyof AvatarConfig; label: string }[] = [
-  { key: "hair", label: "HAIR" },
-  { key: "eyes", label: "EYES" },
-  { key: "brows", label: "BROWS" },
-  { key: "nose", label: "NOSE" },
-  { key: "mouth", label: "MOUTH" },
-  { key: "ears", label: "EARS" },
-  { key: "horns", label: "HORNS / CROWN" },
-  { key: "mark", label: "MARKS" },
-  { key: "extra", label: "WORN" },
-  { key: "collar", label: "COLLAR" },
-];
-
-const SWATCHES: { key: keyof AvatarConfig; label: string; colors: string[] }[] = [
-  { key: "skin", label: "SKIN", colors: SKIN },
-  { key: "hairColor", label: "HAIR COLOUR", colors: HAIR },
-  { key: "eyeColor", label: "EYES", colors: EYE },
-  { key: "bg", label: "BEHIND YOU", colors: BG },
-];
 
 export function AvatarBuilder({ start, fresh }: { start: AvatarConfig; fresh: boolean }) {
   const [c, setC] = useState<AvatarConfig>(start);
 
-  const step = (key: keyof AvatarConfig, by: number) =>
+  const preview = useMemo(() => avatarSvg(c, 168), [c]);
+
+  const step = (key: string, values: string[], by: number) =>
     setC((prev) => {
-      const max = OPTION_COUNTS[key];
-      return { ...prev, [key]: (((prev[key] + by) % max) + max) % max };
+      const list = values;
+      const at = Math.max(0, list.indexOf(prev[key]));
+      const next = (((at + by) % list.length) + list.length) % list.length;
+      return { ...prev, [key]: list[next] };
     });
 
   return (
@@ -57,23 +39,18 @@ export function AvatarBuilder({ start, fresh }: { start: AvatarConfig; fresh: bo
         </div>
       </div>
 
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          padding: "6px 0 2px",
-        }}
-      >
+      <div style={{ display: "flex", justifyContent: "center", padding: "6px 0 2px" }}>
         <div
           style={{
+            width: 168,
+            height: 168,
             boxShadow: "0 0 0 1px var(--edge)",
             borderRadius: "var(--px-r)",
             overflow: "hidden",
             lineHeight: 0,
           }}
-        >
-          <AvatarSvg config={c} size={168} />
-        </div>
+          dangerouslySetInnerHTML={{ __html: preview }}
+        />
       </div>
 
       {fresh ? (
@@ -83,33 +60,30 @@ export function AvatarBuilder({ start, fresh }: { start: AvatarConfig; fresh: bo
         </div>
       ) : null}
 
-      <button
-        type="button"
-        className="btn"
-        onClick={() => setC(avatarFromId(String(Math.random())))}
-      >
+      <button type="button" className="btn" onClick={() => setC(randomAvatar())}>
         ⟳ SOMEONE ELSE ENTIRELY
       </button>
 
-      {SWATCHES.map((row) => (
+      {COLOR_GROUPS.map((row) => (
         <div className="field" key={row.key}>
           <span className="flabel">{row.label}</span>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-            {row.colors.map((col, i) => (
+            {row.values.map((col) => (
               <button
-                key={col + i}
+                key={col}
                 type="button"
-                aria-label={`${row.label} ${i + 1}`}
-                onClick={() => setC((p) => ({ ...p, [row.key]: i }))}
+                aria-label={`${row.label} ${col}`}
+                aria-pressed={c[row.key] === col}
+                onClick={() => setC((p) => ({ ...p, [row.key]: col }))}
                 style={{
                   width: 28,
                   height: 28,
                   padding: 0,
                   cursor: "pointer",
-                  background: col,
+                  background: `#${col}`,
                   borderRadius: "var(--px-r)",
                   border:
-                    c[row.key] === i ? "2px solid var(--pur-bright)" : "1px solid var(--edge)",
+                    c[row.key] === col ? "2px solid var(--pur-bright)" : "1px solid var(--edge)",
                 }}
               />
             ))}
@@ -117,50 +91,59 @@ export function AvatarBuilder({ start, fresh }: { start: AvatarConfig; fresh: bo
         </div>
       ))}
 
-      {SHAPES.map((s) => (
-        <div
-          key={s.key}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-            padding: "6px 0",
-            borderBottom: "1px solid var(--rule-soft)",
-          }}
-        >
-          <div className="px" style={{ fontSize: 9, color: "var(--dim)", flex: 1 }}>
-            {s.label}
-          </div>
-          <button
-            type="button"
-            className="btn btn-sm"
-            style={{ minWidth: 38 }}
-            onClick={() => step(s.key, -1)}
-            aria-label={`${s.label} previous`}
-          >
-            ◀
-          </button>
+      {SHAPE_GROUPS.map((g) => {
+        const list = g.optional ? ["none", ...g.values] : g.values;
+        const at = Math.max(0, list.indexOf(c[g.key]));
+        return (
           <div
-            className="px"
-            style={{ fontSize: 9, color: "var(--muted)", width: 34, textAlign: "center" }}
+            key={g.key}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              padding: "6px 0",
+              borderBottom: "1px solid var(--rule-soft)",
+            }}
           >
-            {c[s.key] + 1}/{OPTION_COUNTS[s.key]}
+            <div className="px" style={{ fontSize: 9, color: "var(--dim)", flex: 1 }}>
+              {g.label}
+            </div>
+            <button
+              type="button"
+              className="btn btn-sm"
+              style={{ minWidth: 38 }}
+              onClick={() => step(g.key, list, -1)}
+              aria-label={`${g.label} previous`}
+            >
+              ◀
+            </button>
+            <div
+              className="px"
+              style={{ fontSize: 9, color: "var(--muted)", width: 44, textAlign: "center" }}
+            >
+              {c[g.key] === "none" ? "NONE" : `${at + 1}/${list.length}`}
+            </div>
+            <button
+              type="button"
+              className="btn btn-sm"
+              style={{ minWidth: 38 }}
+              onClick={() => step(g.key, list, 1)}
+              aria-label={`${g.label} next`}
+            >
+              ▶
+            </button>
           </div>
-          <button
-            type="button"
-            className="btn btn-sm"
-            style={{ minWidth: 38 }}
-            onClick={() => step(s.key, 1)}
-            aria-label={`${s.label} next`}
-          >
-            ▶
-          </button>
-        </div>
-      ))}
+        );
+      })}
 
       <button type="submit" className="btn btn-lg btn-purple btn-block">
         WEAR THIS FACE
       </button>
+
+      <div className="empty" style={{ paddingTop: 2, lineHeight: 1.7 }}>
+        {AVATAR_CREDIT.style.toUpperCase()} BY {AVATAR_CREDIT.creator.toUpperCase()} ·{" "}
+        {AVATAR_CREDIT.license}
+      </div>
     </form>
   );
 }

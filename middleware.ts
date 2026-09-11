@@ -4,6 +4,18 @@ import { NextResponse, type NextRequest } from "next/server";
 // Keeps the Supabase auth session fresh on every request so a signed-in
 // user's cookies don't silently expire mid-visit.
 export async function middleware(request: NextRequest) {
+  // Next prefetches <Link> targets aggressively — six routes can arrive in
+  // the same second. Supabase rotates refresh tokens, so when several of
+  // those requests try to refresh at once the losers present a token that
+  // has already been spent, and the person is quietly signed out. A
+  // prefetch only needs to warm the route, so let it past untouched.
+  if (
+    request.headers.get("next-router-prefetch") === "1" ||
+    request.headers.get("purpose") === "prefetch"
+  ) {
+    return NextResponse.next({ request });
+  }
+
   let response = NextResponse.next({ request });
 
   const supabase = createServerClient(

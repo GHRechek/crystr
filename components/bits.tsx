@@ -1,45 +1,44 @@
-import { avatarBg, initial } from "@/lib/crystr";
-import { AvatarSvg, normalize, type AvatarConfig } from "@/lib/avatar";
+import { avatarSvg, avatarSvgForSeed, normalize } from "@/lib/avatar";
 import type { Author } from "@/lib/data";
 
+/** The portrait. A built one if they've made it, otherwise one derived from
+ *  their id so everyone has a face from the moment they arrive. */
 export function Avatar({
   person,
-  you = false,
   size = 34,
+  fill = false,
   bg,
   glyph,
 }: {
   person?: (Author & { avatar_config?: unknown }) | null;
-  you?: boolean;
   size?: number;
+  /** Fill the grid cell it sits in rather than a fixed size. */
+  fill?: boolean;
+  /** For the Ball's own byline, which isn't a person. */
   bg?: string;
   glyph?: string;
 }) {
-  // A built portrait wins; then a photo from the sign-in; then the letter
-  // tile the prototype used.
-  if (person?.avatar_config && !glyph) {
+  const box = fill
+    ? ({ width: "100%", aspectRatio: "1" } as const)
+    : ({ width: size, height: size } as const);
+
+  if (glyph) {
     return (
-      <div className="avatar" style={{ width: size, height: size }}>
-        <AvatarSvg config={normalize(person.avatar_config) as AvatarConfig} size={size} />
+      <div
+        className="avatar"
+        style={{ ...box, background: bg, fontSize: Math.round(size * 0.35) }}
+      >
+        {glyph}
       </div>
     );
   }
 
-  const background = bg ?? avatarBg(person?.id ?? "?", you);
-  const label = glyph ?? initial(person?.handle);
+  const svg = person?.avatar_config
+    ? avatarSvg(normalize(person.avatar_config), size)
+    : avatarSvgForSeed(person?.id ?? "nobody", size);
 
   return (
-    <div
-      className="avatar"
-      style={{ width: size, height: size, background, fontSize: Math.round(size * 0.35) }}
-    >
-      {person?.avatar_url && !glyph ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={person.avatar_url} alt="" />
-      ) : (
-        label
-      )}
-    </div>
+    <div className="avatar" style={box} dangerouslySetInnerHTML={{ __html: svg }} />
   );
 }
 

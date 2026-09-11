@@ -119,7 +119,7 @@ function Card({ item, decay, me }: { item: FeedItem; decay: number; me: string }
   return (
     <div className="card">
       <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
-        <Avatar person={item.author} you={mine} />
+        <Avatar person={item.author} />
         <div style={{ display: "flex", flexDirection: "column", gap: 1, minWidth: 0 }}>
           <div style={{ fontSize: 13, fontWeight: 500, letterSpacing: "-.01em" }}>
             {item.author.handle}

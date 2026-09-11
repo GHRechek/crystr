@@ -112,16 +112,21 @@ The repo is linked to the `crystr` Vercel project on the VLVT team. Pushing to
 
 ## Portraits
 
-There is no avatar upload. `/me/avatar` builds a face out of layers — skin,
-ears, nine hair styles, hair and eye colour, brows, eyes, nose, mouth, face
-markings, horns/antlers/circlet, worn items, collar, ground — drawn as SVG on
-a 64×64 grid with integer coordinates and `crispEdges`, so it reads 16-bit and
-stays sharp at 28px in a whisper list. The choices live in
-`profiles.avatar_config`; nothing is uploaded and nothing is stored as a file.
-The artwork in `lib/avatar.tsx` is original, drawn for this app.
+There is no avatar upload. `/me/avatar` builds a face from DiceBear's **Pixel
+Art** style (CC0 1.0 — public domain, by DiceBear): 45 hair variants, 12 eyes,
+23 mouths, 23 pieces of clothing, plus optional hat, glasses, beard and
+accessories, with curated colour ramps for skin, hair, eyes, clothes and
+ground. It renders as a 16x16 SVG with `crispEdges`, which is the 16-bit look
+the design asked for and stays sharp at 28px in a whisper list.
 
-A built portrait beats the Google photo; anyone who hasn't made one keeps the
-prototype's letter tile.
+The choices live in `profiles.avatar_config` and are validated against the
+style's own enums on the way in, so nothing is uploaded and no hand-edited
+config can reach the renderer. DiceBear renders locally from the npm package
+— no calls to their API.
+
+Anyone who hasn't built a face gets one derived from their user id
+(`avatarFromId`), which is a real config, so opening the builder starts you on
+exactly the face the rest of the app has been showing.
 
 ## Still placeholder
 
