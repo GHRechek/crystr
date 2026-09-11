@@ -39,9 +39,13 @@ export default async function ProfilePage() {
         }}
       >
         <div style={{ display: "flex", alignItems: "flex-end", gap: 11 }}>
-          <div style={{ boxShadow: "0 0 0 3px var(--device)", borderRadius: "var(--px-r)" }}>
+          <Link
+            href="/me/avatar"
+            title="Change your face"
+            style={{ boxShadow: "0 0 0 3px var(--device)", borderRadius: "var(--px-r)", lineHeight: 0 }}
+          >
             <Avatar person={profile} you size={64} />
-          </div>
+          </Link>
           <div style={{ paddingBottom: 4, minWidth: 0, flex: 1 }}>
             <div style={{ fontSize: 19, fontWeight: 500, letterSpacing: "-.02em" }}>
               {profile.handle}

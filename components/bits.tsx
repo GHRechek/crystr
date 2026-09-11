@@ -1,4 +1,5 @@
 import { avatarBg, initial } from "@/lib/crystr";
+import { AvatarSvg, normalize, type AvatarConfig } from "@/lib/avatar";
 import type { Author } from "@/lib/data";
 
 export function Avatar({
@@ -8,12 +9,22 @@ export function Avatar({
   bg,
   glyph,
 }: {
-  person?: Author | null;
+  person?: (Author & { avatar_config?: unknown }) | null;
   you?: boolean;
   size?: number;
   bg?: string;
   glyph?: string;
 }) {
+  // A built portrait wins; then a photo from the sign-in; then the letter
+  // tile the prototype used.
+  if (person?.avatar_config && !glyph) {
+    return (
+      <div className="avatar" style={{ width: size, height: size }}>
+        <AvatarSvg config={normalize(person.avatar_config) as AvatarConfig} size={size} />
+      </div>
+    );
+  }
+
   const background = bg ?? avatarBg(person?.id ?? "?", you);
   const label = glyph ?? initial(person?.handle);
 
@@ -22,7 +33,7 @@ export function Avatar({
       className="avatar"
       style={{ width: size, height: size, background, fontSize: Math.round(size * 0.35) }}
     >
-      {person?.avatar_url ? (
+      {person?.avatar_url && !glyph ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img src={person.avatar_url} alt="" />
       ) : (
@@ -40,8 +51,4 @@ export function Placeholder({ label, height }: { label: string; height: number }
       <span>{label}</span>
     </div>
   );
-}
-
-export function name(person: Author | null | undefined): string {
-  return person?.handle ?? "someone";
 }

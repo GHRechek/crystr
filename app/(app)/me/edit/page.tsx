@@ -19,6 +19,10 @@ export default async function EditProfilePage() {
         </div>
       </div>
 
+      <Link href="/me/avatar" className="btn btn-block">
+        ☻ {profile.avatar_config ? "CHANGE YOUR FACE" : "MAKE A FACE"}
+      </Link>
+
       <form action={updateProfile} style={{ display: "flex", flexDirection: "column", gap: 11 }}>
         <div className="field">
           <label htmlFor="handle">HANDLE</label>

@@ -7,6 +7,7 @@ export type Profile = {
   display_name: string | null;
   bio: string | null;
   avatar_url: string | null;
+  avatar_config: unknown;
   mood: string | null;
   mana: number;
   spent_total: number;
@@ -14,9 +15,12 @@ export type Profile = {
   created_at: string;
 };
 
-export type Author = Pick<Profile, "id" | "handle" | "display_name" | "avatar_url">;
+export type Author = Pick<
+  Profile,
+  "id" | "handle" | "display_name" | "avatar_url" | "avatar_config"
+>;
 
-const AUTHOR_COLS = "id, handle, display_name, avatar_url";
+const AUTHOR_COLS = "id, handle, display_name, avatar_url, avatar_config";
 
 /** Every screen behind the tab bar needs these two. */
 export async function requireMe(): Promise<{ userId: string; profile: Profile }> {

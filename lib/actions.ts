@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { setFlash, EDGE } from "@/lib/flash";
 import { COSTS, untilReady } from "@/lib/crystr";
+import { normalize } from "@/lib/avatar";
 
 type Rpc = {
   ok: boolean;
@@ -379,6 +380,38 @@ export async function updateProfile(fd: FormData) {
 
   setFlash("NOTED", "The City has been informed, at no charge, which is rare.", EDGE.purple);
   revalidatePath("/me");
+  redirect("/me");
+}
+
+export async function saveAvatar(fd: FormData) {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  let parsed: unknown = {};
+  try {
+    parsed = JSON.parse(String(fd.get("config") ?? "{}"));
+  } catch {
+    setFlash("UNREADABLE", "That portrait did not survive the journey. Try again.", EDGE.mag);
+    return;
+  }
+
+  const { error } = await supabase
+    .from("profiles")
+    .update({ avatar_config: normalize(parsed), updated_at: new Date().toISOString() })
+    .eq("id", user.id);
+
+  if (error) {
+    console.error("saveAvatar:", error.message);
+    wentWrong();
+    return;
+  }
+
+  setFlash("A FACE", "The City will recognise you now, for whatever that is worth.", EDGE.purple);
+  revalidatePath("/me");
+  revalidatePath("/");
   redirect("/me");
 }
 
