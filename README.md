@@ -17,7 +17,7 @@ Supabase and Vercel.
 | `/post` | Compose, with a live cost preview and an image toggle. |
 | `/well`, `/well/[slug]` | The five quests and their proof screens. |
 | `/whispers`, `/whispers/[id]`, `/whispers/new` | DMs at 2 mana a message. |
-| `/me`, `/me/edit` | MySpace-shaped profile: mood, about, Top 8, and the mana ledger. |
+| `/me`, `/me/edit`, `/me/avatar` | MySpace-shaped profile: mood, about, Top 8, the mana ledger, and the portrait builder. |
 | `/vote`, `/vote/new` | The motion board (open / decided) and the witch-only two-step composer. |
 | `/ball`, `/ball/[id]`, `/ball/new`, `/ball/[id]/edit` | Crystr Ball: dispatches, the op-ed review queue, the editor. |
 
@@ -109,6 +109,19 @@ npm run dev
 
 The repo is linked to the `crystr` Vercel project on the VLVT team. Pushing to
 `main` deploys it.
+
+## Portraits
+
+There is no avatar upload. `/me/avatar` builds a face out of layers — skin,
+ears, nine hair styles, hair and eye colour, brows, eyes, nose, mouth, face
+markings, horns/antlers/circlet, worn items, collar, ground — drawn as SVG on
+a 64×64 grid with integer coordinates and `crispEdges`, so it reads 16-bit and
+stays sharp at 28px in a whisper list. The choices live in
+`profiles.avatar_config`; nothing is uploaded and nothing is stored as a file.
+The artwork in `lib/avatar.tsx` is original, drawn for this app.
+
+A built portrait beats the Google photo; anyone who hasn't made one keeps the
+prototype's letter tile.
 
 ## Still placeholder
 
