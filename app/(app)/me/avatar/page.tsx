@@ -1,5 +1,5 @@
 import { requireMe } from "@/lib/data";
-import { faceFromId, normalizeFace } from "@/lib/faces/core";
+import { portraitFromId, normalizePortrait } from "@/lib/portrait/core";
 import { AvatarBuilder } from "./builder";
 import { PortraitUpload } from "./upload";
 
@@ -9,8 +9,8 @@ export default async function AvatarPage() {
   // Open on the face they already have — built, or the one derived from their
   // id that the rest of the app has been showing.
   const start = profile.avatar_config
-    ? normalizeFace(profile.avatar_config)
-    : faceFromId(userId);
+    ? normalizePortrait(profile.avatar_config)
+    : portraitFromId(userId);
 
   return (
     <>

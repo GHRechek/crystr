@@ -2,7 +2,7 @@ import Link from "next/link";
 import { requireMe, getLedger, getTopFriends } from "@/lib/data";
 import { Avatar } from "@/components/bits";
 import { ProfileHead } from "./face-menu";
-import { faceFromId, normalizeFace, packFace } from "@/lib/faces/core";
+import { portraitFromId, normalizePortrait, packPortrait } from "@/lib/portrait/core";
 import { ago, COSTS } from "@/lib/crystr";
 
 export default async function ProfilePage() {
@@ -15,8 +15,8 @@ export default async function ProfilePage() {
   );
   const faceSrc =
     profile.portrait_url ??
-    `/face/${packFace(
-      profile.avatar_config ? normalizeFace(profile.avatar_config) : faceFromId(userId),
+    `/face/${packPortrait(
+      profile.avatar_config ? normalizePortrait(profile.avatar_config) : portraitFromId(userId),
     )}.png`;
   const details: [string, string][] = (
     [

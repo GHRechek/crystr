@@ -1,4 +1,4 @@
-import { faceFromId, normalizeFace, packFace } from "@/lib/faces/core";
+import { portraitFromId, normalizePortrait, packPortrait } from "@/lib/portrait/core";
 import type { Author } from "@/lib/data";
 
 /** The portrait. A built face if they've made one, otherwise one derived from
@@ -47,13 +47,13 @@ export function Avatar({
   }
 
   const config = person?.avatar_config
-    ? normalizeFace(person.avatar_config)
-    : faceFromId(person?.id ?? "nobody");
+    ? normalizePortrait(person.avatar_config)
+    : portraitFromId(person?.id ?? "nobody");
 
   return (
     <div className="avatar" style={box}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={`/face/${packFace(config)}.png`} alt="" width={size} height={size} />
+      <img src={`/face/${packPortrait(config)}.png`} alt="" width={size} height={size} />
     </div>
   );
 }

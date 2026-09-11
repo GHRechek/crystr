@@ -5,44 +5,29 @@ import { useMemo, useState } from "react";
 import { saveAvatar } from "@/lib/actions";
 import {
   ALLOWED,
-  BACKGROUNDS,
-  COLOR_KEYS,
-  DRAW_ORDER,
+  BG_CHOICES,
+  CONTROLS,
+  EYE_CHOICES,
+  HAIR_CHOICES,
   NONE,
-  RAMPS,
-  keyFor,
-  packFace,
-  randomFace,
-  type FaceConfig,
-} from "@/lib/faces/core";
+  SKIN_CHOICES,
+  packPortrait,
+  randomPortrait,
+  type PortraitConfig,
+} from "@/lib/portrait/core";
 
-const LABELS: Record<string, string> = {
-  body: "BUILD",
-  cloths: "WHAT YOU WEAR",
-  neck: "COLLAR",
-  mouth: "MOUTH",
-  nose: "NOSE",
-  beard: "BEARD",
-  eyes: "EYES",
-  brows: "BROWS",
-  glasses: "GLASSES",
-  hairBase: "HAIR",
-  hairBack: "HAIR BEHIND",
-  hairAccessory: "WORN IN YOUR HAIR",
-  ears: "EARS",
-  horns: "HORNS",
-};
-
-/** The order the controls read in — face first, then the fantasy bits. */
-const SHAPE_ORDER = [
-  "hairBase", "hairBack", "hairAccessory", "eyes", "brows", "nose", "mouth",
-  "ears", "horns", "beard", "glasses", "cloths", "neck", "body",
+/** The four pickers the original tool offers, in its own order. */
+const COLOURS: { key: string; label: string; choices: string[] }[] = [
+  { key: "skin", label: "SKIN COLOUR", choices: SKIN_CHOICES },
+  { key: "hair_colour", label: "HAIR COLOUR", choices: HAIR_CHOICES },
+  { key: "eye", label: "EYE COLOUR", choices: EYE_CHOICES },
+  { key: "bg", label: "BG COLOUR", choices: BG_CHOICES },
 ];
 
-export function AvatarBuilder({ start, fresh }: { start: FaceConfig; fresh: boolean }) {
-  const [c, setC] = useState<FaceConfig>(start);
+export function AvatarBuilder({ start, fresh }: { start: PortraitConfig; fresh: boolean }) {
+  const [c, setC] = useState<PortraitConfig>(start);
 
-  const packed = useMemo(() => packFace(c), [c]);
+  const packed = useMemo(() => packPortrait(c), [c]);
 
   const step = (key: string, by: number) =>
     setC((prev) => {
@@ -51,10 +36,6 @@ export function AvatarBuilder({ start, fresh }: { start: FaceConfig; fresh: bool
       const next = (((at + by) % list.length) + list.length) % list.length;
       return { ...prev, [key]: list[next] };
     });
-
-  const shapeKeys = SHAPE_ORDER.filter((k) =>
-    DRAW_ORDER.some((l) => !l.derived && keyFor(l.dir) === k),
-  );
 
   return (
     <form action={saveAvatar} className="pad" style={{ gap: 12 }}>
@@ -108,7 +89,7 @@ export function AvatarBuilder({ start, fresh }: { start: FaceConfig; fresh: bool
           />
         </div>
         <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 7 }}>
-          <button type="button" className="btn btn-sm" onClick={() => setC(randomFace())}>
+          <button type="button" className="btn btn-sm" onClick={() => setC(randomPortrait())}>
             ⟳ SOMEONE ELSE
           </button>
           <button type="submit" className="btn btn-sm btn-purple">
@@ -124,28 +105,27 @@ export function AvatarBuilder({ start, fresh }: { start: FaceConfig; fresh: bool
         </div>
       ) : null}
 
-      {COLOR_KEYS.map((row) => (
+      {COLOURS.map((row) => (
         <div className="field" key={row.key}>
           <span className="flabel">{row.label}</span>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-            {ALLOWED[row.key].map((name) => {
-              const ramp = RAMPS[name];
-              const on = c[row.key] === name;
+            {row.choices.map((hex) => {
+              const on = c[row.key] === hex;
               return (
                 <button
-                  key={name}
+                  key={hex}
                   type="button"
-                  aria-label={`${row.label} ${name}`}
+                  aria-label={`${row.label} ${hex}`}
                   aria-pressed={on}
-                  onClick={() => setC((p) => ({ ...p, [row.key]: name }))}
+                  onClick={() => setC((p) => ({ ...p, [row.key]: hex }))}
                   style={{
                     width: 30,
                     height: 30,
                     padding: 0,
                     cursor: "pointer",
+                    background: hex,
                     borderRadius: "var(--px-r)",
                     border: on ? "2px solid var(--pur-bright)" : "1px solid var(--edge)",
-                    background: `linear-gradient(135deg, ${ramp[0]} 0 50%, ${ramp[1]} 50% 100%)`,
                   }}
                 />
               );
@@ -154,36 +134,13 @@ export function AvatarBuilder({ start, fresh }: { start: FaceConfig; fresh: bool
         </div>
       ))}
 
-      <div className="field">
-        <span className="flabel">BEHIND YOU</span>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-          {BACKGROUNDS.map((hex) => (
-            <button
-              key={hex}
-              type="button"
-              aria-label={`Background ${hex}`}
-              aria-pressed={c.bg === hex}
-              onClick={() => setC((p) => ({ ...p, bg: hex }))}
-              style={{
-                width: 30,
-                height: 30,
-                padding: 0,
-                cursor: "pointer",
-                background: hex,
-                borderRadius: "var(--px-r)",
-                border: c.bg === hex ? "2px solid var(--pur-bright)" : "1px solid var(--edge)",
-              }}
-            />
-          ))}
-        </div>
-      </div>
-
-      {shapeKeys.map((key) => {
-        const list = ALLOWED[key];
-        const at = Math.max(0, list.indexOf(c[key]));
+      {CONTROLS.map((control) => {
+        const list = ALLOWED[control.key];
+        const at = Math.max(0, list.indexOf(c[control.key]));
+        const optionals = control.optional ? 1 : 0;
         return (
           <div
-            key={key}
+            key={control.key}
             style={{
               display: "flex",
               alignItems: "center",
@@ -193,14 +150,14 @@ export function AvatarBuilder({ start, fresh }: { start: FaceConfig; fresh: bool
             }}
           >
             <div className="px" style={{ fontSize: 9, color: "var(--dim)", flex: 1 }}>
-              {LABELS[key] ?? key.toUpperCase()}
+              {control.label}
             </div>
             <button
               type="button"
               className="btn btn-sm"
               style={{ minWidth: 38 }}
-              onClick={() => step(key, -1)}
-              aria-label={`${LABELS[key]} previous`}
+              onClick={() => step(control.key, -1)}
+              aria-label={`${control.label} previous`}
             >
               ◀
             </button>
@@ -208,14 +165,14 @@ export function AvatarBuilder({ start, fresh }: { start: FaceConfig; fresh: bool
               className="px"
               style={{ fontSize: 9, color: "var(--muted)", width: 46, textAlign: "center" }}
             >
-              {c[key] === NONE ? "NONE" : `${at + 1}/${list.length}`}
+              {c[control.key] === NONE ? "NONE" : `${at + 1 - optionals}/${list.length - optionals}`}
             </div>
             <button
               type="button"
               className="btn btn-sm"
               style={{ minWidth: 38 }}
-              onClick={() => step(key, 1)}
-              aria-label={`${LABELS[key]} next`}
+              onClick={() => step(control.key, 1)}
+              aria-label={`${control.label} next`}
             >
               ▶
             </button>
@@ -226,10 +183,6 @@ export function AvatarBuilder({ start, fresh }: { start: FaceConfig; fresh: bool
       <button type="submit" className="btn btn-lg btn-purple btn-block">
         WEAR THIS FACE
       </button>
-
-      <div className="empty" style={{ paddingTop: 2, lineHeight: 1.7 }}>
-        PORTRAIT ART BY V-KTOR · MIT
-      </div>
     </form>
   );
 }

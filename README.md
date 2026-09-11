@@ -17,7 +17,7 @@ Supabase and Vercel.
 | `/post` | Compose, with a live cost preview and an image toggle. |
 | `/well`, `/well/[slug]` | The five quests and their proof screens. |
 | `/whispers`, `/whispers/[id]`, `/whispers/new` | DMs at 2 mana a message. |
-| `/me`, `/me/edit`, `/me/avatar` | MySpace-shaped profile: mood, about, Top 8, the mana ledger, and the portrait builder. |
+| `/me`, `/me/edit`, `/me/avatar` | MySpace-shaped profile: mood, about, Top 6, the mana ledger, and the portrait builder. |
 | `/vote`, `/vote/new` | The motion board (open / decided) and the witch-only two-step composer. |
 | `/ball`, `/ball/[id]`, `/ball/new`, `/ball/[id]/edit` | Crystr Ball: dispatches, the op-ed review queue, the editor. |
 
@@ -112,38 +112,50 @@ The repo is linked to the `crystr` Vercel project on the VLVT team. Pushing to
 
 ## Portraits
 
-There is no avatar upload. `/me/avatar` builds a face from layered 96x96
-pixel art — 20 hairstyles, 11 lengths behind, 14 eyes, 11 mouths, 15 ears,
-20 outfits, plus brows, nose, beard, glasses, horns and things worn in your
-hair, with six colour ramps (skin, hair, eyes, clothes, second cloth, trim)
-and a ground.
+`/me/avatar` builds a face from the Portrait Maker sprite sheets, in a UI that
+mirrors the tool the art was drawn for: nine shape steppers (jaw, ears, eyes,
+eyebrows, nose, mouth, hair, beard, misc) and four colour pickers (skin, hair,
+eye, background). 26 jaws, 26 eyes, 28 mouths, 27 hairstyles, 16 noses, 15
+brow sets, 14 ear shapes, 13 beards and 14 misc — scars, freckles, glasses,
+a monocle, an eyepatch, horns, antlers.
 
-The asset set is curated rather than exposed wholesale: hair went from 51
-"options" to 20 real hairstyles. In the source, `hair/base/<name>` is the
-layer *under* the face, `hair/front/<name>` is what covers the forehead, and
-`<name>_decoration01` is a clip belonging to that style — chosen separately
-you get bald heads wearing hairclips. A hairstyle is now one choice that
-draws its whole self, and `earrings`/`headset`/`ribbon`/`ear_cover*`, which
-were filed under hairstyles, are their own optional layer.
+The source is fifteen 128x128 sheets on a 6-wide grid, and cells line up **by
+grid position across sheets**: `HairBack/07` is the back of the same hairstyle
+as `HairFront/07`, `pupils/13` belongs in `Eyes/13`. That pairing is what the
+manifest encodes, so one choice always draws its whole self rather than, say,
+a pupil floating without its socket. Run `node scripts/build-portrait-manifest.mjs`
+after changing the asset set.
 
-**Artwork:** [V-ktor/pixel-art-portraits](https://github.com/V-ktor/pixel-art-portraits),
-MIT — vendored under `assets/faces/` with its licence. The layers are indexed
-PNGs whose channels are palette slots rather than colours (red = the ramp's
-dark step, green = light, blue = shadow, grey = line work lerping black to
-white). `lib/faces/core.ts` reproduces the original Godot shader per pixel, so
-a face composed here looks like one composed in the tool the art was drawn
-for. Clothing is the one layer whose files are sub-layers of a single outfit
-(`_primary`, `_secondary`, `_details`), grouped in the manifest so a chosen
-outfit always draws its whole self.
+**Recolouring.** The art is drawn in one fixed palette and the tool swaps
+specific colours for the player's choice — a replace shader, not a tint. That
+is reproduced per pixel in `lib/portrait/core.ts`: eight skin steps, fourteen
+hair steps (eyebrows and beard stubble are hair), three pupil steps, and
+everything else — sclera, lips, metal, bone — left exactly as drawn, which is
+why the tool offers exactly three colour pickers plus a ground.
+
+Each ramp is rebuilt around the chosen colour, keeping every step's lightness
+distance from the anchor so the shading survives the swap, but **squeezed to
+fit** rather than clipped: the brightest hair step sits a long way above its
+base, and given the full offset a light blond blows out to cream and puts a
+beige cap on every head. Two traps worth naming — `#d3bea8` is the flat scalp
+the `Cranium` layer paints and belongs to the skin ramp, and the antler and
+horn tones are bone, so they stay out of the hair ramp.
 
 `/face/<packed>.png` composes a portrait and caches it immutably. The URL
 fully describes what it draws — a changed face is a changed URL — so there is
-no lookup, no auth, and nothing identifying in the path. Run
-`node scripts/build-face-manifest.mjs` after changing the asset set.
+no lookup, no auth, and nothing identifying in the path. Portraits are cropped
+once, in the compositor, to the framing every screen uses: the whole head,
+tallest hair to jaw, pointed ears well inside.
 
 Anyone who hasn't built a face gets one derived from their user id, which is
 a real config, so opening the builder starts you on the face the rest of the
-app has been showing.
+app has been showing. A portrait can also be uploaded, which wins over a
+built face.
+
+**Artwork:** the Portrait Maker sheets under `assets/portrait/`, sliced from
+the originals kept in `assets/portrait/_sheets/`. This is paid art — check its
+licence covers redistribution before this repo goes public, and serve the
+cells from the Supabase bucket instead if it doesn't.
 
 ## Still placeholder
 

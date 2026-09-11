@@ -4,3 +4,8 @@ node_modules
 .vercel
 *.tsbuildinfo
 next-env.d.ts
+
+# The Portrait Maker tool itself — the art is what we use, not the binary.
+PortraitMaker*.exe
+data.win
+options.ini
