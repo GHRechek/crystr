@@ -480,6 +480,10 @@ select {
   object-fit: cover;
   image-rendering: pixelated;
 }
+/* An uploaded portrait is someone's own artwork, not our pixel grid. */
+.avatar img[data-upload="true"] {
+  image-rendering: auto;
+}
 
 .pill {
   padding: 3px 7px;

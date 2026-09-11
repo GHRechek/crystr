@@ -418,6 +418,62 @@ export async function setMood(fd: FormData) {
   redirect("/me");
 }
 
+/** A portrait made elsewhere — Picrew, a friend, a scanner — and uploaded.
+ *  Only the storage path is trusted; the public URL is derived from it. */
+export async function savePortrait(fd: FormData) {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const path = str(fd, "path");
+  // The bucket policy already scopes writes to this folder; checking here too
+  // means a hand-made request can't point the profile at someone else's file.
+  if (!path.startsWith(`${user.id}/`)) {
+    wentWrong();
+    return;
+  }
+
+  const {
+    data: { publicUrl },
+  } = supabase.storage.from("avatars").getPublicUrl(path);
+
+  const { error } = await supabase
+    .from("profiles")
+    .update({ portrait_url: publicUrl, updated_at: new Date().toISOString() })
+    .eq("id", user.id);
+
+  if (error) {
+    console.error("savePortrait:", error.message);
+    wentWrong();
+    return;
+  }
+
+  setFlash("A NEW FACE", "The City will recognise you by that now.", EDGE.purple);
+  revalidatePath("/me");
+  revalidatePath("/");
+  redirect("/me");
+}
+
+export async function clearPortrait() {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  await supabase
+    .from("profiles")
+    .update({ portrait_url: null, updated_at: new Date().toISOString() })
+    .eq("id", user.id);
+
+  setFlash("BACK TO THE GRID", "Your built face again. The other one is still in the well.", EDGE.purple);
+  revalidatePath("/me");
+  revalidatePath("/");
+  redirect("/me/avatar");
+}
+
 export async function saveAvatar(fd: FormData) {
   const supabase = createClient();
   const {

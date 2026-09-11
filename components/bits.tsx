@@ -34,6 +34,18 @@ export function Avatar({
     );
   }
 
+  // An uploaded portrait wins; then a face built here; then one derived from
+  // their id. Google's own avatar_url is deliberately ignored — it isn't the
+  // City's idea of a face.
+  if (person?.portrait_url) {
+    return (
+      <div className="avatar" style={box}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={person.portrait_url} alt="" width={size} height={size} data-upload="true" />
+      </div>
+    );
+  }
+
   const config = person?.avatar_config
     ? normalizeFace(person.avatar_config)
     : faceFromId(person?.id ?? "nobody");

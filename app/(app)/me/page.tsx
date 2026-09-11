@@ -13,9 +13,11 @@ export default async function ProfilePage() {
     1,
     Math.round((Date.now() - new Date(profile.created_at).getTime()) / 86_400_000),
   );
-  const facePack = packFace(
-    profile.avatar_config ? normalizeFace(profile.avatar_config) : faceFromId(userId),
-  );
+  const faceSrc =
+    profile.portrait_url ??
+    `/face/${packFace(
+      profile.avatar_config ? normalizeFace(profile.avatar_config) : faceFromId(userId),
+    )}.png`;
   const details: [string, string][] = (
     [
       ["LIKES", profile.likes],
@@ -30,7 +32,7 @@ export default async function ProfilePage() {
   return (
     <div style={{ paddingBottom: 24 }}>
       <ProfileHead
-        src={`/face/${facePack}.png`}
+        src={faceSrc}
         handle={profile.handle}
         joined={`JOINED THE NEW WORLD · ${days} ${days === 1 ? "DAY" : "DAYS"}`}
         mood={profile.mood}

@@ -1,6 +1,7 @@
 import { requireMe } from "@/lib/data";
 import { faceFromId, normalizeFace } from "@/lib/faces/core";
 import { AvatarBuilder } from "./builder";
+import { PortraitUpload } from "./upload";
 
 export default async function AvatarPage() {
   const { userId, profile } = await requireMe();
@@ -11,5 +12,12 @@ export default async function AvatarPage() {
     ? normalizeFace(profile.avatar_config)
     : faceFromId(userId);
 
-  return <AvatarBuilder start={start} fresh={!profile.avatar_config} />;
+  return (
+    <>
+      <div style={{ padding: "16px 16px 0" }}>
+        <PortraitUpload userId={userId} current={profile.portrait_url} />
+      </div>
+      <AvatarBuilder start={start} fresh={!profile.avatar_config} />
+    </>
+  );
 }
