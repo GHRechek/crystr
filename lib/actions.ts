@@ -451,9 +451,9 @@ export async function setTopFriends(fd: FormData) {
 
   if (!r.ok) {
     if (r.code === "insufficient") {
-      broke(r, `Rearranging the Top 8 costs ${COSTS.topEight}. You have {have}.`);
+      broke(r, `Rearranging the Top 6 costs ${COSTS.topSix}. You have {have}.`);
     } else if (r.code === "too_many") {
-      setFlash("EIGHT", "It is called the Top 8 for a reason.", EDGE.mag);
+      setFlash("SIX", "It is called the Top 6 for a reason.", EDGE.mag);
     } else {
       wentWrong();
     }

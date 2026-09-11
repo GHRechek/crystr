@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { requireMe, getPeople, getTopFriends } from "@/lib/data";
 import { updateProfile } from "@/lib/actions";
-import { TopEightPicker } from "./top-eight";
+import { TopSixPicker } from "./top-six";
 
 export default async function EditProfilePage() {
   const { userId, profile } = await requireMe();
@@ -66,7 +66,7 @@ export default async function EditProfilePage() {
         </button>
       </form>
 
-      <TopEightPicker people={people} current={top.map((f) => f.id)} />
+      <TopSixPicker people={people} current={top.map((f) => f.id)} />
     </div>
   );
 }

@@ -7,8 +7,8 @@ import { COSTS } from "@/lib/crystr";
 import type { Author } from "@/lib/data";
 
 /** Order matters and is the order you pick them in — which is the whole
- *  social hazard of a Top 8, and why it costs four mana to change. */
-export function TopEightPicker({
+ *  social hazard of a Top 6, and why it costs four mana to change. */
+export function TopSixPicker({
   people,
   current,
 }: {
@@ -22,7 +22,7 @@ export function TopEightPicker({
 
   function toggle(id: string) {
     setPicked((p) =>
-      p.includes(id) ? p.filter((x) => x !== id) : p.length >= 8 ? p : [...p, id],
+      p.includes(id) ? p.filter((x) => x !== id) : p.length >= 6 ? p : [...p, id],
     );
   }
 
@@ -34,10 +34,10 @@ export function TopEightPicker({
 
       <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginTop: 6 }}>
         <div className="px" style={{ fontSize: 11, color: "var(--blu-soft)" }}>
-          TOP 8
+          TOP 6
         </div>
         <div style={{ fontSize: 10.5, color: "var(--muted)" }}>
-          {picked.length}/8 picked · {COSTS.topEight} mana to change
+          {picked.length}/6 picked · {COSTS.topSix} mana to change
         </div>
       </div>
 
@@ -76,7 +76,7 @@ export function TopEightPicker({
           className={`btn btn-lg btn-block${changed ? " btn-mag" : ""}`}
           aria-disabled={!changed}
         >
-          {changed ? `SAVE THE TOP 8 · -${COSTS.topEight}` : "TOP 8 UNCHANGED"}
+          {changed ? `SAVE THE TOP 6 · -${COSTS.topSix}` : "TOP 6 UNCHANGED"}
         </button>
       )}
     </form>

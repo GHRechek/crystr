@@ -17,7 +17,7 @@ export default async function ProfilePage() {
     profile.avatar_config ? normalize(profile.avatar_config) : avatarFromId(userId),
     64,
   );
-  const slots = [...top, ...Array(Math.max(0, 8 - top.length)).fill(null)].slice(0, 8);
+  const slots = [...top, ...Array(Math.max(0, 6 - top.length)).fill(null)].slice(0, 6);
 
   return (
     <div style={{ paddingBottom: 24 }}>
@@ -51,25 +51,9 @@ export default async function ProfilePage() {
           mood={profile.mood}
         />
 
-        <div style={{ display: "flex", gap: 8 }}>
-          <div className="tile" style={{ flex: 1 }}>
-            <div className="flabel" style={{ marginBottom: 4 }}>
-              SPENT TOTAL
-            </div>
-            <div className="px" style={{ fontSize: 14, color: "var(--pur-soft)" }}>
-              {profile.spent_total}
-            </div>
-          </div>
-          <Link
-            href="/me/edit"
-            className="tile"
-            style={{ flex: "none", width: 104, display: "grid", placeItems: "center", color: "var(--dim)" }}
-          >
-            <span className="px" style={{ fontSize: 9 }}>
-              EDIT PROFILE
-            </span>
-          </Link>
-        </div>
+        <Link href="/me/edit" className="btn btn-sm" style={{ alignSelf: "flex-start" }}>
+          EDIT PROFILE
+        </Link>
 
         <div className="tile" style={{ padding: 12 }}>
           <div
@@ -88,13 +72,13 @@ export default async function ProfilePage() {
         <div>
           <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 8 }}>
             <div className="px" style={{ fontSize: 11, color: "var(--blu-soft)" }}>
-              TOP 8
+              TOP 6
             </div>
             <div style={{ fontSize: 10.5, color: "var(--muted)" }}>
-              reordering one costs {COSTS.topEight} mana and a friendship
+              reordering one costs {COSTS.topSix} mana and a friendship
             </div>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 8 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 8 }}>
             {slots.map((f, i) => (
               <div
                 key={f?.id ?? `empty-${i}`}
@@ -129,8 +113,19 @@ export default async function ProfilePage() {
         </div>
 
         <div>
-          <div className="px" style={{ fontSize: 11, color: "var(--pur-soft)", marginBottom: 8 }}>
-            LEDGER
+          <div
+            style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 8 }}
+          >
+            <div className="px" style={{ fontSize: 11, color: "var(--pur-soft)" }}>
+              LEDGER
+            </div>
+            <span className="spacer" />
+            <div className="px" style={{ fontSize: 8, color: "var(--muted)" }}>
+              SPENT TOTAL
+            </div>
+            <div className="px" style={{ fontSize: 12, color: "var(--pur-soft)" }}>
+              {profile.spent_total}
+            </div>
           </div>
           <div style={{ display: "flex", flexDirection: "column" }}>
             {ledger.map((l) => (

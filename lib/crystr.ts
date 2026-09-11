@@ -12,7 +12,7 @@ export const COSTS = {
   whisper: 2,
   vote: 3,
   oped: 6,
-  topEight: 4,
+  topSix: 4,
 } as const;
 
 /** Below eleven the feed starts to smear; at zero it is barely legible. */

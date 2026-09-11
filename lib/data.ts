@@ -256,7 +256,7 @@ export async function getThread(
   };
 }
 
-/** Everyone else in the City — for starting a whisper or filling a Top 8. */
+/** Everyone else in the City — for starting a whisper or filling a Top 6. */
 export async function getPeople(userId: string): Promise<Author[]> {
   const supabase = createClient();
   const { data } = await supabase
