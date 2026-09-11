@@ -49,18 +49,6 @@ export default async function EditProfilePage() {
         </div>
 
         <div className="field">
-          <label htmlFor="mood">MOOD</label>
-          <input
-            id="mood"
-            name="mood"
-            className="input"
-            defaultValue={profile.mood ?? ""}
-            maxLength={80}
-            placeholder="owed a favour, unsure by whom"
-          />
-        </div>
-
-        <div className="field">
           <label htmlFor="bio">ABOUT ME</label>
           <textarea
             id="bio"

@@ -362,7 +362,6 @@ export async function updateProfile(fd: FormData) {
       handle,
       display_name: str(fd, "display_name") || null,
       bio: str(fd, "bio") || null,
-      mood: str(fd, "mood") || null,
       updated_at: new Date().toISOString(),
     })
     .eq("id", user.id);
@@ -379,6 +378,37 @@ export async function updateProfile(fd: FormData) {
   }
 
   setFlash("NOTED", "The City has been informed, at no charge, which is rare.", EDGE.purple);
+  revalidatePath("/me");
+  redirect("/me");
+}
+
+export async function setMood(fd: FormData) {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const mood = str(fd, "mood").slice(0, 80);
+
+  const { error } = await supabase
+    .from("profiles")
+    .update({ mood: mood || null, updated_at: new Date().toISOString() })
+    .eq("id", user.id);
+
+  if (error) {
+    console.error("setMood:", error.message);
+    wentWrong();
+    return;
+  }
+
+  setFlash(
+    mood ? "NOTED" : "UNSAID",
+    mood
+      ? "The City can see what you are thinking. Thoughts are free; saying them out loud is five."
+      : "Bubble emptied. Let them guess.",
+    EDGE.purple,
+  );
   revalidatePath("/me");
   redirect("/me");
 }

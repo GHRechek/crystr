@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { requireMe, getLedger, getTopFriends } from "@/lib/data";
 import { Avatar } from "@/components/bits";
+import { FaceMenu } from "./face-menu";
+import { avatarSvg, avatarFromId, normalize } from "@/lib/avatar";
 import { ago, COSTS } from "@/lib/crystr";
 
 export default async function ProfilePage() {
@@ -10,6 +12,10 @@ export default async function ProfilePage() {
   const days = Math.max(
     1,
     Math.round((Date.now() - new Date(profile.created_at).getTime()) / 86_400_000),
+  );
+  const faceSvg = avatarSvg(
+    profile.avatar_config ? normalize(profile.avatar_config) : avatarFromId(userId),
+    64,
   );
   const slots = [...top, ...Array(Math.max(0, 8 - top.length)).fill(null)].slice(0, 8);
 
@@ -38,37 +44,15 @@ export default async function ProfilePage() {
           gap: 12,
         }}
       >
-        <div style={{ display: "flex", alignItems: "flex-end", gap: 11 }}>
-          <Link
-            href="/me/avatar"
-            title="Change your face"
-            style={{ boxShadow: "0 0 0 3px var(--device)", borderRadius: "var(--px-r)", lineHeight: 0 }}
-          >
-            <Avatar person={profile} size={64} />
-          </Link>
-          <div style={{ paddingBottom: 4, minWidth: 0, flex: 1 }}>
-            <div style={{ fontSize: 19, fontWeight: 500, letterSpacing: "-.02em" }}>
-              {profile.handle}
-            </div>
-            <div className="px" style={{ fontSize: 8.5, color: "var(--muted)" }}>
-              JOINED THE NEW WORLD · {days} {days === 1 ? "DAY" : "DAYS"}
-            </div>
-          </div>
-          <Link href="/me/edit" className="btn btn-sm" style={{ marginBottom: 4 }}>
-            EDIT
-          </Link>
-        </div>
+        <FaceMenu
+          svg={faceSvg}
+          handle={profile.handle}
+          joined={`JOINED THE NEW WORLD · ${days} ${days === 1 ? "DAY" : "DAYS"}`}
+          mood={profile.mood}
+        />
 
         <div style={{ display: "flex", gap: 8 }}>
           <div className="tile" style={{ flex: 1 }}>
-            <div className="flabel" style={{ marginBottom: 4 }}>
-              MOOD
-            </div>
-            <div style={{ fontSize: 12.5, color: "var(--text-2)" }}>
-              {profile.mood || "unstated, which is its own mood"}
-            </div>
-          </div>
-          <div className="tile" style={{ flex: "none", width: 104 }}>
             <div className="flabel" style={{ marginBottom: 4 }}>
               SPENT TOTAL
             </div>
@@ -76,6 +60,15 @@ export default async function ProfilePage() {
               {profile.spent_total}
             </div>
           </div>
+          <Link
+            href="/me/edit"
+            className="tile"
+            style={{ flex: "none", width: 104, display: "grid", placeItems: "center", color: "var(--dim)" }}
+          >
+            <span className="px" style={{ fontSize: 9 }}>
+              EDIT PROFILE
+            </span>
+          </Link>
         </div>
 
         <div className="tile" style={{ padding: 12 }}>

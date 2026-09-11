@@ -39,11 +39,29 @@ export function AvatarBuilder({ start, fresh }: { start: AvatarConfig; fresh: bo
         </div>
       </div>
 
-      <div style={{ display: "flex", justifyContent: "center", padding: "6px 0 2px" }}>
+      {/* Sticks to the top of the screen so the face stays in view while you
+          work down the options — otherwise every change is a scroll away. */}
+      <div
+        style={{
+          position: "sticky",
+          top: 0,
+          zIndex: 3,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: 12,
+          padding: "8px 0 10px",
+          margin: "0 -16px",
+          paddingInline: 16,
+          background: "var(--device)",
+          borderBottom: "1px solid var(--rule)",
+        }}
+      >
         <div
           style={{
-            width: 168,
-            height: 168,
+            width: 96,
+            height: 96,
+            flex: "none",
             boxShadow: "0 0 0 1px var(--edge)",
             borderRadius: "var(--px-r)",
             overflow: "hidden",
@@ -51,6 +69,14 @@ export function AvatarBuilder({ start, fresh }: { start: AvatarConfig; fresh: bo
           }}
           dangerouslySetInnerHTML={{ __html: preview }}
         />
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 7 }}>
+          <button type="button" className="btn btn-sm" onClick={() => setC(randomAvatar())}>
+            ⟳ SOMEONE ELSE
+          </button>
+          <button type="submit" className="btn btn-sm btn-purple">
+            WEAR THIS FACE
+          </button>
+        </div>
       </div>
 
       {fresh ? (
@@ -59,10 +85,6 @@ export function AvatarBuilder({ start, fresh }: { start: AvatarConfig; fresh: bo
           whisper and byline you pay for.
         </div>
       ) : null}
-
-      <button type="button" className="btn" onClick={() => setC(randomAvatar())}>
-        ⟳ SOMEONE ELSE ENTIRELY
-      </button>
 
       {COLOR_GROUPS.map((row) => (
         <div className="field" key={row.key}>
