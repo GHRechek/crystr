@@ -6,7 +6,6 @@ import { saveAvatar } from "@/lib/actions";
 import {
   ALLOWED,
   BG_CHOICES,
-  CLOTH_CHOICES,
   CONTROLS,
   EYE_CHOICES,
   HAIR_CHOICES,
@@ -17,13 +16,11 @@ import {
   type PortraitConfig,
 } from "@/lib/portrait/core";
 
-/** The original tool's four pickers, in its own order, plus the shirt — which
- *  it never needed, because it never drew a body. */
+/** The four pickers the original tool offers, in its own order. */
 const COLOURS: { key: string; label: string; choices: string[] }[] = [
   { key: "skin", label: "SKIN COLOUR", choices: SKIN_CHOICES },
   { key: "hair_colour", label: "HAIR COLOUR", choices: HAIR_CHOICES },
   { key: "eye", label: "EYE COLOUR", choices: EYE_CHOICES },
-  { key: "cloth", label: "SHIRT COLOUR", choices: CLOTH_CHOICES },
   { key: "bg", label: "BG COLOUR", choices: BG_CHOICES },
 ];
 
@@ -73,8 +70,8 @@ export function AvatarBuilder({ start, fresh }: { start: PortraitConfig; fresh: 
       >
         <div
           style={{
-            width: 104,
-            height: 104,
+            width: 128,
+            height: 128,
             flex: "none",
             boxShadow: "0 0 0 1px var(--edge)",
             borderRadius: "var(--px-r)",
@@ -86,8 +83,8 @@ export function AvatarBuilder({ start, fresh }: { start: PortraitConfig; fresh: 
           <img
             src={`/face/${packed}.png`}
             alt="Your portrait"
-            width={104}
-            height={104}
+            width={128}
+            height={128}
             style={{ width: "100%", height: "100%", imageRendering: "pixelated" }}
           />
         </div>

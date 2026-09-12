@@ -41,7 +41,7 @@ export function ProfileHead({
               setOpen(true);
               setEditing(true);
             }}
-            style={{ position: "absolute", left: 92, right: 16, bottom: 30 }}
+            style={{ position: "absolute", left: 108, right: 16, bottom: 30 }}
           >
             <span>{mood || "…"}</span>
           </button>
@@ -51,7 +51,7 @@ export function ProfileHead({
       <div
         style={{
           padding: "0 16px",
-          marginTop: -26,
+          marginTop: -34,
           display: "flex",
           flexDirection: "column",
           gap: 12,
@@ -71,8 +71,8 @@ export function ProfileHead({
             aria-expanded={open}
             aria-label="Change your face or your status"
             style={{
-              width: 64,
-              height: 64,
+              width: 80,
+              height: 80,
               flex: "none",
               padding: 0,
               border: 0,
@@ -87,7 +87,7 @@ export function ProfileHead({
             }}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={src} alt="" width={64} height={64} style={{ imageRendering: "pixelated" }} />
+            <img src={src} alt="" width={80} height={80} style={{ imageRendering: "pixelated" }} />
           </button>
 
           <div style={{ paddingBottom: 4, minWidth: 0, flex: 1 }}>

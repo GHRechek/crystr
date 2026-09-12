@@ -117,8 +117,8 @@ mirrors the tool the art was drawn for — shape steppers and colour swatches,
 preview pinned to the top. 26 jaws, 26 eyes, 28 mouths, 27 hairstyles, 16
 noses, 15 brow sets, 14 ear shapes, 13 beards; then scars (5), freckles and
 marks (8), horns (2), eyewear (7), jewellery (3, in two slots so a face can
-wear a nose ring and a brow ring at once), and a shirt (3). Colour pickers for
-skin, hair, eyes, shirt and background.
+wear a nose ring and a brow ring at once). Colour pickers for skin, hair,
+eyes and background.
 
 The source is fifteen 128x128 sheets on a 6-wide grid, and cells line up **by
 grid position across sheets**: `HairBack/07` is the back of the same hairstyle
@@ -134,15 +134,12 @@ own controls, and the compositor lets one sheet contribute several cells to a
 face. Run `node scripts/build-portrait-manifest.mjs` after changing the asset
 set.
 
-**The body.** The sheets have none: all 26 jaws stop mid-neck at the same
-twelve pixels. `scripts/build-shoulders.mjs` draws three shirts — crew,
-scoop, V — as full-frame cells in the sheets' own skin colours plus a
-five-step garment ramp that appears nowhere in the original art, so a shirt
-colour can never leak onto a face. The neck is the jaw's full width just
-above the chin's curve and flush with the jaw's straight right edge — which
-is a neck silhouette, not a jawline — so the chin's tapered last rows sit on
-top of it as a curve over a neck, not as the neck's edge. Bare skin is never
-lit past the face's base tone.
+**The neck.** The sheets stop mid-neck: all 26 jaws end at the same 20px
+column, tapered on the last row where the artist stopped. `scripts/build-neck.mjs`
+continues that column straight down in the jaw's own flat base tone, drawn
+behind the jaw, so a portrait runs off the bottom of the frame instead of
+ending in a stub. There is deliberately no body — a body was tried and never
+read as belonging to the head.
 
 **Recolouring.** The art is drawn in one fixed palette and the tool swaps
 specific colours for the player's choice — a replace shader, not a tint. That
@@ -164,9 +161,9 @@ The URL fully describes what it draws — a changed face is a changed URL — so
 there is no lookup, no auth, and nothing identifying in the path. The leading
 segment is `RENDER` in `lib/portrait/core.ts`; bump it whenever the palette,
 draw order, frame or art changes, or every browser keeps serving the old
-picture out of its year-long cache. The frame is 152x152, with the 128x128
-sheet art landing at the `ART` offset so the tallest hair sits just under the
-top edge and there is room below the jaw for a neck and shoulders.
+picture out of its year-long cache. The frame is 120x120, cropped tight to
+the head: the 128x128 sheet art lands at the `ART` offset with the tallest
+hair against the top and the neck running off the bottom.
 
 Anyone who hasn't built a face gets one derived from their user id, which is
 a real config, so opening the builder starts you on the face the rest of the

@@ -38,9 +38,6 @@ const GROUPS = {
   mouth: { lead: "Mouths", also: [] },
   beard: { lead: "Beards", also: [] },
   hair: { lead: "HairBack", also: ["HairFront"] },
-  // Not from the sheets — drawn by scripts/build-shoulders.mjs, because the
-  // sheets have no body and every jaw just stops at the neck.
-  shoulders: { lead: "Shoulders", also: [] },
 };
 
 /** Controls built from named cells, one entry per option. Each id is the
