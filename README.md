@@ -136,11 +136,13 @@ set.
 
 **The body.** The sheets have none: all 26 jaws stop mid-neck at the same
 twelve pixels. `scripts/build-shoulders.mjs` draws three shirts — crew,
-scoop, V — as 144x144 cells in the sheets' own skin colours plus a five-step
-garment ramp that appears nowhere in the original art, so a shirt colour can
-never leak onto a face. The body's neck is exactly the jaw's width where they
-meet, so the jaw's tapered last row reads as its edge rather than a notch,
-and bare skin is never lit past the face's base tone.
+scoop, V — as full-frame cells in the sheets' own skin colours plus a
+five-step garment ramp that appears nowhere in the original art, so a shirt
+colour can never leak onto a face. The neck is the jaw's full width just
+above the chin's curve and flush with the jaw's straight right edge — which
+is a neck silhouette, not a jawline — so the chin's tapered last rows sit on
+top of it as a curve over a neck, not as the neck's edge. Bare skin is never
+lit past the face's base tone.
 
 **Recolouring.** The art is drawn in one fixed palette and the tool swaps
 specific colours for the player's choice — a replace shader, not a tint. That
@@ -162,9 +164,9 @@ The URL fully describes what it draws — a changed face is a changed URL — so
 there is no lookup, no auth, and nothing identifying in the path. The leading
 segment is `RENDER` in `lib/portrait/core.ts`; bump it whenever the palette,
 draw order, frame or art changes, or every browser keeps serving the old
-picture out of its year-long cache. The frame is 144x144, with the 128x128
+picture out of its year-long cache. The frame is 152x152, with the 128x128
 sheet art landing at the `ART` offset so the tallest hair sits just under the
-top edge and the shoulders fill the bottom.
+top edge and there is room below the jaw for a neck and shoulders.
 
 Anyone who hasn't built a face gets one derived from their user id, which is
 a real config, so opening the builder starts you on the face the rest of the

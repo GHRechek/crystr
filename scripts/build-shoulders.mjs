@@ -3,9 +3,9 @@
 // an attachment point and nothing else. Without something below it, every
 // portrait is a head floating on a colour.
 //
-// These cells are the full composed frame (144x144), not 128x128 sheet cells,
-// because the shoulders run past the edge of the original art. The compositor
-// tells them apart by size.
+// These cells are the full composed frame, not 128x128 sheet cells, because
+// the shoulders run past the edge of the original art. The compositor tells
+// them apart by size.
 //
 // Drawn in the sheets' own source palette: the neck and any bare chest use the
 // skin steps, the garment its own five, so all of it recolours through the
@@ -16,20 +16,27 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { PNG } from "pngjs";
 
-const W = 144;
-const H = 144;
+/** Must match FRAME and ART in lib/portrait/core.ts. */
+const FRAME = 152;
+const ART = { x: 14, y: 4 };
 
-/** Where the head lands in this frame. Every jaw's neck is x 64..83 on its
- *  second-to-last row and tapers to 70..81 on the last; the body's neck must
- *  match the wider row exactly so that taper reads as the jaw's edge, not as
- *  a notch, and nothing pokes out beside it. */
-const NECK_CX = 74;
-const NECK_HALF = 10;
-const JAW_BOTTOM = 115;
-const BODY_CX = 72;
-/** Top of the shoulders at the neck, and how far out they reach. */
-const NECK_BASE = 122;
-const REACH = 70;
+// Measured on the sheets, in 128-space. Every jaw is the same here.
+//   src y=108: x 48..73   the jaw just above the chin's curve — the neck's
+//                         true width, since a chin curves in over a neck
+//   src y=110: x 54..73   the chin's underside, curving in
+//   src y=111: x 60..71   the last row, tapered
+// The right edge holds x=73 straight for seven rows: that's the neck's far
+// silhouette, not a jawline. So the neck is the jaw's width at y=108 and
+// flush with that right edge, and the chin's curve sits on top of it.
+const NECK_LEFT = 48 + ART.x;
+const NECK_RIGHT = 73 + ART.x;
+const JAW_BOTTOM = 111 + ART.y;
+
+/** Where the shoulders begin, and how far they reach. */
+const NECK_BASE = JAW_BOTTOM + 13;
+const REACH = 72;
+const BODY_CX = FRAME / 2;
+const NECK_CX = (NECK_LEFT + NECK_RIGHT) / 2;
 
 /** Skin, lightest to darkest, straight from the sheets. */
 const SKIN = ["#fde9d5", "#f3c99e", "#e5ba8d", "#ca9071", "#845e4b"];
@@ -49,38 +56,43 @@ const clamp = (t, a = 0, b = 1) => Math.max(a, Math.min(b, t));
 /** The top edge of the body at a given distance from centre: the trapezius
  *  falling away from the neck, then the deltoid rounding off. */
 function shoulderTop(dx) {
-  const t = clamp((dx - 11) / REACH);
-  if (dx <= 11) return NECK_BASE;
+  const t = clamp((dx - 14) / REACH);
+  if (dx <= 14) return NECK_BASE;
   return NECK_BASE + 11 * Math.sqrt(t) + 5 * t ** 3;
 }
 
 function inBody(x, y) {
   const dx = Math.abs(x - BODY_CX);
-  if (dx > 74) return false;
+  if (dx > FRAME / 2 + 2) return false;
   return y >= shoulderTop(dx);
 }
 
-/** The neck: exactly the jaw's width until it clears the jaw, then widening
- *  into the trapezius. Jaws draws over everything above JAW_BOTTOM. */
-function neckHalf(y) {
-  return NECK_HALF + clamp((y - JAW_BOTTOM - 2) / (NECK_BASE + 4 - JAW_BOTTOM)) * 5;
+/** The neck: the jaw's full width, flaring into the trapezius as it nears
+ *  the shoulders. Jaws draws over everything above JAW_BOTTOM. */
+function neckEdges(y) {
+  const flare = clamp((y - JAW_BOTTOM - 4) / (NECK_BASE - JAW_BOTTOM - 4)) ** 1.6 * 9;
+  return [NECK_LEFT - flare, NECK_RIGHT + flare];
 }
 function inNeck(x, y) {
-  return y >= 96 && y <= NECK_BASE + 6 && Math.abs(x - NECK_CX) <= neckHalf(y);
+  if (y < 96 || y > NECK_BASE + 6) return false;
+  const [l, r] = neckEdges(y);
+  return x >= l && x <= r;
 }
 
 // -------------------------------------------------------------- necklines
 //
-// True where skin shows instead of cloth.
+// True where skin shows instead of cloth. Depths are below the shoulder line.
 
 const NECKLINES = {
-  crew: (x, y) => ((x - NECK_CX) / 21) ** 2 + ((y - 114) / 14) ** 2 < 1,
-  scoop: (x, y) => ((x - NECK_CX) / 27) ** 2 + ((y - 112) / 22) ** 2 < 1,
-  vee: (x, y) => Math.abs(x - NECK_CX) < 25 && y < 118 + (25 - Math.abs(x - NECK_CX)) * 1.2,
+  crew: (x, y) => ((x - NECK_CX) / 22) ** 2 + ((y - (NECK_BASE - 8)) / 15) ** 2 < 1,
+  scoop: (x, y) => ((x - NECK_CX) / 28) ** 2 + ((y - (NECK_BASE - 10)) / 24) ** 2 < 1,
+  vee: (x, y) => {
+    const d = Math.abs(x - NECK_CX);
+    return d < 26 && y < NECK_BASE - 2 + (26 - d) * 1.0;
+  },
 };
 
-/** Three plain necklines. There were eight — bare, collar, turtleneck, tank
- *  and hood went; a shirt here is a colour and a neckline, not a costume. */
+/** Three plain necklines. A shirt here is a colour and a neckline. */
 const STYLES = [
   { id: "00", neckline: "crew" },
   { id: "01", neckline: "scoop" },
@@ -94,12 +106,12 @@ const STYLES = [
 // vertically, which is the difference between shading and stripes.
 
 function lum(x, y) {
-  const dx = (x - BODY_CX) / 74;
+  const dx = (x - BODY_CX) / (FRAME / 2);
   const below = (y - shoulderTop(Math.abs(x - BODY_CX))) / 30;
   let l = 0.74 - dx * 0.26 - clamp(below, 0, 2) * 0.2;
 
   // The head's shadow, softened so its edge isn't a visible disc.
-  const cast = Math.hypot((x - NECK_CX) / 1.45, (y - 112) / 1.0) / 30;
+  const cast = Math.hypot((x - NECK_CX) / 1.45, (y - JAW_BOTTOM) / 1.0) / 32;
   l -= 0.3 * (1 - clamp(cast)) ** 1.4;
 
   // A thin rim along the very top of each shoulder, strongest on the lit side.
@@ -117,12 +129,24 @@ function stepAt(l) {
   return 4;
 }
 
+/** The neck's own shading, continuing the jaw's: base on the lit side,
+ *  darkening to the right as the jaw does, and a band of the chin's shadow
+ *  across the top so the chin's curve reads as an edge over it. */
+function neckTone(x, y) {
+  const [l, r] = neckEdges(y);
+  const t = (x - l) / Math.max(1, r - l);
+  let s = t < 0.55 ? 1 : t < 0.8 ? 2 : 3;
+  if (y <= JAW_BOTTOM + 3) s += 1;
+  return SKIN[clamp(s, 1, 4)];
+}
+
 function draw(style) {
-  const png = new PNG({ width: W, height: H });
+  const png = new PNG({ width: FRAME, height: FRAME });
   png.data.fill(0);
 
   const put = (x, y, hex) => {
-    const i = (y * W + x) * 4;
+    if (x < 0 || y < 0 || x >= FRAME || y >= FRAME) return;
+    const i = (y * FRAME + x) * 4;
     const [r, g, b] = rgb(hex);
     png.data[i] = r;
     png.data[i + 1] = g;
@@ -132,21 +156,15 @@ function draw(style) {
 
   const bareAt = NECKLINES[style.neckline];
 
-  for (let y = 96; y < H; y++) {
-    for (let x = 0; x < W; x++) {
+  for (let y = 96; y < FRAME; y++) {
+    for (let x = 0; x < FRAME; x++) {
       const body = inBody(x, y);
       const neck = inNeck(x, y);
       if (!body && !neck) continue;
 
-      if (!neck || !body) {
-        if (!body) {
-          // Bare neck between the jaw and the shoulder line. Continue what
-          // the jaw drew: flat base, with the shadow it carries down its
-          // right side.
-          const d = x - NECK_CX;
-          put(x, y, d > 7 ? SKIN[3] : d > 4 ? SKIN[2] : SKIN[1]);
-          continue;
-        }
+      if (!body) {
+        put(x, y, neckTone(x, y));
+        continue;
       }
 
       if (bareAt(x, y)) {
@@ -162,8 +180,8 @@ function draw(style) {
 
   // A dark seam where skin gives way to cloth, so a neckline reads as an edge
   // and not as a change of colour.
-  for (let y = 96; y < H - 1; y++) {
-    for (let x = 0; x < W; x++) {
+  for (let y = 96; y < FRAME - 1; y++) {
+    for (let x = 0; x < FRAME; x++) {
       if (!inBody(x, y) || !bareAt(x, y)) continue;
       if (!bareAt(x, y + 1) && inBody(x, y + 1)) put(x, y, CLOTH[4]);
     }
@@ -176,4 +194,4 @@ mkdirSync("assets/portrait/Shoulders", { recursive: true });
 for (const style of STYLES) {
   writeFileSync(`assets/portrait/Shoulders/${style.id}.png`, draw(style));
 }
-console.log(`wrote ${STYLES.length} shoulder cells`);
+console.log(`wrote ${STYLES.length} shoulder cells at ${FRAME}x${FRAME}`);

@@ -13,12 +13,14 @@ import { OPTIONS, type PortraitOption } from "./manifest";
 export const SIZE = 128;
 
 /** The composed frame. Taller and wider than a sheet cell because the body
- *  runs past the edge of the original art, which is head-only. */
-export const FRAME = 144;
+ *  runs past the edge of the original art, which is head-only. Must match
+ *  FRAME and ART in scripts/build-shoulders.mjs. */
+export const FRAME = 152;
 
 /** Where a 128x128 sheet cell lands in that frame: centred on the head, with
- *  the tallest hair just inside the top and room below the jaw for a body. */
-export const ART = { x: 10, y: 4 } as const;
+ *  the tallest hair just inside the top and room below the jaw for a neck
+ *  and shoulders. */
+export const ART = { x: 14, y: 4 } as const;
 
 // ------------------------------------------------------------- the palette
 
@@ -329,7 +331,7 @@ const PACK_ORDER = Object.keys(ALLOWED).sort();
  *  the crop, the art. Faces are cached immutably for a year, and the packed
  *  spec only describes the config, so without this a fixed renderer keeps
  *  serving the broken picture out of everyone's browser cache. */
-export const RENDER = "5";
+export const RENDER = "6";
 
 export function packPortrait(config: PortraitConfig): string {
   const c = normalizePortrait(config);
