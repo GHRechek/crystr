@@ -48,9 +48,10 @@ export type Swatches = {
   hair: string;
   eye: string;
   bg: string;
-  /** What the exposed scalp is: bare skin on a bald head, buzzed stubble
-   *  under any hairstyle — a shaved side is shaved hair, not a bald patch. */
-  scalp: "skin" | "stubble";
+  /** What the exposed scalp is: bare skin, buzzed stubble, or the hair
+   *  colour outright. A shaved side is shaved hair, not a bald patch; bald
+   *  plus stubble is a buzz cut. */
+  scalp: "skin" | "stubble" | "hair";
 };
 
 /** How much of the hair colour shows through a buzzed scalp. */
@@ -169,8 +170,9 @@ export function paletteFor(sw: Swatches): Map<number, [number, number, number]> 
  *  the style — a shaved side filled with full hair colour is no longer a
  *  shaved side. Applied by the compositor to the Cranium layer only. */
 export function scalpFor(sw: Swatches): [number, number, number] | null {
-  if (sw.scalp !== "stubble") return null;
+  if (sw.scalp === "skin") return null;
   const hair = hexToRgb(reramp([HAIR_ANCHOR], HAIR_ANCHOR, sw.hair, 0.86)[HAIR_ANCHOR]);
+  if (sw.scalp === "hair") return hair;
   const skin = hexToRgb(reramp([SKIN_ANCHOR], SKIN_ANCHOR, sw.skin, 0.95)[SKIN_ANCHOR]);
   return [0, 1, 2].map((i) => Math.round(hair[i] * STUBBLE + skin[i] * (1 - STUBBLE))) as [
     number,
@@ -228,6 +230,9 @@ export const CONTROLS: {
   // styles, and the builder steps them together until you split them.
   { key: "hair_back", label: "HAIR · BACK", optional: true },
   { key: "hair_front", label: "HAIR · FRONT", optional: true },
+  // What shows where there's no hair: the shaved side of an undercut, the
+  // whole head when bald. Bald plus stubble is a buzz cut.
+  { key: "scalp", label: "SCALP", names: { skin: "SKIN", stubble: "STUBBLE", hair: "HAIR" } },
   { key: "beard", label: "BEARD", optional: true },
   // The tool's one MISC control, taken apart. Its cells paired a skin mark
   // with a worn thing by grid index — an eye scar came with antlers, an
@@ -258,6 +263,7 @@ export const ALLOWED: Record<string, string[]> = (() => {
   out.bg = BG_CHOICES;
   // The art is drawn facing left; "right" mirrors the whole composed frame.
   out.facing = ["left", "right"];
+  out.scalp = ["skin", "stubble", "hair"];
   return out;
 })();
 
@@ -269,6 +275,7 @@ export function defaultPortrait(): PortraitConfig {
   out.eyebrows = ALLOWED.eyebrows[1] ?? NONE;
   out.hair_back = ALLOWED.hair_back[1] ?? NONE;
   out.hair_front = out.hair_back;
+  out.scalp = "stubble";
   return out;
 }
 
@@ -278,6 +285,11 @@ export function normalizePortrait(raw: unknown): PortraitConfig {
   if (typeof c.hair === "string" && c.hair_back === undefined && c.hair_front === undefined) {
     c.hair_back = c.hair;
     c.hair_front = c.hair;
+  }
+  // Faces saved before the scalp was a choice: keep what they looked like —
+  // stubble under hair, bare skin when bald.
+  if (c.scalp === undefined) {
+    c.scalp = c.hair_back === NONE && c.hair_front === NONE ? "skin" : "stubble";
   }
   const out = defaultPortrait();
   for (const [key, list] of Object.entries(ALLOWED)) {
@@ -329,6 +341,7 @@ export function portraitFromId(id: string): PortraitConfig {
     if (hash(`${id}#${key}`) % 100 >= pct) out[key] = NONE;
   }
   if (hash(`${id}~hair`) % 100 < MATCHED_HAIR_PCT) matchHair(out);
+  out.scalp = pickScalp(out, hash(`${id}~scalp`) % 100);
   return out;
 }
 
@@ -340,7 +353,16 @@ export function randomPortrait(): PortraitConfig {
     if (Math.random() * 100 >= pct) out[key] = NONE;
   }
   if (Math.random() * 100 < MATCHED_HAIR_PCT) matchHair(out);
+  out.scalp = pickScalp(out, Math.floor(Math.random() * 100));
   return out;
+}
+
+/** A scalp for a face nobody chose: mostly stubble under hair, mostly bare
+ *  when bald, and never a hair-coloured cap on a bald head. */
+function pickScalp(c: PortraitConfig, roll: number): string {
+  const bald = c.hair_back === NONE && c.hair_front === NONE;
+  if (bald) return roll < 70 ? "skin" : "stubble";
+  return roll < 70 ? "stubble" : roll < 90 ? "skin" : "hair";
 }
 
 /** Give the front the back's index, where that front exists. */
@@ -391,7 +413,7 @@ const PACK_ORDER = Object.keys(ALLOWED).sort();
  *  the crop, the art. Faces are cached immutably for a year, and the packed
  *  spec only describes the config, so without this a fixed renderer keeps
  *  serving the broken picture out of everyone's browser cache. */
-export const RENDER = "16";
+export const RENDER = "17";
 
 export function packPortrait(config: PortraitConfig): string {
   const c = normalizePortrait(config);
@@ -416,6 +438,5 @@ export function unpackPortrait(packed: string): PortraitConfig | null {
 }
 
 export function swatchesOf(c: PortraitConfig): Swatches {
-  const bald = c.hair_back === NONE && c.hair_front === NONE;
-  return { skin: c.skin, hair: c.hair_colour, eye: c.eye, bg: c.bg, scalp: bald ? "skin" : "stubble" };
+  return { skin: c.skin, hair: c.hair_colour, eye: c.eye, bg: c.bg, scalp: c.scalp as Swatches["scalp"] };
 }

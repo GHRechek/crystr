@@ -183,14 +183,13 @@ beige cap on every head. Two traps worth naming — `#d3bea8` is the flat scalp
 the `Cranium` layer paints, and the antler and horn tones are bone, so they
 stay out of the hair ramp.
 
-The scalp is special-cased: bare skin on a bald head, but under any
-hairstyle it's buzzed, so it takes 75% hair colour over 25% skin. Without
-that, an undercut's shaved side reads as a bald patch. The literal hair
-colour was tried and is worse — a shaved side filled with full hair colour
-stops being a shaved side. The buzz is applied by the compositor to the
+The scalp is a choice — SCALP: SKIN, STUBBLE (75% hair colour over skin) or
+HAIR — because an undercut's shaved side is shaved hair, not a bald patch,
+and bald plus STUBBLE is a buzz cut. It's applied by the compositor to the
 `Cranium` layer only, not as a palette entry: the jaws use the same
 `#d3bea8` for a patch of lower-cheek shading, and as a palette entry the
-buzz greyed the cheek too.
+buzz greyed the cheek too. Faces saved before it was a choice keep what
+they looked like — stubble under hair, skin when bald.
 
 `/face/<render>.<packed>.png` composes a portrait and caches it immutably.
 The URL fully describes what it draws — a changed face is a changed URL — so
