@@ -170,8 +170,14 @@ distance from the anchor so the shading survives the swap, but **squeezed to
 fit** rather than clipped: the brightest hair step sits a long way above its
 base, and given the full offset a light blond blows out to cream and puts a
 beige cap on every head. Two traps worth naming — `#d3bea8` is the flat scalp
-the `Cranium` layer paints and belongs to the skin ramp, and the antler and
-horn tones are bone, so they stay out of the hair ramp.
+the `Cranium` layer paints, and the antler and horn tones are bone, so they
+stay out of the hair ramp.
+
+The scalp is special-cased: bare skin on a bald head, but under any
+hairstyle it's buzzed, so it takes 60% hair colour over 40% skin. Without
+that, an undercut's shaved side reads as a bald patch. The literal hair
+colour was tried and is worse — a shaved side filled with full hair colour
+stops being a shaved side.
 
 `/face/<render>.<packed>.png` composes a portrait and caches it immutably.
 The URL fully describes what it draws — a changed face is a changed URL — so

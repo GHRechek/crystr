@@ -43,7 +43,18 @@ const SKIN_ANCHOR = "#f3c99e"; // the dominant skin tone
 const HAIR_ANCHOR = "#6c4620"; // the dominant hair tone
 const EYE_ANCHOR = "#3c5a78";
 
-export type Swatches = { skin: string; hair: string; eye: string; bg: string };
+export type Swatches = {
+  skin: string;
+  hair: string;
+  eye: string;
+  bg: string;
+  /** What the exposed scalp is: bare skin on a bald head, buzzed stubble
+   *  under any hairstyle — a shaved side is shaved hair, not a bald patch. */
+  scalp: "skin" | "stubble";
+};
+
+/** How much of the hair colour shows through a buzzed scalp. */
+const STUBBLE = 0.6;
 
 export const SKIN_CHOICES = [
   "#f3c99e", "#ffdfc4", "#e0ac69", "#c68642", "#8d5524", "#5c3a21",
@@ -138,6 +149,17 @@ export function paletteFor(sw: Swatches): Map<number, [number, number, number]> 
     ...reramp(HAIR_SRC, HAIR_ANCHOR, sw.hair, 0.86),
     ...reramp(EYE_SRC, EYE_ANCHOR, sw.eye, 0.9),
   };
+
+  // The scalp the Cranium layer paints. Skin on a bald head; under a
+  // hairstyle it's buzzed, so it takes the hair colour over the skin. The
+  // literal hair colour was tried and loses the style — a shaved side filled
+  // with full hair colour is no longer a shaved side.
+  if (sw.scalp === "stubble") {
+    const hair = hexToRgb(table[HAIR_ANCHOR]);
+    const skin = hexToRgb(table[SKIN_ANCHOR]);
+    const mix = hair.map((h, i) => Math.round(h * STUBBLE + skin[i] * (1 - STUBBLE)));
+    table["#d3bea8"] = `#${mix.map((v) => v.toString(16).padStart(2, "0")).join("")}`;
+  }
 
   const map = new Map<number, [number, number, number]>();
   for (const [from, to] of Object.entries(table)) {
@@ -345,7 +367,7 @@ const PACK_ORDER = Object.keys(ALLOWED).sort();
  *  the crop, the art. Faces are cached immutably for a year, and the packed
  *  spec only describes the config, so without this a fixed renderer keeps
  *  serving the broken picture out of everyone's browser cache. */
-export const RENDER = "12";
+export const RENDER = "13";
 
 export function packPortrait(config: PortraitConfig): string {
   const c = normalizePortrait(config);
@@ -370,5 +392,6 @@ export function unpackPortrait(packed: string): PortraitConfig | null {
 }
 
 export function swatchesOf(c: PortraitConfig): Swatches {
-  return { skin: c.skin, hair: c.hair_colour, eye: c.eye, bg: c.bg };
+  const bald = c.hair_back === NONE && c.hair_front === NONE;
+  return { skin: c.skin, hair: c.hair_colour, eye: c.eye, bg: c.bg, scalp: bald ? "skin" : "stubble" };
 }
