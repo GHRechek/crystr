@@ -61,7 +61,7 @@ export function ProfileHead({
           zIndex: 1,
         }}
       >
-        <div style={{ display: "flex", alignItems: "flex-end", gap: 11 }}>
+        <div style={{ display: "flex", alignItems: "flex-end", gap: 11, position: "relative" }}>
           <button
             type="button"
             onClick={() => {
@@ -96,18 +96,28 @@ export function ProfileHead({
               {joined}
             </div>
           </div>
-        </div>
 
-        {open && !editing ? (
-          <div style={{ display: "flex", gap: 7, flexWrap: "wrap" }}>
-            <Link href="/me/avatar" className="btn btn-sm btn-purple">
-              ◉ CHANGE YOUR FACE
-            </Link>
-            <button type="button" className="btn btn-sm" onClick={() => setEditing(true)}>
-              ◔ CHANGE YOUR STATUS
-            </button>
-          </div>
-        ) : null}
+          {/* Hangs off the portrait rather than sitting in the flow, so
+              opening it doesn't shove the whole profile down the screen. */}
+          {open && !editing ? (
+            <div className="face-menu" role="menu">
+              <Link href="/me/avatar" className="face-menu-item" role="menuitem">
+                <span aria-hidden="true">◉</span> CHANGE YOUR FACE
+              </Link>
+              <button
+                type="button"
+                className="face-menu-item"
+                role="menuitem"
+                onClick={() => setEditing(true)}
+              >
+                <span aria-hidden="true">◔</span> CHANGE YOUR STATUS
+              </button>
+              <Link href="/me/edit" className="face-menu-item" role="menuitem">
+                <span aria-hidden="true">▤</span> EDIT PROFILE
+              </Link>
+            </div>
+          ) : null}
+        </div>
 
         {editing ? (
           <form action={setMood} style={{ display: "flex", gap: 7, alignItems: "center" }}>

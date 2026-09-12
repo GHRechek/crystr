@@ -6,6 +6,7 @@ import { saveAvatar } from "@/lib/actions";
 import {
   ALLOWED,
   BG_CHOICES,
+  CLOTH_CHOICES,
   CONTROLS,
   EYE_CHOICES,
   HAIR_CHOICES,
@@ -16,11 +17,13 @@ import {
   type PortraitConfig,
 } from "@/lib/portrait/core";
 
-/** The four pickers the original tool offers, in its own order. */
+/** The original tool's four pickers, in its own order, plus the shirt — which
+ *  it never needed, because it never drew a body. */
 const COLOURS: { key: string; label: string; choices: string[] }[] = [
   { key: "skin", label: "SKIN COLOUR", choices: SKIN_CHOICES },
   { key: "hair_colour", label: "HAIR COLOUR", choices: HAIR_CHOICES },
   { key: "eye", label: "EYE COLOUR", choices: EYE_CHOICES },
+  { key: "cloth", label: "SHIRT COLOUR", choices: CLOTH_CHOICES },
   { key: "bg", label: "BG COLOUR", choices: BG_CHOICES },
 ];
 

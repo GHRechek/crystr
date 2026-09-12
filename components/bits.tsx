@@ -34,18 +34,8 @@ export function Avatar({
     );
   }
 
-  // An uploaded portrait wins; then a face built here; then one derived from
-  // their id. Google's own avatar_url is deliberately ignored — it isn't the
-  // City's idea of a face.
-  if (person?.portrait_url) {
-    return (
-      <div className="avatar" style={box}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={person.portrait_url} alt="" width={size} height={size} data-upload="true" />
-      </div>
-    );
-  }
-
+  // A face built here, or one derived from their id. Google's own avatar_url
+  // is deliberately ignored — it isn't the City's idea of a face.
   const config = person?.avatar_config
     ? normalizePortrait(person.avatar_config)
     : portraitFromId(person?.id ?? "nobody");

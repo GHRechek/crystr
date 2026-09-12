@@ -4,9 +4,14 @@
 // The source is fifteen 128x128 sprite sheets on a 6-wide grid. Cells line up
 // by grid position ACROSS sheets: HairBack/07 is the back of the same
 // hairstyle as HairFront/07, EarsBack/03 belongs to EarsFront/03, pupils/12
-// go in eyes/12. The tool's own UI has one HAIR control, one EARS, one EYES
-// and one MISC, so those are grouped here into single choices that draw all
-// of their pieces.
+// go in eyes/12. Those are grouped here into single choices that draw all of
+// their pieces.
+//
+// The original tool's MISC control paired the same way — index N from the
+// skin-marks sheet AND index N from the worn-things sheet — which is how you
+// got antlers welded to an eye scar and an eyepatch welded to freckles. Here
+// those sheets are read cell by cell and sorted into their own controls, so
+// horns, scars, glasses, blemishes and jewellery are chosen separately.
 import { readdirSync, writeFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 
@@ -14,12 +19,15 @@ const ROOT = "assets/portrait";
 
 const idx = (dir) =>
   existsSync(join(ROOT, dir))
-    ? readdirSync(join(ROOT, dir)).filter((f) => f.endsWith(".png")).map((f) => f.replace(/\.png$/, "")).sort()
+    ? readdirSync(join(ROOT, dir))
+        .filter((f) => f.endsWith(".png"))
+        .map((f) => f.replace(/\.png$/, ""))
+        .sort()
     : [];
 
 const has = (dir, i) => existsSync(join(ROOT, dir, `${i}.png`));
 
-/** A control in the tool's UI: one choice, one or more sheets behind it. */
+/** Controls whose options line up by grid index across one or more sheets. */
 const GROUPS = {
   // key        lead sheet (defines the options)  companions drawn with it
   jaw: { lead: "Jaws", also: [] },
@@ -30,30 +38,82 @@ const GROUPS = {
   mouth: { lead: "Mouths", also: [] },
   beard: { lead: "Beards", also: [] },
   hair: { lead: "HairBack", also: ["HairFront"] },
-  misc: { lead: "AccessoriesBelowBeard", also: ["LayeredAccessories", "LayeredAccessoryBack"] },
+  // Not from the sheets — drawn by scripts/build-shoulders.mjs, because the
+  // sheets have no body and every jaw just stops at the neck.
+  shoulders: { lead: "Shoulders", also: [] },
+};
+
+/** Controls built from named cells, one entry per option. Each id is the
+ *  cell's grid index on the sheet it came from, so the art stays traceable.
+ *  Classified by looking at every cell drawn alone over a plain face. */
+const BELOW = "AccessoriesBelowBeard";
+const WORN = "LayeredAccessories";
+const WORN_BACK = "LayeredAccessoryBack";
+
+const PICKS = {
+  scars: [
+    { id: "01", cells: [`${BELOW}/01`] }, // burn across the cheek
+    { id: "04", cells: [`${BELOW}/04`] }, // cut through the eyebrow, nick below
+    { id: "05", cells: [`${BELOW}/05`] }, // two small scars, cheek and brow
+    { id: "10", cells: [`${BELOW}/10`] }, // scratch by the mouth
+    { id: "11", cells: [`${BELOW}/11`] }, // scratch across the cheek
+  ],
+  blemishes: [
+    { id: "03", cells: [`${BELOW}/03`] }, // one mole
+    { id: "07", cells: [`${BELOW}/07`] }, // two moles
+    { id: "02", cells: [`${BELOW}/02`] }, // a few freckles
+    { id: "14", cells: [`${BELOW}/14`] }, // freckles on the cheek
+    { id: "06", cells: [`${BELOW}/06`] }, // freckles across the face
+    { id: "09", cells: [`${BELOW}/09`] }, // heavy freckles
+    { id: "13", cells: [`${BELOW}/13`] }, // acne
+    { id: "08", cells: [`${BELOW}/08`] }, // forehead lines
+  ],
+  horns: [
+    { id: "05", cells: [`${WORN}/05`, `${WORN_BACK}/05`] }, // horns
+    { id: "04", cells: [`${WORN}/04`, `${WORN_BACK}/04`] }, // antlers
+  ],
+  eyewear: [
+    { id: "03", cells: [`${WORN}/03`] }, // round spectacles
+    { id: "11", cells: [`${WORN}/11`] }, // spectacles
+    { id: "10", cells: [`${WORN}/10`] }, // thin frames
+    { id: "07", cells: [`${WORN}/07`] }, // round dark lenses
+    { id: "06", cells: [`${WORN}/06`] }, // sunglasses
+    { id: "08", cells: [`${WORN}/08`] }, // monocle on a chain
+    { id: "09", cells: [`${WORN}/09`] }, // eyepatch
+  ],
+  jewellery: [
+    { id: "01", cells: [`${WORN}/01`] }, // nose ring
+    { id: "02", cells: [`${WORN}/02`] }, // eyebrow piercing
+    { id: "12", cells: [`${BELOW}/12`] }, // bindi
+  ],
 };
 
 const manifest = {};
 for (const [key, { lead, also }] of Object.entries(GROUPS)) {
-  // MISC's pieces don't all share one lead, so take the union of indices.
-  const ids =
-    key === "misc"
-      ? [...new Set([lead, ...also].flatMap((d) => idx(d)))].sort()
-      : idx(lead);
-
-  manifest[key] = ids.map((i) => ({
+  manifest[key] = idx(lead).map((i) => ({
     id: i,
-    sheets: [lead, ...also].filter((d) => has(d, i)),
+    cells: [lead, ...also].filter((d) => has(d, i)).map((d) => `${d}/${i}`),
   }));
 }
+for (const [key, options] of Object.entries(PICKS)) {
+  for (const o of options) {
+    for (const c of o.cells) {
+      if (!existsSync(join(ROOT, `${c}.png`))) throw new Error(`${key}/${o.id}: no such cell ${c}`);
+    }
+  }
+  manifest[key] = options;
+}
+// A second jewellery slot draws from the same cells, so a face can wear two.
+manifest.jewellery2 = manifest.jewellery;
 
 const body = `// GENERATED by scripts/build-portrait-manifest.mjs — do not edit by hand.
 
 export type PortraitOption = {
-  /** The cell's position in the original 6-wide sheet grid. */
+  /** The cell's grid index on the sheet it came from. */
   id: string;
-  /** Every sheet that has a piece of this option, in no particular order. */
-  sheets: string[];
+  /** Every cell this option draws, as sheet/index. Order is decided by the
+   *  compositor's sheet order, not by this list. */
+  cells: string[];
 };
 
 export const OPTIONS: Record<string, PortraitOption[]> = ${JSON.stringify(manifest, null, 2)};
@@ -61,5 +121,7 @@ export const OPTIONS: Record<string, PortraitOption[]> = ${JSON.stringify(manife
 
 writeFileSync("lib/portrait/manifest.ts", body);
 console.log(
-  Object.entries(manifest).map(([k, v]) => `${k}: ${v.length}`).join("  "),
+  Object.entries(manifest)
+    .map(([k, v]) => `${k}: ${v.length}`)
+    .join("  "),
 );

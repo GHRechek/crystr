@@ -9,12 +9,16 @@ import { OPTIONS, type PortraitOption } from "./manifest";
 // else (sclera, lips, metal) the tool leaves alone, which is why it offers
 // exactly three colour pickers plus a background.
 
+/** The sheets' own cell size. */
 export const SIZE = 128;
 
-/** The whole head fits in here — tallest hair at the top, jaw at the bottom,
- *  pointed ears well inside. This is the framing the app uses everywhere,
- *  cropped once in the compositor. */
-export const CROP = { x: 8, y: 1, w: 112, h: 112 } as const;
+/** The composed frame. Taller and wider than a sheet cell because the body
+ *  runs past the edge of the original art, which is head-only. */
+export const FRAME = 144;
+
+/** Where a 128x128 sheet cell lands in that frame: centred on the head, with
+ *  the tallest hair just inside the top and room below the jaw for a body. */
+export const ART = { x: 10, y: 4 } as const;
 
 // ------------------------------------------------------------- the palette
 
@@ -32,14 +36,19 @@ const HAIR_SRC = [
 ];
 /** The pupils. */
 const EYE_SRC = ["#5a7896", "#3c5a78", "#1e3c5a"];
+/** The garment, lightest to darkest. Drawn by scripts/build-shoulders.mjs in
+ *  five colours that appear nowhere in the sheets, so swapping them for a
+ *  shirt colour can never reach a face. */
+const CLOTH_SRC = ["#a9b8dc", "#8fa0c8", "#5a6a94", "#39456a", "#242c46"];
 
 /** The step each ramp is anchored on — the colour a player is really picking
  *  when they choose "skin". The others move with it. */
 const SKIN_ANCHOR = "#f3c99e"; // the dominant skin tone
 const HAIR_ANCHOR = "#6c4620"; // the dominant hair tone
 const EYE_ANCHOR = "#3c5a78";
+const CLOTH_ANCHOR = "#5a6a94";
 
-export type Swatches = { skin: string; hair: string; eye: string; bg: string };
+export type Swatches = { skin: string; hair: string; eye: string; cloth: string; bg: string };
 
 export const SKIN_CHOICES = [
   "#f3c99e", "#ffdfc4", "#e0ac69", "#c68642", "#8d5524", "#5c3a21",
@@ -52,6 +61,10 @@ export const HAIR_CHOICES = [
 export const EYE_CHOICES = [
   "#3c5a78", "#3a2a20", "#4c7df0", "#3fae86", "#9184d9", "#a8641f",
   "#c9c9d4", "#e0398a", "#c95b5b",
+];
+export const CLOTH_CHOICES = [
+  "#5a6a94", "#2e3140", "#6e4a7a", "#8c3a4e", "#2f6156", "#a8642c",
+  "#c2596f", "#3f7fb8", "#7a8a3c", "#b8a24a", "#8a8f99", "#d9d4c8",
 ];
 export const BG_CHOICES = [
   "#2a2146", "#1b1d29", "#3a1b34", "#1b2b3a", "#2b3320", "#3a2b1b", "#20203a", "#232532",
@@ -133,6 +146,7 @@ export function paletteFor(sw: Swatches): Map<number, [number, number, number]> 
     ...reramp(SKIN_SRC, SKIN_ANCHOR, sw.skin, 0.95),
     ...reramp(HAIR_SRC, HAIR_ANCHOR, sw.hair, 0.86),
     ...reramp(EYE_SRC, EYE_ANCHOR, sw.eye, 0.9),
+    ...reramp(CLOTH_SRC, CLOTH_ANCHOR, sw.cloth, 0.88),
   };
 
   const map = new Map<number, [number, number, number]>();
@@ -153,6 +167,9 @@ export const SHEET_ORDER = [
   "Cranium",
   "HairBack",
   "LayeredAccessoryBack",
+  // The body sits in front of the hair that falls behind it and behind the
+  // jaw, so the seam where the neck meets the shoulders is covered by the face.
+  "Shoulders",
   "EarsBack",
   "Jaws",
   "EarsFront",
@@ -177,7 +194,16 @@ export const CONTROLS: { key: string; label: string; optional?: boolean }[] = [
   { key: "mouth", label: "MOUTH" },
   { key: "hair", label: "HAIR", optional: true },
   { key: "beard", label: "BEARD", optional: true },
-  { key: "misc", label: "MISC", optional: true },
+  // The tool's one MISC control, taken apart. Its cells paired a skin mark
+  // with a worn thing by grid index — an eye scar came with antlers, an
+  // eyepatch with freckles — so each kind is its own choice here.
+  { key: "scars", label: "SCARS", optional: true },
+  { key: "blemishes", label: "FRECKLES & MARKS", optional: true },
+  { key: "horns", label: "HORNS", optional: true },
+  { key: "eyewear", label: "EYEWEAR", optional: true },
+  { key: "jewellery", label: "JEWELLERY", optional: true },
+  { key: "jewellery2", label: "MORE JEWELLERY", optional: true },
+  { key: "shoulders", label: "SHIRT" },
 ];
 
 export const NONE = "none";
@@ -193,6 +219,7 @@ export const ALLOWED: Record<string, string[]> = (() => {
   out.skin = SKIN_CHOICES;
   out.hair_colour = HAIR_CHOICES;
   out.eye = EYE_CHOICES;
+  out.cloth = CLOTH_CHOICES;
   out.bg = BG_CHOICES;
   return out;
 })();
@@ -200,9 +227,10 @@ export const ALLOWED: Record<string, string[]> = (() => {
 export function defaultPortrait(): PortraitConfig {
   const out: PortraitConfig = {};
   for (const [k, list] of Object.entries(ALLOWED)) out[k] = list[0];
-  for (const c of CONTROLS) if (c.optional) out[c.key] = ALLOWED[c.key][1] ?? NONE;
-  out.beard = NONE;
-  out.misc = NONE;
+  // A default face has eyebrows and hair and nothing else optional.
+  for (const c of CONTROLS) if (c.optional) out[c.key] = NONE;
+  out.eyebrows = ALLOWED.eyebrows[1] ?? NONE;
+  out.hair = ALLOWED.hair[1] ?? NONE;
   return out;
 }
 
@@ -229,7 +257,17 @@ function hash(s: string): number {
 }
 
 /** How often an optional part turns up on a face nobody has chosen yet. */
-const ODDS: Record<string, number> = { beard: 22, misc: 25, eyebrows: 92, hair: 90 };
+const ODDS: Record<string, number> = {
+  eyebrows: 92,
+  hair: 90,
+  beard: 22,
+  scars: 12,
+  blemishes: 35,
+  horns: 8,
+  eyewear: 18,
+  jewellery: 20,
+  jewellery2: 6,
+};
 
 export function portraitFromId(id: string): PortraitConfig {
   const out = defaultPortrait();
@@ -253,23 +291,34 @@ export function randomPortrait(): PortraitConfig {
   return out;
 }
 
-/** Every image file this face needs, already in draw order. */
+/** Every image file this face needs, already in draw order. Several controls
+ *  can draw from one sheet — a scar and freckles are both skin marks — so a
+ *  sheet may contribute more than one cell; within a sheet they go in id order,
+ *  which is stable and doesn't matter since they never overlap. */
 export function drawPlan(config: PortraitConfig): string[] {
   const c = normalizePortrait(config);
 
-  // sheet -> the cell id that sheet should draw
-  const wanted = new Map<string, string>();
+  // sheet -> the cells that sheet should draw
+  const wanted = new Map<string, Set<string>>();
+  const want = (cell: string) => {
+    const [sheet, id] = cell.split("/");
+    if (!wanted.has(sheet)) wanted.set(sheet, new Set());
+    wanted.get(sheet)!.add(id);
+  };
+
   for (const control of CONTROLS) {
     const id = c[control.key];
     if (!id || id === NONE) continue;
     const option = (OPTIONS[control.key] ?? []).find((o: PortraitOption) => o.id === id);
-    for (const sheet of option?.sheets ?? []) wanted.set(sheet, id);
+    for (const cell of option?.cells ?? []) want(cell);
   }
 
-  // The cranium is a single shading arc with no choice behind it.
-  wanted.set("Cranium", "00");
+  // The scalp is a single shape with no choice behind it.
+  want("Cranium/00");
 
-  return SHEET_ORDER.filter((s) => wanted.has(s)).map((s) => `${s}/${wanted.get(s)}.png`);
+  return SHEET_ORDER.flatMap((sheet) =>
+    [...(wanted.get(sheet) ?? [])].sort().map((id) => `${sheet}/${id}.png`),
+  );
 }
 
 // ------------------------------------------------------------ url packing
@@ -280,7 +329,7 @@ const PACK_ORDER = Object.keys(ALLOWED).sort();
  *  the crop, the art. Faces are cached immutably for a year, and the packed
  *  spec only describes the config, so without this a fixed renderer keeps
  *  serving the broken picture out of everyone's browser cache. */
-export const RENDER = "3";
+export const RENDER = "4";
 
 export function packPortrait(config: PortraitConfig): string {
   const c = normalizePortrait(config);
@@ -305,5 +354,5 @@ export function unpackPortrait(packed: string): PortraitConfig | null {
 }
 
 export function swatchesOf(c: PortraitConfig): Swatches {
-  return { skin: c.skin, hair: c.hair_colour, eye: c.eye, bg: c.bg };
+  return { skin: c.skin, hair: c.hair_colour, eye: c.eye, cloth: c.cloth, bg: c.bg };
 }

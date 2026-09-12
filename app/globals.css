@@ -709,6 +709,71 @@ select {
   }
 }
 
+/* The menu that drops off the portrait when you tap it. A tooltip, not a row
+   of buttons: it floats over what follows instead of pushing it down. */
+.face-menu {
+  position: absolute;
+  top: calc(100% + 9px);
+  left: 0;
+  z-index: 5;
+  min-width: 196px;
+  display: flex;
+  flex-direction: column;
+  padding: 4px;
+  background: var(--surface);
+  border-radius: var(--px-r);
+  box-shadow:
+    0 0 0 1px var(--edge),
+    0 10px 26px -8px rgb(0 0 0 / 0.75);
+}
+/* The pointer back up to the face — two stepped squares, like the thought's
+   tail, because a triangle would be the one diagonal in a 16-bit interface. */
+.face-menu::before,
+.face-menu::after {
+  content: "";
+  position: absolute;
+  background: var(--surface);
+  box-shadow: 0 0 0 1px var(--edge);
+  border-radius: 2px;
+}
+.face-menu::before {
+  width: 10px;
+  height: 10px;
+  left: 18px;
+  top: -5px;
+  clip-path: inset(0 -2px 2px -2px);
+}
+.face-menu::after {
+  width: 6px;
+  height: 6px;
+  left: 24px;
+  top: -13px;
+}
+.face-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 11px;
+  border: 0;
+  border-radius: var(--px-r);
+  background: transparent;
+  font-family: var(--px-font);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  color: var(--text-2);
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+.face-menu-item > span {
+  color: var(--pur-soft);
+}
+.face-menu-item:hover,
+.face-menu-item:focus-visible {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
 /* The mood, as a thought bubble hanging in the banner above the portrait.
    The tail is two stepped squares rather than a smooth triangle — a curve
    would be the one round thing in a 16-bit interface. */

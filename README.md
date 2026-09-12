@@ -113,18 +113,32 @@ The repo is linked to the `crystr` Vercel project on the VLVT team. Pushing to
 ## Portraits
 
 `/me/avatar` builds a face from the Portrait Maker sprite sheets, in a UI that
-mirrors the tool the art was drawn for: nine shape steppers (jaw, ears, eyes,
-eyebrows, nose, mouth, hair, beard, misc) and four colour pickers (skin, hair,
-eye, background). 26 jaws, 26 eyes, 28 mouths, 27 hairstyles, 16 noses, 15
-brow sets, 14 ear shapes, 13 beards and 14 misc — scars, freckles, glasses,
-a monocle, an eyepatch, horns, antlers.
+mirrors the tool the art was drawn for — shape steppers and colour swatches,
+preview pinned to the top. 26 jaws, 26 eyes, 28 mouths, 27 hairstyles, 16
+noses, 15 brow sets, 14 ear shapes, 13 beards; then scars (5), freckles and
+marks (8), horns (2), eyewear (7), jewellery (3, in two slots so a face can
+wear a nose ring and a brow ring at once), and a shirt (8). Colour pickers for
+skin, hair, eyes, shirt and background.
 
 The source is fifteen 128x128 sheets on a 6-wide grid, and cells line up **by
 grid position across sheets**: `HairBack/07` is the back of the same hairstyle
 as `HairFront/07`, `pupils/13` belongs in `Eyes/13`. That pairing is what the
 manifest encodes, so one choice always draws its whole self rather than, say,
-a pupil floating without its socket. Run `node scripts/build-portrait-manifest.mjs`
-after changing the asset set.
+a pupil floating without its socket.
+
+The tool's own MISC control paired the same way, and that was worth undoing:
+index N from the skin-marks sheet drew *with* index N from the worn-things
+sheet, so antlers came welded to an eye scar and an eyepatch to heavy
+freckles. Those two sheets are read cell by cell instead and sorted into their
+own controls, and the compositor lets one sheet contribute several cells to a
+face. Run `node scripts/build-portrait-manifest.mjs` after changing the asset
+set.
+
+**The body.** The sheets have none: all 26 jaws stop mid-neck at the same
+twelve pixels. `scripts/build-shoulders.mjs` draws the eight shirts as
+144x144 cells — bare, crew, scoop, V, collar, turtleneck, tank, hood — in the
+sheets' own skin colours plus a five-step garment ramp that appears nowhere in
+the original art, so a shirt colour can never leak onto a face.
 
 **Recolouring.** The art is drawn in one fixed palette and the tool swaps
 specific colours for the player's choice — a replace shader, not a tint. That
@@ -141,16 +155,20 @@ beige cap on every head. Two traps worth naming — `#d3bea8` is the flat scalp
 the `Cranium` layer paints and belongs to the skin ramp, and the antler and
 horn tones are bone, so they stay out of the hair ramp.
 
-`/face/<packed>.png` composes a portrait and caches it immutably. The URL
-fully describes what it draws — a changed face is a changed URL — so there is
-no lookup, no auth, and nothing identifying in the path. Portraits are cropped
-once, in the compositor, to the framing every screen uses: the whole head,
-tallest hair to jaw, pointed ears well inside.
+`/face/<render>.<packed>.png` composes a portrait and caches it immutably.
+The URL fully describes what it draws — a changed face is a changed URL — so
+there is no lookup, no auth, and nothing identifying in the path. The leading
+segment is `RENDER` in `lib/portrait/core.ts`; bump it whenever the palette,
+draw order, frame or art changes, or every browser keeps serving the old
+picture out of its year-long cache. The frame is 144x144, with the 128x128
+sheet art landing at the `ART` offset so the tallest hair sits just under the
+top edge and the shoulders fill the bottom.
 
 Anyone who hasn't built a face gets one derived from their user id, which is
 a real config, so opening the builder starts you on the face the rest of the
-app has been showing. A portrait can also be uploaded, which wins over a
-built face.
+app has been showing. There is no upload: every face in the City is built
+here. (`profiles.portrait_url` and the `avatars` bucket are left over from
+when there was one, and are unused.)
 
 **Artwork:** the Portrait Maker sheets under `assets/portrait/`, sliced from
 the originals kept in `assets/portrait/_sheets/`. This is paid art — check its

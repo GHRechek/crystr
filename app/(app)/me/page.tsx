@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { requireMe, getLedger, getTopFriends } from "@/lib/data";
 import { Avatar } from "@/components/bits";
 import { ProfileHead } from "./face-menu";
@@ -13,11 +12,9 @@ export default async function ProfilePage() {
     1,
     Math.round((Date.now() - new Date(profile.created_at).getTime()) / 86_400_000),
   );
-  const faceSrc =
-    profile.portrait_url ??
-    `/face/${packPortrait(
-      profile.avatar_config ? normalizePortrait(profile.avatar_config) : portraitFromId(userId),
-    )}.png`;
+  const faceSrc = `/face/${packPortrait(
+    profile.avatar_config ? normalizePortrait(profile.avatar_config) : portraitFromId(userId),
+  )}.png`;
   const details: [string, string][] = (
     [
       ["LIKES", profile.likes],
@@ -46,11 +43,6 @@ export default async function ProfilePage() {
           gap: 12,
         }}
       >
-
-        <Link href="/me/edit" className="btn btn-sm" style={{ alignSelf: "flex-start" }}>
-          EDIT PROFILE
-        </Link>
-
         <div className="tile" style={{ padding: 12 }}>
           <div
             className="px"
