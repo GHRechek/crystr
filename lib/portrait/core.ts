@@ -54,7 +54,12 @@ export type Swatches = {
 };
 
 /** How much of the hair colour shows through a buzzed scalp. */
-const STUBBLE = 0.6;
+const STUBBLE = 0.75;
+
+/** The flat colour the Cranium layer paints. The jaws use it too, for a
+ *  patch of lower-cheek shading, which is why the buzz can't be a palette
+ *  entry: it has to apply to the Cranium layer only. */
+export const SCALP_SRC = (0xd3 << 16) | (0xbe << 8) | 0xa8;
 
 export const SKIN_CHOICES = [
   "#f3c99e", "#ffdfc4", "#e0ac69", "#c68642", "#8d5524", "#5c3a21",
@@ -150,23 +155,28 @@ export function paletteFor(sw: Swatches): Map<number, [number, number, number]> 
     ...reramp(EYE_SRC, EYE_ANCHOR, sw.eye, 0.9),
   };
 
-  // The scalp the Cranium layer paints. Skin on a bald head; under a
-  // hairstyle it's buzzed, so it takes the hair colour over the skin. The
-  // literal hair colour was tried and loses the style — a shaved side filled
-  // with full hair colour is no longer a shaved side.
-  if (sw.scalp === "stubble") {
-    const hair = hexToRgb(table[HAIR_ANCHOR]);
-    const skin = hexToRgb(table[SKIN_ANCHOR]);
-    const mix = hair.map((h, i) => Math.round(h * STUBBLE + skin[i] * (1 - STUBBLE)));
-    table["#d3bea8"] = `#${mix.map((v) => v.toString(16).padStart(2, "0")).join("")}`;
-  }
-
   const map = new Map<number, [number, number, number]>();
   for (const [from, to] of Object.entries(table)) {
     const [r, g, b] = hexToRgb(from);
     map.set((r << 16) | (g << 8) | b, hexToRgb(to));
   }
   return map;
+}
+
+/** What the Cranium layer's scalp becomes. Skin on a bald head — the skin
+ *  ramp's own value, as for any layer. Under a hairstyle it's buzzed: the
+ *  hair colour over the skin. The literal hair colour was tried and loses
+ *  the style — a shaved side filled with full hair colour is no longer a
+ *  shaved side. Applied by the compositor to the Cranium layer only. */
+export function scalpFor(sw: Swatches): [number, number, number] | null {
+  if (sw.scalp !== "stubble") return null;
+  const hair = hexToRgb(reramp([HAIR_ANCHOR], HAIR_ANCHOR, sw.hair, 0.86)[HAIR_ANCHOR]);
+  const skin = hexToRgb(reramp([SKIN_ANCHOR], SKIN_ANCHOR, sw.skin, 0.95)[SKIN_ANCHOR]);
+  return [0, 1, 2].map((i) => Math.round(hair[i] * STUBBLE + skin[i] * (1 - STUBBLE))) as [
+    number,
+    number,
+    number,
+  ];
 }
 
 // ----------------------------------------------------------------- layers
@@ -381,7 +391,7 @@ const PACK_ORDER = Object.keys(ALLOWED).sort();
  *  the crop, the art. Faces are cached immutably for a year, and the packed
  *  spec only describes the config, so without this a fixed renderer keeps
  *  serving the broken picture out of everyone's browser cache. */
-export const RENDER = "15";
+export const RENDER = "16";
 
 export function packPortrait(config: PortraitConfig): string {
   const c = normalizePortrait(config);

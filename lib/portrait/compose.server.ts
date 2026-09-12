@@ -1,7 +1,17 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { PNG } from "pngjs";
-import { ART, FRAME, SIZE, drawPlan, paletteFor, swatchesOf, type PortraitConfig } from "./core";
+import {
+  ART,
+  FRAME,
+  SCALP_SRC,
+  SIZE,
+  drawPlan,
+  paletteFor,
+  scalpFor,
+  swatchesOf,
+  type PortraitConfig,
+} from "./core";
 
 // Stacking the sheet cells onto one frame and swapping the palette as each
 // lands. Decoded cells are cached for the life of the lambda; the route caches
@@ -29,6 +39,7 @@ function cell(relPath: string): Uint8ClampedArray | null {
 export function composePortrait(config: PortraitConfig): Buffer {
   const sw = swatchesOf(config);
   const palette = paletteFor(sw);
+  const scalp = scalpFor(sw);
 
   const png = new PNG({ width: FRAME, height: FRAME });
   const out = png.data;
@@ -47,6 +58,9 @@ export function composePortrait(config: PortraitConfig): Buffer {
   for (const path of drawPlan(config)) {
     const src = cell(path);
     if (!src) continue;
+    // The scalp colour is also a jaw shading colour, so the buzz applies to
+    // the Cranium layer alone — everywhere else it stays skin.
+    const buzz = scalp && path.startsWith("Cranium/") ? scalp : null;
 
     for (let y = 0; y < SIZE; y++) {
       const dy = y + ART.y;
@@ -62,7 +76,8 @@ export function composePortrait(config: PortraitConfig): Buffer {
 
         // Palette replace: only colours the art actually uses are swapped, so
         // sclera, lips, metal and bone keep their own, as in the original.
-        const swapped = palette.get((src[s] << 16) | (src[s + 1] << 8) | src[s + 2]);
+        const key = (src[s] << 16) | (src[s + 1] << 8) | src[s + 2];
+        const swapped = buzz && key === SCALP_SRC ? buzz : palette.get(key);
         const r = swapped ? swapped[0] : src[s];
         const g = swapped ? swapped[1] : src[s + 1];
         const b = swapped ? swapped[2] : src[s + 2];
