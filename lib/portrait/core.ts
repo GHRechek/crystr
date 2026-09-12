@@ -12,12 +12,12 @@ import { OPTIONS, type PortraitOption } from "./manifest";
 /** The sheets' own cell size. */
 export const SIZE = 128;
 
-/** The composed frame: cropped tight to the head, so it fills the picture.
- *  Must match FRAME and ART in scripts/build-neck.mjs. */
+/** The composed frame: cropped tight to the head, so it fills the picture. */
 export const FRAME = 120;
 
 /** Where a 128x128 sheet cell lands in that frame: centred on the head, the
- *  tallest hair against the top, the neck running off the bottom. */
+ *  tallest hair against the top. The portrait ends where the artist's jaw
+ *  ends — a neck and a body were both tried, and neither belonged. */
 export const ART = { x: -2, y: 0 } as const;
 
 // ------------------------------------------------------------- the palette
@@ -157,9 +157,6 @@ export const SHEET_ORDER = [
   "Cranium",
   "HairBack",
   "LayeredAccessoryBack",
-  // The neck's continuation sits in front of the hair that falls behind it
-  // and behind the jaw, so the seam is under the chin.
-  "Neck",
   "EarsBack",
   "Jaws",
   "EarsFront",
@@ -301,10 +298,8 @@ export function drawPlan(config: PortraitConfig): string[] {
     for (const cell of option?.cells ?? []) want(cell);
   }
 
-  // The scalp and the neck's continuation are single shapes with no choice
-  // behind them.
+  // The scalp is a single shape with no choice behind it.
   want("Cranium/00");
-  want("Neck/00");
 
   return SHEET_ORDER.flatMap((sheet) =>
     [...(wanted.get(sheet) ?? [])].sort().map((id) => `${sheet}/${id}.png`),
@@ -319,7 +314,7 @@ const PACK_ORDER = Object.keys(ALLOWED).sort();
  *  the crop, the art. Faces are cached immutably for a year, and the packed
  *  spec only describes the config, so without this a fixed renderer keeps
  *  serving the broken picture out of everyone's browser cache. */
-export const RENDER = "10";
+export const RENDER = "11";
 
 export function packPortrait(config: PortraitConfig): string {
   const c = normalizePortrait(config);

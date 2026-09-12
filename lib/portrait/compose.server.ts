@@ -3,27 +3,22 @@ import { join } from "node:path";
 import { PNG } from "pngjs";
 import { ART, FRAME, SIZE, drawPlan, paletteFor, swatchesOf, type PortraitConfig } from "./core";
 
-// Stacking the layers onto one frame and swapping the palette as each lands.
-// Decoded cells are cached for the life of the lambda; the route caches the
-// finished PNG immutably, so a given face is built once per edge node.
+// Stacking the sheet cells onto one frame and swapping the palette as each
+// lands. Decoded cells are cached for the life of the lambda; the route caches
+// the finished PNG immutably, so a given face is built once per edge node.
 
 const ASSETS = join(process.cwd(), "assets", "portrait");
+const decoded = new Map<string, Uint8ClampedArray | null>();
 
-type Cell = { data: Uint8ClampedArray; size: number };
-const decoded = new Map<string, Cell | null>();
-
-/** Sheet cells are 128 and land offset into the frame; the shoulders are drawn
- *  at frame size and land at the origin. Nothing else is accepted. */
-function cell(relPath: string): Cell | null {
+/** A 128x128 sheet cell. Nothing else is accepted. */
+function cell(relPath: string): Uint8ClampedArray | null {
   const hit = decoded.get(relPath);
   if (hit !== undefined) return hit;
 
-  let out: Cell | null = null;
+  let out: Uint8ClampedArray | null = null;
   try {
     const png = PNG.sync.read(readFileSync(join(ASSETS, relPath)));
-    if (png.width === png.height && (png.width === SIZE || png.width === FRAME)) {
-      out = { data: new Uint8ClampedArray(png.data), size: png.width };
-    }
+    if (png.width === SIZE && png.height === SIZE) out = new Uint8ClampedArray(png.data);
   } catch {
     out = null;
   }
@@ -53,29 +48,24 @@ export function composePortrait(config: PortraitConfig): Buffer {
     const src = cell(path);
     if (!src) continue;
 
-    const ox = src.size === FRAME ? 0 : ART.x;
-    const oy = src.size === FRAME ? 0 : ART.y;
-
-    for (let y = 0; y < src.size; y++) {
-      const dy = y + oy;
+    for (let y = 0; y < SIZE; y++) {
+      const dy = y + ART.y;
       if (dy < 0 || dy >= FRAME) continue;
 
-      for (let x = 0; x < src.size; x++) {
-        const dx = x + ox;
+      for (let x = 0; x < SIZE; x++) {
+        const dx = x + ART.x;
         if (dx < 0 || dx >= FRAME) continue;
 
-        const s = (y * src.size + x) * 4;
-        const a = src.data[s + 3];
+        const s = (y * SIZE + x) * 4;
+        const a = src[s + 3];
         if (a === 0) continue;
 
         // Palette replace: only colours the art actually uses are swapped, so
         // sclera, lips, metal and bone keep their own, as in the original.
-        const swapped = palette.get(
-          (src.data[s] << 16) | (src.data[s + 1] << 8) | src.data[s + 2],
-        );
-        const r = swapped ? swapped[0] : src.data[s];
-        const g = swapped ? swapped[1] : src.data[s + 1];
-        const b = swapped ? swapped[2] : src.data[s + 2];
+        const swapped = palette.get((src[s] << 16) | (src[s + 1] << 8) | src[s + 2]);
+        const r = swapped ? swapped[0] : src[s];
+        const g = swapped ? swapped[1] : src[s + 1];
+        const b = swapped ? swapped[2] : src[s + 2];
 
         const d = (dy * FRAME + dx) * 4;
         if (a === 255) {

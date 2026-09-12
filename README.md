@@ -134,12 +134,12 @@ own controls, and the compositor lets one sheet contribute several cells to a
 face. Run `node scripts/build-portrait-manifest.mjs` after changing the asset
 set.
 
-**The neck.** The sheets stop mid-neck: all 26 jaws end at the same 20px
-column, tapered on the last row where the artist stopped. `scripts/build-neck.mjs`
-continues that column straight down in the jaw's own flat base tone, drawn
-behind the jaw, so a portrait runs off the bottom of the frame instead of
-ending in a stub. There is deliberately no body — a body was tried and never
-read as belonging to the head.
+**Below the jaw, nothing.** The sheets stop mid-neck — all 26 jaws end at the
+same 20px stub — and the portrait ends there too. A body and then a neck were
+both drawn to continue it, in the sheets' own palette, and neither ever read
+as belonging to the head. Anything added under a face this well painted has
+to be painted as well, and generated pixels weren't. So the crop is tight to
+the head and the stub is the artist's own last row.
 
 **Recolouring.** The art is drawn in one fixed palette and the tool swaps
 specific colours for the player's choice — a replace shader, not a tint. That
@@ -163,7 +163,7 @@ segment is `RENDER` in `lib/portrait/core.ts`; bump it whenever the palette,
 draw order, frame or art changes, or every browser keeps serving the old
 picture out of its year-long cache. The frame is 120x120, cropped tight to
 the head: the 128x128 sheet art lands at the `ART` offset with the tallest
-hair against the top and the neck running off the bottom.
+hair against the top.
 
 Anyone who hasn't built a face gets one derived from their user id, which is
 a real config, so opening the builder starts you on the face the rest of the
