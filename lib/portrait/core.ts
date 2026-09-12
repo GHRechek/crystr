@@ -62,6 +62,18 @@ const STUBBLE = 0.75;
  *  entry: it has to apply to the Cranium layer only. */
 export const SCALP_SRC = (0xd3 << 16) | (0xbe << 8) | 0xa8;
 
+/** Colours that mean one thing on the face and another inside one layer,
+ *  as source → the source colour to treat them as, for that layer only.
+ *  The palette is one table per face; the artist's palette wasn't, quite. */
+export const LAYER_ALIASES: Record<string, Record<number, number>> = {
+  // #845e4b is the skin's deepest step everywhere — except in the brows,
+  // where it's the brow's own lighter hairs: the taper ends, and in the
+  // bushy brows hairs interleaved with the dark ones. On pale skin the skin
+  // step re-ramps to orange-brown, and the brow went orange. As hair, one
+  // step lighter than the brow's core (#312723), it follows the hair colour.
+  Eyebrows: { [(0x84 << 16) | (0x5e << 8) | 0x4b]: (0x42 << 16) | (0x30 << 8) | 0x24 },
+};
+
 export const SKIN_CHOICES = [
   "#f3c99e", "#ffdfc4", "#e0ac69", "#c68642", "#8d5524", "#5c3a21",
   "#cfe3d4", "#cdc0e8", "#bcd8e8", "#e8c0cf", "#b9c4a0",
@@ -413,7 +425,7 @@ const PACK_ORDER = Object.keys(ALLOWED).sort();
  *  the crop, the art. Faces are cached immutably for a year, and the packed
  *  spec only describes the config, so without this a fixed renderer keeps
  *  serving the broken picture out of everyone's browser cache. */
-export const RENDER = "17";
+export const RENDER = "18";
 
 export function packPortrait(config: PortraitConfig): string {
   const c = normalizePortrait(config);

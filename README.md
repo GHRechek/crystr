@@ -183,6 +183,13 @@ beige cap on every head. Two traps worth naming — `#d3bea8` is the flat scalp
 the `Cranium` layer paints, and the antler and horn tones are bone, so they
 stay out of the hair ramp.
 
+The palette is one table per face, and the artist's wasn't, quite: a few
+colours mean one thing on the face and another inside one layer.
+`LAYER_ALIASES` in `lib/portrait/core.ts` handles those per layer — `#845e4b`
+is the skin's deepest step everywhere except in the brows, where it's the
+brow's own lighter hairs and follows the hair colour instead. (On pale skin
+the skin step re-ramps to orange-brown, and the brows went orange.)
+
 The scalp is a choice — SCALP: SKIN, STUBBLE (75% hair colour over skin) or
 HAIR — because an undercut's shaved side is shaved hair, not a bald patch,
 and bald plus STUBBLE is a buzz cut. It's applied by the compositor to the

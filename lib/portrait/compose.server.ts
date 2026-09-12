@@ -4,6 +4,7 @@ import { PNG } from "pngjs";
 import {
   ART,
   FRAME,
+  LAYER_ALIASES,
   SCALP_SRC,
   SIZE,
   drawPlan,
@@ -60,7 +61,9 @@ export function composePortrait(config: PortraitConfig): Buffer {
     if (!src) continue;
     // The scalp colour is also a jaw shading colour, so the buzz applies to
     // the Cranium layer alone — everywhere else it stays skin.
-    const buzz = scalp && path.startsWith("Cranium/") ? scalp : null;
+    const layer = path.slice(0, path.indexOf("/"));
+    const buzz = scalp && layer === "Cranium" ? scalp : null;
+    const alias = LAYER_ALIASES[layer];
 
     for (let y = 0; y < SIZE; y++) {
       const dy = y + ART.y;
@@ -77,7 +80,7 @@ export function composePortrait(config: PortraitConfig): Buffer {
         // Palette replace: only colours the art actually uses are swapped, so
         // sclera, lips, metal and bone keep their own, as in the original.
         const key = (src[s] << 16) | (src[s + 1] << 8) | src[s + 2];
-        const swapped = buzz && key === SCALP_SRC ? buzz : palette.get(key);
+        const swapped = buzz && key === SCALP_SRC ? buzz : palette.get(alias?.[key] ?? key);
         const r = swapped ? swapped[0] : src[s];
         const g = swapped ? swapped[1] : src[s + 1];
         const b = swapped ? swapped[2] : src[s + 2];
