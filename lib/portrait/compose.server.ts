@@ -82,5 +82,16 @@ export function composePortrait(config: PortraitConfig): Buffer {
     }
   }
 
+  // Facing right is the same face mirrored, every layer together, so a scar
+  // or an earring swaps sides with the fringe rather than floating.
+  if (config.facing === "right") {
+    const row = Buffer.alloc(FRAME * 4);
+    for (let y = 0; y < FRAME; y++) {
+      const off = y * FRAME * 4;
+      out.copy(row, 0, off, off + FRAME * 4);
+      for (let x = 0; x < FRAME; x++) row.copy(out, off + x * 4, (FRAME - 1 - x) * 4, (FRAME - x) * 4);
+    }
+  }
+
   return PNG.sync.write(png);
 }

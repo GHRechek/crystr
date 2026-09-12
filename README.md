@@ -118,7 +118,9 @@ preview pinned to the top. 26 jaws, 26 eyes, 28 mouths, 16 noses, 15 brow
 sets, 14 ear shapes, 13 beards; hair as two controls, 27 backs and 27
 fronts; then scars (5), freckles and marks (8), horns (2), eyewear (7),
 jewellery (3, in two slots so a face can wear a nose ring and a brow ring at
-once), earrings (10). Colour pickers for skin, hair, eyes and background.
+once), earrings (10); and FACING, left as drawn or mirrored right — the whole
+composed frame flips, so every layer swaps sides together. Colour pickers
+for skin, hair, eyes and background.
 
 The source is fifteen 128x128 sheets on a 6-wide grid, and cells line up **by
 grid position across sheets**: `HairBack/07` is the back of the same hairstyle

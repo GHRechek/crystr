@@ -195,8 +195,16 @@ export const SHEET_ORDER = [
   "LayeredAccessories",
 ];
 
-/** The tool's own controls, in the order it lists them. */
-export const CONTROLS: { key: string; label: string; optional?: boolean }[] = [
+/** The tool's own controls, in the order it lists them. `names` gives an
+ *  option a word in the builder instead of a number, where numbers would
+ *  mean nothing. */
+export const CONTROLS: {
+  key: string;
+  label: string;
+  optional?: boolean;
+  names?: Record<string, string>;
+}[] = [
+  { key: "facing", label: "FACING", names: { left: "LEFT", right: "RIGHT" } },
   { key: "jaw", label: "JAW" },
   { key: "ears", label: "EARS" },
   { key: "eyes", label: "EYES" },
@@ -235,6 +243,8 @@ export const ALLOWED: Record<string, string[]> = (() => {
   out.hair_colour = HAIR_CHOICES;
   out.eye = EYE_CHOICES;
   out.bg = BG_CHOICES;
+  // The art is drawn facing left; "right" mirrors the whole composed frame.
+  out.facing = ["left", "right"];
   return out;
 })();
 
@@ -367,7 +377,7 @@ const PACK_ORDER = Object.keys(ALLOWED).sort();
  *  the crop, the art. Faces are cached immutably for a year, and the packed
  *  spec only describes the config, so without this a fixed renderer keeps
  *  serving the broken picture out of everyone's browser cache. */
-export const RENDER = "13";
+export const RENDER = "14";
 
 export function packPortrait(config: PortraitConfig): string {
   const c = normalizePortrait(config);

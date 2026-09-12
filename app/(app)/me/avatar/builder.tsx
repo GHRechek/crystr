@@ -172,7 +172,9 @@ export function AvatarBuilder({ start, fresh }: { start: PortraitConfig; fresh: 
               className="px"
               style={{ fontSize: 9, color: "var(--muted)", width: 46, textAlign: "center" }}
             >
-              {c[control.key] === NONE ? "NONE" : `${at + 1 - optionals}/${list.length - optionals}`}
+              {c[control.key] === NONE
+                ? "NONE"
+                : control.names?.[c[control.key]] ?? `${at + 1 - optionals}/${list.length - optionals}`}
             </div>
             <button
               type="button"
