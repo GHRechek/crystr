@@ -1431,6 +1431,44 @@ export const OPTIONS: Record<string, PortraitOption[]> = {
       ]
     }
   ],
+  "eyeshadow": [
+    {
+      "id": "smoky",
+      "cells": [
+        "Eyeshadow/smoky-{eyes}"
+      ]
+    },
+    {
+      "id": "violet",
+      "cells": [
+        "Eyeshadow/violet-{eyes}"
+      ]
+    },
+    {
+      "id": "blue",
+      "cells": [
+        "Eyeshadow/blue-{eyes}"
+      ]
+    },
+    {
+      "id": "gold",
+      "cells": [
+        "Eyeshadow/gold-{eyes}"
+      ]
+    },
+    {
+      "id": "green",
+      "cells": [
+        "Eyeshadow/green-{eyes}"
+      ]
+    },
+    {
+      "id": "rose",
+      "cells": [
+        "Eyeshadow/rose-{eyes}"
+      ]
+    }
+  ],
   "jewellery2": [
     {
       "id": "01",

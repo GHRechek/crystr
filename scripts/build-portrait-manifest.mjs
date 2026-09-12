@@ -115,14 +115,25 @@ for (const [key, options] of Object.entries(PICKS)) {
   }
   manifest[key] = options;
 }
-// Templated cells are checked against every ear.
-for (const o of EARRINGS) {
-  for (const ear of idx("EarsFront")) {
-    const c = o.cells[0].replace("{ears}", ear);
-    if (!existsSync(join(ROOT, `${c}.png`))) throw new Error(`earrings/${o.id}: no such cell ${c}`);
+/** Eyeshadow is a tint on the lid, and the lid moves with the eye shape, so
+ *  scripts/build-eyeshadow.mjs draws one cell per (colour, eyes). */
+const EYESHADOW = ["smoky", "violet", "blue", "gold", "green", "rose"].map((colour) => ({
+  id: colour,
+  cells: [`Eyeshadow/${colour}-{eyes}`],
+}));
+
+// Templated cells are checked against every value of the control they follow.
+const checkTemplated = (key, options, token, dir) => {
+  for (const o of options) {
+    for (const v of idx(dir)) {
+      const c = o.cells[0].replace(`{${token}}`, v);
+      if (!existsSync(join(ROOT, `${c}.png`))) throw new Error(`${key}/${o.id}: no such cell ${c}`);
+    }
   }
-}
-manifest.earrings = EARRINGS;
+  manifest[key] = options;
+};
+checkTemplated("earrings", EARRINGS, "ears", "EarsFront");
+checkTemplated("eyeshadow", EYESHADOW, "eyes", "Eyes");
 // A second jewellery slot draws from the same cells, so a face can wear two.
 manifest.jewellery2 = manifest.jewellery;
 

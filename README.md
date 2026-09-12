@@ -118,9 +118,9 @@ preview pinned to the top. 26 jaws, 26 eyes, 28 mouths, 16 noses, 15 brow
 sets, 14 ear shapes, 13 beards; hair as two controls, 27 backs and 27
 fronts; then scars (5), freckles and marks (8), horns (2), eyewear (7),
 jewellery (3, in two slots so a face can wear a nose ring and a brow ring at
-once), earrings (10); and FACING, left as drawn or mirrored right — the whole
-composed frame flips, so every layer swaps sides together. Colour pickers
-for skin, hair, eyes and background.
+once), earrings (10), eyeshadow (6); and FACING, left as drawn or mirrored
+right — the whole composed frame flips, so every layer swaps sides together.
+Colour pickers for skin, hair, eyes and background.
 
 The source is fifteen 128x128 sheets on a 6-wide grid, and cells line up **by
 grid position across sheets**: `HairBack/07` is the back of the same hairstyle
@@ -152,6 +152,14 @@ the lobe as the ear cell's lowest opaque row). The option's cell is a
 template — `Earrings/hoop-gold-{ears}` — and the compositor fills `{ears}`
 from the face, so the earring follows the ear. They draw right after
 `EarsFront`, under the hair, so a style that falls over the ear covers them.
+
+**Eyeshadow** works the same way, per eye shape: `scripts/build-eyeshadow.mjs`
+finds each Eyes cell's upper lash line (per column, the topmost dark pixel)
+and tints the four rows above it, strongest at the lashes and fading up. It's
+translucent, so the lid's own shading shows through. Six colours, drawn over
+the eye and under the brows. Lipstick and blush were mocked up alongside and
+not taken: lipstick worked (the lip tones re-ramp like hair does) but wasn't
+wanted; blush went muddy on the fantasy skins.
 
 **Below the jaw, nothing.** The sheets stop mid-neck — all 26 jaws end at the
 same 20px stub — and the portrait ends there too. A body and then a neck were

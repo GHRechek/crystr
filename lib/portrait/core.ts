@@ -186,6 +186,8 @@ export const SHEET_ORDER = [
   "Earrings",
   "Eyes",
   "pupils",
+  // A tint on the lid: over the eye, under the brows and the hair.
+  "Eyeshadow",
   "Eyebrows",
   "Noses",
   "Mouths",
@@ -227,6 +229,7 @@ export const CONTROLS: {
   { key: "jewellery", label: "JEWELLERY", optional: true },
   { key: "jewellery2", label: "MORE JEWELLERY", optional: true },
   { key: "earrings", label: "EARRINGS", optional: true },
+  { key: "eyeshadow", label: "EYESHADOW", optional: true },
 ];
 
 export const NONE = "none";
@@ -297,6 +300,7 @@ const ODDS: Record<string, number> = {
   hair_front: 90,
   beard: 22,
   earrings: 30,
+  eyeshadow: 25,
   scars: 12,
   blemishes: 35,
   horns: 8,
@@ -377,7 +381,7 @@ const PACK_ORDER = Object.keys(ALLOWED).sort();
  *  the crop, the art. Faces are cached immutably for a year, and the packed
  *  spec only describes the config, so without this a fixed renderer keeps
  *  serving the broken picture out of everyone's browser cache. */
-export const RENDER = "14";
+export const RENDER = "15";
 
 export function packPortrait(config: PortraitConfig): string {
   const c = normalizePortrait(config);
