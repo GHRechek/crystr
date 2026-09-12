@@ -4,7 +4,8 @@ export type PortraitOption = {
   /** The cell's grid index on the sheet it came from. */
   id: string;
   /** Every cell this option draws, as sheet/index. Order is decided by the
-   *  compositor's sheet order, not by this list. */
+   *  compositor's sheet order, not by this list. A cell may carry a {key}
+   *  token, filled from the face's own choice for that control. */
   cells: string[];
 };
 
@@ -878,193 +879,330 @@ export const OPTIONS: Record<string, PortraitOption[]> = {
       ]
     }
   ],
-  "hair": [
+  "hair_back": [
     {
       "id": "01",
       "cells": [
-        "HairBack/01",
+        "HairBack/01"
+      ]
+    },
+    {
+      "id": "02",
+      "cells": [
+        "HairBack/02"
+      ]
+    },
+    {
+      "id": "03",
+      "cells": [
+        "HairBack/03"
+      ]
+    },
+    {
+      "id": "04",
+      "cells": [
+        "HairBack/04"
+      ]
+    },
+    {
+      "id": "05",
+      "cells": [
+        "HairBack/05"
+      ]
+    },
+    {
+      "id": "06",
+      "cells": [
+        "HairBack/06"
+      ]
+    },
+    {
+      "id": "07",
+      "cells": [
+        "HairBack/07"
+      ]
+    },
+    {
+      "id": "08",
+      "cells": [
+        "HairBack/08"
+      ]
+    },
+    {
+      "id": "09",
+      "cells": [
+        "HairBack/09"
+      ]
+    },
+    {
+      "id": "10",
+      "cells": [
+        "HairBack/10"
+      ]
+    },
+    {
+      "id": "11",
+      "cells": [
+        "HairBack/11"
+      ]
+    },
+    {
+      "id": "12",
+      "cells": [
+        "HairBack/12"
+      ]
+    },
+    {
+      "id": "13",
+      "cells": [
+        "HairBack/13"
+      ]
+    },
+    {
+      "id": "14",
+      "cells": [
+        "HairBack/14"
+      ]
+    },
+    {
+      "id": "15",
+      "cells": [
+        "HairBack/15"
+      ]
+    },
+    {
+      "id": "16",
+      "cells": [
+        "HairBack/16"
+      ]
+    },
+    {
+      "id": "17",
+      "cells": [
+        "HairBack/17"
+      ]
+    },
+    {
+      "id": "18",
+      "cells": [
+        "HairBack/18"
+      ]
+    },
+    {
+      "id": "19",
+      "cells": [
+        "HairBack/19"
+      ]
+    },
+    {
+      "id": "20",
+      "cells": [
+        "HairBack/20"
+      ]
+    },
+    {
+      "id": "21",
+      "cells": [
+        "HairBack/21"
+      ]
+    },
+    {
+      "id": "22",
+      "cells": [
+        "HairBack/22"
+      ]
+    },
+    {
+      "id": "23",
+      "cells": [
+        "HairBack/23"
+      ]
+    },
+    {
+      "id": "24",
+      "cells": [
+        "HairBack/24"
+      ]
+    },
+    {
+      "id": "25",
+      "cells": [
+        "HairBack/25"
+      ]
+    },
+    {
+      "id": "26",
+      "cells": [
+        "HairBack/26"
+      ]
+    },
+    {
+      "id": "27",
+      "cells": [
+        "HairBack/27"
+      ]
+    }
+  ],
+  "hair_front": [
+    {
+      "id": "01",
+      "cells": [
         "HairFront/01"
       ]
     },
     {
       "id": "02",
       "cells": [
-        "HairBack/02",
         "HairFront/02"
       ]
     },
     {
       "id": "03",
       "cells": [
-        "HairBack/03",
         "HairFront/03"
       ]
     },
     {
       "id": "04",
       "cells": [
-        "HairBack/04",
         "HairFront/04"
       ]
     },
     {
       "id": "05",
       "cells": [
-        "HairBack/05",
         "HairFront/05"
       ]
     },
     {
       "id": "06",
       "cells": [
-        "HairBack/06",
         "HairFront/06"
       ]
     },
     {
       "id": "07",
       "cells": [
-        "HairBack/07",
         "HairFront/07"
       ]
     },
     {
       "id": "08",
       "cells": [
-        "HairBack/08",
         "HairFront/08"
       ]
     },
     {
       "id": "09",
       "cells": [
-        "HairBack/09",
         "HairFront/09"
       ]
     },
     {
       "id": "10",
       "cells": [
-        "HairBack/10",
         "HairFront/10"
       ]
     },
     {
       "id": "11",
       "cells": [
-        "HairBack/11",
         "HairFront/11"
       ]
     },
     {
       "id": "12",
       "cells": [
-        "HairBack/12",
         "HairFront/12"
       ]
     },
     {
       "id": "13",
       "cells": [
-        "HairBack/13",
         "HairFront/13"
       ]
     },
     {
       "id": "14",
       "cells": [
-        "HairBack/14",
         "HairFront/14"
       ]
     },
     {
       "id": "15",
       "cells": [
-        "HairBack/15",
         "HairFront/15"
       ]
     },
     {
       "id": "16",
       "cells": [
-        "HairBack/16",
         "HairFront/16"
       ]
     },
     {
       "id": "17",
       "cells": [
-        "HairBack/17",
         "HairFront/17"
       ]
     },
     {
       "id": "18",
       "cells": [
-        "HairBack/18",
         "HairFront/18"
       ]
     },
     {
       "id": "19",
       "cells": [
-        "HairBack/19",
         "HairFront/19"
       ]
     },
     {
       "id": "20",
       "cells": [
-        "HairBack/20",
         "HairFront/20"
       ]
     },
     {
       "id": "21",
       "cells": [
-        "HairBack/21",
         "HairFront/21"
       ]
     },
     {
       "id": "22",
       "cells": [
-        "HairBack/22",
         "HairFront/22"
       ]
     },
     {
       "id": "23",
       "cells": [
-        "HairBack/23",
         "HairFront/23"
       ]
     },
     {
       "id": "24",
       "cells": [
-        "HairBack/24",
         "HairFront/24"
       ]
     },
     {
       "id": "25",
       "cells": [
-        "HairBack/25",
         "HairFront/25"
       ]
     },
     {
       "id": "26",
       "cells": [
-        "HairBack/26",
         "HairFront/26"
       ]
     },
     {
       "id": "27",
       "cells": [
-        "HairBack/27",
         "HairFront/27"
       ]
     }
@@ -1228,6 +1366,68 @@ export const OPTIONS: Record<string, PortraitOption[]> = {
       "id": "12",
       "cells": [
         "AccessoriesBelowBeard/12"
+      ]
+    }
+  ],
+  "earrings": [
+    {
+      "id": "stud-silver",
+      "cells": [
+        "Earrings/stud-silver-{ears}"
+      ]
+    },
+    {
+      "id": "stud-gold",
+      "cells": [
+        "Earrings/stud-gold-{ears}"
+      ]
+    },
+    {
+      "id": "hoop-silver",
+      "cells": [
+        "Earrings/hoop-silver-{ears}"
+      ]
+    },
+    {
+      "id": "hoop-gold",
+      "cells": [
+        "Earrings/hoop-gold-{ears}"
+      ]
+    },
+    {
+      "id": "bighoop-silver",
+      "cells": [
+        "Earrings/bighoop-silver-{ears}"
+      ]
+    },
+    {
+      "id": "bighoop-gold",
+      "cells": [
+        "Earrings/bighoop-gold-{ears}"
+      ]
+    },
+    {
+      "id": "drop-silver",
+      "cells": [
+        "Earrings/drop-silver-{ears}"
+      ]
+    },
+    {
+      "id": "drop-gold",
+      "cells": [
+        "Earrings/drop-gold-{ears}"
+      ]
+    },
+    {
+      "id": "dangle-silver",
+      "cells": [
+        "Earrings/dangle-silver-{ears}"
+      ]
+    },
+    {
+      "id": "dangle-gold",
+      "cells": [
+        "Earrings/dangle-gold-{ears}"
       ]
     }
   ],

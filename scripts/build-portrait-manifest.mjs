@@ -37,8 +37,23 @@ const GROUPS = {
   nose: { lead: "Noses", also: [] },
   mouth: { lead: "Mouths", also: [] },
   beard: { lead: "Beards", also: [] },
-  hair: { lead: "HairBack", also: ["HairFront"] },
+  // Hair is two controls, not one: the back (length and volume) and the
+  // front (hairline and fringe) are separate sheets, and choosing them
+  // separately gives 27 x 27 styles for the price of 27. The tool paired them
+  // by index; the builder still steps them together until you split them.
+  hair_back: { lead: "HairBack", also: [] },
+  hair_front: { lead: "HairFront", also: [] },
 };
+
+/** Earrings hang from the lobe, and the lobe moves with the ear shape, so
+ *  scripts/build-earrings.mjs draws one cell per (design, metal, ear). The
+ *  option's cell is a template: the compositor fills {ears} from the face. */
+const EARRINGS = ["stud", "hoop", "bighoop", "drop", "dangle"].flatMap((design) =>
+  ["silver", "gold"].map((metal) => ({
+    id: `${design}-${metal}`,
+    cells: [`Earrings/${design}-${metal}-{ears}`],
+  })),
+);
 
 /** Controls built from named cells, one entry per option. Each id is the
  *  cell's grid index on the sheet it came from, so the art stays traceable.
@@ -100,6 +115,14 @@ for (const [key, options] of Object.entries(PICKS)) {
   }
   manifest[key] = options;
 }
+// Templated cells are checked against every ear.
+for (const o of EARRINGS) {
+  for (const ear of idx("EarsFront")) {
+    const c = o.cells[0].replace("{ears}", ear);
+    if (!existsSync(join(ROOT, `${c}.png`))) throw new Error(`earrings/${o.id}: no such cell ${c}`);
+  }
+}
+manifest.earrings = EARRINGS;
 // A second jewellery slot draws from the same cells, so a face can wear two.
 manifest.jewellery2 = manifest.jewellery;
 
@@ -109,7 +132,8 @@ export type PortraitOption = {
   /** The cell's grid index on the sheet it came from. */
   id: string;
   /** Every cell this option draws, as sheet/index. Order is decided by the
-   *  compositor's sheet order, not by this list. */
+   *  compositor's sheet order, not by this list. A cell may carry a {key}
+   *  token, filled from the face's own choice for that control. */
   cells: string[];
 };
 

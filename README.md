@@ -114,11 +114,11 @@ The repo is linked to the `crystr` Vercel project on the VLVT team. Pushing to
 
 `/me/avatar` builds a face from the Portrait Maker sprite sheets, in a UI that
 mirrors the tool the art was drawn for — shape steppers and colour swatches,
-preview pinned to the top. 26 jaws, 26 eyes, 28 mouths, 27 hairstyles, 16
-noses, 15 brow sets, 14 ear shapes, 13 beards; then scars (5), freckles and
-marks (8), horns (2), eyewear (7), jewellery (3, in two slots so a face can
-wear a nose ring and a brow ring at once). Colour pickers for skin, hair,
-eyes and background.
+preview pinned to the top. 26 jaws, 26 eyes, 28 mouths, 16 noses, 15 brow
+sets, 14 ear shapes, 13 beards; hair as two controls, 27 backs and 27
+fronts; then scars (5), freckles and marks (8), horns (2), eyewear (7),
+jewellery (3, in two slots so a face can wear a nose ring and a brow ring at
+once), earrings (10). Colour pickers for skin, hair, eyes and background.
 
 The source is fifteen 128x128 sheets on a 6-wide grid, and cells line up **by
 grid position across sheets**: `HairBack/07` is the back of the same hairstyle
@@ -133,6 +133,23 @@ freckles. Those two sheets are read cell by cell instead and sorted into their
 own controls, and the compositor lets one sheet contribute several cells to a
 face. Run `node scripts/build-portrait-manifest.mjs` after changing the asset
 set.
+
+**Hair is two controls.** `HairBack` is length and volume, `HairFront` is
+hairline and fringe, and the tool paired them by index. Chosen separately
+they give 27 × 27 styles for the price of 27 — every one of them the
+artist's own pixels. The builder keeps the originals one tap away: while
+back and front match, stepping the back moves the front with it; change the
+front on its own and they stay split. Faces nobody has built keep the
+artist's pairings 70% of the time so the feed doesn't fill with blunt bangs
+on afros. A face saved when hair was one control maps its id to both.
+
+**Earrings** are the one thing drawn rather than sliced: five designs in two
+metals, a handful of pixels each in the sheets' own metal tones, hung from
+the lobe of each of the 14 ear shapes (`scripts/build-earrings.mjs` finds
+the lobe as the ear cell's lowest opaque row). The option's cell is a
+template — `Earrings/hoop-gold-{ears}` — and the compositor fills `{ears}`
+from the face, so the earring follows the ear. They draw right after
+`EarsFront`, under the hair, so a style that falls over the ear covers them.
 
 **Below the jaw, nothing.** The sheets stop mid-neck — all 26 jaws end at the
 same 20px stub — and the portrait ends there too. A body and then a neck were

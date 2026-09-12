@@ -34,7 +34,14 @@ export function AvatarBuilder({ start, fresh }: { start: PortraitConfig; fresh: 
       const list = ALLOWED[key];
       const at = Math.max(0, list.indexOf(prev[key]));
       const next = (((at + by) % list.length) + list.length) % list.length;
-      return { ...prev, [key]: list[next] };
+      const out = { ...prev, [key]: list[next] };
+      // Stepping the back of the hair walks through the artist's own 27
+      // styles: while back and front match, the front moves with it. Change
+      // the front on its own and they stay split.
+      if (key === "hair_back" && prev.hair_front === prev.hair_back) {
+        out.hair_front = ALLOWED.hair_front.includes(out.hair_back) ? out.hair_back : NONE;
+      }
+      return out;
     });
 
   return (

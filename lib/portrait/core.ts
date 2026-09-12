@@ -160,6 +160,8 @@ export const SHEET_ORDER = [
   "EarsBack",
   "Jaws",
   "EarsFront",
+  // On the ear, under the hair: a style that falls over the ear covers them.
+  "Earrings",
   "Eyes",
   "pupils",
   "Eyebrows",
@@ -179,7 +181,11 @@ export const CONTROLS: { key: string; label: string; optional?: boolean }[] = [
   { key: "eyebrows", label: "EYEBROWS", optional: true },
   { key: "nose", label: "NOSE" },
   { key: "mouth", label: "MOUTH" },
-  { key: "hair", label: "HAIR", optional: true },
+  // The tool's one HAIR control, split: the back is length and volume, the
+  // front is hairline and fringe. They pair by index for the 27 original
+  // styles, and the builder steps them together until you split them.
+  { key: "hair_back", label: "HAIR · BACK", optional: true },
+  { key: "hair_front", label: "HAIR · FRONT", optional: true },
   { key: "beard", label: "BEARD", optional: true },
   // The tool's one MISC control, taken apart. Its cells paired a skin mark
   // with a worn thing by grid index — an eye scar came with antlers, an
@@ -190,6 +196,7 @@ export const CONTROLS: { key: string; label: string; optional?: boolean }[] = [
   { key: "eyewear", label: "EYEWEAR", optional: true },
   { key: "jewellery", label: "JEWELLERY", optional: true },
   { key: "jewellery2", label: "MORE JEWELLERY", optional: true },
+  { key: "earrings", label: "EARRINGS", optional: true },
 ];
 
 export const NONE = "none";
@@ -215,12 +222,18 @@ export function defaultPortrait(): PortraitConfig {
   // A default face has eyebrows and hair and nothing else optional.
   for (const c of CONTROLS) if (c.optional) out[c.key] = NONE;
   out.eyebrows = ALLOWED.eyebrows[1] ?? NONE;
-  out.hair = ALLOWED.hair[1] ?? NONE;
+  out.hair_back = ALLOWED.hair_back[1] ?? NONE;
+  out.hair_front = out.hair_back;
   return out;
 }
 
 export function normalizePortrait(raw: unknown): PortraitConfig {
-  const c = (raw ?? {}) as Record<string, unknown>;
+  const c = { ...((raw ?? {}) as Record<string, unknown>) };
+  // Faces saved when hair was one control: its id was the pair's index.
+  if (typeof c.hair === "string" && c.hair_back === undefined && c.hair_front === undefined) {
+    c.hair_back = c.hair;
+    c.hair_front = c.hair;
+  }
   const out = defaultPortrait();
   for (const [key, list] of Object.entries(ALLOWED)) {
     const v = c[key];
@@ -228,6 +241,10 @@ export function normalizePortrait(raw: unknown): PortraitConfig {
   }
   return out;
 }
+
+/** Faces nobody chose keep the artist's pairings most of the time, so the
+ *  feed doesn't fill up with blunt bangs on afros. */
+const MATCHED_HAIR_PCT = 70;
 
 function hash(s: string): number {
   let h = 2166136261;
@@ -244,8 +261,10 @@ function hash(s: string): number {
 /** How often an optional part turns up on a face nobody has chosen yet. */
 const ODDS: Record<string, number> = {
   eyebrows: 92,
-  hair: 90,
+  hair_back: 90,
+  hair_front: 90,
   beard: 22,
+  earrings: 30,
   scars: 12,
   blemishes: 35,
   horns: 8,
@@ -263,6 +282,7 @@ export function portraitFromId(id: string): PortraitConfig {
   for (const [key, pct] of Object.entries(ODDS)) {
     if (hash(`${id}#${key}`) % 100 >= pct) out[key] = NONE;
   }
+  if (hash(`${id}~hair`) % 100 < MATCHED_HAIR_PCT) matchHair(out);
   return out;
 }
 
@@ -273,7 +293,13 @@ export function randomPortrait(): PortraitConfig {
   for (const [key, pct] of Object.entries(ODDS)) {
     if (Math.random() * 100 >= pct) out[key] = NONE;
   }
+  if (Math.random() * 100 < MATCHED_HAIR_PCT) matchHair(out);
   return out;
+}
+
+/** Give the front the back's index, where that front exists. */
+function matchHair(c: PortraitConfig) {
+  if (c.hair_back !== NONE && ALLOWED.hair_front.includes(c.hair_back)) c.hair_front = c.hair_back;
 }
 
 /** Every image file this face needs, already in draw order. Several controls
@@ -295,7 +321,12 @@ export function drawPlan(config: PortraitConfig): string[] {
     const id = c[control.key];
     if (!id || id === NONE) continue;
     const option = (OPTIONS[control.key] ?? []).find((o: PortraitOption) => o.id === id);
-    for (const cell of option?.cells ?? []) want(cell);
+    // A {key} token in a cell name is filled from the face's own choice for
+    // that control — earrings are drawn per ear shape, so their cell depends
+    // on the ears.
+    for (const cell of option?.cells ?? []) {
+      want(cell.replace(/\{(\w+)\}/g, (_, key: string) => c[key] ?? NONE));
+    }
   }
 
   // The scalp is a single shape with no choice behind it.
@@ -314,7 +345,7 @@ const PACK_ORDER = Object.keys(ALLOWED).sort();
  *  the crop, the art. Faces are cached immutably for a year, and the packed
  *  spec only describes the config, so without this a fixed renderer keeps
  *  serving the broken picture out of everyone's browser cache. */
-export const RENDER = "11";
+export const RENDER = "12";
 
 export function packPortrait(config: PortraitConfig): string {
   const c = normalizePortrait(config);
