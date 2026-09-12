@@ -13,6 +13,7 @@ export function ProofForm({ quest, userId }: { quest: Quest; userId: string }) {
   const [stage, setStage] = useState<Stage>("empty");
   const [path, setPath] = useState("");
   const [note, setNote] = useState("");
+  const cameraRef = useRef<HTMLInputElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const waiting = !!quest.ready_at;
@@ -124,8 +125,12 @@ export function ProofForm({ quest, userId }: { quest: Quest; userId: string }) {
         </div>
       ) : null}
 
+      {/* Two inputs, because `capture` is all-or-nothing: with it the phone
+          opens straight into the camera and the library is unreachable,
+          without it you only ever get the library. The tile is the camera —
+          proof-of-artifact is meant to be taken there and then. */}
       <input
-        ref={fileRef}
+        ref={cameraRef}
         type="file"
         accept="image/*"
         capture="environment"
@@ -135,10 +140,20 @@ export function ProofForm({ quest, userId }: { quest: Quest; userId: string }) {
           if (f) void upload(f);
         }}
       />
+      <input
+        ref={fileRef}
+        type="file"
+        accept="image/*"
+        hidden
+        onChange={(e) => {
+          const f = e.target.files?.[0];
+          if (f) void upload(f);
+        }}
+      />
 
       <button
         type="button"
-        onClick={() => fileRef.current?.click()}
+        onClick={() => cameraRef.current?.click()}
         className="placeholder"
         style={{
           minHeight: 150,
@@ -173,6 +188,15 @@ export function ProofForm({ quest, userId }: { quest: Quest; userId: string }) {
         >
           {zone.hint}
         </div>
+      </button>
+
+      <button
+        type="button"
+        className="btn btn-sm"
+        style={{ alignSelf: "flex-start" }}
+        onClick={() => fileRef.current?.click()}
+      >
+        ▣ OR CHOOSE ONE YOU ALREADY TOOK
       </button>
 
       <div className="field">

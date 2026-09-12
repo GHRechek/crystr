@@ -43,7 +43,7 @@ export function ProfileHead({
             }}
             style={{ position: "absolute", left: 92, right: 16, bottom: 30 }}
           >
-            {mood || "…"}
+            <span>{mood || "…"}</span>
           </button>
         ) : null}
       </div>

@@ -4,12 +4,6 @@ import { useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { savePortrait, clearPortrait } from "@/lib/actions";
 
-/** Picrew can't be embedded — it refuses framing, and using it as this app's
- *  infrastructure isn't ours to do. Linking out is the supported shape: they
- *  make the face on the creator's own page, on the creator's terms, and bring
- *  the image back. */
-const PICREW = "https://picrew.me/en/image_maker/1698802";
-
 export function PortraitUpload({
   userId,
   current,
@@ -19,6 +13,7 @@ export function PortraitUpload({
 }) {
   const [stage, setStage] = useState<"idle" | "uploading" | "failed">("idle");
   const [path, setPath] = useState("");
+  const cameraRef = useRef<HTMLInputElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   async function upload(file: File) {
@@ -47,20 +42,24 @@ export function PortraitUpload({
         BRING YOUR OWN
       </div>
       <div style={{ fontSize: 11.5, lineHeight: 1.5, color: "var(--muted)" }}>
-        Make one on Picrew, save the image, and bring it back here. It replaces
-        the built face everywhere. Check the maker&apos;s own usage terms —
-        they vary by creator, and only you can agree to them.
+        Take one now, or bring one you drew or made somewhere else. Either
+        replaces the built face everywhere.
       </div>
 
-      <a
-        href={PICREW}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="btn btn-sm btn-purple"
-      >
-        ◈ MAKE ONE ON PICREW ↗
-      </a>
-
+      {/* `capture` is all-or-nothing — with it the phone goes straight to the
+          camera and the library is unreachable — so there are two inputs and
+          two buttons. "user" is the front camera, which is where a face is. */}
+      <input
+        ref={cameraRef}
+        type="file"
+        accept="image/*"
+        capture="user"
+        hidden
+        onChange={(e) => {
+          const f = e.target.files?.[0];
+          if (f) void upload(f);
+        }}
+      />
       <input
         ref={fileRef}
         type="file"
@@ -82,19 +81,36 @@ export function PortraitUpload({
             WEAR IT
           </button>
         </form>
-      ) : (
-        <button
-          type="button"
-          className="btn btn-sm"
-          onClick={() => fileRef.current?.click()}
-          disabled={stage === "uploading"}
-        >
-          {stage === "uploading"
-            ? "CARRYING IT OVER…"
-            : stage === "failed"
-              ? "IT DID NOT ARRIVE — TRY AGAIN"
-              : "▣ UPLOAD A PORTRAIT"}
+      ) : stage === "uploading" ? (
+        <button type="button" className="btn btn-sm" disabled>
+          CARRYING IT OVER…
         </button>
+      ) : (
+        <>
+          {stage === "failed" ? (
+            <div className="px" style={{ fontSize: 9, color: "var(--mag-soft)" }}>
+              IT DID NOT ARRIVE — TRY AGAIN
+            </div>
+          ) : null}
+          <div style={{ display: "flex", gap: 7 }}>
+            <button
+              type="button"
+              className="btn btn-sm btn-purple"
+              style={{ flex: 1 }}
+              onClick={() => cameraRef.current?.click()}
+            >
+              ◉ TAKE A PHOTO
+            </button>
+            <button
+              type="button"
+              className="btn btn-sm"
+              style={{ flex: 1 }}
+              onClick={() => fileRef.current?.click()}
+            >
+              ▣ UPLOAD
+            </button>
+          </div>
+        </>
       )}
 
       {current ? (

@@ -276,13 +276,22 @@ export function drawPlan(config: PortraitConfig): string[] {
 
 const PACK_ORDER = Object.keys(ALLOWED).sort();
 
+/** Bump this whenever the compositor changes — the palette, the draw order,
+ *  the crop, the art. Faces are cached immutably for a year, and the packed
+ *  spec only describes the config, so without this a fixed renderer keeps
+ *  serving the broken picture out of everyone's browser cache. */
+export const RENDER = "3";
+
 export function packPortrait(config: PortraitConfig): string {
   const c = normalizePortrait(config);
-  return PACK_ORDER.map((k) => ALLOWED[k].indexOf(c[k]).toString(36)).join(".");
+  return [RENDER, ...PACK_ORDER.map((k) => ALLOWED[k].indexOf(c[k]).toString(36))].join(".");
 }
 
 export function unpackPortrait(packed: string): PortraitConfig | null {
   const parts = packed.split(".");
+  // Links made before the render was versioned are one segment short; they
+  // still describe a real face, so draw it rather than 404.
+  if (parts.length === PACK_ORDER.length + 1) parts.shift();
   if (parts.length !== PACK_ORDER.length) return null;
   const out: PortraitConfig = {};
   for (let i = 0; i < PACK_ORDER.length; i++) {

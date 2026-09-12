@@ -725,6 +725,11 @@ select {
   line-height: 1.45;
   color: var(--text-2);
   cursor: pointer;
+}
+/* The truncation lives on the text, not the bubble — clipping the bubble
+   takes the tail with it, since the tail hangs outside the box. */
+.thought > span {
+  display: block;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
