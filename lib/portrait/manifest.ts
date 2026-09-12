@@ -1087,36 +1087,6 @@ export const OPTIONS: Record<string, PortraitOption[]> = {
       "cells": [
         "Shoulders/02"
       ]
-    },
-    {
-      "id": "03",
-      "cells": [
-        "Shoulders/03"
-      ]
-    },
-    {
-      "id": "04",
-      "cells": [
-        "Shoulders/04"
-      ]
-    },
-    {
-      "id": "05",
-      "cells": [
-        "Shoulders/05"
-      ]
-    },
-    {
-      "id": "06",
-      "cells": [
-        "Shoulders/06"
-      ]
-    },
-    {
-      "id": "07",
-      "cells": [
-        "Shoulders/07"
-      ]
     }
   ],
   "scars": [

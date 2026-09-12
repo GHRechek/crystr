@@ -117,7 +117,7 @@ mirrors the tool the art was drawn for — shape steppers and colour swatches,
 preview pinned to the top. 26 jaws, 26 eyes, 28 mouths, 27 hairstyles, 16
 noses, 15 brow sets, 14 ear shapes, 13 beards; then scars (5), freckles and
 marks (8), horns (2), eyewear (7), jewellery (3, in two slots so a face can
-wear a nose ring and a brow ring at once), and a shirt (8). Colour pickers for
+wear a nose ring and a brow ring at once), and a shirt (3). Colour pickers for
 skin, hair, eyes, shirt and background.
 
 The source is fifteen 128x128 sheets on a 6-wide grid, and cells line up **by
@@ -135,10 +135,12 @@ face. Run `node scripts/build-portrait-manifest.mjs` after changing the asset
 set.
 
 **The body.** The sheets have none: all 26 jaws stop mid-neck at the same
-twelve pixels. `scripts/build-shoulders.mjs` draws the eight shirts as
-144x144 cells — bare, crew, scoop, V, collar, turtleneck, tank, hood — in the
-sheets' own skin colours plus a five-step garment ramp that appears nowhere in
-the original art, so a shirt colour can never leak onto a face.
+twelve pixels. `scripts/build-shoulders.mjs` draws three shirts — crew,
+scoop, V — as 144x144 cells in the sheets' own skin colours plus a five-step
+garment ramp that appears nowhere in the original art, so a shirt colour can
+never leak onto a face. The body's neck is exactly the jaw's width where they
+meet, so the jaw's tapered last row reads as its edge rather than a notch,
+and bare skin is never lit past the face's base tone.
 
 **Recolouring.** The art is drawn in one fixed palette and the tool swaps
 specific colours for the player's choice — a replace shader, not a tint. That

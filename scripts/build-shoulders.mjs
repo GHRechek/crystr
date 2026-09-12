@@ -19,11 +19,16 @@ import { PNG } from "pngjs";
 const W = 144;
 const H = 144;
 
-/** Where the head lands in this frame. The jaw's neck stub is x 70..81. */
-const NECK_CX = 75;
+/** Where the head lands in this frame. Every jaw's neck is x 64..83 on its
+ *  second-to-last row and tapers to 70..81 on the last; the body's neck must
+ *  match the wider row exactly so that taper reads as the jaw's edge, not as
+ *  a notch, and nothing pokes out beside it. */
+const NECK_CX = 74;
+const NECK_HALF = 10;
+const JAW_BOTTOM = 115;
 const BODY_CX = 72;
 /** Top of the shoulders at the neck, and how far out they reach. */
-const NECK_BASE = 120;
+const NECK_BASE = 122;
 const REACH = 70;
 
 /** Skin, lightest to darkest, straight from the sheets. */
@@ -55,9 +60,10 @@ function inBody(x, y) {
   return y >= shoulderTop(dx);
 }
 
-/** The neck, widening into the shoulders. Jaws draws over most of it. */
+/** The neck: exactly the jaw's width until it clears the jaw, then widening
+ *  into the trapezius. Jaws draws over everything above JAW_BOTTOM. */
 function neckHalf(y) {
-  return 10 + clamp((y - 100) / 24) * 7;
+  return NECK_HALF + clamp((y - JAW_BOTTOM - 2) / (NECK_BASE + 4 - JAW_BOTTOM)) * 5;
 }
 function inNeck(x, y) {
   return y >= 96 && y <= NECK_BASE + 6 && Math.abs(x - NECK_CX) <= neckHalf(y);
@@ -68,46 +74,17 @@ function inNeck(x, y) {
 // True where skin shows instead of cloth.
 
 const NECKLINES = {
-  bare: () => true,
   crew: (x, y) => ((x - NECK_CX) / 21) ** 2 + ((y - 114) / 14) ** 2 < 1,
   scoop: (x, y) => ((x - NECK_CX) / 27) ** 2 + ((y - 112) / 22) ** 2 < 1,
   vee: (x, y) => Math.abs(x - NECK_CX) < 25 && y < 118 + (25 - Math.abs(x - NECK_CX)) * 1.2,
-  collar: (x, y) => ((x - NECK_CX) / 19) ** 2 + ((y - 114) / 13) ** 2 < 1,
-  turtle: () => false,
-  tank: (x, y) => {
-    const d = Math.abs(x - NECK_CX);
-    if (d < 25) return y < 140;
-    if (d < 45) return y < 130 - (d - 25) * 0.45;
-    return false;
-  },
-  hood: (x, y) => ((x - NECK_CX) / 20) ** 2 + ((y - 115) / 13) ** 2 < 1,
 };
 
-/** Cloth drawn on top of the garment: lapels, a cowl. Returns a shade nudge. */
-const TRIM = {
-  collar: (x, y) => {
-    const d = x - NECK_CX;
-    const drop = y - 112;
-    if (drop < 0 || drop > 30) return false;
-    const inner = 7 + drop * 0.42;
-    const outer = inner + 13 - drop * 0.18;
-    return Math.abs(d) > inner && Math.abs(d) < outer;
-  },
-  hood: (x, y) => {
-    const r = ((x - NECK_CX) / 42) ** 2 + ((y - 130) / 26) ** 2;
-    return r < 1 && r > 0.42 && y > 110;
-  },
-};
-
+/** Three plain necklines. There were eight — bare, collar, turtleneck, tank
+ *  and hood went; a shirt here is a colour and a neckline, not a costume. */
 const STYLES = [
-  { id: "00", neckline: "bare" },
-  { id: "01", neckline: "crew" },
-  { id: "02", neckline: "scoop" },
-  { id: "03", neckline: "vee" },
-  { id: "04", neckline: "collar", trim: "collar" },
-  { id: "05", neckline: "turtle" },
-  { id: "06", neckline: "tank" },
-  { id: "07", neckline: "hood", trim: "hood" },
+  { id: "00", neckline: "crew" },
+  { id: "01", neckline: "scoop" },
+  { id: "02", neckline: "vee" },
 ];
 
 // ----------------------------------------------------------------- light
@@ -154,7 +131,6 @@ function draw(style) {
   };
 
   const bareAt = NECKLINES[style.neckline];
-  const trimAt = style.trim ? TRIM[style.trim] : null;
 
   for (let y = 96; y < H; y++) {
     for (let x = 0; x < W; x++) {
@@ -162,32 +138,34 @@ function draw(style) {
       const neck = inNeck(x, y);
       if (!body && !neck) continue;
 
-      let s = stepAt(lum(x, y));
-
-      if (!body) {
-        // Bare neck above the shoulder line.
-        put(x, y, style.neckline === "turtle" ? CLOTH[clamp(s, 1, 4)] : SKIN[clamp(s, 0, 4)]);
-        continue;
+      if (!neck || !body) {
+        if (!body) {
+          // Bare neck between the jaw and the shoulder line. Continue what
+          // the jaw drew: flat base, with the shadow it carries down its
+          // right side.
+          const d = x - NECK_CX;
+          put(x, y, d > 7 ? SKIN[3] : d > 4 ? SKIN[2] : SKIN[1]);
+          continue;
+        }
       }
 
-      if (trimAt && trimAt(x, y)) {
-        put(x, y, CLOTH[clamp(s - 1, 0, 4)]);
-      } else if (bareAt(x, y)) {
-        put(x, y, SKIN[clamp(s, 0, 4)]);
+      if (bareAt(x, y)) {
+        // Skin is never lit past the face's own base tone — the jaw's neck is
+        // drawn flat base, and a chest brighter than the forehead reads as a
+        // different object. The lightest step is for cloth only.
+        put(x, y, SKIN[clamp(stepAt(lum(x, y) - 0.1), 1, 4)]);
       } else {
-        put(x, y, CLOTH[clamp(s, 0, 4)]);
+        put(x, y, CLOTH[clamp(stepAt(lum(x, y)), 0, 4)]);
       }
     }
   }
 
   // A dark seam where skin gives way to cloth, so a neckline reads as an edge
   // and not as a change of colour.
-  if (style.neckline !== "bare" && style.neckline !== "turtle") {
-    for (let y = 96; y < H - 1; y++) {
-      for (let x = 0; x < W; x++) {
-        if (!inBody(x, y) || !bareAt(x, y)) continue;
-        if (!bareAt(x, y + 1) && inBody(x, y + 1)) put(x, y, CLOTH[4]);
-      }
+  for (let y = 96; y < H - 1; y++) {
+    for (let x = 0; x < W; x++) {
+      if (!inBody(x, y) || !bareAt(x, y)) continue;
+      if (!bareAt(x, y + 1) && inBody(x, y + 1)) put(x, y, CLOTH[4]);
     }
   }
 
