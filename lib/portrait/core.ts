@@ -331,7 +331,7 @@ const PACK_ORDER = Object.keys(ALLOWED).sort();
  *  the crop, the art. Faces are cached immutably for a year, and the packed
  *  spec only describes the config, so without this a fixed renderer keeps
  *  serving the broken picture out of everyone's browser cache. */
-export const RENDER = "6";
+export const RENDER = "7";
 
 export function packPortrait(config: PortraitConfig): string {
   const c = normalizePortrait(config);

@@ -25,16 +25,23 @@ const ART = { x: 14, y: 4 };
 //                         true width, since a chin curves in over a neck
 //   src y=110: x 54..73   the chin's underside, curving in
 //   src y=111: x 60..71   the last row, tapered
-// The right edge holds x=73 straight for seven rows: that's the neck's far
-// silhouette, not a jawline. So the neck is the jaw's width at y=108 and
-// flush with that right edge, and the chin's curve sits on top of it.
+// The right edge holds x=73 straight for seven rows: that's where the artist
+// stopped, not where the neck ends. In a three-quarter view the far side of
+// the neck shows past the jawline, under the far ear (EarsBack sits at
+// x 80..103), turning away into shadow. So the neck runs from the jaw's left
+// edge to under that ear — about two-thirds of the head's width — and the
+// chin's curve sits on top of it.
 const NECK_LEFT = 48 + ART.x;
-const NECK_RIGHT = 73 + ART.x;
+const NECK_RIGHT = 81 + ART.x;
 const JAW_BOTTOM = 111 + ART.y;
+/** Right of this the neck is turning away from the light. */
+const NECK_TURN = 73 + ART.x;
 
-/** Where the shoulders begin, and how far they reach. */
+/** Where the shoulders begin, how wide the trapezius is before the slope
+ *  starts, and how far the shoulders reach. */
 const NECK_BASE = JAW_BOTTOM + 13;
-const REACH = 72;
+const TRAP = 28;
+const REACH = 52;
 const BODY_CX = FRAME / 2;
 const NECK_CX = (NECK_LEFT + NECK_RIGHT) / 2;
 
@@ -56,8 +63,8 @@ const clamp = (t, a = 0, b = 1) => Math.max(a, Math.min(b, t));
 /** The top edge of the body at a given distance from centre: the trapezius
  *  falling away from the neck, then the deltoid rounding off. */
 function shoulderTop(dx) {
-  const t = clamp((dx - 14) / REACH);
-  if (dx <= 14) return NECK_BASE;
+  if (dx <= TRAP) return NECK_BASE;
+  const t = clamp((dx - TRAP) / REACH);
   return NECK_BASE + 11 * Math.sqrt(t) + 5 * t ** 3;
 }
 
@@ -70,7 +77,7 @@ function inBody(x, y) {
 /** The neck: the jaw's full width, flaring into the trapezius as it nears
  *  the shoulders. Jaws draws over everything above JAW_BOTTOM. */
 function neckEdges(y) {
-  const flare = clamp((y - JAW_BOTTOM - 4) / (NECK_BASE - JAW_BOTTOM - 4)) ** 1.6 * 9;
+  const flare = clamp((y - JAW_BOTTOM - 3) / (NECK_BASE - JAW_BOTTOM - 3)) ** 1.5 * 8;
   return [NECK_LEFT - flare, NECK_RIGHT + flare];
 }
 function inNeck(x, y) {
@@ -83,12 +90,14 @@ function inNeck(x, y) {
 //
 // True where skin shows instead of cloth. Depths are below the shoulder line.
 
+// Each opening is as wide as the neck's base at the shoulder line, so the
+// collar sits around the neck rather than pinching it.
 const NECKLINES = {
-  crew: (x, y) => ((x - NECK_CX) / 22) ** 2 + ((y - (NECK_BASE - 8)) / 15) ** 2 < 1,
-  scoop: (x, y) => ((x - NECK_CX) / 28) ** 2 + ((y - (NECK_BASE - 10)) / 24) ** 2 < 1,
+  crew: (x, y) => ((x - NECK_CX) / 27) ** 2 + ((y - NECK_BASE) / 8) ** 2 < 1,
+  scoop: (x, y) => ((x - NECK_CX) / 31) ** 2 + ((y - NECK_BASE) / 17) ** 2 < 1,
   vee: (x, y) => {
     const d = Math.abs(x - NECK_CX);
-    return d < 26 && y < NECK_BASE - 2 + (26 - d) * 1.0;
+    return d < 30 && y < NECK_BASE + (30 - d) * 0.8;
   },
 };
 
@@ -135,7 +144,10 @@ function stepAt(l) {
 function neckTone(x, y) {
   const [l, r] = neckEdges(y);
   const t = (x - l) / Math.max(1, r - l);
-  let s = t < 0.55 ? 1 : t < 0.8 ? 2 : 3;
+  let s = t < 0.5 ? 1 : t < 0.72 ? 2 : 3;
+  // Past the jawline the neck is turning away: deepest shade, so it reads as
+  // the far side rather than as width stuck on.
+  if (x > NECK_TURN + 1) s = 4;
   if (y <= JAW_BOTTOM + 3) s += 1;
   return SKIN[clamp(s, 1, 4)];
 }
