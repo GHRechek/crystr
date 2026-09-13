@@ -883,163 +883,327 @@ export const OPTIONS: Record<string, PortraitOption[]> = {
     {
       "id": "01",
       "cells": [
-        "HairBack/01"
+        "HairSides/01"
       ]
     },
     {
       "id": "02",
       "cells": [
-        "HairBack/02"
+        "HairSides/02"
       ]
     },
     {
       "id": "03",
       "cells": [
-        "HairBack/03"
+        "HairSides/03"
       ]
     },
     {
       "id": "04",
       "cells": [
-        "HairBack/04"
+        "HairSides/04"
       ]
     },
     {
       "id": "05",
       "cells": [
-        "HairBack/05"
+        "HairSides/05"
       ]
     },
     {
       "id": "06",
       "cells": [
-        "HairBack/06"
+        "HairSides/06"
       ]
     },
     {
       "id": "07",
       "cells": [
-        "HairBack/07"
+        "HairSides/07"
       ]
     },
     {
       "id": "08",
       "cells": [
-        "HairBack/08"
+        "HairSides/08"
       ]
     },
     {
       "id": "09",
       "cells": [
-        "HairBack/09"
+        "HairSides/09"
       ]
     },
     {
       "id": "10",
       "cells": [
-        "HairBack/10"
+        "HairSides/10"
       ]
     },
     {
       "id": "11",
       "cells": [
-        "HairBack/11"
+        "HairSides/11"
       ]
     },
     {
       "id": "12",
       "cells": [
-        "HairBack/12"
+        "HairSides/12"
       ]
     },
     {
       "id": "13",
       "cells": [
-        "HairBack/13"
+        "HairSides/13"
       ]
     },
     {
       "id": "14",
       "cells": [
-        "HairBack/14"
+        "HairSides/14"
       ]
     },
     {
       "id": "15",
       "cells": [
-        "HairBack/15"
+        "HairSides/15"
       ]
     },
     {
       "id": "16",
       "cells": [
-        "HairBack/16"
+        "HairSides/16"
       ]
     },
     {
       "id": "17",
       "cells": [
-        "HairBack/17"
+        "HairSides/17"
       ]
     },
     {
       "id": "18",
       "cells": [
-        "HairBack/18"
+        "HairSides/18"
       ]
     },
     {
       "id": "19",
       "cells": [
-        "HairBack/19"
+        "HairSides/19"
       ]
     },
     {
       "id": "20",
       "cells": [
-        "HairBack/20"
+        "HairSides/20"
       ]
     },
     {
       "id": "21",
       "cells": [
-        "HairBack/21"
+        "HairSides/21"
       ]
     },
     {
       "id": "22",
       "cells": [
-        "HairBack/22"
+        "HairSides/22"
       ]
     },
     {
       "id": "23",
       "cells": [
-        "HairBack/23"
+        "HairSides/23"
       ]
     },
     {
       "id": "24",
       "cells": [
-        "HairBack/24"
+        "HairSides/24"
       ]
     },
     {
       "id": "25",
       "cells": [
-        "HairBack/25"
+        "HairSides/25"
       ]
     },
     {
       "id": "26",
       "cells": [
-        "HairBack/26"
+        "HairSides/26"
       ]
     },
     {
       "id": "27",
       "cells": [
-        "HairBack/27"
+        "HairSides/27"
+      ]
+    }
+  ],
+  "crown": [
+    {
+      "id": "01",
+      "cells": [
+        "HairCrown/01"
+      ]
+    },
+    {
+      "id": "02",
+      "cells": [
+        "HairCrown/02"
+      ]
+    },
+    {
+      "id": "03",
+      "cells": [
+        "HairCrown/03"
+      ]
+    },
+    {
+      "id": "04",
+      "cells": [
+        "HairCrown/04"
+      ]
+    },
+    {
+      "id": "05",
+      "cells": [
+        "HairCrown/05"
+      ]
+    },
+    {
+      "id": "06",
+      "cells": [
+        "HairCrown/06"
+      ]
+    },
+    {
+      "id": "07",
+      "cells": [
+        "HairCrown/07"
+      ]
+    },
+    {
+      "id": "08",
+      "cells": [
+        "HairCrown/08"
+      ]
+    },
+    {
+      "id": "09",
+      "cells": [
+        "HairCrown/09"
+      ]
+    },
+    {
+      "id": "10",
+      "cells": [
+        "HairCrown/10"
+      ]
+    },
+    {
+      "id": "11",
+      "cells": [
+        "HairCrown/11"
+      ]
+    },
+    {
+      "id": "12",
+      "cells": [
+        "HairCrown/12"
+      ]
+    },
+    {
+      "id": "13",
+      "cells": [
+        "HairCrown/13"
+      ]
+    },
+    {
+      "id": "14",
+      "cells": [
+        "HairCrown/14"
+      ]
+    },
+    {
+      "id": "15",
+      "cells": [
+        "HairCrown/15"
+      ]
+    },
+    {
+      "id": "16",
+      "cells": [
+        "HairCrown/16"
+      ]
+    },
+    {
+      "id": "17",
+      "cells": [
+        "HairCrown/17"
+      ]
+    },
+    {
+      "id": "18",
+      "cells": [
+        "HairCrown/18"
+      ]
+    },
+    {
+      "id": "19",
+      "cells": [
+        "HairCrown/19"
+      ]
+    },
+    {
+      "id": "20",
+      "cells": [
+        "HairCrown/20"
+      ]
+    },
+    {
+      "id": "21",
+      "cells": [
+        "HairCrown/21"
+      ]
+    },
+    {
+      "id": "22",
+      "cells": [
+        "HairCrown/22"
+      ]
+    },
+    {
+      "id": "23",
+      "cells": [
+        "HairCrown/23"
+      ]
+    },
+    {
+      "id": "24",
+      "cells": [
+        "HairCrown/24"
+      ]
+    },
+    {
+      "id": "25",
+      "cells": [
+        "HairCrown/25"
+      ]
+    },
+    {
+      "id": "26",
+      "cells": [
+        "HairCrown/26"
+      ]
+    },
+    {
+      "id": "27",
+      "cells": [
+        "HairCrown/27"
       ]
     }
   ],
@@ -1490,3 +1654,7 @@ export const OPTIONS: Record<string, PortraitOption[]> = {
     }
   ]
 };
+
+/** For each hair back (sides), the crowns that sit on it without a seam —
+ *  its own first. Decided by scripts/build-hair-crown.mjs. */
+export const CROWNS: Record<string, string[]> = {"10":["10","09","16"],"11":["11","03","12","13","18","19","25","26"],"12":["12","03","11","13","18","19","25","26"],"13":["13","03","11","12","18","19","25","26"],"14":["14"],"15":["15","09","10","16"],"16":["16","09","10","15"],"17":["17","05","07"],"18":["18","03","11","12","13","19","25","26"],"19":["19","03","11","12","13","18","25","26"],"20":["20"],"21":["21"],"22":["22"],"23":["23","24"],"24":["24","23"],"25":["25","03","11","12","13","18","19","26"],"26":["26","03","11","12","13","18","19","25"],"27":["27"],"01":["01"],"02":["02"],"03":["03","11","12","13","18","19","25","26"],"04":["04"],"05":["05","07","17"],"06":["06"],"07":["07","05","17"],"08":["08"],"09":["09","10","16"]};

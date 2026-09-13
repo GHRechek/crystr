@@ -115,8 +115,8 @@ The repo is linked to the `crystr` Vercel project on the VLVT team. Pushing to
 `/me/avatar` builds a face from the Portrait Maker sprite sheets, in a UI that
 mirrors the tool the art was drawn for — shape steppers and colour swatches,
 preview pinned to the top. 26 jaws, 26 eyes, 28 mouths, 16 noses, 15 brow
-sets, 14 ear shapes, 13 beards; hair as two controls, 27 backs and 27
-fronts; then scars (5), freckles and marks (8), horns (2), eyewear (7),
+sets, 14 ear shapes, 13 beards; hair as three controls, 27 backs, 27
+crowns and 27 fronts; then scars (5), freckles and marks (8), horns (2), eyewear (7),
 jewellery (3, in two slots so a face can wear a nose ring and a brow ring at
 once), earrings (10), eyeshadow (6); and FACING, left as drawn or mirrored
 right — the whole composed frame flips, so every layer swaps sides together.
@@ -136,7 +136,7 @@ own controls, and the compositor lets one sheet contribute several cells to a
 face. Run `node scripts/build-portrait-manifest.mjs` after changing the asset
 set.
 
-**Hair is two controls.** `HairBack` is length and volume, `HairFront` is
+**Hair is three controls.** `HairBack` is sides and length, `HairFront` is
 hairline and fringe, and the tool paired them by index. Chosen separately
 they give 27 × 27 styles for the price of 27 — every one of them the
 artist's own pixels. The builder keeps the originals one tap away: while
@@ -144,6 +144,22 @@ back and front match, stepping the back moves the front with it; change the
 front on its own and they stay split. Faces nobody has built keep the
 artist's pairings 70% of the time so the feed doesn't fill with blunt bangs
 on afros. A face saved when hair was one control maps its id to both.
+
+The third, CROWN, is the top of the head, and it isn't a sheet: the artist
+painted crown, sides and length as one piece on the back sheet, so
+`scripts/build-hair-crown.mjs` cuts every back cell along one fixed line
+(above the skull's midline is crown; below it, outside the skull's columns
+and under it, is sides) into `HairCrown/NN` and `HairSides/NN`, which add
+back up to the original exactly. Two shapes painted for different
+silhouettes don't agree along that line — a bob's crown over a curly side
+shows a step — so the script scores every crown against every sides along
+the part of the cut the face doesn't cover, and only pairs whose
+silhouettes meet within three pixels and whose shading doesn't jump across
+it are offered: 74 beyond the artist's own 27, mostly the short cuts
+trading tops and the bun going over a braid. The pairs live in
+`assets/portrait/_crown-pairs.json` and the manifest as `CROWNS`; the
+CROWN stepper walks only through the crowns that sit on the current back,
+and a face whose saved crown no longer does wears its back's own.
 
 **Earrings** are the one thing drawn rather than sliced: five designs in two
 metals, a handful of pixels each in the sheets' own metal tones, hung from

@@ -12,7 +12,7 @@
 // got antlers welded to an eye scar and an eyepatch welded to freckles. Here
 // those sheets are read cell by cell and sorted into their own controls, so
 // horns, scars, glasses, blemishes and jewellery are chosen separately.
-import { readdirSync, writeFileSync, existsSync } from "node:fs";
+import { readdirSync, readFileSync, writeFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 
 const ROOT = "assets/portrait";
@@ -37,13 +37,20 @@ const GROUPS = {
   nose: { lead: "Noses", also: [] },
   mouth: { lead: "Mouths", also: [] },
   beard: { lead: "Beards", also: [] },
-  // Hair is two controls, not one: the back (length and volume) and the
+  // Hair is three controls, not one. The back (length and volume) and the
   // front (hairline and fringe) are separate sheets, and choosing them
-  // separately gives 27 x 27 styles for the price of 27. The tool paired them
-  // by index; the builder still steps them together until you split them.
-  hair_back: { lead: "HairBack", also: [] },
+  // separately gives 27 x 27 styles for the price of 27. The crown is cut
+  // from the back sheet by scripts/build-hair-crown.mjs — HairSides is the
+  // back cell minus its top, HairCrown is that top — and which crowns sit on
+  // which sides without a seam is decided there too. The tool paired all of
+  // it by index; the builder still steps them together until you split them.
+  hair_back: { lead: "HairSides", also: [] },
+  crown: { lead: "HairCrown", also: [] },
   hair_front: { lead: "HairFront", also: [] },
 };
+
+/** sides id -> the crown ids that sit on it cleanly (its own first). */
+const CROWNS = JSON.parse(readFileSync(join(ROOT, "_crown-pairs.json"), "utf8"));
 
 /** Earrings hang from the lobe, and the lobe moves with the ear shape, so
  *  scripts/build-earrings.mjs draws one cell per (design, metal, ear). The
@@ -149,6 +156,10 @@ export type PortraitOption = {
 };
 
 export const OPTIONS: Record<string, PortraitOption[]> = ${JSON.stringify(manifest, null, 2)};
+
+/** For each hair back (sides), the crowns that sit on it without a seam —
+ *  its own first. Decided by scripts/build-hair-crown.mjs. */
+export const CROWNS: Record<string, string[]> = ${JSON.stringify(CROWNS)};
 `;
 
 writeFileSync("lib/portrait/manifest.ts", body);

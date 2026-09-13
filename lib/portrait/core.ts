@@ -1,4 +1,4 @@
-import { OPTIONS, type PortraitOption } from "./manifest";
+import { CROWNS, OPTIONS, type PortraitOption } from "./manifest";
 
 // Portraits are layered 128x128 art from the Portrait Maker sprite sheets.
 //
@@ -201,7 +201,10 @@ export const SHEET_ORDER = [
   // The scalp is the back of the skull, so it goes under everything — draw it
   // after the back hair and it sits on top of the hair.
   "Cranium",
-  "HairBack",
+  // The back sheet, cut in two: the sides and length, then the crown. They
+  // never overlap, so the order between them is moot.
+  "HairSides",
+  "HairCrown",
   "LayeredAccessoryBack",
   "EarsBack",
   "Jaws",
@@ -237,10 +240,14 @@ export const CONTROLS: {
   { key: "eyebrows", label: "EYEBROWS", optional: true },
   { key: "nose", label: "NOSE" },
   { key: "mouth", label: "MOUTH" },
-  // The tool's one HAIR control, split: the back is length and volume, the
-  // front is hairline and fringe. They pair by index for the 27 original
-  // styles, and the builder steps them together until you split them.
+  // The tool's one HAIR control, split three ways: the back is sides and
+  // length, the crown is the top of the head, the front is hairline and
+  // fringe. They pair by index for the 27 original styles, and the builder
+  // steps them together until you split them. The crown is cut from the
+  // back's own cell, and only crowns that meet a back's sides without a seam
+  // are offered on it — see crownsFor.
   { key: "hair_back", label: "HAIR · BACK", optional: true },
+  { key: "crown", label: "HAIR · CROWN", optional: true },
   { key: "hair_front", label: "HAIR · FRONT", optional: true },
   // What shows where there's no hair: the shaved side of an undercut, the
   // whole head when bald. Bald plus stubble is a buzz cut.
@@ -279,6 +286,19 @@ export const ALLOWED: Record<string, string[]> = (() => {
   return out;
 })();
 
+/** The crowns that sit on a given hair back: its own first, then any other
+ *  whose cut edge meets these sides cleanly. A bald back takes no crown. */
+export function crownsFor(back: string): string[] {
+  if (back === NONE) return [NONE];
+  return CROWNS[back] ?? [back];
+}
+
+/** The crown a face should wear: the one it has if that sits on its back,
+ *  otherwise the back's own. */
+function settleCrown(c: PortraitConfig) {
+  if (!crownsFor(c.hair_back).includes(c.crown)) c.crown = c.hair_back;
+}
+
 export function defaultPortrait(): PortraitConfig {
   const out: PortraitConfig = {};
   for (const [k, list] of Object.entries(ALLOWED)) out[k] = list[0];
@@ -286,6 +306,7 @@ export function defaultPortrait(): PortraitConfig {
   for (const c of CONTROLS) if (c.optional) out[c.key] = NONE;
   out.eyebrows = ALLOWED.eyebrows[1] ?? NONE;
   out.hair_back = ALLOWED.hair_back[1] ?? NONE;
+  out.crown = out.hair_back;
   out.hair_front = out.hair_back;
   out.scalp = "stubble";
   return out;
@@ -308,6 +329,9 @@ export function normalizePortrait(raw: unknown): PortraitConfig {
     const v = c[key];
     if (typeof v === "string" && list.includes(v)) out[key] = v;
   }
+  // Faces saved before the crown was a choice wear their back's own; a crown
+  // that doesn't sit on this back (the pairs can change with the art) too.
+  settleCrown(out);
   return out;
 }
 
@@ -353,6 +377,7 @@ export function portraitFromId(id: string): PortraitConfig {
     if (hash(`${id}#${key}`) % 100 >= pct) out[key] = NONE;
   }
   if (hash(`${id}~hair`) % 100 < MATCHED_HAIR_PCT) matchHair(out);
+  pickCrown(out, hash(`${id}~crown`) % 100, hash(`${id}~which`));
   out.scalp = pickScalp(out, hash(`${id}~scalp`) % 100);
   return out;
 }
@@ -365,8 +390,18 @@ export function randomPortrait(): PortraitConfig {
     if (Math.random() * 100 >= pct) out[key] = NONE;
   }
   if (Math.random() * 100 < MATCHED_HAIR_PCT) matchHair(out);
+  pickCrown(out, Math.floor(Math.random() * 100), Math.floor(Math.random() * 1e9));
   out.scalp = pickScalp(out, Math.floor(Math.random() * 100));
   return out;
+}
+
+/** A crown for a face nobody chose: the back's own most of the time, else
+ *  one of the others that sit on it. */
+const MATCHED_CROWN_PCT = 80;
+
+function pickCrown(c: PortraitConfig, roll: number, which: number) {
+  const others = crownsFor(c.hair_back).filter((id) => id !== c.hair_back);
+  c.crown = roll < MATCHED_CROWN_PCT || !others.length ? c.hair_back : others[which % others.length];
 }
 
 /** A scalp for a face nobody chose: mostly stubble under hair, mostly bare
@@ -425,7 +460,7 @@ const PACK_ORDER = Object.keys(ALLOWED).sort();
  *  the crop, the art. Faces are cached immutably for a year, and the packed
  *  spec only describes the config, so without this a fixed renderer keeps
  *  serving the broken picture out of everyone's browser cache. */
-export const RENDER = "18";
+export const RENDER = "19";
 
 export function packPortrait(config: PortraitConfig): string {
   const c = normalizePortrait(config);

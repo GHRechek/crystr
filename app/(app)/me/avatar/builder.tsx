@@ -11,6 +11,7 @@ import {
   HAIR_CHOICES,
   NONE,
   SKIN_CHOICES,
+  crownsFor,
   packPortrait,
   randomPortrait,
   type PortraitConfig,
@@ -31,15 +32,22 @@ export function AvatarBuilder({ start, fresh }: { start: PortraitConfig; fresh: 
 
   const step = (key: string, by: number) =>
     setC((prev) => {
-      const list = ALLOWED[key];
+      // The crown only steps through the crowns that sit on this back.
+      const list = key === "crown" ? crownsFor(prev.hair_back) : ALLOWED[key];
       const at = Math.max(0, list.indexOf(prev[key]));
       const next = (((at + by) % list.length) + list.length) % list.length;
       const out = { ...prev, [key]: list[next] };
       // Stepping the back of the hair walks through the artist's own 27
       // styles: while back and front match, the front moves with it. Change
-      // the front on its own and they stay split.
-      if (key === "hair_back" && prev.hair_front === prev.hair_back) {
-        out.hair_front = ALLOWED.hair_front.includes(out.hair_back) ? out.hair_back : NONE;
+      // the front on its own and they stay split. The crown comes along the
+      // same way, and comes back if the one you'd split to won't sit on the
+      // new back.
+      if (key === "hair_back") {
+        if (prev.hair_front === prev.hair_back) {
+          out.hair_front = ALLOWED.hair_front.includes(out.hair_back) ? out.hair_back : NONE;
+        }
+        const split = prev.crown !== prev.hair_back && crownsFor(out.hair_back).includes(prev.crown);
+        out.crown = split ? prev.crown : out.hair_back;
       }
       return out;
     });
