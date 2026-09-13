@@ -115,8 +115,8 @@ The repo is linked to the `crystr` Vercel project on the VLVT team. Pushing to
 `/me/avatar` builds a face from the Portrait Maker sprite sheets, in a UI that
 mirrors the tool the art was drawn for — shape steppers and colour swatches,
 preview pinned to the top. 26 jaws, 26 eyes, 28 mouths, 16 noses, 15 brow
-sets, 14 ear shapes, 13 beards; hair as three controls, 27 backs, 27
-crowns and 27 fronts; then scars (5), freckles and marks (8), horns (2), eyewear (7),
+sets, 14 ear shapes, 13 beards; hair as two controls, 27 sides and 27
+tops; then scars (5), freckles and marks (8), horns (2), eyewear (7),
 jewellery (3, in two slots so a face can wear a nose ring and a brow ring at
 once), earrings (10), eyeshadow (6); and FACING, left as drawn or mirrored
 right — the whole composed frame flips, so every layer swaps sides together.
@@ -136,45 +136,39 @@ own controls, and the compositor lets one sheet contribute several cells to a
 face. Run `node scripts/build-portrait-manifest.mjs` after changing the asset
 set.
 
-**Hair is three controls.** `HairBack` is sides and length, `HairFront` is
-hairline and fringe, and the tool paired them by index. Chosen separately
-they give 27 × 27 styles for the price of 27 — every one of them the
-artist's own pixels. The builder keeps the originals one tap away: while
-back and front match, stepping the back moves the front with it; change the
-front on its own and they stay split. Faces nobody has built keep the
-artist's pairings 70% of the time so the feed doesn't fill with blunt bangs
-on afros. A face saved when hair was one control maps its id to both.
+**Hair is two controls: the sides of the head and the top of it.** The
+sheets give hair as `HairBack` (crown, sides and length, one painted piece)
+and `HairFront` (hairline and fringe), paired by index into 27 styles. The
+top of a head is the back cell above the skull's curve plus the front
+cell; the sides are the rest of the back cell. `scripts/build-hair-crown.mjs`
+cuts every back cell along that line into `HairCrown/NN` and `HairSides/NN`
+(they add back up to the original exactly), and TOP draws the crown and
+the front of one style together — so a top is a whole top, fringe
+included, and swapping it puts the bun over the long hair, the blunt
+bangs over the braid, the slicked top over the shaved sides.
 
-The third, CROWN, is the top of the head, and it isn't a sheet: the artist
-painted crown, sides and length as one piece on the back sheet, so
-`scripts/build-hair-crown.mjs` cuts every back cell along one fixed line
-(above the skull's midline is crown; below it, outside the skull's columns
-and under it, is sides) into `HairCrown/NN` and `HairSides/NN`, which add
-back up to the original exactly. Two shapes painted for different
-silhouettes don't agree along that line — a bob's crown over a curly side
-shows a step — so the script scores every crown against every sides along
-the part of the cut the face doesn't cover, and only pairs whose
-silhouettes meet within three pixels and whose shading doesn't jump across
-it — under 15 on average and never past 48 at any one pixel, which is what
-the artist's own pairs manage — are offered: 48 beyond the artist's own 27,
-mostly the short cuts trading tops and the bun going over a braid. (A bob's
-highlight band over a darker long style averaged 22 with a jump of 60, and
-met in a tone line at the temple.) "Doesn't cover" means the
-jaw, not the skull — the skull draws under the hair, and scoring it as
-cover hid the cut's vertical edge above the ear, which is exactly where
-the seam showed. Three things the score can't see are locked by hand: the
-mohawk swaps with nothing, because its crest is one shape from the front
-fin to the back of the crown and its crown on any other front is a fin off
-the back of the head; a curly crown goes on curly sides only, because the
-curls' bumps stop dead where a bob's straight edge starts (a smooth crown
-over curly ends reads fine the other way); and the two slicked-back crowns
-sit on their own sides only, because their underside is a straight
-highlight band that only their own sides continue — on any other sides
-it's a line across the temple, and it scores like the artist's own pairs
-because the line is inside the crown, not along the cut. The pairs live in
-`assets/portrait/_crown-pairs.json` and the manifest as `CROWNS`; the
-CROWN stepper walks only through the crowns that sit on the current back,
-and a face whose saved crown no longer does wears its back's own.
+Two shapes painted for different silhouettes don't agree along the cut —
+a bob's top over a curly side shows a step — so the script scores every
+top against every sides along the part of the cut the face doesn't cover
+(the jaw; the skull draws under the hair) and only pairs whose silhouettes
+meet within three pixels and whose shading doesn't jump across it are
+offered: 60 beyond the artist's own 27. The pairs live in
+`assets/portrait/_crown-pairs.json` and the manifest as `TOPS`. The
+builder keeps the originals one tap away: while top and sides match,
+stepping the sides moves the top with them; change the top on its own and
+they stay split, until you reach sides it won't sit on. Faces nobody has
+built keep the artist's pairings 75% of the time so the feed doesn't fill
+with buns on bobs. Older faces migrate: one saved when hair was one
+control maps its id to both; one saved when it was a back and a front (or
+a back, a crown and a front) keeps the top of the style it had chosen
+where that sits on its sides, and wears the sides' own otherwise.
+
+A first version split the front and the crown separately, with the crown
+cut at the skull's midline. It swapped too little (a fringe on its own) and
+cut through too much: the mohawk's crest, the undercut's side mass, the
+bob's highlight band all straddled the line and needed hand locks. Moving
+the cut up to where the skull stops curving in, and taking the fringe with
+the top, made the score sufficient on its own.
 
 **Earrings** are the one thing drawn rather than sliced: five designs in two
 metals, a handful of pixels each in the sheets' own metal tones, hung from

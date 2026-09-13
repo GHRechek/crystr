@@ -1,4 +1,4 @@
-import { CROWNS, OPTIONS, type PortraitOption } from "./manifest";
+import { OPTIONS, TOPS, type PortraitOption } from "./manifest";
 
 // Portraits are layered 128x128 art from the Portrait Maker sprite sheets.
 //
@@ -201,7 +201,7 @@ export const SHEET_ORDER = [
   // The scalp is the back of the skull, so it goes under everything — draw it
   // after the back hair and it sits on top of the hair.
   "Cranium",
-  // The back sheet, cut in two: the sides and length, then the crown. They
+  // The back sheet, cut in two: the sides and length, then the top. They
   // never overlap, so the order between them is moot.
   "HairSides",
   "HairCrown",
@@ -240,15 +240,14 @@ export const CONTROLS: {
   { key: "eyebrows", label: "EYEBROWS", optional: true },
   { key: "nose", label: "NOSE" },
   { key: "mouth", label: "MOUTH" },
-  // The tool's one HAIR control, split three ways: the back is sides and
-  // length, the crown is the top of the head, the front is hairline and
-  // fringe. They pair by index for the 27 original styles, and the builder
-  // steps them together until you split them. The crown is cut from the
-  // back's own cell, and only crowns that meet a back's sides without a seam
-  // are offered on it — see crownsFor.
-  { key: "hair_back", label: "HAIR · BACK", optional: true },
-  { key: "crown", label: "HAIR · CROWN", optional: true },
-  { key: "hair_front", label: "HAIR · FRONT", optional: true },
+  // The tool's one HAIR control, split in two: the sides of the head (and
+  // the length that hangs from them) and the whole top of it, hairline and
+  // fringe included. They pair by index for the 27 original styles, and the
+  // builder steps them together until you split them. The top is cut from
+  // the back's own cell along the skull's curve, and only tops that meet a
+  // back's sides without a seam are offered on it — see topsFor.
+  { key: "hair_back", label: "HAIR · SIDES", optional: true },
+  { key: "top", label: "HAIR · TOP", optional: true },
   // What shows where there's no hair: the shaved side of an undercut, the
   // whole head when bald. Bald plus stubble is a buzz cut.
   { key: "scalp", label: "SCALP", names: { skin: "SKIN", stubble: "STUBBLE", hair: "HAIR" } },
@@ -286,17 +285,18 @@ export const ALLOWED: Record<string, string[]> = (() => {
   return out;
 })();
 
-/** The crowns that sit on a given hair back: its own first, then any other
- *  whose cut edge meets these sides cleanly. A bald back takes no crown. */
-export function crownsFor(back: string): string[] {
-  if (back === NONE) return [NONE];
-  return CROWNS[back] ?? [back];
+/** The tops that sit on a given hair back: its own first, then any other
+ *  whose cut edge meets these sides cleanly. No sides takes none, or a top
+ *  that ends above the cut — a shaved head with something on top. */
+export function topsFor(back: string): string[] {
+  if (back === NONE) return [NONE, ...(TOPS.none ?? [])];
+  return TOPS[back] ?? [back];
 }
 
-/** The crown a face should wear: the one it has if that sits on its back,
+/** The top a face should wear: the one it has if that sits on its back,
  *  otherwise the back's own. */
-function settleCrown(c: PortraitConfig) {
-  if (!crownsFor(c.hair_back).includes(c.crown)) c.crown = c.hair_back;
+function settleTop(c: PortraitConfig) {
+  if (!topsFor(c.hair_back).includes(c.top)) c.top = c.hair_back;
 }
 
 export function defaultPortrait(): PortraitConfig {
@@ -306,8 +306,7 @@ export function defaultPortrait(): PortraitConfig {
   for (const c of CONTROLS) if (c.optional) out[c.key] = NONE;
   out.eyebrows = ALLOWED.eyebrows[1] ?? NONE;
   out.hair_back = ALLOWED.hair_back[1] ?? NONE;
-  out.crown = out.hair_back;
-  out.hair_front = out.hair_back;
+  out.top = out.hair_back;
   out.scalp = "stubble";
   return out;
 }
@@ -315,29 +314,31 @@ export function defaultPortrait(): PortraitConfig {
 export function normalizePortrait(raw: unknown): PortraitConfig {
   const c = { ...((raw ?? {}) as Record<string, unknown>) };
   // Faces saved when hair was one control: its id was the pair's index.
-  if (typeof c.hair === "string" && c.hair_back === undefined && c.hair_front === undefined) {
+  if (typeof c.hair === "string" && c.hair_back === undefined) {
     c.hair_back = c.hair;
-    c.hair_front = c.hair;
+    c.top = c.hair;
+  }
+  // Faces saved when the top was a front and a crown: a split crown was the
+  // stronger choice, else the front they picked; either way the top of that
+  // style, or the back's own if it won't sit on these sides.
+  if (c.top === undefined) {
+    c.top = typeof c.crown === "string" && c.crown !== c.hair_back ? c.crown : c.hair_front ?? c.hair_back;
   }
   // Faces saved before the scalp was a choice: keep what they looked like —
   // stubble under hair, bare skin when bald.
   if (c.scalp === undefined) {
-    c.scalp = c.hair_back === NONE && c.hair_front === NONE ? "skin" : "stubble";
+    c.scalp = c.hair_back === NONE && c.top === NONE ? "skin" : "stubble";
   }
   const out = defaultPortrait();
   for (const [key, list] of Object.entries(ALLOWED)) {
     const v = c[key];
     if (typeof v === "string" && list.includes(v)) out[key] = v;
   }
-  // Faces saved before the crown was a choice wear their back's own; a crown
-  // that doesn't sit on this back (the pairs can change with the art) too.
-  settleCrown(out);
+  // A top that doesn't sit on this back (the pairs can change with the art)
+  // falls back to the back's own.
+  settleTop(out);
   return out;
 }
-
-/** Faces nobody chose keep the artist's pairings most of the time, so the
- *  feed doesn't fill up with blunt bangs on afros. */
-const MATCHED_HAIR_PCT = 70;
 
 function hash(s: string): number {
   let h = 2166136261;
@@ -355,7 +356,6 @@ function hash(s: string): number {
 const ODDS: Record<string, number> = {
   eyebrows: 92,
   hair_back: 90,
-  hair_front: 90,
   beard: 22,
   earrings: 30,
   eyeshadow: 25,
@@ -376,8 +376,7 @@ export function portraitFromId(id: string): PortraitConfig {
   for (const [key, pct] of Object.entries(ODDS)) {
     if (hash(`${id}#${key}`) % 100 >= pct) out[key] = NONE;
   }
-  if (hash(`${id}~hair`) % 100 < MATCHED_HAIR_PCT) matchHair(out);
-  pickCrown(out, hash(`${id}~crown`) % 100, hash(`${id}~which`));
+  pickTop(out, hash(`${id}~top`) % 100, hash(`${id}~which`));
   out.scalp = pickScalp(out, hash(`${id}~scalp`) % 100);
   return out;
 }
@@ -389,32 +388,27 @@ export function randomPortrait(): PortraitConfig {
   for (const [key, pct] of Object.entries(ODDS)) {
     if (Math.random() * 100 >= pct) out[key] = NONE;
   }
-  if (Math.random() * 100 < MATCHED_HAIR_PCT) matchHair(out);
-  pickCrown(out, Math.floor(Math.random() * 100), Math.floor(Math.random() * 1e9));
+  pickTop(out, Math.floor(Math.random() * 100), Math.floor(Math.random() * 1e9));
   out.scalp = pickScalp(out, Math.floor(Math.random() * 100));
   return out;
 }
 
-/** A crown for a face nobody chose: the back's own most of the time, else
- *  one of the others that sit on it. */
-const MATCHED_CROWN_PCT = 80;
+/** A top for a face nobody chose: the artist's own pairing most of the
+ *  time, so the feed doesn't fill up with buns on bobs, else one of the
+ *  others that sit on these sides. */
+const MATCHED_TOP_PCT = 75;
 
-function pickCrown(c: PortraitConfig, roll: number, which: number) {
-  const others = crownsFor(c.hair_back).filter((id) => id !== c.hair_back);
-  c.crown = roll < MATCHED_CROWN_PCT || !others.length ? c.hair_back : others[which % others.length];
+function pickTop(c: PortraitConfig, roll: number, which: number) {
+  const others = topsFor(c.hair_back).filter((id) => id !== c.hair_back);
+  c.top = roll < MATCHED_TOP_PCT || !others.length ? c.hair_back : others[which % others.length];
 }
 
 /** A scalp for a face nobody chose: mostly stubble under hair, mostly bare
  *  when bald, and never a hair-coloured cap on a bald head. */
 function pickScalp(c: PortraitConfig, roll: number): string {
-  const bald = c.hair_back === NONE && c.hair_front === NONE;
+  const bald = c.hair_back === NONE && c.top === NONE;
   if (bald) return roll < 70 ? "skin" : "stubble";
   return roll < 70 ? "stubble" : roll < 90 ? "skin" : "hair";
-}
-
-/** Give the front the back's index, where that front exists. */
-function matchHair(c: PortraitConfig) {
-  if (c.hair_back !== NONE && ALLOWED.hair_front.includes(c.hair_back)) c.hair_front = c.hair_back;
 }
 
 /** Every image file this face needs, already in draw order. Several controls
@@ -460,7 +454,7 @@ const PACK_ORDER = Object.keys(ALLOWED).sort();
  *  the crop, the art. Faces are cached immutably for a year, and the packed
  *  spec only describes the config, so without this a fixed renderer keeps
  *  serving the broken picture out of everyone's browser cache. */
-export const RENDER = "23";
+export const RENDER = "24";
 
 export function packPortrait(config: PortraitConfig): string {
   const c = normalizePortrait(config);

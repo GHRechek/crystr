@@ -1043,330 +1043,193 @@ export const OPTIONS: Record<string, PortraitOption[]> = {
       ]
     }
   ],
-  "crown": [
+  "top": [
     {
       "id": "01",
       "cells": [
-        "HairCrown/01"
-      ]
-    },
-    {
-      "id": "02",
-      "cells": [
-        "HairCrown/02"
-      ]
-    },
-    {
-      "id": "03",
-      "cells": [
-        "HairCrown/03"
-      ]
-    },
-    {
-      "id": "04",
-      "cells": [
-        "HairCrown/04"
-      ]
-    },
-    {
-      "id": "05",
-      "cells": [
-        "HairCrown/05"
-      ]
-    },
-    {
-      "id": "06",
-      "cells": [
-        "HairCrown/06"
-      ]
-    },
-    {
-      "id": "07",
-      "cells": [
-        "HairCrown/07"
-      ]
-    },
-    {
-      "id": "08",
-      "cells": [
-        "HairCrown/08"
-      ]
-    },
-    {
-      "id": "09",
-      "cells": [
-        "HairCrown/09"
-      ]
-    },
-    {
-      "id": "10",
-      "cells": [
-        "HairCrown/10"
-      ]
-    },
-    {
-      "id": "11",
-      "cells": [
-        "HairCrown/11"
-      ]
-    },
-    {
-      "id": "12",
-      "cells": [
-        "HairCrown/12"
-      ]
-    },
-    {
-      "id": "13",
-      "cells": [
-        "HairCrown/13"
-      ]
-    },
-    {
-      "id": "14",
-      "cells": [
-        "HairCrown/14"
-      ]
-    },
-    {
-      "id": "15",
-      "cells": [
-        "HairCrown/15"
-      ]
-    },
-    {
-      "id": "16",
-      "cells": [
-        "HairCrown/16"
-      ]
-    },
-    {
-      "id": "17",
-      "cells": [
-        "HairCrown/17"
-      ]
-    },
-    {
-      "id": "18",
-      "cells": [
-        "HairCrown/18"
-      ]
-    },
-    {
-      "id": "19",
-      "cells": [
-        "HairCrown/19"
-      ]
-    },
-    {
-      "id": "20",
-      "cells": [
-        "HairCrown/20"
-      ]
-    },
-    {
-      "id": "21",
-      "cells": [
-        "HairCrown/21"
-      ]
-    },
-    {
-      "id": "22",
-      "cells": [
-        "HairCrown/22"
-      ]
-    },
-    {
-      "id": "23",
-      "cells": [
-        "HairCrown/23"
-      ]
-    },
-    {
-      "id": "24",
-      "cells": [
-        "HairCrown/24"
-      ]
-    },
-    {
-      "id": "25",
-      "cells": [
-        "HairCrown/25"
-      ]
-    },
-    {
-      "id": "26",
-      "cells": [
-        "HairCrown/26"
-      ]
-    },
-    {
-      "id": "27",
-      "cells": [
-        "HairCrown/27"
-      ]
-    }
-  ],
-  "hair_front": [
-    {
-      "id": "01",
-      "cells": [
+        "HairCrown/01",
         "HairFront/01"
       ]
     },
     {
       "id": "02",
       "cells": [
+        "HairCrown/02",
         "HairFront/02"
       ]
     },
     {
       "id": "03",
       "cells": [
+        "HairCrown/03",
         "HairFront/03"
       ]
     },
     {
       "id": "04",
       "cells": [
+        "HairCrown/04",
         "HairFront/04"
       ]
     },
     {
       "id": "05",
       "cells": [
+        "HairCrown/05",
         "HairFront/05"
       ]
     },
     {
       "id": "06",
       "cells": [
+        "HairCrown/06",
         "HairFront/06"
       ]
     },
     {
       "id": "07",
       "cells": [
+        "HairCrown/07",
         "HairFront/07"
       ]
     },
     {
       "id": "08",
       "cells": [
+        "HairCrown/08",
         "HairFront/08"
       ]
     },
     {
       "id": "09",
       "cells": [
+        "HairCrown/09",
         "HairFront/09"
       ]
     },
     {
       "id": "10",
       "cells": [
+        "HairCrown/10",
         "HairFront/10"
       ]
     },
     {
       "id": "11",
       "cells": [
+        "HairCrown/11",
         "HairFront/11"
       ]
     },
     {
       "id": "12",
       "cells": [
+        "HairCrown/12",
         "HairFront/12"
       ]
     },
     {
       "id": "13",
       "cells": [
+        "HairCrown/13",
         "HairFront/13"
       ]
     },
     {
       "id": "14",
       "cells": [
+        "HairCrown/14",
         "HairFront/14"
       ]
     },
     {
       "id": "15",
       "cells": [
+        "HairCrown/15",
         "HairFront/15"
       ]
     },
     {
       "id": "16",
       "cells": [
+        "HairCrown/16",
         "HairFront/16"
       ]
     },
     {
       "id": "17",
       "cells": [
+        "HairCrown/17",
         "HairFront/17"
       ]
     },
     {
       "id": "18",
       "cells": [
+        "HairCrown/18",
         "HairFront/18"
       ]
     },
     {
       "id": "19",
       "cells": [
+        "HairCrown/19",
         "HairFront/19"
       ]
     },
     {
       "id": "20",
       "cells": [
+        "HairCrown/20",
         "HairFront/20"
       ]
     },
     {
       "id": "21",
       "cells": [
+        "HairCrown/21",
         "HairFront/21"
       ]
     },
     {
       "id": "22",
       "cells": [
+        "HairCrown/22",
         "HairFront/22"
       ]
     },
     {
       "id": "23",
       "cells": [
+        "HairCrown/23",
         "HairFront/23"
       ]
     },
     {
       "id": "24",
       "cells": [
+        "HairCrown/24",
         "HairFront/24"
       ]
     },
     {
       "id": "25",
       "cells": [
+        "HairCrown/25",
         "HairFront/25"
       ]
     },
     {
       "id": "26",
       "cells": [
+        "HairCrown/26",
         "HairFront/26"
       ]
     },
     {
       "id": "27",
       "cells": [
+        "HairCrown/27",
         "HairFront/27"
       ]
     }
@@ -1655,6 +1518,7 @@ export const OPTIONS: Record<string, PortraitOption[]> = {
   ]
 };
 
-/** For each hair back (sides), the crowns that sit on it without a seam —
- *  its own first. Decided by scripts/build-hair-crown.mjs. */
-export const CROWNS: Record<string, string[]> = {"10":["10","09","15","16"],"11":["11","13","14","25","26"],"12":["12"],"13":["13","11","14","25","26"],"14":["14","11","13","25","26"],"15":["15","09","10","16"],"16":["16","09","10","15"],"17":["17"],"18":["18","11","13","14","25","26"],"19":["19","11","13","14","25","26"],"20":["20","02"],"21":["21","22"],"22":["22","21"],"23":["23","24"],"24":["24","23"],"25":["25","11","13","14","26"],"26":["26","11","13","14","25"],"27":["27"],"01":["01"],"02":["02","20"],"03":["03"],"04":["04"],"05":["05"],"06":["06"],"07":["07"],"08":["08"],"09":["09","10","15","16"]};
+/** For each hair back (the sides), the tops that sit on it without a seam —
+ *  its own first; "none" is the tops that sit on a shaved head. Decided by
+ *  scripts/build-hair-crown.mjs. */
+export const TOPS: Record<string, string[]> = {"10":["10","04","09","15","16","24"],"11":["11","19","25"],"12":["12"],"13":["13"],"14":["14","26"],"15":["15","04","09","10","16","24"],"16":["16","04","09","10","15","24"],"17":["17"],"18":["18","19"],"19":["19","18"],"20":["20","01","02","04","09","10"],"21":["21","04","22"],"22":["22","04","21"],"23":["23","04","09","10","15","16","24"],"24":["24","04","09","10","15","16"],"25":["25","11","18"],"26":["26","14"],"27":["27"],"01":["01","02","20"],"02":["02","04","10","20"],"03":["03"],"04":["04","02","09","10","15","16","20","23"],"05":["05"],"06":["06"],"07":["07"],"08":["08"],"09":["09","04","10","15","16","24"],"none":[]};

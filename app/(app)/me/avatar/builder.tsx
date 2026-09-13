@@ -11,9 +11,9 @@ import {
   HAIR_CHOICES,
   NONE,
   SKIN_CHOICES,
-  crownsFor,
   packPortrait,
   randomPortrait,
+  topsFor,
   type PortraitConfig,
 } from "@/lib/portrait/core";
 
@@ -32,22 +32,18 @@ export function AvatarBuilder({ start, fresh }: { start: PortraitConfig; fresh: 
 
   const step = (key: string, by: number) =>
     setC((prev) => {
-      // The crown only steps through the crowns that sit on this back.
-      const list = key === "crown" ? crownsFor(prev.hair_back) : ALLOWED[key];
+      // The top only steps through the tops that sit on these sides.
+      const list = key === "top" ? topsFor(prev.hair_back) : ALLOWED[key];
       const at = Math.max(0, list.indexOf(prev[key]));
       const next = (((at + by) % list.length) + list.length) % list.length;
       const out = { ...prev, [key]: list[next] };
-      // Stepping the back of the hair walks through the artist's own 27
-      // styles: while back and front match, the front moves with it. Change
-      // the front on its own and they stay split. The crown comes along the
-      // same way, and comes back if the one you'd split to won't sit on the
-      // new back.
+      // Stepping the sides walks through the artist's own 27 styles: while
+      // top and sides match, the top moves with them. Change the top on its
+      // own and they stay split — until you reach sides it won't sit on,
+      // when it comes back to matching.
       if (key === "hair_back") {
-        if (prev.hair_front === prev.hair_back) {
-          out.hair_front = ALLOWED.hair_front.includes(out.hair_back) ? out.hair_back : NONE;
-        }
-        const split = prev.crown !== prev.hair_back && crownsFor(out.hair_back).includes(prev.crown);
-        out.crown = split ? prev.crown : out.hair_back;
+        const split = prev.top !== prev.hair_back && topsFor(out.hair_back).includes(prev.top);
+        out.top = split ? prev.top : out.hair_back;
       }
       return out;
     });

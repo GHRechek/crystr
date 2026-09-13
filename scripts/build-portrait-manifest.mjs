@@ -37,20 +37,20 @@ const GROUPS = {
   nose: { lead: "Noses", also: [] },
   mouth: { lead: "Mouths", also: [] },
   beard: { lead: "Beards", also: [] },
-  // Hair is three controls, not one. The back (length and volume) and the
-  // front (hairline and fringe) are separate sheets, and choosing them
-  // separately gives 27 x 27 styles for the price of 27. The crown is cut
-  // from the back sheet by scripts/build-hair-crown.mjs — HairSides is the
-  // back cell minus its top, HairCrown is that top — and which crowns sit on
-  // which sides without a seam is decided there too. The tool paired all of
-  // it by index; the builder still steps them together until you split them.
+  // Hair is two controls, not one: the sides of the head and the top of it.
+  // scripts/build-hair-crown.mjs cuts every back cell along the skull's
+  // curve into HairSides (what hangs beside and below) and HairCrown (the
+  // top); the top of a style is that plus its HairFront cell, the hairline
+  // and fringe, paired by index as drawn. Which tops sit on which sides
+  // without a seam is decided there too. The tool paired all of it by
+  // index; the builder still steps them together until you split them.
   hair_back: { lead: "HairSides", also: [] },
-  crown: { lead: "HairCrown", also: [] },
-  hair_front: { lead: "HairFront", also: [] },
+  top: { lead: "HairCrown", also: ["HairFront"] },
 };
 
-/** sides id -> the crown ids that sit on it cleanly (its own first). */
-const CROWNS = JSON.parse(readFileSync(join(ROOT, "_crown-pairs.json"), "utf8"));
+/** sides id -> the top ids that sit on it cleanly (its own first); "none"
+ *  is the tops that sit on a shaved head. */
+const TOPS = JSON.parse(readFileSync(join(ROOT, "_crown-pairs.json"), "utf8"));
 
 /** Earrings hang from the lobe, and the lobe moves with the ear shape, so
  *  scripts/build-earrings.mjs draws one cell per (design, metal, ear). The
@@ -157,9 +157,10 @@ export type PortraitOption = {
 
 export const OPTIONS: Record<string, PortraitOption[]> = ${JSON.stringify(manifest, null, 2)};
 
-/** For each hair back (sides), the crowns that sit on it without a seam —
- *  its own first. Decided by scripts/build-hair-crown.mjs. */
-export const CROWNS: Record<string, string[]> = ${JSON.stringify(CROWNS)};
+/** For each hair back (the sides), the tops that sit on it without a seam —
+ *  its own first; "none" is the tops that sit on a shaved head. Decided by
+ *  scripts/build-hair-crown.mjs. */
+export const TOPS: Record<string, string[]> = ${JSON.stringify(TOPS)};
 `;
 
 writeFileSync("lib/portrait/manifest.ts", body);
