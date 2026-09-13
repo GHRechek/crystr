@@ -115,8 +115,8 @@ The repo is linked to the `crystr` Vercel project on the VLVT team. Pushing to
 `/me/avatar` builds a face from the Portrait Maker sprite sheets, in a UI that
 mirrors the tool the art was drawn for — shape steppers and colour swatches,
 preview pinned to the top. 26 jaws, 26 eyes, 28 mouths, 16 noses, 15 brow
-sets, 14 ear shapes, 13 beards; hair as two controls, 27 sides and 27
-tops; then scars (5), freckles and marks (8), horns (2), eyewear (7),
+sets, 14 ear shapes, 13 beards; hair as two controls, 31 sides and 31
+tops (the artist's 27 styles plus four of them in locs); then scars (5), freckles and marks (8), horns (2), eyewear (7),
 jewellery (3, in two slots so a face can wear a nose ring and a brow ring at
 once), earrings (10), eyeshadow (6); and FACING, left as drawn or mirrored
 right — the whole composed frame flips, so every layer swaps sides together.
@@ -152,7 +152,7 @@ a bob's top over a curly side shows a step — so the script scores every
 top against every sides along the part of the cut the face doesn't cover
 (the jaw; the skull draws under the hair) and only pairs whose silhouettes
 meet within three pixels and whose shading doesn't jump across it are
-offered: 60 beyond the artist's own 27. The pairs live in
+offered: 72 beyond the styles' own. The pairs live in
 `assets/portrait/_crown-pairs.json` and the manifest as `TOPS`. The
 builder keeps the originals one tap away: while top and sides match,
 stepping the sides moves the top with them; change the top on its own and
@@ -162,6 +162,19 @@ with buns on bobs. Older faces migrate: one saved when hair was one
 control maps its id to both; one saved when it was a back and a front (or
 a back, a crown and a front) keeps the top of the style it had chosen
 where that sits on its sides, and wears the sides' own otherwise.
+
+**Locs** are the one texture drawn onto the art: the two buns, the ponytail
+and the braid again as styles `09l`, `10l`, `15l`, `16l`, each stepping
+right after its original. `scripts/build-hair-locs.mjs` keeps every pixel's
+outline and its place in the artist's shading and nudges the tone one
+palette step in a rope pattern — 4px ropes leaning with the hang of the
+hair, a groove between them, a twist row every few rows at each rope's own
+phase so the twists don't line up into a weave — using hair palette colours
+only, so they recolour with the picker like everything else. A texture
+change along the cut is a line the seam score can't see, so locs tops go on
+locs sides and smooth on smooth; among themselves the four trade tops
+freely, which is how the bun goes over the locs braid. (An earlier, evenly
+spaced version read as knitwear.)
 
 A first version split the front and the crown separately, with the crown
 cut at the skull's midline. It swapped too little (a fringe on its own) and

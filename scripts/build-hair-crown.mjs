@@ -112,6 +112,11 @@ for (const id of ids) {
 
 const fits = ({ step, shade }) => step <= MAX_STEP && shade <= MAX_SHADE;
 
+/** The locs styles (scripts/build-hair-locs.mjs, ids ending in "l") are a
+ *  texture, and a texture change along the cut is a line the score can't
+ *  see, so locs tops go on locs sides and smooth on smooth. */
+const family = (id) => (id.endsWith("l") ? "locs" : "smooth");
+
 // sides id -> the top ids that sit on it cleanly, its own first. "none" is
 // no sides: the tops that end above the cut and can sit on a shaved head.
 const pairs = {};
@@ -119,7 +124,7 @@ let extra = 0;
 for (const s of ids) {
   pairs[s] = [s];
   for (const t of ids) {
-    if (t === s) continue;
+    if (t === s || family(t) !== family(s)) continue;
     if (fits(seam(cut[t].top, cut[s].sides))) { pairs[s].push(t); extra++; }
   }
 }
