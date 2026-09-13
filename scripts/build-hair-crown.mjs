@@ -46,6 +46,15 @@ const MAX_SHADE = 34;
  *  The seam score can't see that — it only looks along the cut. */
 const WHOLE = ["12"];
 
+/** The curly styles. A curly crown over straight sides meets in a line the
+ *  score can't see either — silhouette and shading both agree along the cut,
+ *  but the curls' bumps stop dead where the bob's straight edge starts. The
+ *  other way round, a smooth crown over curly ends, reads as a style. So a
+ *  curly crown goes on curly sides only. Roughness either side of the cut
+ *  was measured and doesn't separate them: the artist's own pairs vary more
+ *  across the cut than these do. */
+const CURLY = ["23", "24"];
+
 const read = (p) => PNG.sync.read(readFileSync(`${ROOT}/${p}.png`));
 const at = (png, x, y) => (y * SIZE + x) * 4;
 const opaque = (png, x, y) => x >= 0 && x < SIZE && y >= 0 && y < SIZE && png.data[at(png, x, y) + 3] > 0;
@@ -55,8 +64,16 @@ const lum = (png, x, y) => {
 };
 
 /** Boundary pairs [crownPixel, sidesPixel] along the cut, skipping any the
- *  skull covers — the seam behind the face is never seen. */
-const cranium = read("Cranium/00");
+ *  face covers — the seam behind the face is never seen. The face is the
+ *  jaw, and the jaws differ, so a pixel counts as covered only if every jaw
+ *  covers it. (Not the Cranium: the skull draws under the hair, and
+ *  treating it as cover hid the cut's vertical edge above the ear.) */
+const cover = (() => {
+  const jaws = readdirSync(`${ROOT}/Jaws`).filter((f) => f.endsWith(".png")).map((f) => read(`Jaws/${f.replace(/\.png$/, "")}`));
+  const all = new PNG({ width: SIZE, height: SIZE });
+  for (let i = 3; i < all.data.length; i += 4) all.data[i] = jaws.every((j) => j.data[i] > 0) ? 255 : 0;
+  return all;
+})();
 const SEAM = [];
 for (let x = 0; x < SIZE; x++) {
   if (x >= CORE[0] && x <= CORE[1]) continue;
@@ -67,7 +84,7 @@ for (let y = MID; y < UNDER; y++) {
   SEAM.push([[CORE[1], y], [CORE[1] + 1, y]]);
 }
 for (let x = CORE[0]; x <= CORE[1]; x++) SEAM.push([[x, UNDER - 1], [x, UNDER]]);
-const VISIBLE = SEAM.filter(([c, s]) => !opaque(cranium, ...c) && !opaque(cranium, ...s));
+const VISIBLE = SEAM.filter(([c, s]) => !opaque(cover, ...c) && !opaque(cover, ...s));
 
 function split(png) {
   const crown = new PNG({ width: SIZE, height: SIZE });
@@ -114,6 +131,7 @@ for (const s of ids) {
   for (const c of ids) {
     if (c === s) continue;
     if (WHOLE.includes(c) || WHOLE.includes(s)) continue;
+    if (CURLY.includes(c) && !CURLY.includes(s)) continue;
     const { step, shade } = seam(cut[c].crown, cut[s].sides);
     if (step <= MAX_STEP && shade <= MAX_SHADE) { pairs[s].push(c); extra++; }
   }
