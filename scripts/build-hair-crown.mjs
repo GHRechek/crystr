@@ -39,6 +39,13 @@ const MAX_STEP = 3;
  *  sit around 20. */
 const MAX_SHADE = 34;
 
+/** Styles that are one shape across the cut and the front both, and can't
+ *  be split at all: the mohawk's crest runs from the front fin to the back
+ *  of the crown, so its crown on any other front is a fin off the back of
+ *  the head, and any other crown under its front is a fin on a flat top.
+ *  The seam score can't see that — it only looks along the cut. */
+const WHOLE = ["12"];
+
 const read = (p) => PNG.sync.read(readFileSync(`${ROOT}/${p}.png`));
 const at = (png, x, y) => (y * SIZE + x) * 4;
 const opaque = (png, x, y) => x >= 0 && x < SIZE && y >= 0 && y < SIZE && png.data[at(png, x, y) + 3] > 0;
@@ -106,6 +113,7 @@ for (const s of ids) {
   pairs[s] = [s];
   for (const c of ids) {
     if (c === s) continue;
+    if (WHOLE.includes(c) || WHOLE.includes(s)) continue;
     const { step, shade } = seam(cut[c].crown, cut[s].sides);
     if (step <= MAX_STEP && shade <= MAX_SHADE) { pairs[s].push(c); extra++; }
   }

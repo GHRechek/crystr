@@ -155,8 +155,12 @@ silhouettes don't agree along that line — a bob's crown over a curly side
 shows a step — so the script scores every crown against every sides along
 the part of the cut the face doesn't cover, and only pairs whose
 silhouettes meet within three pixels and whose shading doesn't jump across
-it are offered: 74 beyond the artist's own 27, mostly the short cuts
-trading tops and the bun going over a braid. The pairs live in
+it are offered: 60 beyond the artist's own 27, mostly the short cuts
+trading tops and the bun going over a braid. The mohawk is locked out of
+the swap in both directions — its crest is one shape from the front fin to
+the back of the crown, which the score can't see because it only looks
+along the cut, so its crown on any other front was a fin off the back of
+the head. The pairs live in
 `assets/portrait/_crown-pairs.json` and the manifest as `CROWNS`; the
 CROWN stepper walks only through the crowns that sit on the current back,
 and a face whose saved crown no longer does wears its back's own.
