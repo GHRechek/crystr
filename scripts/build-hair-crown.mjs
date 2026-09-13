@@ -55,6 +55,14 @@ const WHOLE = ["12"];
  *  across the cut than these do. */
 const CURLY = ["23", "24"];
 
+/** Crowns that only sit on their own sides: the slicked-back cuts end in a
+ *  straight highlight band along the underside that the artist continued in
+ *  those styles' own sides, and on any other sides the band is a hard line
+ *  across the temple. Their seam scores the same as the artist's own pairs —
+ *  the line is inside the crown, not along the cut. The sides of these
+ *  styles still take other crowns. */
+const OWN_SIDES_ONLY = ["18", "19"];
+
 const read = (p) => PNG.sync.read(readFileSync(`${ROOT}/${p}.png`));
 const at = (png, x, y) => (y * SIZE + x) * 4;
 const opaque = (png, x, y) => x >= 0 && x < SIZE && y >= 0 && y < SIZE && png.data[at(png, x, y) + 3] > 0;
@@ -132,6 +140,7 @@ for (const s of ids) {
     if (c === s) continue;
     if (WHOLE.includes(c) || WHOLE.includes(s)) continue;
     if (CURLY.includes(c) && !CURLY.includes(s)) continue;
+    if (OWN_SIDES_ONLY.includes(c)) continue;
     const { step, shade } = seam(cut[c].crown, cut[s].sides);
     if (step <= MAX_STEP && shade <= MAX_SHADE) { pairs[s].push(c); extra++; }
   }

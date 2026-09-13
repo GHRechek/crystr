@@ -155,16 +155,20 @@ silhouettes don't agree along that line — a bob's crown over a curly side
 shows a step — so the script scores every crown against every sides along
 the part of the cut the face doesn't cover, and only pairs whose
 silhouettes meet within three pixels and whose shading doesn't jump across
-it are offered: 73 beyond the artist's own 27, mostly the short cuts
+it are offered: 61 beyond the artist's own 27, mostly the short cuts
 trading tops and the bun going over a braid. "Doesn't cover" means the
 jaw, not the skull — the skull draws under the hair, and scoring it as
 cover hid the cut's vertical edge above the ear, which is exactly where
-the seam showed. Two things the score can't see are locked by hand: the
+the seam showed. Three things the score can't see are locked by hand: the
 mohawk swaps with nothing, because its crest is one shape from the front
 fin to the back of the crown and its crown on any other front is a fin off
-the back of the head; and a curly crown goes on curly sides only, because
-the curls' bumps stop dead where a bob's straight edge starts (a smooth
-crown over curly ends reads fine the other way). The pairs live in
+the back of the head; a curly crown goes on curly sides only, because the
+curls' bumps stop dead where a bob's straight edge starts (a smooth crown
+over curly ends reads fine the other way); and the two slicked-back crowns
+sit on their own sides only, because their underside is a straight
+highlight band that only their own sides continue — on any other sides
+it's a line across the temple, and it scores like the artist's own pairs
+because the line is inside the crown, not along the cut. The pairs live in
 `assets/portrait/_crown-pairs.json` and the manifest as `CROWNS`; the
 CROWN stepper walks only through the crowns that sit on the current back,
 and a face whose saved crown no longer does wears its back's own.
