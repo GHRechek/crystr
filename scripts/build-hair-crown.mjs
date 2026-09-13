@@ -22,7 +22,7 @@
 // Cells are 128x128 sheet-space like everything else. Run after changing
 // the hair: node scripts/build-hair-crown.mjs
 
-import { mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { PNG } from "pngjs";
 
 const SIZE = 128;
@@ -36,9 +36,23 @@ const CORE = [42, 70];
 const UNDER = 80;
 const isSides = (x, y) => y >= UNDER || (y >= MID && (x < CORE[0] || x > CORE[1]));
 
-/** How far apart two silhouettes may be along the visible seam, in boundary
- *  pixels where one has hair and the other doesn't. */
-const MAX_STEP = 3;
+/** How far the sides may stick out from under the top along the visible
+ *  seam, in boundary pixels where the sides have hair and the top above
+ *  them doesn't — a shelf. The other way round, hair above that ends at the
+ *  cut with nothing below, is a high fade at this row and reads as one, so
+ *  it isn't counted: a short top sits on the curly sides that are a few
+ *  curls at the nape, and on no sides at all. */
+const MAX_SHELF = 3;
+/** ...unless that ending is well out from the head. The skull's edge is at
+ *  x 37 on the cut row; hair that stops at the cut more than 7px outside it
+ *  isn't a fade, it's a slab hanging in the air — the big dome and the
+ *  messy bun over a short side. Counted in boundary pixels past x 30 on
+ *  the left and 86 on the right. */
+const MAX_AIR = 3;
+const AIR = [30, 86];
+
+/** Styles left out of the builder. 07 was the receding hairline, cut. */
+const EXCLUDE = ["07"];
 /** How much the shading may jump across the seam, on average, where both
  *  have hair: mean luminance difference in 0–255. */
 const MAX_SHADE = 25;
@@ -88,21 +102,30 @@ function split(png) {
   return { top, sides };
 }
 
-/** Steps and shade jump between a top and a sides along the visible seam. */
+/** Shelf, air and shade jump between a top and a sides along the visible
+ *  seam. */
 function seam(top, sides) {
-  let step = 0, both = 0, shade = 0;
+  let shelf = 0, air = 0, both = 0, shade = 0;
   for (const [t, s] of VISIBLE) {
     const a = opaque(top, ...t), b = opaque(sides, ...s);
-    if (a !== b) step++;
-    else if (a) { both++; shade += Math.abs(lum(top, ...t) - lum(sides, ...s)); }
+    if (b && !a) shelf++;
+    else if (a && !b && t[1] === MID - 1 && (t[0] < AIR[0] || t[0] > AIR[1])) air++;
+    else if (a && b) { both++; shade += Math.abs(lum(top, ...t) - lum(sides, ...s)); }
   }
-  return { step, shade: both ? shade / both : 0 };
+  return { shelf, air, shade: both ? shade / both : 0 };
 }
 
 mkdirSync(`${ROOT}/HairCrown`, { recursive: true });
 mkdirSync(`${ROOT}/HairSides`, { recursive: true });
 
-const ids = readdirSync(`${ROOT}/HairBack`).filter((f) => f.endsWith(".png")).map((f) => f.replace(/\.png$/, "")).sort();
+const ids = readdirSync(`${ROOT}/HairBack`)
+  .filter((f) => f.endsWith(".png"))
+  .map((f) => f.replace(/\.png$/, ""))
+  .filter((id) => !EXCLUDE.includes(id))
+  .sort();
+for (const dir of ["HairCrown", "HairSides"]) {
+  for (const f of readdirSync(`${ROOT}/${dir}`)) if (!ids.includes(f.replace(/\.png$/, ""))) rmSync(`${ROOT}/${dir}/${f}`);
+}
 const cut = {};
 for (const id of ids) {
   cut[id] = split(read(`HairBack/${id}`));
@@ -110,21 +133,16 @@ for (const id of ids) {
   writeFileSync(`${ROOT}/HairSides/${id}.png`, PNG.sync.write(cut[id].sides));
 }
 
-const fits = ({ step, shade }) => step <= MAX_STEP && shade <= MAX_SHADE;
-
-/** The locs styles (scripts/build-hair-locs.mjs, ids ending in "l") are a
- *  texture, and a texture change along the cut is a line the score can't
- *  see, so locs tops go on locs sides and smooth on smooth. */
-const family = (id) => (id.endsWith("l") ? "locs" : "smooth");
+const fits = ({ shelf, air, shade }) => shelf <= MAX_SHELF && air <= MAX_AIR && shade <= MAX_SHADE;
 
 // sides id -> the top ids that sit on it cleanly, its own first. "none" is
-// no sides: the tops that end above the cut and can sit on a shaved head.
+// no sides: the tops that can sit on a shaved head.
 const pairs = {};
 let extra = 0;
 for (const s of ids) {
   pairs[s] = [s];
   for (const t of ids) {
-    if (t === s || family(t) !== family(s)) continue;
+    if (t === s) continue;
     if (fits(seam(cut[t].top, cut[s].sides))) { pairs[s].push(t); extra++; }
   }
 }
@@ -134,9 +152,9 @@ pairs.none = ids.filter((t) => fits(seam(cut[t].top, bare)));
 writeFileSync(`${ROOT}/_crown-pairs.json`, JSON.stringify(pairs, null, 2) + "\n");
 
 if (process.argv.includes("--matrix")) {
-  console.log("sides \\ top: step / shade (own pair marked *)");
+  console.log("sides \\ top: shelf / shade (own pair marked *)");
   for (const s of ids) {
-    console.log(s, ids.map((t) => { const r = seam(cut[t].top, cut[s].sides); return `${t === s ? "*" : " "}${String(r.step).padStart(2)}/${String(Math.round(r.shade)).padStart(2)}`; }).join(" "));
+    console.log(s, ids.map((t) => { const r = seam(cut[t].top, cut[s].sides); return `${t === s ? "*" : " "}${String(r.shelf).padStart(2)}/${String(Math.round(r.shade)).padStart(2)}`; }).join(" "));
   }
 }
 console.log(`cut ${ids.length} styles; ${extra} top/sides pairs beyond the artist's own; ${pairs.none.length} tops on no sides; ${VISIBLE.length} of ${SEAM.length} seam pixels visible`);
