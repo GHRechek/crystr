@@ -34,10 +34,13 @@ const isSides = (x, y) => y >= UNDER || (y >= MID && (x < CORE[0] || x > CORE[1]
 /** How far apart two silhouettes may be along the visible seam, in boundary
  *  pixels where one has hair and the other doesn't. */
 const MAX_STEP = 3;
-/** How much the shading may jump across the seam, on average, where both
- *  have hair: mean luminance difference in 0–255. The artist's own pairs
- *  sit around 20. */
-const MAX_SHADE = 34;
+/** How much the shading may jump across the seam where both have hair, as
+ *  luminance in 0–255: on average, and at the single worst pixel. The
+ *  artist's own pairs average under 11 and never jump past 48; a bob's
+ *  highlight band over a darker long style averaged 22 with a jump of 60,
+ *  and met in a tone line at the temple. */
+const MAX_SHADE = 15;
+const MAX_JUMP = 48;
 
 /** Styles that are one shape across the cut and the front both, and can't
  *  be split at all: the mohawk's crest runs from the front fin to the back
@@ -111,13 +114,18 @@ function split(png) {
 
 /** Steps and shade jump between a crown and a sides along the visible seam. */
 function seam(crown, sides) {
-  let step = 0, both = 0, shade = 0;
+  let step = 0, both = 0, shade = 0, jump = 0;
   for (const [c, s] of VISIBLE) {
     const a = opaque(crown, ...c), b = opaque(sides, ...s);
     if (a !== b) step++;
-    else if (a) { both++; shade += Math.abs(lum(crown, ...c) - lum(sides, ...s)); }
+    else if (a) {
+      both++;
+      const d = Math.abs(lum(crown, ...c) - lum(sides, ...s));
+      shade += d;
+      jump = Math.max(jump, d);
+    }
   }
-  return { step, shade: both ? shade / both : 0 };
+  return { step, shade: both ? shade / both : 0, jump };
 }
 
 mkdirSync(`${ROOT}/HairCrown`, { recursive: true });
@@ -141,8 +149,8 @@ for (const s of ids) {
     if (WHOLE.includes(c) || WHOLE.includes(s)) continue;
     if (CURLY.includes(c) && !CURLY.includes(s)) continue;
     if (OWN_SIDES_ONLY.includes(c)) continue;
-    const { step, shade } = seam(cut[c].crown, cut[s].sides);
-    if (step <= MAX_STEP && shade <= MAX_SHADE) { pairs[s].push(c); extra++; }
+    const { step, shade, jump } = seam(cut[c].crown, cut[s].sides);
+    if (step <= MAX_STEP && shade <= MAX_SHADE && jump <= MAX_JUMP) { pairs[s].push(c); extra++; }
   }
 }
 writeFileSync(`${ROOT}/_crown-pairs.json`, JSON.stringify(pairs, null, 2) + "\n");

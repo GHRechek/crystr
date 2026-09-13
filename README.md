@@ -155,8 +155,11 @@ silhouettes don't agree along that line — a bob's crown over a curly side
 shows a step — so the script scores every crown against every sides along
 the part of the cut the face doesn't cover, and only pairs whose
 silhouettes meet within three pixels and whose shading doesn't jump across
-it are offered: 61 beyond the artist's own 27, mostly the short cuts
-trading tops and the bun going over a braid. "Doesn't cover" means the
+it — under 15 on average and never past 48 at any one pixel, which is what
+the artist's own pairs manage — are offered: 48 beyond the artist's own 27,
+mostly the short cuts trading tops and the bun going over a braid. (A bob's
+highlight band over a darker long style averaged 22 with a jump of 60, and
+met in a tone line at the temple.) "Doesn't cover" means the
 jaw, not the skull — the skull draws under the hair, and scoring it as
 cover hid the cut's vertical edge above the ear, which is exactly where
 the seam showed. Three things the score can't see are locked by hand: the
