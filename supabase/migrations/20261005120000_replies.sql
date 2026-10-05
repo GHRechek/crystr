@@ -1,6 +1,6 @@
 -- Replies: one level, five mana, same as a post.
 --
--- NOT APPLIED. A reply is a post that points at another post. Additive and
+-- Applied to the live project. A reply is a post that points at another post. Additive and
 -- backward compatible: parent_id is nullable and every existing row stays a
 -- top-level post, so the current app keeps working until the new one ships.
 --
