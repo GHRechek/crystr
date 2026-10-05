@@ -86,7 +86,7 @@ export async function getFeed(userId: string): Promise<FeedItem[]> {
   const [{ data: posts }, { data: dispatches }] = await Promise.all([
     supabase
       .from("posts")
-      .select(`id, body, has_image, cost, created_at, author:profiles!posts_author_id_fkey(${AUTHOR_COLS}), likes:post_likes(count), replies:posts!posts_parent_id_fkey(count)`)
+      .select(`id, body, has_image, cost, created_at, author:profiles!posts_author_id_fkey(${AUTHOR_COLS}), likes:post_likes(count))`)
       .is("parent_id", null)
       .order("created_at", { ascending: false })
       .limit(50),
@@ -106,7 +106,6 @@ export async function getFeed(userId: string): Promise<FeedItem[]> {
     created_at: string;
     author: Author;
     likes: { count: number }[];
-    replies: { count: number }[];
   }>;
 
   let mine = new Set<number>();
@@ -119,6 +118,20 @@ export async function getFeed(userId: string): Promise<FeedItem[]> {
     mine = new Set((likes ?? []).map((l) => l.post_id as number));
   }
 
+  // Reply counts: one plain query, tallied here. (An embedded count over the
+  // posts table's own foreign key is ambiguous to PostgREST in a self-join.)
+  const replyCount = new Map<number, number>();
+  if (rows.length) {
+    const { data: kids } = await supabase
+      .from("posts")
+      .select("parent_id")
+      .in("parent_id", rows.map((p) => p.id));
+    for (const k of kids ?? []) {
+      const id = k.parent_id as number;
+      replyCount.set(id, (replyCount.get(id) ?? 0) + 1);
+    }
+  }
+
   const social: FeedItem[] = rows.map((p) => ({
     kind: "post",
     id: p.id,
@@ -129,7 +142,7 @@ export async function getFeed(userId: string): Promise<FeedItem[]> {
     created_at: p.created_at,
     likes: p.likes?.[0]?.count ?? 0,
     liked: mine.has(p.id),
-    replies: p.replies?.[0]?.count ?? 0,
+    replies: replyCount.get(p.id) ?? 0,
   }));
 
   const ball = ((dispatches ?? []) as unknown as FeedDispatch[]).map((a) => ({
