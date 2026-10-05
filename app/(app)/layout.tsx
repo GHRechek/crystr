@@ -1,7 +1,7 @@
 import { requireMe } from "@/lib/data";
 import { readFlash } from "@/lib/flash";
-import { Clock, TabBar, Toast, WellButton } from "@/components/chrome";
-import { MANA_CAP, manaColor, wellLine } from "@/lib/crystr";
+import { Clock, SetupBanner, TabBar, Toast, WellButton } from "@/components/chrome";
+import { MANA_CAP, hasStarterHandle, manaColor, wellLine } from "@/lib/crystr";
 
 export const dynamic = "force-dynamic";
 
@@ -36,6 +36,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             <WellButton low={mana < 11} />
           </div>
         </header>
+
+        {hasStarterHandle(profile.handle) ? <SetupBanner /> : null}
 
         <main className="screen">{children}</main>
 

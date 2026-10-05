@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { requireMe, getPeople, getTopFriends } from "@/lib/data";
 import { updateProfile } from "@/lib/actions";
+import { hasStarterHandle } from "@/lib/crystr";
 import { TopSixPicker } from "./top-six";
 
 export default async function EditProfilePage() {
   const { userId, profile } = await requireMe();
+  const starter = hasStarterHandle(profile.handle);
   const [people, top] = await Promise.all([getPeople(userId), getTopFriends(userId)]);
 
   return (
@@ -30,7 +32,9 @@ export default async function EditProfilePage() {
             id="handle"
             name="handle"
             className="input"
-            defaultValue={profile.handle}
+            defaultValue={starter ? "" : profile.handle}
+            placeholder={starter ? "what the City will call you" : undefined}
+            autoFocus={starter}
             required
             maxLength={32}
             pattern="[a-zA-Z0-9_.\-]+"

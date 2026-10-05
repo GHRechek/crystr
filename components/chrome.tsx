@@ -114,3 +114,22 @@ export function Toast({ flash }: { flash: Flash }) {
     </div>
   );
 }
+
+/** Shown under the header until a new arrival has picked a handle. Hidden on
+ *  the edit page itself, where the form is already the prompt. */
+export function SetupBanner() {
+  const path = usePathname();
+  if (path.startsWith("/me/edit")) return null;
+
+  return (
+    <Link href="/me/edit" className="setup-banner">
+      <span className="px" style={{ fontSize: 9 }}>
+        FINISH SETTING UP YOUR PROFILE
+      </span>
+      <span className="spacer" />
+      <span className="px" style={{ fontSize: 9 }}>
+        PICK A HANDLE →
+      </span>
+    </Link>
+  );
+}

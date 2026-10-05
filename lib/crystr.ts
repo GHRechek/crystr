@@ -150,3 +150,10 @@ export function byline(
   if (status === "returned") return `${who} · RETURNED`;
   return `${who} · UNPUBLISHED`;
 }
+
+/** The handle the sign-in trigger gives a new arrival: "user_" and the first
+ *  eight characters of their id. Still wearing it means they haven't picked
+ *  one, which is the whole definition of an unfinished profile. */
+export function hasStarterHandle(handle: string): boolean {
+  return /^user_[0-9a-f]{8}$/.test(handle);
+}
