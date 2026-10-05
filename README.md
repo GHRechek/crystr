@@ -15,6 +15,7 @@ Supabase and Vercel.
 | --- | --- |
 | `/` | The timeline. Posts, plus published Ball dispatches interleaved at positions 2, 5 and 8 with a `◉ BALL` tag. Decays with your balance. |
 | `/post` | Compose, with a live cost preview and an image toggle. |
+| `/thread/[id]` | A post and the replies under it, oldest first, with the reply box. Five mana a reply, same as a post. |
 | `/well`, `/well/[slug]` | The five quests and their proof screens. |
 | `/whispers`, `/whispers/[id]`, `/whispers/new` | DMs at 2 mana a message. |
 | `/me`, `/me/edit`, `/me/avatar` | MySpace-shaped profile: mood, about, Top 6, the mana ledger, and the portrait builder. |
@@ -250,11 +251,21 @@ the originals kept in `assets/portrait/_sheets/`. This is paid art — check its
 licence covers redistribution before this repo goes public, and serve the
 cells from the Supabase bucket instead if it doesn't.
 
+## Replies
+
+A reply is a post with a `parent_id`, written by `cr_create_reply` at the price
+of a post (5 mana, 3 more with an image). One level only: replying to a reply
+attaches to the post at the top of its thread, so a thread is a post and a flat
+list under it. The timeline shows top-level posts only, with a reply count on
+the REPLY button; tapping a post or REPLY opens `/thread/[id]`, replies oldest
+first, with the reply box. Deleting a post deletes its replies. The migration is
+`supabase/migrations/20261005120000_replies.sql`; it is additive, so the old app
+keeps working until the new one ships.
+
 ## Still placeholder
 
 Images are striped tiles with a monospace label, as in the prototype — posts
 and article banners record *that* there's an image but there's nowhere to
-upload one yet (quest proofs do upload, to the `proofs` bucket). Replies toast
-"replies are posts wearing a hat" rather than threading. The prototype's
+upload one yet (quest proofs do upload, to the `proofs` bucket). The prototype's
 feed-layout and pixel-intensity variation knobs are baked to their defaults
 (Roomy cards, Subtle).

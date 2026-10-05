@@ -60,6 +60,8 @@ export type FeedPost = {
   created_at: string;
   likes: number;
   liked: boolean;
+  /** How many replies sit under it. Always 0 for a reply itself. */
+  replies: number;
 };
 
 export type FeedDispatch = {
@@ -84,7 +86,8 @@ export async function getFeed(userId: string): Promise<FeedItem[]> {
   const [{ data: posts }, { data: dispatches }] = await Promise.all([
     supabase
       .from("posts")
-      .select(`id, body, has_image, cost, created_at, author:profiles!posts_author_id_fkey(${AUTHOR_COLS}), likes:post_likes(count)`)
+      .select(`id, body, has_image, cost, created_at, author:profiles!posts_author_id_fkey(${AUTHOR_COLS}), likes:post_likes(count), replies:posts!posts_parent_id_fkey(count)`)
+      .is("parent_id", null)
       .order("created_at", { ascending: false })
       .limit(50),
     supabase
@@ -103,6 +106,7 @@ export async function getFeed(userId: string): Promise<FeedItem[]> {
     created_at: string;
     author: Author;
     likes: { count: number }[];
+    replies: { count: number }[];
   }>;
 
   let mine = new Set<number>();
@@ -125,6 +129,7 @@ export async function getFeed(userId: string): Promise<FeedItem[]> {
     created_at: p.created_at,
     likes: p.likes?.[0]?.count ?? 0,
     liked: mine.has(p.id),
+    replies: p.replies?.[0]?.count ?? 0,
   }));
 
   const ball = ((dispatches ?? []) as unknown as FeedDispatch[]).map((a) => ({
@@ -324,6 +329,67 @@ export async function getMotions(): Promise<{ open: Motion[]; past: Motion[] }> 
   return {
     open: all.filter((m) => new Date(m.closes_at).getTime() > now),
     past: all.filter((m) => new Date(m.closes_at).getTime() <= now),
+  };
+}
+
+/** One post and the replies under it, oldest first. Null if there is no such
+ *  post — or it's a reply, which has no page of its own: its thread does. */
+export async function getPostThread(
+  id: number,
+  userId: string,
+): Promise<{ post: FeedPost; replies: FeedPost[] } | null> {
+  const supabase = createClient();
+
+  const [{ data: top }, { data: kids }] = await Promise.all([
+    supabase
+      .from("posts")
+      .select(`id, body, has_image, cost, created_at, parent_id, author:profiles!posts_author_id_fkey(${AUTHOR_COLS}), likes:post_likes(count)`)
+      .eq("id", id)
+      .maybeSingle(),
+    supabase
+      .from("posts")
+      .select(`id, body, has_image, cost, created_at, parent_id, author:profiles!posts_author_id_fkey(${AUTHOR_COLS}), likes:post_likes(count)`)
+      .eq("parent_id", id)
+      .order("created_at", { ascending: true })
+      .limit(200),
+  ]);
+
+  if (!top || (top as { parent_id: number | null }).parent_id !== null) return null;
+
+  type Row = {
+    id: number;
+    body: string;
+    has_image: boolean;
+    cost: number;
+    created_at: string;
+    author: Author;
+    likes: { count: number }[];
+  };
+  const rows = [top as unknown as Row, ...((kids ?? []) as unknown as Row[])];
+
+  const { data: likes } = await supabase
+    .from("post_likes")
+    .select("post_id")
+    .eq("user_id", userId)
+    .in("post_id", rows.map((r) => r.id));
+  const mine = new Set((likes ?? []).map((l) => l.post_id as number));
+
+  const toPost = (r: Row, replies: number): FeedPost => ({
+    kind: "post",
+    id: r.id,
+    author: r.author,
+    body: r.body,
+    has_image: r.has_image,
+    cost: r.cost,
+    created_at: r.created_at,
+    likes: r.likes?.[0]?.count ?? 0,
+    liked: mine.has(r.id),
+    replies,
+  });
+
+  return {
+    post: toPost(rows[0], rows.length - 1),
+    replies: rows.slice(1).map((r) => toPost(r, 0)),
   };
 }
 

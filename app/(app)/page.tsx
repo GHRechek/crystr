@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { requireMe, getFeed, type FeedItem } from "@/lib/data";
 import { Avatar, Placeholder } from "@/components/bits";
-import { likePost, replyNotice } from "@/lib/actions";
+import { PostCard } from "@/components/post-card";
 import {
   ago,
   corrupt,
@@ -114,67 +114,5 @@ function Card({ item, decay, me }: { item: FeedItem; decay: number; me: string }
     );
   }
 
-  const mine = item.author.id === me;
-
-  return (
-    <div className="card">
-      <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
-        <Avatar person={item.author} />
-        <div style={{ display: "flex", flexDirection: "column", gap: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 13, fontWeight: 500, letterSpacing: "-.01em" }}>
-            {item.author.handle}
-          </div>
-          <div className="px" style={{ fontSize: 8.5, color: "var(--muted)" }}>
-            {mine ? "YOU · " : ""}
-            {ago(item.created_at)}
-          </div>
-        </div>
-        <div className="spacer" />
-        <div className="px" style={{ fontSize: 8.5, color: "var(--dim)" }}>
-          -{item.cost}
-        </div>
-      </div>
-
-      <div
-        style={{
-          fontSize: 13.5,
-          lineHeight: 1.55,
-          color: "var(--text-2)",
-          textWrap: "pretty",
-          whiteSpace: "pre-wrap",
-        }}
-      >
-        {corrupt(item.body, decay)}
-      </div>
-
-      {item.has_image ? (
-        <Placeholder label="IMAGE — PENDING TILE" height={132} />
-      ) : null}
-
-      <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 1 }}>
-        <form action={likePost}>
-          <input type="hidden" name="post_id" value={item.id} />
-          <button
-            className="btn btn-sm"
-            type="submit"
-            style={{
-              borderColor: item.liked ? "var(--mag)" : "var(--edge)",
-              color: item.liked ? "var(--mag-soft)" : "var(--dim)",
-            }}
-          >
-            ♥ {item.likes}
-          </button>
-        </form>
-        <form action={replyNotice}>
-          <button className="btn btn-sm" type="submit">
-            ↩ REPLY
-          </button>
-        </form>
-        <div className="spacer" />
-        <span className="px" style={{ fontSize: 8, color: "var(--dim)" }}>
-          -1 TO LIKE
-        </span>
-      </div>
-    </div>
-  );
+  return <PostCard post={item} me={me} decay={decay} />;
 }

@@ -86,11 +86,32 @@ export async function likePost(fd: FormData) {
     }
   }
   revalidatePath("/");
+  const back = fd.get("thread");
+  if (back) revalidatePath(`/thread/${Number(back)}`);
 }
 
-export async function replyNotice() {
-  setFlash("COSTS 5", "Replies are posts wearing a hat. Same price. Use the POST tab.", EDGE.purple);
+export async function createReply(fd: FormData) {
+  const parent = Number(fd.get("parent_id"));
+  const r = await call("cr_create_reply", { p_parent: parent, p_body: str(fd, "body") });
+
+  if (!r.ok) {
+    if (r.code === "empty") {
+      setFlash("DECLINED", "An empty reply still costs five. Say something.", EDGE.mag);
+    } else if (r.code === "insufficient") {
+      broke(r, "Short by {short}. A reply costs what a post costs, and the well is that way.");
+    } else if (r.code === "missing") {
+      setFlash("GONE", "That post is no longer there to answer. Somebody unsaid it.", EDGE.mag);
+      redirect("/");
+    } else {
+      wentWrong();
+    }
+    return;
+  }
+
+  setFlash("REPLIED", `${r.cost} mana gone. It is on the thread, under their name, not yours.`, EDGE.mag);
   revalidatePath("/");
+  revalidatePath(`/thread/${parent}`);
+  redirect(`/thread/${parent}`);
 }
 
 export async function voiceLocked() {
