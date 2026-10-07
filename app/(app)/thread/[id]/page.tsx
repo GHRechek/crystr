@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireMe, getPostThread } from "@/lib/data";
 import { PostCard } from "@/components/post-card";
+import { decayLevel } from "@/lib/crystr";
 import { ReplyForm } from "./reply-form";
 
 export default async function ThreadPage({
@@ -19,6 +20,7 @@ export default async function ThreadPage({
   if (!thread) notFound();
 
   const { post, replies } = thread;
+  const decay = decayLevel(profile.mana);
 
   return (
     <div className="pad" style={{ gap: 12 }}>
@@ -34,13 +36,13 @@ export default async function ThreadPage({
         </div>
       </div>
 
-      <PostCard post={post} me={userId} inThread thread={post.id} />
+      <PostCard post={post} me={userId} decay={decay} inThread thread={post.id} />
 
       <ReplyForm parent={post.id} mana={profile.mana} focus={searchParams.reply === "1"} />
 
       {replies.map((r) => (
         <div key={r.id} style={{ paddingLeft: 14, borderLeft: "2px solid var(--edge)" }}>
-          <PostCard post={r} me={userId} inThread thread={post.id} />
+          <PostCard post={r} me={userId} decay={decay} inThread thread={post.id} />
         </div>
       ))}
     </div>

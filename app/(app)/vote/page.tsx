@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { requireMe, getMotions, type Motion } from "@/lib/data";
 import { castVote } from "@/lib/actions";
-import { ago, closesIn, COSTS } from "@/lib/crystr";
+import { ago, closesIn, corrupt, COSTS, decayLevel } from "@/lib/crystr";
 
 export default async function VotePage({
   searchParams,
@@ -11,6 +11,7 @@ export default async function VotePage({
   const { profile } = await requireMe();
   const { open, past } = await getMotions();
   const showPast = searchParams.tab === "past";
+  const decay = decayLevel(profile.mana);
 
   return (
     <div className="pad" style={{ gap: 13 }}>
@@ -50,14 +51,14 @@ export default async function VotePage({
 
       {showPast ? (
         past.length ? (
-          past.map((m) => <Decided key={m.id} motion={m} />)
+          past.map((m) => <Decided key={m.id} motion={m} decay={decay} />)
         ) : (
           <div className="empty">NOTHING HAS BEEN DECIDED YET</div>
         )
       ) : (
         <>
           {open.map((m) => (
-            <Open key={m.id} motion={m} mana={profile.mana} />
+            <Open key={m.id} motion={m} mana={profile.mana} decay={decay} />
           ))}
           {open.length === 0 ? (
             <div className="empty">
@@ -98,7 +99,7 @@ function Tally({ motion, height }: { motion: Motion; height: number }) {
   );
 }
 
-function Open({ motion, mana }: { motion: Motion; mana: number }) {
+function Open({ motion, mana, decay }: { motion: Motion; mana: number; decay: number }) {
   const total = motion.votes_for + motion.votes_against;
   const pct = total ? Math.round((motion.votes_for / total) * 100) : 0;
   const closes = closesIn(motion.closes_at);
@@ -120,7 +121,7 @@ function Open({ motion, mana }: { motion: Motion; mana: number }) {
               textWrap: "pretty",
             }}
           >
-            {motion.title}
+            {corrupt(motion.title, decay)}
           </div>
         </div>
         <div
@@ -141,7 +142,7 @@ function Open({ motion, mana }: { motion: Motion; mana: number }) {
 
       {motion.blurb ? (
         <div style={{ fontSize: 12, lineHeight: 1.55, color: "var(--dim)", textWrap: "pretty" }}>
-          {motion.blurb}
+          {corrupt(motion.blurb, decay)}
         </div>
       ) : null}
 
@@ -212,7 +213,7 @@ function Open({ motion, mana }: { motion: Motion; mana: number }) {
   );
 }
 
-function Decided({ motion }: { motion: Motion }) {
+function Decided({ motion, decay }: { motion: Motion; decay: number }) {
   const total = motion.votes_for + motion.votes_against;
   const pct = total ? Math.round((motion.votes_for / total) * 100) : 0;
   const passed = motion.votes_for > motion.votes_against;
@@ -230,7 +231,7 @@ function Decided({ motion }: { motion: Motion }) {
             textWrap: "pretty",
           }}
         >
-          {motion.title}
+          {corrupt(motion.title, decay)}
         </div>
         <div className={`pill ${passed ? "pill-passed" : "pill-failed"}`} style={{ fontSize: 8 }}>
           {total === 0 ? "NO QUORUM" : passed ? "PASSED" : "FAILED"}

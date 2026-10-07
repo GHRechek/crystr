@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { requireMe, getThread } from "@/lib/data";
 import { Avatar } from "@/components/bits";
 import { sendWhisper } from "@/lib/actions";
-import { COSTS } from "@/lib/crystr";
+import { corrupt, COSTS, decayLevel } from "@/lib/crystr";
 
 export default async function ThreadPage({ params }: { params: { id: string } }) {
   const { userId, profile } = await requireMe();
@@ -14,6 +14,7 @@ export default async function ThreadPage({ params }: { params: { id: string } })
   if (!thread) notFound();
 
   const broke = profile.mana < COSTS.whisper;
+  const decay = decayLevel(profile.mana);
 
   return (
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100%" }}>
@@ -69,7 +70,7 @@ export default async function ThreadPage({ params }: { params: { id: string } })
                 whiteSpace: "pre-wrap",
               }}
             >
-              {m.body}
+              {corrupt(m.body, decay)}
             </div>
           );
         })}

@@ -6,9 +6,6 @@ import {
   ago,
   corrupt,
   decayLevel,
-  DECAY_FILTER,
-  DECAY_NOTE,
-  SCAN_OPACITY,
 } from "@/lib/crystr";
 
 export default async function FeedPage() {
@@ -20,26 +17,7 @@ export default async function FeedPage() {
 
   return (
     <>
-      <div className="pad" style={{ padding: "14px 16px 24px", filter: DECAY_FILTER[decay] }}>
-        {decay > 0 ? (
-          <div className="degrading">
-            <span className="px" style={{ fontSize: 13, color: "var(--mag)" }}>
-              !
-            </span>
-            <div>
-              <div
-                className="px"
-                style={{ fontSize: 9.5, color: "var(--mag-soft)", marginBottom: 4 }}
-              >
-                SIGNAL DEGRADING
-              </div>
-              <div style={{ fontSize: 11.5, lineHeight: 1.5, color: "var(--text-3)" }}>
-                {DECAY_NOTE[decay]}
-              </div>
-            </div>
-          </div>
-        ) : null}
-
+      <div className="pad" style={{ padding: "14px 16px 24px" }}>
         {items.map((item) => (
           <Card key={`${item.kind}-${item.id}`} item={item} decay={decay} me={userId} />
         ))}
@@ -57,9 +35,6 @@ export default async function FeedPage() {
         )}
       </div>
 
-      {decay > 0 ? (
-        <div className="scanlines" style={{ opacity: SCAN_OPACITY[decay] }} />
-      ) : null}
     </>
   );
 }

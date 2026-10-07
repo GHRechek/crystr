@@ -2,7 +2,7 @@ import { requireMe, getLedger, getTopFriends } from "@/lib/data";
 import { Avatar } from "@/components/bits";
 import { ProfileHead } from "./face-menu";
 import { portraitFromId, normalizePortrait, packPortrait } from "@/lib/portrait/core";
-import { ago, COSTS } from "@/lib/crystr";
+import { ago, corrupt, COSTS, decayLevel } from "@/lib/crystr";
 
 export default async function ProfilePage() {
   const { userId, profile } = await requireMe();
@@ -24,6 +24,7 @@ export default async function ProfilePage() {
     ] satisfies [string, string | null][]
   ).flatMap(([label, value]) => (value?.trim() ? [[label, value.trim()] as [string, string]] : []));
 
+  const decay = decayLevel(profile.mana);
   const slots = [...top, ...Array(Math.max(0, 6 - top.length)).fill(null)].slice(0, 6);
 
   return (
@@ -53,7 +54,7 @@ export default async function ProfilePage() {
           <div
             style={{ fontSize: 12.5, lineHeight: 1.6, color: "var(--text-3)", textWrap: "pretty" }}
           >
-            {profile.bio || "Nothing written here yet. The City will assume the worst."}
+            {corrupt(profile.bio || "Nothing written here yet. The City will assume the worst.", decay)}
           </div>
         </div>
 
@@ -75,7 +76,7 @@ export default async function ProfilePage() {
                     {label}
                   </div>
                   <div style={{ fontSize: 12.5, lineHeight: 1.5, color: "var(--text-2)", minWidth: 0 }}>
-                    {value}
+                    {corrupt(value, decay)}
                   </div>
                 </div>
               ))}

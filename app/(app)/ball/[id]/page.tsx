@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireMe, getArticle } from "@/lib/data";
 import { setArticleStatus } from "@/lib/actions";
-import { byline, paragraphs, readTime } from "@/lib/crystr";
+import { byline, corrupt, decayLevel, paragraphs, readTime } from "@/lib/crystr";
 
 export default async function ArticlePage({ params }: { params: { id: string } }) {
   const { profile } = await requireMe();
@@ -13,6 +13,7 @@ export default async function ArticlePage({ params }: { params: { id: string } }
   if (!article) notFound();
 
   const isWitch = profile.is_witch;
+  const decay = decayLevel(profile.mana);
   const pending = article.status === "pending";
   const nextStatus =
     pending || article.status === "draft" || article.status === "returned"
@@ -52,11 +53,11 @@ export default async function ArticlePage({ params }: { params: { id: string } }
               textWrap: "pretty",
             }}
           >
-            {article.headline}
+            {corrupt(article.headline, decay)}
           </div>
           {article.standfirst ? (
             <div style={{ fontSize: 14, lineHeight: 1.55, color: "var(--text-3)", textWrap: "pretty" }}>
-              {article.standfirst}
+              {corrupt(article.standfirst, decay)}
             </div>
           ) : null}
         </div>
@@ -79,7 +80,7 @@ export default async function ArticlePage({ params }: { params: { id: string } }
 
         {paragraphs(article.body).map((p, i) => (
           <div key={i} style={{ fontSize: 14, lineHeight: 1.65, color: "var(--text-2)", textWrap: "pretty" }}>
-            {p}
+            {corrupt(p, decay)}
           </div>
         ))}
 

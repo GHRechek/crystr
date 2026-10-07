@@ -1,6 +1,7 @@
 import { requireMe } from "@/lib/data";
 import { readFlash } from "@/lib/flash";
 import { Clock, SetupBanner, TabBar, Toast, WellButton } from "@/components/chrome";
+import { DecayFrame } from "@/components/decay";
 import { MANA_CAP, hasStarterHandle, manaColor, wellLine } from "@/lib/crystr";
 
 export const dynamic = "force-dynamic";
@@ -39,7 +40,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
         {hasStarterHandle(profile.handle) ? <SetupBanner /> : null}
 
-        <main className="screen">{children}</main>
+        <main className="screen">
+          <DecayFrame mana={mana}>{children}</DecayFrame>
+        </main>
 
         {flash ? <Toast flash={flash} /> : null}
 

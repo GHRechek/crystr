@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { requireMe, getArticles, type Article } from "@/lib/data";
 import { setArticleStatus } from "@/lib/actions";
-import { byline, COSTS } from "@/lib/crystr";
+import { byline, corrupt, COSTS, decayLevel } from "@/lib/crystr";
 
 export default async function BallPage({
   searchParams,
@@ -10,6 +10,7 @@ export default async function BallPage({
 }) {
   const { userId, profile } = await requireMe();
   const all = await getArticles();
+  const decay = decayLevel(profile.mana);
 
   // A witch can look at the Ball as a player sees it — the prototype's
   // VIEWING AS switch, kept honest: a player cannot switch the other way.
@@ -139,11 +140,11 @@ export default async function BallPage({
                 OP-ED · {a.author.handle.toUpperCase()}
               </div>
               <div style={{ fontSize: 13.5, fontWeight: 500, lineHeight: 1.3, textWrap: "pretty" }}>
-                {a.headline}
+                {corrupt(a.headline, decay)}
               </div>
               {a.standfirst ? (
                 <div style={{ fontSize: 11.5, lineHeight: 1.5, color: "var(--dim)" }}>
-                  {a.standfirst}
+                  {corrupt(a.standfirst, decay)}
                 </div>
               ) : null}
               <div style={{ display: "flex", gap: 7 }}>
@@ -173,8 +174,8 @@ export default async function BallPage({
               <span className="kicker">{a.kicker}</span>
               <Pill article={a} />
             </div>
-            <div className="headline">{a.headline}</div>
-            {a.standfirst ? <div className="standfirst">{a.standfirst}</div> : null}
+            <div className="headline">{corrupt(a.headline, decay)}</div>
+            {a.standfirst ? <div className="standfirst">{corrupt(a.standfirst, decay)}</div> : null}
             <div className="byline" style={{ marginTop: 2 }}>
               {byline(a.author.handle, a.status, a.created_at, a.published_at, a.byline_name)}
             </div>

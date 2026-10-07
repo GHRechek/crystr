@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { requireMe, getThreads } from "@/lib/data";
 import { Avatar } from "@/components/bits";
-import { ago, COSTS } from "@/lib/crystr";
+import { ago, corrupt, COSTS, decayLevel } from "@/lib/crystr";
 
 export default async function WhispersPage() {
-  const { userId } = await requireMe();
+  const { userId, profile } = await requireMe();
   const threads = await getThreads(userId);
+  const decay = decayLevel(profile.mana);
 
   return (
     <div className="pad" style={{ padding: "14px 16px 24px", gap: 8 }}>
@@ -37,7 +38,7 @@ export default async function WhispersPage() {
                 textOverflow: "ellipsis",
               }}
             >
-              {t.preview}
+              {corrupt(t.preview, decay)}
             </div>
           </div>
           {t.unread ? (
