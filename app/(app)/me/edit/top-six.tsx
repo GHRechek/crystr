@@ -37,7 +37,7 @@ export function TopSixPicker({
           TOP 6
         </div>
         <div style={{ fontSize: 10.5, color: "var(--muted)" }}>
-          {picked.length}/6 picked · {COSTS.topSix} mana to change
+          {picked.length}/6 picked · changing it takes {COSTS.topSix} mana
         </div>
       </div>
 
@@ -76,7 +76,7 @@ export function TopSixPicker({
           className={`btn btn-lg btn-block${changed ? " btn-mag" : ""}`}
           aria-disabled={!changed}
         >
-          {changed ? `SAVE THE TOP 6 · -${COSTS.topSix}` : "TOP 6 UNCHANGED"}
+          {changed ? `SAVE THE TOP 6 · USES ${COSTS.topSix}` : "TOP 6 UNCHANGED"}
         </button>
       )}
     </form>

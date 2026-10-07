@@ -90,7 +90,7 @@ export default async function ProfilePage() {
               TOP 6
             </div>
             <div style={{ fontSize: 10.5, color: "var(--muted)" }}>
-              reordering one costs {COSTS.topSix} mana and a friendship
+              reordering takes {COSTS.topSix} mana
             </div>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 8 }}>

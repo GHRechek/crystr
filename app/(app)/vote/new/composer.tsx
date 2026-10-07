@@ -95,7 +95,7 @@ export function MotionComposer() {
             name="m_blurb"
             className="textarea textarea-sub"
             rows={3}
-            placeholder="Two sentences. Both sides, if you can manage it."
+            placeholder="Two sentences. Both sides, if you can."
           />
         </div>
 

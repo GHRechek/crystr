@@ -53,7 +53,7 @@ export function ReplyForm({
           aria-disabled={!ready}
           disabled={!ready}
         >
-          {affordable ? "REPLY" : "SHORT ON MANA"}
+          {affordable ? "REPLY" : "REST FIRST"}
         </button>
       </div>
     </form>

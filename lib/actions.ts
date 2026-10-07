@@ -41,12 +41,12 @@ function str(fd: FormData, key: string): string {
 
 /** The house message for "you cannot afford this", with the shortfall. */
 function broke(r: Rpc, line: string) {
-  setFlash("DECLINED", line.replace("{have}", String(r.have ?? 0))
+  setFlash("REST FIRST", line.replace("{have}", String(r.have ?? 0))
     .replace("{short}", String(Math.max(0, (r.need ?? 0) - (r.have ?? 0)))), EDGE.mag);
 }
 
 function wentWrong() {
-  setFlash("THE WELL COUGHED", "Something failed on the way to the counting house. Try that again.", EDGE.mag);
+  setFlash("SOMETHING WENT WRONG", "That one is on us. Give it another try.", EDGE.mag);
 }
 
 // ------------------------------------------------------------------- feed
@@ -59,16 +59,16 @@ export async function createPost(fd: FormData) {
 
   if (!r.ok) {
     if (r.code === "empty") {
-      setFlash("DECLINED", "An empty post still costs five. Write something.", EDGE.mag);
+      setFlash("DECLINED", "There is nothing here yet. Write a few words first.", EDGE.mag);
     } else if (r.code === "insufficient") {
-      broke(r, "Short by {short}. The WELL tab is not a punishment, it is a suggestion.");
+      broke(r, "You are {short} short of the strength for that. A little time at the Well will help.");
     } else {
       wentWrong();
     }
     return;
   }
 
-  setFlash("POSTED", `${r.cost} mana gone. It had better have been worth it.`, EDGE.mag);
+  setFlash("POSTED", `That took ${r.cost} out of you. Nicely said.`, EDGE.mag);
   revalidatePath("/");
   redirect("/");
 }
@@ -78,9 +78,9 @@ export async function likePost(fd: FormData) {
 
   if (!r.ok) {
     if (r.code === "already") {
-      setFlash("ALREADY PAID", "You liked this once. Enthusiasm is not refundable.", EDGE.purple);
+      setFlash("ALREADY LIKED", "You have already liked this one.", EDGE.purple);
     } else if (r.code === "insufficient") {
-      setFlash("DECLINED", "One mana. You do not have one mana. Go write a poem.", EDGE.mag);
+      setFlash("REST FIRST", "You are fully out of mana. The Well is the place to recover.", EDGE.mag);
     } else {
       wentWrong();
     }
@@ -96,9 +96,9 @@ export async function createReply(fd: FormData) {
 
   if (!r.ok) {
     if (r.code === "empty") {
-      setFlash("DECLINED", "An empty reply still costs five. Say something.", EDGE.mag);
+      setFlash("DECLINED", "There is nothing here yet. Write a few words first.", EDGE.mag);
     } else if (r.code === "insufficient") {
-      broke(r, "Short by {short}. A reply costs what a post costs, and the well is that way.");
+      broke(r, "You are {short} short of the strength for a reply. The Well will help.");
     } else if (r.code === "missing") {
       setFlash("GONE", "That post is no longer there to answer. Somebody unsaid it.", EDGE.mag);
       redirect("/");
@@ -108,14 +108,14 @@ export async function createReply(fd: FormData) {
     return;
   }
 
-  setFlash("REPLIED", `${r.cost} mana gone. It is on the thread, under their name, not yours.`, EDGE.mag);
+  setFlash("REPLIED", `That took ${r.cost} out of you. Your reply is on the thread.`, EDGE.mag);
   revalidatePath("/");
   revalidatePath(`/thread/${parent}`);
   redirect(`/thread/${parent}`);
 }
 
 export async function voiceLocked() {
-  setFlash("LOCKED", "Voice notes cost eleven mana and nobody has ever earned that in one sitting.", EDGE.purple);
+  setFlash("LOCKED", "Voice notes are not open yet. They will take a lot out of you, so we are keeping them for later.", EDGE.purple);
   revalidatePath("/post");
 }
 
@@ -133,13 +133,13 @@ export async function submitQuest(fd: FormData) {
     if (r.code === "no_proof") {
       setFlash(
         "NO PROOF",
-        "The well pays for artifacts, not for intentions. Upload the thing, or write down what you did.",
+        "The Well needs something to go on. Add a photo, or write down what you did.",
         EDGE.mag,
       );
     } else if (r.code === "cooldown") {
       setFlash(
         "TOO SOON",
-        `The well pays for effort, not for repetition. That one is available again in ${untilReady(r.ready_at!)}.`,
+        `You have brought this one in recently. It will be ready again in ${untilReady(r.ready_at!)}.`,
         EDGE.mag,
       );
     } else {
@@ -151,7 +151,7 @@ export async function submitQuest(fd: FormData) {
 
   setFlash(
     "ACCEPTED",
-    `${r.reward} mana credited. The well notes that you were capable of this the whole time.`,
+    `${r.reward} mana restored. Well done. Look after yourself.`,
     EDGE.blue,
   );
   revalidatePath("/well");
@@ -180,9 +180,9 @@ export async function sendWhisper(fd: FormData) {
 
   if (!r.ok) {
     if (r.code === "empty") {
-      setFlash("EMPTY", "Two mana for nothing. Even here, that's a bad trade.", EDGE.purple);
+      setFlash("EMPTY", "Nothing to send yet. Write a few words first.", EDGE.purple);
     } else if (r.code === "insufficient") {
-      broke(r, `Whispers cost ${COSTS.whisper}. You have {have}. This one waits until you do something real.`);
+      broke(r, `A whisper takes ${COSTS.whisper}, and you have {have}. Recover at the Well and it will be here when you are back.`);
     } else {
       wentWrong();
     }
@@ -200,18 +200,18 @@ export async function castVote(fd: FormData) {
 
   if (!r.ok) {
     if (r.code === "insufficient") {
-      broke(r, "A vote costs three. You have {have}. Democracy waits; the well does not.");
+      broke(r, "A vote takes three, and you have {have}. Your vote will keep. Go and recover, then come back.");
     } else if (r.code === "already") {
-      setFlash("COUNTED", "You have already been counted on this one. It cannot be withdrawn.", EDGE.purple);
+      setFlash("COUNTED", "You have already voted on this one, and it cannot be changed.", EDGE.purple);
     } else if (r.code === "closed") {
-      setFlash("CLOSED", "That motion closed while you were deciding. The City moved on without you.", EDGE.purple);
+      setFlash("CLOSED", "That motion closed while you were deciding. There will be another.", EDGE.purple);
     } else {
       wentWrong();
     }
   } else {
     setFlash(
       "RECORDED",
-      "Three mana, one opinion, filed under your name. It cannot be withdrawn.",
+      "Your vote is in, under your name. It takes three out of you and cannot be changed.",
       str(fd, "side") === "for" ? EDGE.mag : EDGE.blue,
     );
   }
@@ -235,11 +235,11 @@ export async function tableMotion(fd: FormData) {
     if (r.code === "no_motion") {
       setFlash("EMPTY", "A motion needs wording before it needs a briefing.", EDGE.mag);
     } else if (r.code === "no_headline") {
-      setFlash("NO HEADLINE", "The City will not read an untitled notice, and neither will I.", EDGE.mag);
+      setFlash("NO HEADLINE", "Give it a headline so the City knows what it is about.", EDGE.mag);
     } else if (r.code === "thin_briefing") {
       setFlash(
         "TOO THIN",
-        "A motion goes to the board with a briefing that explains it. Forty characters is not an explanation.",
+        "A motion goes to the board with a briefing that explains it. Forty characters is a little short to explain it.",
         EDGE.mag,
       );
     } else if (r.code === "forbidden") {
@@ -252,7 +252,7 @@ export async function tableMotion(fd: FormData) {
 
   setFlash(
     "TABLED",
-    "Motion is on the board with its briefing attached. The City can now be annoyed at you accurately.",
+    "Your motion is on the board with its briefing attached.",
     EDGE.blue,
   );
   revalidatePath("/vote");
@@ -274,9 +274,9 @@ export async function submitOpEd(fd: FormData) {
 
   if (!r.ok) {
     if (r.code === "no_headline") {
-      setFlash("NO HEADLINE", "The City will not read an untitled notice, and neither will I.", EDGE.mag);
+      setFlash("NO HEADLINE", "Give it a headline so the City knows what it is about.", EDGE.mag);
     } else if (r.code === "insufficient") {
-      broke(r, `Op-eds cost ${COSTS.oped} to file. You have {have}. The well is that way.`);
+      broke(r, `An op-ed takes ${COSTS.oped}, and you have {have}. Recover at the Well and come back to it.`);
     } else {
       wentWrong();
     }
@@ -285,7 +285,7 @@ export async function submitOpEd(fd: FormData) {
 
   setFlash(
     "FILED",
-    "Six mana, one opinion, queued for a witch. They read these on their own time, so be patient.",
+    "Filed. It took six out of you. A witch will read it when they can, so no rush.",
     EDGE.mag,
   );
   revalidatePath("/ball");
@@ -309,7 +309,7 @@ export async function saveDispatch(fd: FormData) {
 
   if (!r.ok) {
     if (r.code === "no_headline") {
-      setFlash("NO HEADLINE", "The City will not read an untitled notice, and neither will I.", EDGE.mag);
+      setFlash("NO HEADLINE", "Give it a headline so the City knows what it is about.", EDGE.mag);
     } else if (r.code === "forbidden") {
       setFlash("NOT YOURS", "Dispatches are a witch's business.", EDGE.mag);
     } else {
@@ -321,11 +321,11 @@ export async function saveDispatch(fd: FormData) {
   if (status === "published") {
     setFlash(
       "PUBLISHED",
-      "It is on the board. Everyone in the City can read it, and roughly nine of them will.",
+      "It is on the board for the whole City to read.",
       EDGE.blue,
     );
   } else {
-    setFlash("SAVED", "Held as a draft. Nobody can see it, which may be for the best.", EDGE.purple);
+    setFlash("SAVED", "Saved as a draft. Only you can see it.", EDGE.purple);
   }
   revalidatePath("/ball");
   revalidatePath("/");
@@ -348,13 +348,13 @@ export async function setArticleStatus(fd: FormData) {
   }
 
   if (r.kind === "oped" && status === "published") {
-    setFlash("APPROVED", "Published under their name. If it is wrong, it is wrong in public now.", EDGE.blue);
+    setFlash("APPROVED", "Approved and published under their name.", EDGE.blue);
   } else if (status === "returned") {
-    setFlash("RETURNED", "Sent back with no notes, which is the cruellest kind.", EDGE.mag);
+    setFlash("RETURNED", "Sent back to the writer.", EDGE.mag);
   } else if (status === "published") {
-    setFlash("PUBLISHED", "Live to the City. No take-backs that anyone will believe.", EDGE.blue);
+    setFlash("PUBLISHED", "Published. The City can read it now.", EDGE.blue);
   } else {
-    setFlash("PULLED", "Pulled from the board. People screenshot things, you know.", EDGE.purple);
+    setFlash("PULLED", "Taken down from the board.", EDGE.purple);
   }
 
   revalidatePath("/ball");
@@ -374,7 +374,7 @@ export async function updateProfile(fd: FormData) {
 
   const handle = str(fd, "handle").toLowerCase().replace(/[^a-z0-9_.-]/g, "");
   if (!handle) {
-    setFlash("NO NAME", "The City needs something to shout. Pick a handle.", EDGE.mag);
+    setFlash("NO NAME", "The City needs something to call you. Pick a handle.", EDGE.mag);
     return;
   }
 
@@ -397,13 +397,13 @@ export async function updateProfile(fd: FormData) {
       "TAKEN",
       error.code === "23505"
         ? "Someone in the City already answers to that. Pick another."
-        : "That did not save. The counting house blames you.",
+        : "That did not save. Please try again.",
       EDGE.mag,
     );
     return;
   }
 
-  setFlash("NOTED", "The City has been informed, at no charge, which is rare.", EDGE.purple);
+  setFlash("NOTED", "The City has been told.", EDGE.purple);
   revalidatePath("/me");
   redirect("/me");
 }
@@ -431,8 +431,8 @@ export async function setMood(fd: FormData) {
   setFlash(
     mood ? "NOTED" : "UNSAID",
     mood
-      ? "The City can see what you are thinking. Thoughts are free; saying them out loud is five."
-      : "Bubble emptied. Let them guess.",
+      ? "The City can see what is on your mind. Thoughts are free; posting takes five."
+      : "Bubble cleared.",
     EDGE.purple,
   );
   revalidatePath("/me");
@@ -465,7 +465,7 @@ export async function saveAvatar(fd: FormData) {
     return;
   }
 
-  setFlash("A FACE", "The City will recognise you now, for whatever that is worth.", EDGE.purple);
+  setFlash("A FACE", "Your face is saved. The City will know you now.", EDGE.purple);
   revalidatePath("/me");
   revalidatePath("/");
   redirect("/me");
@@ -477,9 +477,9 @@ export async function setTopFriends(fd: FormData) {
 
   if (!r.ok) {
     if (r.code === "insufficient") {
-      broke(r, `Rearranging the Top 6 costs ${COSTS.topSix}. You have {have}.`);
+      broke(r, `Rearranging the Top 6 takes ${COSTS.topSix}, and you have {have}. The Well will help.`);
     } else if (r.code === "too_many") {
-      setFlash("SIX", "It is called the Top 6 for a reason.", EDGE.mag);
+      setFlash("SIX", "The Top 6 holds six, no more.", EDGE.mag);
     } else {
       wentWrong();
     }
@@ -487,9 +487,9 @@ export async function setTopFriends(fd: FormData) {
   }
 
   if (r.unchanged) {
-    setFlash("UNCHANGED", "Same eight, same order. No charge, no hard feelings.", EDGE.purple);
+    setFlash("UNCHANGED", "Nothing changed, so nothing was used.", EDGE.purple);
   } else {
-    setFlash("REARRANGED", "Four mana and, probably, a friendship.", EDGE.mag);
+    setFlash("REARRANGED", "Your Top 6 is rearranged.", EDGE.mag);
   }
   revalidatePath("/me");
   redirect("/me");

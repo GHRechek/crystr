@@ -19,7 +19,7 @@ const silkscreen = Silkscreen({
 export const metadata: Metadata = {
   title: "CRYSTR",
   description:
-    "A social network for The City. Speaking costs mana; mana costs you something real.",
+    "A social network for The City. Your mana is your strength, so look after it.",
 };
 
 export const viewport: Viewport = {

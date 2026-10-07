@@ -71,11 +71,11 @@ export default function LoginPage({
               onClick={signInWithGoogle}
               disabled={busy}
             >
-              {busy ? "OPENING THE GATE…" : "SIGN IN WITH GOOGLE"}
+              {busy ? "OPENING THE DOOR…" : "SIGN IN WITH GOOGLE"}
             </button>
 
             <div className="empty" style={{ paddingTop: 0 }}>
-              THE WELL DOES NOT DO CREDIT
+              COME IN, THE CITY IS WAITING
             </div>
           </div>
         </main>

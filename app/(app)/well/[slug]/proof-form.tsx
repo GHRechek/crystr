@@ -51,7 +51,7 @@ export function ProofForm({ quest, userId }: { quest: Quest; userId: string }) {
       glyph: "◷",
       glyphColor: "var(--pur-soft)",
       border: "var(--pur)",
-      label: "CARRYING IT TO THE WELL",
+      label: "ON ITS WAY TO THE WELL",
       hint: "Hold on.",
     },
     attached: {
@@ -102,7 +102,7 @@ export function ProofForm({ quest, userId }: { quest: Quest; userId: string }) {
       <div style={{ display: "flex", gap: 8 }}>
         <div className="tile" style={{ flex: 1 }}>
           <div className="flabel" style={{ marginBottom: 5 }}>
-            PAYS
+            RESTORES
           </div>
           <div className="px" style={{ fontSize: 16, color: "var(--blu-soft)" }}>
             +{quest.reward}
@@ -110,7 +110,7 @@ export function ProofForm({ quest, userId }: { quest: Quest; userId: string }) {
         </div>
         <div className="tile" style={{ flex: 1 }}>
           <div className="flabel" style={{ marginBottom: 5 }}>
-            COSTS YOU
+            TAKES YOU
           </div>
           <div className="px" style={{ fontSize: 16, color: "var(--mag-soft)" }}>
             {quest.time_label}
@@ -120,8 +120,7 @@ export function ProofForm({ quest, userId }: { quest: Quest; userId: string }) {
 
       {waiting ? (
         <div className="banner-note banner-mag">
-          You brought this one in recently. The well pays for effort, not for
-          repetition — come back in {untilReady(quest.ready_at!)}.
+          You brought this one in recently. It will be ready again in {untilReady(quest.ready_at!)}.
         </div>
       ) : null}
 

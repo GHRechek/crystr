@@ -11,8 +11,8 @@ export default async function WellPage() {
       <div>
         <div className="screen-title">THE WELL</div>
         <div className="screen-intro">
-          It does not refill itself. Bring it proof you did something with your hands,
-          your mouth, or your two minutes of silence.
+          Your mana is your strength, and this is where you recover it. Show us something
+          you did with your hands, your voice, or a few quiet minutes.
         </div>
       </div>
 
@@ -47,8 +47,8 @@ export default async function WellPage() {
       })}
 
       <div className="notice">
-        Proof is reviewed by whoever is awake. Fabricate at your own risk; the well
-        remembers.
+        A real person looks at each one. Please be honest, because that is what keeps
+        the Well fair for everyone.
       </div>
     </div>
   );

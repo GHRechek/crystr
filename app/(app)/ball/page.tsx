@@ -107,7 +107,7 @@ export default async function BallPage({
         </div>
       ) : (
         <Link href="/ball/new?kind=oped" className="btn btn-mag btn-block" style={{ minHeight: 44 }}>
-          ✎ SUBMIT AN OP-ED · -{COSTS.oped}
+          ✎ SUBMIT AN OP-ED · USES {COSTS.oped}
         </Link>
       )}
 

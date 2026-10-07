@@ -190,7 +190,7 @@ function Open({ motion, mana, decay }: { motion: Motion; mana: number; decay: nu
             color: motion.my_side === "for" ? "var(--mag-pale)" : "var(--blu-pale)",
           }}
         >
-          YOU VOTED {motion.my_side.toUpperCase()} · {COSTS.vote} MANA SPENT
+          YOU VOTED {motion.my_side.toUpperCase()} · {COSTS.vote} MANA USED
         </div>
       ) : (
         <div style={{ display: "flex", gap: 8 }}>
@@ -203,7 +203,7 @@ function Open({ motion, mana, decay }: { motion: Motion; mana: number; decay: nu
                 className={`btn btn-block ${side === "for" ? "btn-mag" : "btn-blue"}`}
                 style={{ minHeight: 44, fontSize: 10, opacity: mana >= COSTS.vote ? 1 : 0.5 }}
               >
-                {side.toUpperCase()} · -{COSTS.vote}
+                {side.toUpperCase()} · USES {COSTS.vote}
               </button>
             </form>
           ))}

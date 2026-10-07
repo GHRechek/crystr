@@ -26,7 +26,7 @@ export default async function FeedPage() {
           <div className="empty">
             NOBODY HAS SAID ANYTHING YET
             <br />
-            <span style={{ color: "var(--muted)" }}>BE THE FIRST. IT COSTS FIVE.</span>
+            <span style={{ color: "var(--muted)" }}>BE THE FIRST TO SAY SOMETHING.</span>
           </div>
         ) : (
           <div className="empty">

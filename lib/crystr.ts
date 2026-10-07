@@ -34,9 +34,9 @@ export const SCAN_OPACITY = [0, 0.14, 0.3, 0.5] as const;
 
 export const DECAY_NOTE = [
   "",
-  "Below eleven. Things will begin to smear. Consider going outside before it gets embarrassing.",
-  "Below five. Characters are starting to go. This is not a bug, it is an invoice.",
-  "You are out of mana. The feed is still here, technically. Legibility is a premium feature.",
+  "Your mana is getting low and things are starting to blur. A little time at the Well will help.",
+  "Your mana is very low and the words are starting to fade. Rest, then head to the Well.",
+  "You are out of mana and it is hard to read. Go to the Well. Everything comes back as you recover.",
 ] as const;
 
 const BLOCKS = ["█", "▓", "▒", "░"];
@@ -56,9 +56,9 @@ export function corrupt(text: string, level: number): string {
 }
 
 export function wellLine(mana: number): string {
-  if (mana === 0) return "The well is dry. So are you.";
-  if (mana < 11) return "Running low. The well is right there.";
-  return "Enough for a few sincere thoughts.";
+  if (mana === 0) return "You are running on empty. Head to the Well and recover.";
+  if (mana < 11) return "Getting low. A little time at the Well will help.";
+  return "Feeling strong. Plenty for a few sincere thoughts.";
 }
 
 export function manaColor(mana: number): string {

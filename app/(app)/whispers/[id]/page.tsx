@@ -116,7 +116,7 @@ export default async function ThreadPage({ params }: { params: { id: string } })
           name="body"
           className="input"
           style={{ flex: 1, fontSize: 13.5 }}
-          placeholder={`whisper (${COSTS.whisper} mana)`}
+          placeholder={`whisper (takes ${COSTS.whisper})`}
           autoComplete="off"
         />
         <button type="submit" className="btn btn-blue" style={{ minHeight: 44, minWidth: 56 }}>

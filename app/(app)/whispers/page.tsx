@@ -15,7 +15,7 @@ export default async function WhispersPage() {
           WHISPERS
         </div>
         <div style={{ fontSize: 11, color: "var(--muted)" }}>
-          {COSTS.whisper} mana to send. Silence is free.
+          A whisper takes {COSTS.whisper} mana. Silence is free.
         </div>
       </div>
 

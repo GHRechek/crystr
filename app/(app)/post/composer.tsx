@@ -40,7 +40,7 @@ export function Composer({ mana }: { mana: number }) {
         rows={6}
         value={text}
         onChange={(e) => setText(e.target.value)}
-        placeholder="say something the well would consider worth five mana"
+        placeholder="say something"
       />
 
       <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
@@ -73,9 +73,9 @@ export function Composer({ mana }: { mana: number }) {
         aria-disabled={!canPublish}
       >
         {canPublish
-          ? `PUBLISH · -${cost}`
+          ? `PUBLISH · USES ${cost}`
           : !affordable
-            ? "NOT ENOUGH MANA"
+            ? "REST FIRST"
             : "WRITE SOMETHING"}
       </button>
     </form>

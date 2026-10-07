@@ -35,8 +35,8 @@ export function Editor({
 
       {oped ? (
         <div className="banner-note banner-mag">
-          Op-eds cost {COSTS.oped} mana to file and go to a witch before anyone else sees
-          them. They can publish it, or return it without comment.
+          An op-ed takes {COSTS.oped} mana to file and goes to a witch before anyone else
+          sees it. They can publish it or send it back.
         </div>
       ) : null}
 
@@ -132,7 +132,7 @@ export function Editor({
           style={{ flex: 1, fontSize: 10 }}
           aria-disabled={!ready}
         >
-          {oped ? `SUBMIT FOR REVIEW · -${COSTS.oped}` : "PUBLISH TO THE CITY"}
+          {oped ? `SUBMIT FOR REVIEW · USES ${COSTS.oped}` : "PUBLISH TO THE CITY"}
         </button>
       </div>
     </form>
