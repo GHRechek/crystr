@@ -11,11 +11,16 @@
 -- Adding a badge later = one row in `badges` + one `when` branch in
 -- award_badges below.
 --
--- Registered Plaintiffs: people who have filled in the registration form (a
--- Google Form, shown in the app). The app cannot see who submitted it, so a
--- person says they have, and that is taken on trust. It is kept as its own table
--- so a mechanic that needs "is this person a Registered Plaintiff" has one
--- place to look. It also earns a badge.
+-- Registered Plaintiffs: people who have filled in Form 12-A, the City Office of
+-- Civic Plaintiff Registration form. It used to be a Google Form; it is now a
+-- form in the app (me/plaintiff), so each submission is tied to the signed-in
+-- person. The form's code questions (ADC, SDC, petition series) are checked here,
+-- against plaintiff_codes, which nothing but cr_submit_plaintiff can read: the
+-- right answers must not live in the (public) repo or reach the browser. They are
+-- loaded straight into the database and are deliberately not in this file.
+--
+-- plaintiffs is the bare fact, for the coming mechanic to look at; plaintiff_forms
+-- keeps what was written, for witches. Submitting also earns a badge.
 --
 -- Two badges (meeting up, helping) are things the app cannot see, so one person
 -- says it happened and the other confirms. One confirmation is enough. That is
@@ -90,6 +95,32 @@ grant select on public.plaintiffs to authenticated;
 -- Who is registered is not a secret: anyone signed in can see.
 drop policy if exists plaintiffs_read on public.plaintiffs;
 create policy plaintiffs_read on public.plaintiffs for select to authenticated using (true);
+
+-- What was written on the form. Only the person and witches can read it.
+create table if not exists public.plaintiff_forms (
+  user_id      uuid primary key references public.profiles (id) on delete cascade,
+  answers      jsonb not null,
+  submitted_at timestamptz not null default now()
+);
+alter table public.plaintiff_forms enable row level security;
+revoke all on public.plaintiff_forms from anon, authenticated;
+grant select on public.plaintiff_forms to authenticated;
+drop policy if exists plaintiff_forms_read on public.plaintiff_forms;
+create policy plaintiff_forms_read on public.plaintiff_forms for select to authenticated
+  using (user_id = auth.uid() or public.is_witch());
+
+-- The answers to the form's code questions. kind is 'adc' (key: city, outland,
+-- gate), 'sdc' (key: orc, elf, human, shifter, planar) or 'pcode' (key: series).
+-- No grants and no policies: only the definer function below can read it. The
+-- rows are loaded directly, never from this repo.
+create table if not exists public.plaintiff_codes (
+  kind text not null check (kind in ('adc', 'sdc', 'pcode')),
+  key  text not null,
+  code text not null,
+  primary key (kind, key)
+);
+alter table public.plaintiff_codes enable row level security;
+revoke all on public.plaintiff_codes from anon, authenticated;
 
 alter table public.vouches enable row level security;
 revoke all on public.vouches from anon, authenticated;
@@ -251,23 +282,67 @@ begin
 end;
 $$;
 
--- "I have filled in the form." Registers the caller once and awards the badge.
-create or replace function public.cr_register_plaintiff()
+-- Form 12-A. Checks the form's rules, then registers the caller once and awards
+-- the badge. Returns code 'incomplete', 'bad_adc', 'bad_sdc' or 'bad_pcode' for
+-- the rule that failed (the form's own error wording is in the app). A code
+-- matches if the text typed contains it, as the Google Form's "contains" rule did.
+-- A missing code row fails the check, never passes it.
+create or replace function public.cr_submit_plaintiff(
+  p_name text, p_alias text, p_realm text, p_district text, p_district_code text,
+  p_species text, p_species_code text, p_pcode text)
 returns jsonb language plpgsql security definer set search_path = public as $$
+declare v_name text := btrim(coalesce(p_name, ''));
+        v_alias text := btrim(coalesce(p_alias, ''));
+        v_ok boolean;
 begin
   if auth.uid() is null then return jsonb_build_object('ok', false, 'code', 'forbidden'); end if;
   if exists (select 1 from public.plaintiffs where user_id = auth.uid()) then
     return jsonb_build_object('ok', true, 'already', true);
   end if;
+
+  if char_length(v_name) = 0 or char_length(v_name) > 120 or char_length(v_alias) > 120
+     or p_realm not in ('new-world', 'old-world', 'planar-outsider', 'other')
+     or p_district not in ('city', 'outland', 'gate')
+     or p_species not in ('orc', 'elf', 'human', 'shifter', 'planar')
+     or char_length(btrim(coalesce(p_district_code, ''))) = 0
+     or char_length(btrim(coalesce(p_species_code, ''))) = 0
+     or char_length(btrim(coalesce(p_pcode, ''))) = 0 then
+    return jsonb_build_object('ok', false, 'code', 'incomplete');
+  end if;
+
+  -- A bounded length, so a long string of digits cannot "contain" every code.
+  if char_length(p_district_code) > 24 or char_length(p_species_code) > 24 or char_length(p_pcode) > 24 then
+    return jsonb_build_object('ok', false, 'code', 'incomplete');
+  end if;
+
+  select exists (select 1 from public.plaintiff_codes
+                  where kind = 'adc' and key = p_district
+                    and position(lower(code) in lower(p_district_code)) > 0) into v_ok;
+  if not v_ok then return jsonb_build_object('ok', false, 'code', 'bad_adc'); end if;
+
+  select exists (select 1 from public.plaintiff_codes
+                  where kind = 'sdc' and key = p_species
+                    and position(lower(code) in lower(p_species_code)) > 0) into v_ok;
+  if not v_ok then return jsonb_build_object('ok', false, 'code', 'bad_sdc'); end if;
+
+  select exists (select 1 from public.plaintiff_codes
+                  where kind = 'pcode' and key = 'series'
+                    and position(lower(code) in lower(p_pcode)) > 0) into v_ok;
+  if not v_ok then return jsonb_build_object('ok', false, 'code', 'bad_pcode'); end if;
+
   insert into public.plaintiffs (user_id) values (auth.uid()) on conflict do nothing;
+  insert into public.plaintiff_forms (user_id, answers)
+  values (auth.uid(), jsonb_build_object(
+    'name', v_name, 'alias', v_alias, 'realm', p_realm, 'district', p_district, 'species', p_species))
+  on conflict (user_id) do nothing;
   perform public.award_badges(auth.uid());
   return jsonb_build_object('ok', true);
 end;
 $$;
 
 revoke all on function public.award_badges(uuid) from public, anon, authenticated;
-revoke all on function public.cr_register_plaintiff() from public, anon;
-grant execute on function public.cr_register_plaintiff() to authenticated;
+revoke all on function public.cr_submit_plaintiff(text, text, text, text, text, text, text, text) from public, anon;
+grant execute on function public.cr_submit_plaintiff(text, text, text, text, text, text, text, text) to authenticated;
 revoke all on function public.trg_award_badges() from public, anon, authenticated;
 revoke all on function public.cr_claim_new_badges() from public, anon;
 revoke all on function public.cr_claim_vouch(text, uuid) from public, anon;

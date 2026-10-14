@@ -152,7 +152,7 @@ export default async function ProfilePage() {
                 BECOME A REGISTERED PLAINTIFF
               </div>
               <div style={{ fontSize: 11, lineHeight: 1.45, color: "var(--muted)", marginTop: 4 }}>
-                Fill in a short form and go on the City's books.
+                File Form 12-A and go on the City's books.
               </div>
             </div>
             <span className="spacer" />

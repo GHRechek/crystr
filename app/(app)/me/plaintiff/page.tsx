@@ -1,13 +1,17 @@
 import Link from "next/link";
-import { requireMe, getPlaintiffSince } from "@/lib/data";
-import { registerPlaintiff } from "@/lib/actions";
-import { PLAINTIFF_FORM_EMBED, PLAINTIFF_FORM_URL } from "@/lib/plaintiff";
+import { requireMe, getPlaintiffSince, getPlaintiffForms } from "@/lib/data";
+import { DISTRICTS, REALMS, SPECIES } from "@/lib/plaintiff";
 import { ago } from "@/lib/crystr";
+import { PlaintiffForm } from "./form";
 
-/** Become a Registered Plaintiff: fill in the form, then say so. */
+const label = (list: readonly { value: string; label: string }[], v?: string) =>
+  list.find((x) => x.value === v)?.label.replace(/^\d+\.\s*/, "") ?? "—";
+
+/** Form 12-A, the City Office of Civic Plaintiff Registration. */
 export default async function PlaintiffPage() {
-  const { userId } = await requireMe();
+  const { userId, profile } = await requireMe();
   const since = await getPlaintiffSince(userId);
+  const forms = profile.is_witch ? await getPlaintiffForms() : [];
 
   return (
     <div className="pad" style={{ gap: 12 }}>
@@ -24,47 +28,51 @@ export default async function PlaintiffPage() {
       </div>
 
       <div>
-        <div className="screen-title">REGISTERED PLAINTIFF</div>
+        <div className="screen-title">CITY OFFICE OF CIVIC PLAINTIFF REGISTRATION</div>
         <div className="screen-intro">
           {since
-            ? `You have been a Registered Plaintiff since ${ago(since)}. Thank you. There is nothing more to do here.`
-            : "Fill in the form below to go on the City's books as a Registered Plaintiff. When you have sent it in, come back and tell us, and the title is yours."}
+            ? `Form 12-A is on file. You have been a Registered Plaintiff since ${ago(since)}. There is nothing more to do here.`
+            : "Form 12-A · Interim Capacity. Answer the questions below to go on the City's books as a Registered Plaintiff. Questions marked * are required."}
         </div>
       </div>
 
-      {since ? null : (
-        <>
-          <div className="tile" style={{ padding: 0, overflow: "hidden" }}>
-            <iframe
-              title="Registered Plaintiff form"
-              src={PLAINTIFF_FORM_EMBED}
-              style={{ width: "100%", height: 640, border: 0, background: "#fff", display: "block" }}
-              loading="lazy"
-            >
-              Loading…
-            </iframe>
-          </div>
+      {since ? null : <PlaintiffForm />}
 
-          <a
-            href={PLAINTIFF_FORM_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn btn-sm"
-            style={{ alignSelf: "flex-start" }}
-          >
-            FORM NOT SHOWING? OPEN IT IN A NEW TAB ↗
-          </a>
-
-          <form action={registerPlaintiff} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            <button type="submit" className="btn btn-lg btn-purple btn-block">
-              I HAVE SENT IN THE FORM
-            </button>
-            <div style={{ fontSize: 11, lineHeight: 1.5, color: "var(--muted)" }}>
-              Only press this once you have sent the form in. We take your word for it.
+      {profile.is_witch ? (
+        <div className="tile" style={{ padding: 12, display: "flex", flexDirection: "column", gap: 10 }}>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
+            <div className="px" style={{ fontSize: 8.5, color: "var(--pur-pale)" }}>
+              REGISTERED PLAINTIFFS
             </div>
-          </form>
-        </>
-      )}
+            <span className="spacer" />
+            <div className="px" style={{ fontSize: 8, color: "var(--muted)" }}>
+              {forms.length} · ONLY WITCHES SEE THIS
+            </div>
+          </div>
+          {forms.length === 0 ? (
+            <div style={{ fontSize: 12, color: "var(--muted)" }}>Nobody has filed Form 12-A yet.</div>
+          ) : (
+            forms.map((f) => (
+              <div key={f.user_id} style={{ borderTop: "1px solid var(--rule-soft)", paddingTop: 8 }}>
+                <div style={{ display: "flex", gap: 8, alignItems: "baseline" }}>
+                  <div style={{ fontSize: 13, fontWeight: 500 }}>{f.answers.name ?? "—"}</div>
+                  {f.answers.alias ? (
+                    <div style={{ fontSize: 11, color: "var(--muted)" }}>aka {f.answers.alias}</div>
+                  ) : null}
+                  <span className="spacer" />
+                  <div className="px" style={{ fontSize: 8, color: "var(--muted)" }}>
+                    {ago(f.submitted_at).toUpperCase()}
+                  </div>
+                </div>
+                <div className="px" style={{ fontSize: 8, color: "var(--muted)", marginTop: 4, lineHeight: 1.7 }}>
+                  @{(f.who?.handle ?? "unknown").toUpperCase()} · {label(REALMS, f.answers.realm).toUpperCase()} ·{" "}
+                  {label(DISTRICTS, f.answers.district).toUpperCase()} · {label(SPECIES, f.answers.species).toUpperCase()}
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      ) : null}
     </div>
   );
 }

@@ -501,6 +501,25 @@ export async function getPlaintiffSince(userId: string): Promise<string | null> 
   return data ? String((data as { registered_at: string }).registered_at) : null;
 }
 
+export type PlaintiffRow = {
+  user_id: string;
+  submitted_at: string;
+  answers: { name?: string; alias?: string; realm?: string; district?: string; species?: string };
+  who: { handle: string } | null;
+};
+
+/** Everyone who has filled in Form 12-A, newest first. Witches only: for anyone
+ *  else the database returns just their own. */
+export async function getPlaintiffForms(): Promise<PlaintiffRow[]> {
+  const supabase = createClient();
+  const { data } = await supabase
+    .from("plaintiff_forms")
+    .select("user_id, submitted_at, answers, who:profiles!plaintiff_forms_user_id_fkey(handle)")
+    .order("submitted_at", { ascending: false })
+    .limit(500);
+  return (data ?? []) as unknown as PlaintiffRow[];
+}
+
 /** Every badge there is, and when this person earned each one (null if not yet). */
 export async function getBadges(userId: string): Promise<BadgeRow[]> {
   const supabase = createClient();

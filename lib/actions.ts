@@ -7,6 +7,7 @@ import { setFlash, EDGE } from "@/lib/flash";
 import { COSTS, untilReady } from "@/lib/crystr";
 import { normalizePortrait } from "@/lib/portrait/core";
 import { listBadges } from "@/lib/badges";
+import { PLAINTIFF_ERRORS, type PlaintiffError } from "@/lib/plaintiff";
 
 type Rpc = {
   ok: boolean;
@@ -206,14 +207,27 @@ export async function sendWhisper(fd: FormData) {
 
 // ------------------------------------------------------------- plaintiffs
 
-/** "I have filled in the registration form." Taken on trust: the app cannot see
- *  who submitted a Google Form. */
-export async function registerPlaintiff() {
-  const r = await call("cr_register_plaintiff", {});
+/** Form 12-A. The rules (including the code questions) are checked in the
+ *  database. On a mistake this returns where it went wrong, so the form keeps
+ *  what was typed; on success the person is registered and sent to their profile. */
+export async function submitPlaintiff(fd: FormData): Promise<PlaintiffError | undefined> {
+  const r = await call("cr_submit_plaintiff", {
+    p_name: str(fd, "name"),
+    p_alias: str(fd, "alias"),
+    p_realm: str(fd, "realm"),
+    p_district: str(fd, "district"),
+    p_district_code: str(fd, "district_code"),
+    p_species: str(fd, "species"),
+    p_species_code: str(fd, "species_code"),
+    p_pcode: str(fd, "pcode"),
+  });
+
   if (!r.ok) {
-    wentWrong();
-    redirect("/me/plaintiff");
+    const known = PLAINTIFF_ERRORS[r.code as keyof typeof PLAINTIFF_ERRORS];
+    if (known) return known;
+    return { field: "form", message: "That one is on us. Give it another try." };
   }
+
   setFlash(
     "REGISTERED",
     `You are on the City's books as a Registered Plaintiff.${await newBadges()}`,
