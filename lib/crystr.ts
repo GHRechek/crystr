@@ -13,6 +13,8 @@ export const COSTS = {
   vote: 3,
   oped: 6,
   topSix: 4,
+  /** What adding a fact to a wiki page takes. Display only: the database charges it. */
+  wikiEdit: 2,
 } as const;
 
 /** Below eleven the feed starts to smear; at zero it is barely legible. */
