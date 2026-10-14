@@ -11,6 +11,12 @@
 -- Adding a badge later = one row in `badges` + one `when` branch in
 -- award_badges below.
 --
+-- Registered Plaintiffs: people who have filled in the registration form (a
+-- Google Form, shown in the app). The app cannot see who submitted it, so a
+-- person says they have, and that is taken on trust. It is kept as its own table
+-- so a mechanic that needs "is this person a Registered Plaintiff" has one
+-- place to look. It also earns a badge.
+--
 -- Two badges (meeting up, helping) are things the app cannot see, so one person
 -- says it happened and the other confirms. One confirmation is enough. That is
 -- the `vouches` table below; it only matters to these badges.
@@ -74,6 +80,17 @@ create unique index if not exists vouches_helped_confirmed_idx
   on public.vouches (claimant, other) where status = 'confirmed' and kind = 'helped';
 create index if not exists vouches_other_idx on public.vouches (other, status);
 
+create table if not exists public.plaintiffs (
+  user_id       uuid primary key references public.profiles (id) on delete cascade,
+  registered_at timestamptz not null default now()
+);
+alter table public.plaintiffs enable row level security;
+revoke all on public.plaintiffs from anon, authenticated;
+grant select on public.plaintiffs to authenticated;
+-- Who is registered is not a secret: anyone signed in can see.
+drop policy if exists plaintiffs_read on public.plaintiffs;
+create policy plaintiffs_read on public.plaintiffs for select to authenticated using (true);
+
 alter table public.vouches enable row level security;
 revoke all on public.vouches from anon, authenticated;
 grant select on public.vouches to authenticated;
@@ -89,7 +106,8 @@ insert into public.badges (slug, title, how, blurb, art, sort) values
   ('whisper-web',    'WHISPER WEB',      'Whisper to five different people.',     'You whispered to five different people.', 'whisper-web.png', 4),
   ('a-voice-in-council', 'A VOICE IN COUNCIL', 'Vote on ten motions.',            'You have had your say on ten motions.', 'a-voice-in-council.png', 5),
   ('meet-in-person', 'MEET IN PERSON',   'Meet up with someone from the City. They say yes.', 'You met someone from the City in person.', 'meet-in-person.png', 6),
-  ('a-helping-hand', 'A HELPING HAND',   'Help someone with a problem. They say yes.',        'Someone said you helped them.', 'a-helping-hand.png', 7)
+  ('a-helping-hand', 'A HELPING HAND',   'Help someone with a problem. They say yes.',        'Someone said you helped them.', 'a-helping-hand.png', 7),
+  ('registered-plaintiff', 'REGISTERED PLAINTIFF', 'Become a Registered Plaintiff: fill in the registration form.', 'You are on the City''s books as a Registered Plaintiff.', 'registered-plaintiff.png', 8)
 on conflict (slug) do update set art = excluded.art;
 
 -- Which badges does this person qualify for right now? Inserts any new ones
@@ -129,6 +147,8 @@ begin
       when 'a-helping-hand' then
         exists (select 1 from public.vouches
                  where kind = 'helped' and status = 'confirmed' and claimant = p_user)
+      when 'registered-plaintiff' then
+        exists (select 1 from public.plaintiffs where user_id = p_user)
       else false
     end;
 
@@ -231,7 +251,23 @@ begin
 end;
 $$;
 
+-- "I have filled in the form." Registers the caller once and awards the badge.
+create or replace function public.cr_register_plaintiff()
+returns jsonb language plpgsql security definer set search_path = public as $$
+begin
+  if auth.uid() is null then return jsonb_build_object('ok', false, 'code', 'forbidden'); end if;
+  if exists (select 1 from public.plaintiffs where user_id = auth.uid()) then
+    return jsonb_build_object('ok', true, 'already', true);
+  end if;
+  insert into public.plaintiffs (user_id) values (auth.uid()) on conflict do nothing;
+  perform public.award_badges(auth.uid());
+  return jsonb_build_object('ok', true);
+end;
+$$;
+
 revoke all on function public.award_badges(uuid) from public, anon, authenticated;
+revoke all on function public.cr_register_plaintiff() from public, anon;
+grant execute on function public.cr_register_plaintiff() to authenticated;
 revoke all on function public.trg_award_badges() from public, anon, authenticated;
 revoke all on function public.cr_claim_new_badges() from public, anon;
 revoke all on function public.cr_claim_vouch(text, uuid) from public, anon;

@@ -204,6 +204,25 @@ export async function sendWhisper(fd: FormData) {
   revalidatePath(`/whispers/${threadId}`);
 }
 
+// ------------------------------------------------------------- plaintiffs
+
+/** "I have filled in the registration form." Taken on trust: the app cannot see
+ *  who submitted a Google Form. */
+export async function registerPlaintiff() {
+  const r = await call("cr_register_plaintiff", {});
+  if (!r.ok) {
+    wentWrong();
+    redirect("/me/plaintiff");
+  }
+  setFlash(
+    "REGISTERED",
+    `You are on the City's books as a Registered Plaintiff.${await newBadges()}`,
+    EDGE.blue,
+  );
+  revalidatePath("/me");
+  redirect("/me");
+}
+
 // ----------------------------------------------------------------- vouches
 
 /** "We met up" / "I helped them", said inside a whisper thread. */

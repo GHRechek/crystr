@@ -494,6 +494,13 @@ export async function getVouchesBetween(userId: string, otherId: string): Promis
   return (data ?? []) as unknown as Vouch[];
 }
 
+/** When this person registered as a plaintiff, or null if they have not. */
+export async function getPlaintiffSince(userId: string): Promise<string | null> {
+  const supabase = createClient();
+  const { data } = await supabase.from("plaintiffs").select("registered_at").eq("user_id", userId).maybeSingle();
+  return data ? String((data as { registered_at: string }).registered_at) : null;
+}
+
 /** Every badge there is, and when this person earned each one (null if not yet). */
 export async function getBadges(userId: string): Promise<BadgeRow[]> {
   const supabase = createClient();

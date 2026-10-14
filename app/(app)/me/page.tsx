@@ -1,4 +1,5 @@
-import { requireMe, getLedger, getTopFriends, getBadges } from "@/lib/data";
+import Link from "next/link";
+import { requireMe, getLedger, getTopFriends, getBadges, getPlaintiffSince } from "@/lib/data";
 import { BADGE_GLYPH } from "@/lib/badges";
 import { Avatar } from "@/components/bits";
 import { ProfileHead } from "./face-menu";
@@ -7,10 +8,11 @@ import { ago, corrupt, COSTS, decayLevel } from "@/lib/crystr";
 
 export default async function ProfilePage() {
   const { userId, profile } = await requireMe();
-  const [ledger, top, badges] = await Promise.all([
+  const [ledger, top, badges, plaintiffSince] = await Promise.all([
     getLedger(userId),
     getTopFriends(userId),
     getBadges(userId),
+    getPlaintiffSince(userId),
   ]);
   const earnedCount = badges.filter((b) => b.earned_at).length;
 
@@ -132,6 +134,33 @@ export default async function ProfilePage() {
             ))}
           </div>
         </div>
+
+        {plaintiffSince ? (
+          <div className="tile" style={{ padding: 12, display: "flex", alignItems: "center", gap: 10 }}>
+            <div className="px" style={{ fontSize: 9, color: "var(--blu-soft)" }}>
+              ✓ REGISTERED PLAINTIFF
+            </div>
+            <span className="spacer" />
+            <div className="px" style={{ fontSize: 8, color: "var(--muted)" }}>
+              SINCE {ago(plaintiffSince).toUpperCase()}
+            </div>
+          </div>
+        ) : (
+          <Link href="/me/plaintiff" className="tile" style={{ padding: 12, display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
+            <div>
+              <div className="px" style={{ fontSize: 9, color: "var(--pur-pale)" }}>
+                BECOME A REGISTERED PLAINTIFF
+              </div>
+              <div style={{ fontSize: 11, lineHeight: 1.45, color: "var(--muted)", marginTop: 4 }}>
+                Fill in a short form and go on the City's books.
+              </div>
+            </div>
+            <span className="spacer" />
+            <span className="px" style={{ fontSize: 12, color: "var(--pur-pale)" }}>
+              →
+            </span>
+          </Link>
+        )}
 
         {badges.length ? (
           <div>
