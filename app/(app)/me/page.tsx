@@ -1,4 +1,5 @@
-import { requireMe, getLedger, getTopFriends } from "@/lib/data";
+import { requireMe, getLedger, getTopFriends, getBadges } from "@/lib/data";
+import { BADGE_GLYPH } from "@/lib/badges";
 import { Avatar } from "@/components/bits";
 import { ProfileHead } from "./face-menu";
 import { portraitFromId, normalizePortrait, packPortrait } from "@/lib/portrait/core";
@@ -6,7 +7,12 @@ import { ago, corrupt, COSTS, decayLevel } from "@/lib/crystr";
 
 export default async function ProfilePage() {
   const { userId, profile } = await requireMe();
-  const [ledger, top] = await Promise.all([getLedger(userId), getTopFriends(userId)]);
+  const [ledger, top, badges] = await Promise.all([
+    getLedger(userId),
+    getTopFriends(userId),
+    getBadges(userId),
+  ]);
+  const earnedCount = badges.filter((b) => b.earned_at).length;
 
   const days = Math.max(
     1,
@@ -126,6 +132,74 @@ export default async function ProfilePage() {
             ))}
           </div>
         </div>
+
+        {badges.length ? (
+          <div>
+            <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 8 }}>
+              <div className="px" style={{ fontSize: 11, color: "var(--mag-soft)" }}>
+                BADGES
+              </div>
+              <span className="spacer" />
+              <div className="px" style={{ fontSize: 8, color: "var(--muted)" }}>
+                {earnedCount} OF {badges.length}
+              </div>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 8 }}>
+              {badges.map((b) => {
+                const got = !!b.earned_at;
+                return (
+                  <div
+                    key={b.slug}
+                    className="tile"
+                    style={{ padding: 10, display: "flex", gap: 9, alignItems: "flex-start", opacity: got ? 1 : 0.5 }}
+                  >
+                    {b.art ? (
+                      // The art brings its own frame, so it is shown as it is, a whole number of times
+                      // larger so the pixels stay sharp.
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={`/badges/${b.art}`}
+                        alt=""
+                        width={42}
+                        height={42}
+                        style={{
+                          flex: "none",
+                          imageRendering: "pixelated",
+                          filter: got ? "none" : "grayscale(1)",
+                        }}
+                      />
+                    ) : (
+                      <div
+                        aria-hidden
+                        style={{
+                          width: 42,
+                          height: 42,
+                          flex: "none",
+                          display: "grid",
+                          placeItems: "center",
+                          fontSize: 16,
+                          color: got ? "var(--mag-soft)" : "var(--dim)",
+                          border: `1px solid ${got ? "var(--mag-edge)" : "var(--edge)"}`,
+                          borderRadius: 6,
+                        }}
+                      >
+                        {BADGE_GLYPH}
+                      </div>
+                    )}
+                    <div style={{ minWidth: 0 }}>
+                      <div className="px" style={{ fontSize: 8, color: got ? "var(--text)" : "var(--muted)", lineHeight: 1.5 }}>
+                        {b.title}
+                      </div>
+                      <div style={{ fontSize: 10.5, lineHeight: 1.45, color: "var(--muted)", marginTop: 3 }}>
+                        {got ? b.blurb : b.how}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        ) : null}
 
         <div>
           <div
