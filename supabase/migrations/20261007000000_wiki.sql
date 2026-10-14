@@ -1,8 +1,9 @@
 -- The wiki: a page is a list of facts about a thing, written a few words at a
 -- time by whoever walks past.
 --
--- NOT APPLIED. Written for the feature/wiki branch; nothing reads these tables
--- until the wiki ships.
+-- Applied to the live database on 2026-10-14. The tool that applied it chokes on
+-- literal backslashes, so this file uses [[:space:]] and a chr(10)/chr(13) check
+-- where it once had \s and [\r\n]; they mean the same thing.
 --
 -- The shape: a witch starts a page (a title and some number of open slots). The
 -- page shows the facts the City has added, one per slot, with illegible filler
@@ -44,13 +45,14 @@ create table if not exists public.wiki_facts (
   id          bigint generated always as identity primary key,
   page_id     bigint not null references public.wiki_pages (id) on delete cascade,
   slot        int    not null check (slot >= 1),
-  body        text   not null check (char_length(btrim(body)) between 1 and 80 and body !~ '[\r\n]'),
+  body        text   not null check (char_length(btrim(body)) between 1 and 80),
   author      uuid   not null references public.profiles (id),
   status      text   not null default 'pending' check (status in ('pending', 'kept', 'returned')),
   note        text   not null default '',
   created_at  timestamptz not null default now(),
   reviewed_by uuid references public.profiles (id),
-  reviewed_at timestamptz
+  reviewed_at timestamptz,
+  constraint wiki_facts_one_line check (position(chr(10) in body) = 0 and position(chr(13) in body) = 0)
 );
 -- One kept fact per slot; one waiting fact per person per slot.
 create unique index if not exists wiki_facts_kept_idx    on public.wiki_facts (page_id, slot) where status = 'kept';
@@ -109,7 +111,7 @@ $$;
 create or replace function public.cr_wiki_add_fact(p_page bigint, p_slot int, p_body text)
 returns jsonb language plpgsql security definer set search_path = public as $$
 declare pg public.wiki_pages%rowtype;
-        v_body text := btrim(regexp_replace(coalesce(p_body, ''), '\s+', ' ', 'g'));
+        v_body text := btrim(regexp_replace(coalesce(p_body, ''), '[[:space:]]+', ' ', 'g'));
         v_cost int := 2;
         v_id bigint;
 begin
@@ -163,7 +165,7 @@ begin
     return jsonb_build_object('ok', true, 'kept', false, 'slug', pg.slug);
   end if;
 
-  v_text := btrim(regexp_replace(coalesce(nullif(btrim(coalesce(p_body, '')), ''), f.body), '\s+', ' ', 'g'));
+  v_text := btrim(regexp_replace(coalesce(nullif(btrim(coalesce(p_body, '')), ''), f.body), '[[:space:]]+', ' ', 'g'));
   if char_length(v_text) = 0 or char_length(v_text) > 80
      or cardinality(regexp_split_to_array(v_text, ' ')) > 10 then
     return jsonb_build_object('ok', false, 'code', 'too_long');
