@@ -99,7 +99,9 @@ export async function addFact(fd: FormData) {
 
   setFlash(
     "ADDED",
-    r.reworded
+    r.kept
+      ? "It is on the page now. A witch's words need no approval."
+      : r.reworded
       ? "Your words are updated. A witch will read them."
       : `That took ${r.cost ?? COSTS.wikiEdit} out of you. A witch will read it; until then only you and the witches can see it.`,
     EDGE.blue,

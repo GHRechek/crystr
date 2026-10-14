@@ -61,12 +61,19 @@ export default async function AddFact({ params }: { params: { slug: string; slot
         className={`btn btn-lg btn-block${own || affordable ? " btn-purple" : ""}`}
         aria-disabled={!own && !affordable}
       >
-        {own ? "UPDATE YOUR WORDS · FREE" : affordable ? `ADD TO THE PAGE · USES ${COSTS.wikiEdit}` : "REST FIRST"}
+        {own
+          ? profile.is_witch
+            ? "PUT IT ON THE PAGE · FREE"
+            : "UPDATE YOUR WORDS · FREE"
+          : affordable
+            ? `ADD TO THE PAGE · USES ${COSTS.wikiEdit}`
+            : "REST FIRST"}
       </button>
 
       <div style={{ fontSize: 11, lineHeight: 1.5, color: "var(--muted)" }}>
-        Everyone else sees it only once a witch has read and kept it. Until then it is just for
-        you and the witches. They can keep it, change the wording, or send it back.
+        {profile.is_witch
+          ? "As a witch, what you add goes straight onto the page. Nobody needs to approve it."
+          : "Everyone else sees it only once a witch has read and kept it. Until then it is just for you and the witches. They can keep it, change the wording, or send it back."}
       </div>
     </form>
   );

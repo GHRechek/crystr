@@ -12,7 +12,7 @@
 -- is visible only to its writer and to witches. Witches keep, reword or send
 -- back what is added, lock or archive pages, and can take a kept fact down.
 --
--- Reading is free. Adding a fact costs 2 mana, charged by cr_wiki_add_fact (and
+-- Reading is free. Adding a fact costs 2 mana (a witch's goes straight on the page; everyone else's waits for a witch), charged by cr_wiki_add_fact (and
 -- COSTS.wikiEdit in lib/crystr.ts, which is only for display). Rewording your own
 -- fact while it is still waiting is free. Starting a page and moderating cost
 -- nothing.
@@ -108,12 +108,19 @@ $$;
 -- charged before anything is written. Rewording your own waiting fact for the
 -- same slot replaces it, for nothing. A slot that already has a kept fact is
 -- settled.
+--
+-- A witch needs no approval: what a witch adds is kept at once (and anyone else
+-- who offered a fact for that spot is sent back, as when a witch keeps one). It
+-- costs the same as for anyone, unless they are finishing a fact of their own
+-- that was already waiting, which was already paid for.
 create or replace function public.cr_wiki_add_fact(p_page bigint, p_slot int, p_body text)
 returns jsonb language plpgsql security definer set search_path = public as $$
 declare pg public.wiki_pages%rowtype;
         v_body text := btrim(regexp_replace(coalesce(p_body, ''), '[[:space:]]+', ' ', 'g'));
         v_cost int := 2;
         v_id bigint;
+        v_open int;
+        v_paid boolean := false;
 begin
   select * into pg from public.wiki_pages where id = p_page;
   if not found or pg.archived or p_slot is null or p_slot < 1 or p_slot > pg.slots then
@@ -129,6 +136,35 @@ begin
   end if;
   if exists (select 1 from public.wiki_facts where page_id = p_page and slot = p_slot and status = 'kept') then
     return jsonb_build_object('ok', false, 'code', 'settled');
+  end if;
+
+  if public.is_witch() then
+    update public.wiki_facts
+       set body = v_body, status = 'kept', note = '', created_at = now(),
+           reviewed_by = auth.uid(), reviewed_at = now()
+     where page_id = p_page and slot = p_slot and author = auth.uid() and status = 'pending'
+    returning id into v_id;
+    if found then
+      v_paid := true;
+    else
+      if public.cr_balance() < v_cost then return public.cr_short(v_cost); end if;
+      perform public.cr_take(v_cost, 'Wiki fact — ' || pg.title, 'wiki');
+      insert into public.wiki_facts (page_id, slot, body, author, status, reviewed_by, reviewed_at)
+      values (p_page, p_slot, v_body, auth.uid(), 'kept', auth.uid(), now())
+      returning id into v_id;
+    end if;
+    update public.wiki_facts
+       set status = 'returned', note = 'A witch put a fact in this spot. Try one of the open ones.',
+           reviewed_by = auth.uid(), reviewed_at = now()
+     where page_id = p_page and slot = p_slot and status = 'pending';
+    -- Always leave at least two open slots.
+    select pg.slots - count(*) into v_open from public.wiki_facts where page_id = pg.id and status = 'kept';
+    update public.wiki_pages
+       set slots = least(300, slots + greatest(0, 2 - v_open)),
+           updated_by = auth.uid(), updated_at = now()
+     where id = pg.id;
+    return jsonb_build_object('ok', true, 'id', v_id, 'kept', true,
+                              'cost', case when v_paid then 0 else v_cost end, 'mana', public.cr_balance());
   end if;
 
   update public.wiki_facts set body = v_body, created_at = now()
