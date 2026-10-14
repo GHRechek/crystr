@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { setFlash, EDGE } from "@/lib/flash";
 import { COSTS, untilReady } from "@/lib/crystr";
 import { normalizePortrait } from "@/lib/portrait/core";
+import { listBadges } from "@/lib/badges";
 
 type Rpc = {
   ok: boolean;
@@ -33,6 +34,16 @@ async function call(fn: string, args: Record<string, unknown>): Promise<Rpc> {
     return { ok: false, code: "error" };
   }
   return (data ?? { ok: false, code: "error" }) as Rpc;
+}
+
+/** Badges earned since the person last heard, as a sentence to add to a message
+ *  ("" when there are none). Asking marks them as told, so each is announced once. */
+async function newBadges(): Promise<string> {
+  const supabase = createClient();
+  const { data, error } = await supabase.rpc("cr_claim_new_badges");
+  if (error || !Array.isArray(data) || data.length === 0) return "";
+  const titles = (data as { title: string }[]).map((b) => b.title);
+  return ` You earned a badge: ${listBadges(titles)}.`;
 }
 
 function str(fd: FormData, key: string): string {
@@ -68,7 +79,7 @@ export async function createPost(fd: FormData) {
     return;
   }
 
-  setFlash("POSTED", `That took ${r.cost} out of you. Nicely said.`, EDGE.mag);
+  setFlash("POSTED", `That took ${r.cost} out of you. Nicely said.${await newBadges()}`, EDGE.mag);
   revalidatePath("/");
   redirect("/");
 }
@@ -108,7 +119,7 @@ export async function createReply(fd: FormData) {
     return;
   }
 
-  setFlash("REPLIED", `That took ${r.cost} out of you. Your reply is on the thread.`, EDGE.mag);
+  setFlash("REPLIED", `That took ${r.cost} out of you. Your reply is on the thread.${await newBadges()}`, EDGE.mag);
   revalidatePath("/");
   revalidatePath(`/thread/${parent}`);
   redirect(`/thread/${parent}`);
@@ -186,8 +197,54 @@ export async function sendWhisper(fd: FormData) {
     } else {
       wentWrong();
     }
+  } else {
+    const note = await newBadges();
+    if (note) setFlash("NEW BADGE", note.trim(), EDGE.blue);
   }
   revalidatePath(`/whispers/${threadId}`);
+}
+
+// ----------------------------------------------------------------- vouches
+
+/** "We met up" / "I helped them", said inside a whisper thread. */
+export async function claimVouch(fd: FormData) {
+  const thread = Number(fd.get("thread_id"));
+  const kind = str(fd, "kind");
+  const r = await call("cr_claim_vouch", { p_kind: kind, p_other: str(fd, "other_id") });
+
+  if (!r.ok) {
+    if (r.code === "already") {
+      setFlash("ALREADY SAID", "That one is already waiting, or already confirmed.", EDGE.purple);
+    } else if (r.code === "no_thread") {
+      setFlash("WHISPER FIRST", "Send them a whisper first, so there is a thread to say it in.", EDGE.purple);
+    } else {
+      wentWrong();
+    }
+  } else {
+    setFlash(
+      "ASKED",
+      kind === "meetup"
+        ? "They will see a note asking whether you met up. If they say yes, you both earn a badge."
+        : "They will see a note asking whether you helped. If they say yes, you earn a badge.",
+      EDGE.blue,
+    );
+  }
+  revalidatePath(`/whispers/${thread}`);
+}
+
+/** The other person says yes, or not quite. */
+export async function answerVouch(fd: FormData) {
+  const yes = str(fd, "answer") === "yes";
+  const r = await call("cr_answer_vouch", { p_id: Number(fd.get("id")), p_yes: yes });
+
+  if (!r.ok) {
+    setFlash("ALREADY ANSWERED", "That note is no longer waiting for you.", EDGE.purple);
+  } else if (yes) {
+    setFlash("THANK YOU", `Confirmed.${await newBadges()}`, EDGE.blue);
+  } else {
+    setFlash("NO WORRIES", "Left as it was.", EDGE.purple);
+  }
+  revalidatePath("/", "layout");
 }
 
 // ------------------------------------------------------------------ votes
@@ -211,7 +268,7 @@ export async function castVote(fd: FormData) {
   } else {
     setFlash(
       "RECORDED",
-      "Your vote is in, under your name. It takes three out of you and cannot be changed.",
+      `Your vote is in, under your name. It takes three out of you and cannot be changed.${await newBadges()}`,
       str(fd, "side") === "for" ? EDGE.mag : EDGE.blue,
     );
   }

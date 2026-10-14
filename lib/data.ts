@@ -1,3 +1,4 @@
+import type { BadgeRow } from "@/lib/badges";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
@@ -457,6 +458,54 @@ export async function getLedger(userId: string): Promise<LedgerRow[]> {
     .order("created_at", { ascending: false })
     .limit(20);
   return (data ?? []) as LedgerRow[];
+}
+
+export type Vouch = {
+  id: number;
+  kind: "meetup" | "helped";
+  claimant: string;
+  other: string;
+  status: "pending" | "confirmed" | "declined";
+  who: { handle: string } | null;
+};
+
+/** Things people have said about you that wait for a yes: "we met up", "I helped them". */
+export async function getPendingVouches(userId: string): Promise<Vouch[]> {
+  const supabase = createClient();
+  const { data } = await supabase
+    .from("vouches")
+    .select("id, kind, claimant, other, status, who:profiles!vouches_claimant_fkey(handle)")
+    .eq("other", userId)
+    .eq("status", "pending")
+    .order("created_at")
+    .limit(5);
+  return (data ?? []) as unknown as Vouch[];
+}
+
+/** Everything said between you and one other person, for their whisper thread. */
+export async function getVouchesBetween(userId: string, otherId: string): Promise<Vouch[]> {
+  const supabase = createClient();
+  const { data } = await supabase
+    .from("vouches")
+    .select("id, kind, claimant, other, status, who:profiles!vouches_claimant_fkey(handle)")
+    .or(`and(claimant.eq.${userId},other.eq.${otherId}),and(claimant.eq.${otherId},other.eq.${userId})`)
+    .neq("status", "declined")
+    .limit(10);
+  return (data ?? []) as unknown as Vouch[];
+}
+
+/** Every badge there is, and when this person earned each one (null if not yet). */
+export async function getBadges(userId: string): Promise<BadgeRow[]> {
+  const supabase = createClient();
+  const [all, mine] = await Promise.all([
+    supabase.from("badges").select("slug, title, how, blurb, art, sort").order("sort"),
+    supabase.from("user_badges").select("badge_slug, earned_at").eq("user_id", userId),
+  ]);
+  const earned = new Map((mine.data ?? []).map((r) => [String(r.badge_slug), String(r.earned_at)]));
+  return ((all.data ?? []) as Omit<BadgeRow, "earned_at">[]).map((b) => ({
+    ...b,
+    earned_at: earned.get(b.slug) ?? null,
+  }));
 }
 
 export async function getTopFriends(userId: string): Promise<Author[]> {
