@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireMe } from "@/lib/data";
-import { getWikiFacts, getWikiPage, SLUG, type WikiFact } from "@/lib/wiki";
+import { getWikiFacts, getWikiPage, SLUG, touchWikiPage, type WikiFact } from "@/lib/wiki";
 import { moderateWikiPage, removeFact } from "@/lib/wiki-actions";
 import { fillerChunk } from "@/lib/wiki-filler";
 import { ago, corrupt, decayLevel } from "@/lib/crystr";
@@ -48,6 +48,8 @@ export default async function WikiPageView({ params }: { params: { slug: string 
   const page = await getWikiPage(params.slug);
   if (!page) notFound();
 
+  // Opening a page moves it to the top of this person's list.
+  await touchWikiPage(page.id);
   const facts = await getWikiFacts(page.id);
   const witch = profile.is_witch;
   const decay = decayLevel(profile.mana);

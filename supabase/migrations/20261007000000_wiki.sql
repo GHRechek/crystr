@@ -229,3 +229,33 @@ grant execute on function public.cr_wiki_add_fact(bigint, int, text) to authenti
 grant execute on function public.cr_wiki_review_fact(bigint, boolean, text, text) to authenticated;
 grant execute on function public.cr_wiki_remove_fact(bigint) to authenticated;
 grant execute on function public.cr_wiki_moderate(bigint, boolean, boolean) to authenticated;
+
+-- When each person last opened each page, so their wiki list can put what they
+-- opened most recently first. Their own record only: nobody sees anyone else's.
+-- Applied 2026-10-14, after the rest of this file.
+create table if not exists public.wiki_views (
+  user_id   uuid   not null references public.profiles (id) on delete cascade,
+  page_id   bigint not null references public.wiki_pages (id) on delete cascade,
+  viewed_at timestamptz not null default now(),
+  primary key (user_id, page_id)
+);
+alter table public.wiki_views enable row level security;
+revoke all on public.wiki_views from anon, authenticated;
+grant select on public.wiki_views to authenticated;
+drop policy if exists wiki_views_read on public.wiki_views;
+create policy wiki_views_read on public.wiki_views for select to authenticated using (user_id = auth.uid());
+
+-- Note that the caller opened a page. Archived pages are for witches only.
+create or replace function public.cr_wiki_touch(p_page bigint)
+returns void language plpgsql security definer set search_path = public as $$
+begin
+  if auth.uid() is null then return; end if;
+  if not exists (select 1 from public.wiki_pages where id = p_page and (not archived or public.is_witch())) then
+    return;
+  end if;
+  insert into public.wiki_views (user_id, page_id, viewed_at) values (auth.uid(), p_page, now())
+  on conflict (user_id, page_id) do update set viewed_at = now();
+end;
+$$;
+revoke all on function public.cr_wiki_touch(bigint) from public, anon;
+grant execute on function public.cr_wiki_touch(bigint) to authenticated;

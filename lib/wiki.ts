@@ -39,10 +39,47 @@ export type WikiListing = WikiPage & {
   waiting: number;
 };
 
+/** The list's order: the pages this person opened most recently first, then
+ *  every page they haven't opened, alphabetically. Pure, so it can be tested. */
+export function listOrder<T extends { id: number; title: string }>(pages: T[], viewed: Map<number, number>): T[] {
+  return [...pages].sort((a, b) => {
+    const va = viewed.get(a.id);
+    const vb = viewed.get(b.id);
+    if (va !== undefined && vb !== undefined && va !== vb) return vb - va;
+    if (va !== undefined && vb === undefined) return -1;
+    if (va === undefined && vb !== undefined) return 1;
+    return a.title.localeCompare(b.title, undefined, { sensitivity: "base" });
+  });
+}
+
+/** When this person last opened each page (their own record; the database only
+ *  ever shows them their own). */
+async function getViewed(): Promise<Map<number, number>> {
+  const supabase = createClient();
+  const { data } = await supabase.from("wiki_views").select("page_id, viewed_at").limit(1000);
+  return new Map(
+    ((data ?? []) as { page_id: number; viewed_at: string }[]).map((v) => [v.page_id, new Date(v.viewed_at).getTime()]),
+  );
+}
+
+/** Note that this person has opened a page. Best effort: a failure here must
+ *  never stop the page from showing. */
+export async function touchWikiPage(pageId: number): Promise<void> {
+  try {
+    const supabase = createClient();
+    await supabase.rpc("cr_wiki_touch", { p_page: pageId });
+  } catch {
+    // ignore
+  }
+}
+
 export async function getWikiPages(witch: boolean): Promise<WikiListing[]> {
   const supabase = createClient();
-  const { data } = await supabase.from("wiki_pages").select(PAGE_COLS).order("title", { ascending: true }).limit(500);
-  const pages = (data ?? []) as unknown as WikiPage[];
+  const [{ data }, viewed] = await Promise.all([
+    supabase.from("wiki_pages").select(PAGE_COLS).order("title", { ascending: true }).limit(500),
+    getViewed(),
+  ]);
+  const pages = listOrder((data ?? []) as unknown as WikiPage[], viewed);
   if (pages.length === 0) return [];
 
   const { data: facts } = await supabase
