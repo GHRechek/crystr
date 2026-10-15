@@ -1,7 +1,9 @@
 -- Badges: recognition, nothing more. They carry no mana and are never taken
 -- back.
 --
--- NOT APPLIED. Written for the feature/badges branch.
+-- Applied to the live database on 2026-10-15, in small steps (the apply tool times
+-- out on large batches). The plaintiff_codes rows were loaded separately and are
+-- not in this file. A rebuild of the database needs them loaded again.
 --
 -- A badge is earned by doing something the app can already see. Awarding is
 -- done by triggers on the tables the activity lands in (posts, whispers,
