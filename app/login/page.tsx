@@ -2,6 +2,7 @@
 
 import { useState, use } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { LOGIN_PROBLEMS, type LoginProblem } from "@/lib/login-problems";
 
 export default function LoginPage(
   props: {
@@ -10,7 +11,8 @@ export default function LoginPage(
 ) {
   const searchParams = use(props.searchParams);
   const [busy, setBusy] = useState(false);
-  const problem = searchParams?.e;
+  const code = searchParams?.e;
+  const problem = code && Object.hasOwn(LOGIN_PROBLEMS, code) ? LOGIN_PROBLEMS[code as LoginProblem] : undefined;
 
   async function signInWithGoogle() {
     setBusy(true);
