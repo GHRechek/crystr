@@ -1,15 +1,16 @@
-import { requireMe, getPendingVouches } from "@/lib/data";
+import { requireMe, getPendingVouches, getTopSixNotices } from "@/lib/data";
 import { readFlash } from "@/lib/flash";
 import { Clock, SetupBanner, TabBar, Toast, WellButton } from "@/components/chrome";
 import { DecayFrame } from "@/components/decay";
 import { VouchBanner } from "@/components/vouch-banner";
+import { TopSixBanner } from "@/components/top-six-banner";
 import { MANA_CAP, hasStarterHandle, manaColor, wellLine } from "@/lib/crystr";
 
 export const dynamic = "force-dynamic";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const { profile, userId } = await requireMe();
-  const vouches = await getPendingVouches(userId);
+  const [vouches, topSixFrom] = await Promise.all([getPendingVouches(userId), getTopSixNotices(userId)]);
   const flash = await readFlash();
   const mana = profile.mana;
 
@@ -43,6 +44,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         {hasStarterHandle(profile.handle) ? <SetupBanner /> : null}
 
         <VouchBanner vouches={vouches} />
+        <TopSixBanner who={topSixFrom} />
 
         <main className="screen">
           <DecayFrame mana={mana}>{children}</DecayFrame>
