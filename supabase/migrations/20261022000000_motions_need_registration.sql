@@ -1,4 +1,4 @@
--- Voting on a motion, and tabling one, now need a Registered Plaintiff: someone who
+-- Voting on a motion, and creating one, now need a Registered Plaintiff: someone who
 -- has filed Form 12-A (a row in public.plaintiffs). It applies to witches too.
 --
 -- Applied to the live database on 2026-10-22. Both functions are otherwise exactly
@@ -36,7 +36,7 @@ declare v_article bigint;
         v_motion  bigint;
 begin
   if not public.is_witch() then return jsonb_build_object('ok', false, 'code', 'forbidden'); end if;
-  -- Tabling a motion also needs a Registered Plaintiff (Form 12-A filed).
+  -- Creating a motion also needs a Registered Plaintiff (Form 12-A filed).
   if not exists (select 1 from public.plaintiffs where user_id = auth.uid()) then
     return jsonb_build_object('ok', false, 'code', 'not_registered');
   end if;

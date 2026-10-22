@@ -311,7 +311,7 @@ export async function castVote(fd: FormData) {
   revalidatePath("/vote");
 }
 
-export async function tableMotion(fd: FormData) {
+export async function createMotion(fd: FormData) {
   const r = await call("cr_table_motion", {
     m_kicker: str(fd, "m_kicker"),
     m_title: str(fd, "m_title"),
@@ -336,9 +336,9 @@ export async function tableMotion(fd: FormData) {
         EDGE.mag,
       );
     } else if (r.code === "forbidden") {
-      setFlash("NOT YOURS", "Only witches table motions.", EDGE.mag);
+      setFlash("NOT YOURS", "Only witches create motions.", EDGE.mag);
     } else if (r.code === "not_registered") {
-      setFlash("REGISTER FIRST", "Tabling a motion is for Registered Plaintiffs. File Form 12-A first.", EDGE.purple);
+      setFlash("REGISTER FIRST", "Creating a motion is for Registered Plaintiffs. File Form 12-A first.", EDGE.purple);
       redirect("/me/plaintiff");
     } else {
       wentWrong();
@@ -347,7 +347,7 @@ export async function tableMotion(fd: FormData) {
   }
 
   setFlash(
-    "TABLED",
+    "CREATED",
     "Your motion is on the board with its briefing attached.",
     EDGE.blue,
   );

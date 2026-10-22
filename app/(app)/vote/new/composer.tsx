@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { tableMotion } from "@/lib/actions";
+import { createMotion } from "@/lib/actions";
 
 const WINDOWS = [
   { hours: 4, label: "4 HOURS" },
@@ -24,7 +24,7 @@ export function MotionComposer() {
   const canPublish = canAdvance && headline.trim().length > 0 && body.trim().length >= 40;
 
   return (
-    <form action={tableMotion} className="pad" style={{ gap: 11 }}>
+    <form action={createMotion} className="pad" style={{ gap: 11 }}>
       <input type="hidden" name="m_hours" value={hours} />
       <input type="hidden" name="b_banner" value={banner ? "true" : "false"} />
       <input type="hidden" name="b_kicker" value="MOTION BRIEFING" />

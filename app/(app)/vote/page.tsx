@@ -31,7 +31,7 @@ export default async function VotePage({
               REGISTER TO TAKE PART
             </div>
             <div style={{ fontSize: 11, lineHeight: 1.45, color: "var(--muted)", marginTop: 4 }}>
-              Voting on motions, and tabling them, is for Registered Plaintiffs. File Form 12-A
+              Voting on motions, and creating them, is for Registered Plaintiffs. File Form 12-A
               and you are in.
             </div>
           </div>
@@ -49,12 +49,12 @@ export default async function VotePage({
           </span>
           <span className="spacer" />
           <Link href={registered ? "/vote/new" : "/me/plaintiff"} className="btn btn-sm btn-purple" style={{ minHeight: 36 }}>
-            {registered ? "＋ TABLE A MOTION" : "REGISTER TO TABLE ONE"}
+            {registered ? "＋ CREATE A MOTION" : "REGISTER TO CREATE ONE"}
           </Link>
         </div>
       ) : (
         <div className="notice">
-          Only witches table motions. If you want one on the board, argue for it in an
+          Only witches create motions. If you want one on the board, argue for it in an
           op-ed on the Ball and make it hard to ignore.
         </div>
       )}
@@ -84,12 +84,12 @@ export default async function VotePage({
               THE BOARD IS EMPTY
               <br />
               <span style={{ color: "var(--muted)" }}>
-                {profile.is_witch ? "TABLE SOMETHING." : "NOTHING TO BE ANNOYED ABOUT. YET."}
+                {profile.is_witch ? "CREATE SOMETHING." : "NOTHING TO BE ANNOYED ABOUT. YET."}
               </span>
             </div>
           ) : null}
           <div className="notice">
-            Witches table motions, and never without a briefing attached. Reading is
+            Witches create motions, and never without a briefing attached. Reading is
             free; being counted is three.
           </div>
         </>
