@@ -59,7 +59,7 @@ export default async function TermsPage() {
             </div>
 
             {accepted ? (
-              <Link href="/me" className="btn btn-lg btn-block">
+              <Link href="/" className="btn btn-lg btn-block">
                 ← BACK
               </Link>
             ) : (
