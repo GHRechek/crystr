@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { requireMe, getLedger, getTopFriends, getBadges, getPlaintiffSince } from "@/lib/data";
+import { requireMe, getLedger, getTopFriends, getBadges, getPlaintiffSince, countOpenReports } from "@/lib/data";
 import { BADGE_GLYPH } from "@/lib/badges";
 import { Avatar } from "@/components/bits";
 import { ProfileHead } from "./face-menu";
@@ -14,6 +14,7 @@ export default async function ProfilePage() {
     getBadges(userId),
     getPlaintiffSince(userId),
   ]);
+  const openReports = profile.is_witch ? await countOpenReports() : 0;
   const earnedCount = badges.filter((b) => b.earned_at).length;
 
   const days = Math.max(
@@ -287,6 +288,17 @@ export default async function ProfilePage() {
               </div>
             ))}
           </div>
+        </div>
+
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          {profile.is_witch ? (
+            <Link href="/reports" className="btn btn-sm" style={{ minHeight: 36 }}>
+              REPORTS · {openReports}
+            </Link>
+          ) : null}
+          <Link href="/terms" className="btn btn-sm" style={{ minHeight: 36 }}>
+            TERMS OF SERVICE
+          </Link>
         </div>
 
         <form action="/auth/signout" method="post">

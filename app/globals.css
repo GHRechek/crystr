@@ -836,3 +836,8 @@ select {
   text-decoration: none;
   flex: none;
 }
+
+/* The small "report" disclosure under posts and whispers */
+.report summary::-webkit-details-marker { display: none; }
+.report summary { padding: 6px 2px; }
+.report[open] summary { color: var(--text-3); }

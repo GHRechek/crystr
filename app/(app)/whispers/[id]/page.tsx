@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { requireMe, getThread, getVouchesBetween } from "@/lib/data";
 import { Avatar } from "@/components/bits";
 import { sendWhisper, claimVouch } from "@/lib/actions";
+import { ReportButton } from "@/components/report-button";
 import { corrupt, COSTS, decayLevel } from "@/lib/crystr";
 import type { Vouch } from "@/lib/data";
 
@@ -99,6 +100,10 @@ export default async function ThreadPage(props: { params: Promise<{ id: string }
             <span style={{ color: "var(--muted)" }}>A LITTLE TIME AT THE WELL, THEN TRY AGAIN.</span>
           </div>
         ) : null}
+      </div>
+
+      <div style={{ flex: "none", padding: "8px 16px 0" }}>
+        <ReportButton kind="whisper" target={id} back={`/whispers/${id}`} label="REPORT THIS CONVERSATION" />
       </div>
 
       <Said thread={id} other={thread.other} me={userId} vouches={vouches} />

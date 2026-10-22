@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Avatar, Placeholder } from "@/components/bits";
 import { likePost } from "@/lib/actions";
+import { ReportButton } from "@/components/report-button";
 import { ago, corrupt } from "@/lib/crystr";
 import type { FeedPost } from "@/lib/data";
 
@@ -88,6 +89,9 @@ export function PostCard({
           </Link>
         )}
         <div className="spacer" />
+        {mine ? null : (
+          <ReportButton kind="post" target={post.id} back={inThread && thread ? `/thread/${thread}` : "/"} />
+        )}
         <span className="px" style={{ fontSize: 8, color: "var(--dim)" }}>
           -1 TO LIKE
         </span>
