@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { requireMe, getMotions, type Motion } from "@/lib/data";
+import { requireMe, getMotions, getPlaintiffSince, type Motion } from "@/lib/data";
 import { castVote } from "@/lib/actions";
 import { ago, closesIn, corrupt, COSTS, decayLevel } from "@/lib/crystr";
 
@@ -8,8 +8,9 @@ export default async function VotePage({
 }: {
   searchParams: { tab?: string };
 }) {
-  const { profile } = await requireMe();
-  const { open, past } = await getMotions();
+  const { profile, userId } = await requireMe();
+  const [{ open, past }, plaintiffSince] = await Promise.all([getMotions(), getPlaintiffSince(userId)]);
+  const registered = !!plaintiffSince;
   const showPast = searchParams.tab === "past";
   const decay = decayLevel(profile.mana);
 
@@ -23,14 +24,32 @@ export default async function VotePage({
         </div>
       </div>
 
+      {registered ? null : (
+        <Link href="/me/plaintiff" className="tile" style={{ padding: 12, display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
+          <div>
+            <div className="px" style={{ fontSize: 9, color: "var(--pur-pale)" }}>
+              REGISTER TO TAKE PART
+            </div>
+            <div style={{ fontSize: 11, lineHeight: 1.45, color: "var(--muted)", marginTop: 4 }}>
+              Voting on motions, and tabling them, is for Registered Plaintiffs. File Form 12-A
+              and you are in.
+            </div>
+          </div>
+          <span className="spacer" />
+          <span className="px" style={{ fontSize: 12, color: "var(--pur-pale)" }}>
+            →
+          </span>
+        </Link>
+      )}
+
       {profile.is_witch ? (
         <div className="witchbar">
           <span className="px" style={{ fontSize: 8.5, color: "var(--pur-pale)" }}>
             WITCH ACCESS
           </span>
           <span className="spacer" />
-          <Link href="/vote/new" className="btn btn-sm btn-purple" style={{ minHeight: 36 }}>
-            ＋ TABLE A MOTION
+          <Link href={registered ? "/vote/new" : "/me/plaintiff"} className="btn btn-sm btn-purple" style={{ minHeight: 36 }}>
+            {registered ? "＋ TABLE A MOTION" : "REGISTER TO TABLE ONE"}
           </Link>
         </div>
       ) : (
@@ -58,7 +77,7 @@ export default async function VotePage({
       ) : (
         <>
           {open.map((m) => (
-            <Open key={m.id} motion={m} mana={profile.mana} decay={decay} />
+            <Open key={m.id} motion={m} mana={profile.mana} decay={decay} registered={registered} />
           ))}
           {open.length === 0 ? (
             <div className="empty">
@@ -99,7 +118,7 @@ function Tally({ motion, height }: { motion: Motion; height: number }) {
   );
 }
 
-function Open({ motion, mana, decay }: { motion: Motion; mana: number; decay: number }) {
+function Open({ motion, mana, decay, registered }: { motion: Motion; mana: number; decay: number; registered: boolean }) {
   const total = motion.votes_for + motion.votes_against;
   const pct = total ? Math.round((motion.votes_for / total) * 100) : 0;
   const closes = closesIn(motion.closes_at);
@@ -192,6 +211,10 @@ function Open({ motion, mana, decay }: { motion: Motion; mana: number; decay: nu
         >
           YOU VOTED {motion.my_side.toUpperCase()} · {COSTS.vote} MANA USED
         </div>
+      ) : !registered ? (
+        <Link href="/me/plaintiff" className="btn btn-block" style={{ minHeight: 44, fontSize: 10 }}>
+          REGISTER TO VOTE
+        </Link>
       ) : (
         <div style={{ display: "flex", gap: 8 }}>
           {(["for", "against"] as const).map((side) => (

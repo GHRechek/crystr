@@ -291,6 +291,9 @@ export async function castVote(fd: FormData) {
   if (!r.ok) {
     if (r.code === "insufficient") {
       broke(r, "A vote takes three, and you have {have}. Your vote will keep. Go and recover, then come back.");
+    } else if (r.code === "not_registered") {
+      setFlash("REGISTER FIRST", "Voting is for Registered Plaintiffs. File Form 12-A and you can vote.", EDGE.purple);
+      redirect("/me/plaintiff");
     } else if (r.code === "already") {
       setFlash("COUNTED", "You have already voted on this one, and it cannot be changed.", EDGE.purple);
     } else if (r.code === "closed") {
@@ -334,6 +337,9 @@ export async function tableMotion(fd: FormData) {
       );
     } else if (r.code === "forbidden") {
       setFlash("NOT YOURS", "Only witches table motions.", EDGE.mag);
+    } else if (r.code === "not_registered") {
+      setFlash("REGISTER FIRST", "Tabling a motion is for Registered Plaintiffs. File Form 12-A first.", EDGE.purple);
+      redirect("/me/plaintiff");
     } else {
       wentWrong();
     }
