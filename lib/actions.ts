@@ -52,13 +52,13 @@ function str(fd: FormData, key: string): string {
 }
 
 /** The house message for "you cannot afford this", with the shortfall. */
-function broke(r: Rpc, line: string) {
-  setFlash("REST FIRST", line.replace("{have}", String(r.have ?? 0))
+async function broke(r: Rpc, line: string) {
+  await setFlash("REST FIRST", line.replace("{have}", String(r.have ?? 0))
     .replace("{short}", String(Math.max(0, (r.need ?? 0) - (r.have ?? 0)))), EDGE.mag);
 }
 
-function wentWrong() {
-  setFlash("SOMETHING WENT WRONG", "That one is on us. Give it another try.", EDGE.mag);
+async function wentWrong() {
+  await setFlash("SOMETHING WENT WRONG", "That one is on us. Give it another try.", EDGE.mag);
 }
 
 // ------------------------------------------------------------------- feed
@@ -71,16 +71,16 @@ export async function createPost(fd: FormData) {
 
   if (!r.ok) {
     if (r.code === "empty") {
-      setFlash("DECLINED", "There is nothing here yet. Write a few words first.", EDGE.mag);
+      await setFlash("DECLINED", "There is nothing here yet. Write a few words first.", EDGE.mag);
     } else if (r.code === "insufficient") {
-      broke(r, "You are {short} short of the strength for that. A little time at the Well will help.");
+      await broke(r, "You are {short} short of the strength for that. A little time at the Well will help.");
     } else {
-      wentWrong();
+      await wentWrong();
     }
     return;
   }
 
-  setFlash("POSTED", `That took ${r.cost} out of you. Nicely said.${await newBadges()}`, EDGE.mag);
+  await setFlash("POSTED", `That took ${r.cost} out of you. Nicely said.${await newBadges()}`, EDGE.mag);
   revalidatePath("/");
   redirect("/");
 }
@@ -90,11 +90,11 @@ export async function likePost(fd: FormData) {
 
   if (!r.ok) {
     if (r.code === "already") {
-      setFlash("ALREADY LIKED", "You have already liked this one.", EDGE.purple);
+      await setFlash("ALREADY LIKED", "You have already liked this one.", EDGE.purple);
     } else if (r.code === "insufficient") {
-      setFlash("REST FIRST", "You are fully out of mana. The Well is the place to recover.", EDGE.mag);
+      await setFlash("REST FIRST", "You are fully out of mana. The Well is the place to recover.", EDGE.mag);
     } else {
-      wentWrong();
+      await wentWrong();
     }
   }
   revalidatePath("/");
@@ -108,26 +108,26 @@ export async function createReply(fd: FormData) {
 
   if (!r.ok) {
     if (r.code === "empty") {
-      setFlash("DECLINED", "There is nothing here yet. Write a few words first.", EDGE.mag);
+      await setFlash("DECLINED", "There is nothing here yet. Write a few words first.", EDGE.mag);
     } else if (r.code === "insufficient") {
-      broke(r, "You are {short} short of the strength for a reply. The Well will help.");
+      await broke(r, "You are {short} short of the strength for a reply. The Well will help.");
     } else if (r.code === "missing") {
-      setFlash("GONE", "That post is no longer there to answer. Somebody unsaid it.", EDGE.mag);
+      await setFlash("GONE", "That post is no longer there to answer. Somebody unsaid it.", EDGE.mag);
       redirect("/");
     } else {
-      wentWrong();
+      await wentWrong();
     }
     return;
   }
 
-  setFlash("REPLIED", `That took ${r.cost} out of you. Your reply is on the thread.${await newBadges()}`, EDGE.mag);
+  await setFlash("REPLIED", `That took ${r.cost} out of you. Your reply is on the thread.${await newBadges()}`, EDGE.mag);
   revalidatePath("/");
   revalidatePath(`/thread/${parent}`);
   redirect(`/thread/${parent}`);
 }
 
 export async function voiceLocked() {
-  setFlash("LOCKED", "Voice notes are not open yet. They will take a lot out of you, so we are keeping them for later.", EDGE.purple);
+  await setFlash("LOCKED", "Voice notes are not open yet. They will take a lot out of you, so we are keeping them for later.", EDGE.purple);
   revalidatePath("/post");
 }
 
@@ -143,25 +143,25 @@ export async function submitQuest(fd: FormData) {
 
   if (!r.ok) {
     if (r.code === "no_proof") {
-      setFlash(
+      await setFlash(
         "NO PROOF",
         "The Well needs something to go on. Add a photo, or write down what you did.",
         EDGE.mag,
       );
     } else if (r.code === "cooldown") {
-      setFlash(
+      await setFlash(
         "TOO SOON",
         `You have brought this one in recently. It will be ready again in ${untilReady(r.ready_at!)}.`,
         EDGE.mag,
       );
     } else {
-      wentWrong();
+      await wentWrong();
     }
     revalidatePath(`/well/${slug}`);
     return;
   }
 
-  setFlash(
+  await setFlash(
     "ACCEPTED",
     `${r.reward} mana restored. Well done. Look after yourself.`,
     EDGE.blue,
@@ -176,7 +176,7 @@ export async function submitQuest(fd: FormData) {
 export async function openThread(fd: FormData) {
   const r = await call("cr_open_thread", { p_other: str(fd, "other_id") });
   if (!r.ok) {
-    wentWrong();
+    await wentWrong();
     return;
   }
   revalidatePath("/whispers");
@@ -192,15 +192,15 @@ export async function sendWhisper(fd: FormData) {
 
   if (!r.ok) {
     if (r.code === "empty") {
-      setFlash("EMPTY", "Nothing to send yet. Write a few words first.", EDGE.purple);
+      await setFlash("EMPTY", "Nothing to send yet. Write a few words first.", EDGE.purple);
     } else if (r.code === "insufficient") {
-      broke(r, `A whisper takes ${COSTS.whisper}, and you have {have}. Recover at the Well and it will be here when you are back.`);
+      await broke(r, `A whisper takes ${COSTS.whisper}, and you have {have}. Recover at the Well and it will be here when you are back.`);
     } else {
-      wentWrong();
+      await wentWrong();
     }
   } else {
     const note = await newBadges();
-    if (note) setFlash("NEW BADGE", note.trim(), EDGE.blue);
+    if (note) await setFlash("NEW BADGE", note.trim(), EDGE.blue);
   }
   revalidatePath(`/whispers/${threadId}`);
 }
@@ -228,7 +228,7 @@ export async function submitPlaintiff(fd: FormData): Promise<PlaintiffError | un
     return { field: "form", message: "That one is on us. Give it another try." };
   }
 
-  setFlash(
+  await setFlash(
     "REGISTERED",
     `You are on the City's books as a Registered Plaintiff.${await newBadges()}`,
     EDGE.blue,
@@ -247,14 +247,14 @@ export async function claimVouch(fd: FormData) {
 
   if (!r.ok) {
     if (r.code === "already") {
-      setFlash("ALREADY SAID", "That one is already waiting, or already confirmed.", EDGE.purple);
+      await setFlash("ALREADY SAID", "That one is already waiting, or already confirmed.", EDGE.purple);
     } else if (r.code === "no_thread") {
-      setFlash("WHISPER FIRST", "Send them a whisper first, so there is a thread to say it in.", EDGE.purple);
+      await setFlash("WHISPER FIRST", "Send them a whisper first, so there is a thread to say it in.", EDGE.purple);
     } else {
-      wentWrong();
+      await wentWrong();
     }
   } else {
-    setFlash(
+    await setFlash(
       "ASKED",
       kind === "meetup"
         ? "They will see a note asking whether you met up. If they say yes, you both earn a badge."
@@ -271,11 +271,11 @@ export async function answerVouch(fd: FormData) {
   const r = await call("cr_answer_vouch", { p_id: Number(fd.get("id")), p_yes: yes });
 
   if (!r.ok) {
-    setFlash("ALREADY ANSWERED", "That note is no longer waiting for you.", EDGE.purple);
+    await setFlash("ALREADY ANSWERED", "That note is no longer waiting for you.", EDGE.purple);
   } else if (yes) {
-    setFlash("THANK YOU", `Confirmed.${await newBadges()}`, EDGE.blue);
+    await setFlash("THANK YOU", `Confirmed.${await newBadges()}`, EDGE.blue);
   } else {
-    setFlash("NO WORRIES", "Left as it was.", EDGE.purple);
+    await setFlash("NO WORRIES", "Left as it was.", EDGE.purple);
   }
   revalidatePath("/", "layout");
 }
@@ -290,19 +290,19 @@ export async function castVote(fd: FormData) {
 
   if (!r.ok) {
     if (r.code === "insufficient") {
-      broke(r, "A vote takes three, and you have {have}. Your vote will keep. Go and recover, then come back.");
+      await broke(r, "A vote takes three, and you have {have}. Your vote will keep. Go and recover, then come back.");
     } else if (r.code === "not_registered") {
-      setFlash("REGISTER FIRST", "Voting is for Registered Plaintiffs. File Form 12-A and you can vote.", EDGE.purple);
+      await setFlash("REGISTER FIRST", "Voting is for Registered Plaintiffs. File Form 12-A and you can vote.", EDGE.purple);
       redirect("/me/plaintiff");
     } else if (r.code === "already") {
-      setFlash("COUNTED", "You have already voted on this one, and it cannot be changed.", EDGE.purple);
+      await setFlash("COUNTED", "You have already voted on this one, and it cannot be changed.", EDGE.purple);
     } else if (r.code === "closed") {
-      setFlash("CLOSED", "That motion closed while you were deciding. There will be another.", EDGE.purple);
+      await setFlash("CLOSED", "That motion closed while you were deciding. There will be another.", EDGE.purple);
     } else {
-      wentWrong();
+      await wentWrong();
     }
   } else {
-    setFlash(
+    await setFlash(
       "RECORDED",
       `Your vote is in, under your name. It takes three out of you and cannot be changed.${await newBadges()}`,
       str(fd, "side") === "for" ? EDGE.mag : EDGE.blue,
@@ -326,27 +326,27 @@ export async function createMotion(fd: FormData) {
 
   if (!r.ok) {
     if (r.code === "no_motion") {
-      setFlash("EMPTY", "A motion needs wording before it needs a briefing.", EDGE.mag);
+      await setFlash("EMPTY", "A motion needs wording before it needs a briefing.", EDGE.mag);
     } else if (r.code === "no_headline") {
-      setFlash("NO HEADLINE", "Give it a headline so the City knows what it is about.", EDGE.mag);
+      await setFlash("NO HEADLINE", "Give it a headline so the City knows what it is about.", EDGE.mag);
     } else if (r.code === "thin_briefing") {
-      setFlash(
+      await setFlash(
         "TOO THIN",
         "A motion goes to the board with a briefing that explains it. Forty characters is a little short to explain it.",
         EDGE.mag,
       );
     } else if (r.code === "forbidden") {
-      setFlash("NOT YOURS", "Only witches create motions.", EDGE.mag);
+      await setFlash("NOT YOURS", "Only witches create motions.", EDGE.mag);
     } else if (r.code === "not_registered") {
-      setFlash("REGISTER FIRST", "Creating a motion is for Registered Plaintiffs. File Form 12-A first.", EDGE.purple);
+      await setFlash("REGISTER FIRST", "Creating a motion is for Registered Plaintiffs. File Form 12-A first.", EDGE.purple);
       redirect("/me/plaintiff");
     } else {
-      wentWrong();
+      await wentWrong();
     }
     return;
   }
 
-  setFlash(
+  await setFlash(
     "CREATED",
     "Your motion is on the board with its briefing attached.",
     EDGE.blue,
@@ -370,16 +370,16 @@ export async function submitOpEd(fd: FormData) {
 
   if (!r.ok) {
     if (r.code === "no_headline") {
-      setFlash("NO HEADLINE", "Give it a headline so the City knows what it is about.", EDGE.mag);
+      await setFlash("NO HEADLINE", "Give it a headline so the City knows what it is about.", EDGE.mag);
     } else if (r.code === "insufficient") {
-      broke(r, `An op-ed takes ${COSTS.oped}, and you have {have}. Recover at the Well and come back to it.`);
+      await broke(r, `An op-ed takes ${COSTS.oped}, and you have {have}. Recover at the Well and come back to it.`);
     } else {
-      wentWrong();
+      await wentWrong();
     }
     return;
   }
 
-  setFlash(
+  await setFlash(
     "FILED",
     "Filed. It took six out of you. A witch will read it when they can, so no rush.",
     EDGE.mag,
@@ -405,23 +405,23 @@ export async function saveDispatch(fd: FormData) {
 
   if (!r.ok) {
     if (r.code === "no_headline") {
-      setFlash("NO HEADLINE", "Give it a headline so the City knows what it is about.", EDGE.mag);
+      await setFlash("NO HEADLINE", "Give it a headline so the City knows what it is about.", EDGE.mag);
     } else if (r.code === "forbidden") {
-      setFlash("NOT YOURS", "Dispatches are a witch's business.", EDGE.mag);
+      await setFlash("NOT YOURS", "Dispatches are a witch's business.", EDGE.mag);
     } else {
-      wentWrong();
+      await wentWrong();
     }
     return;
   }
 
   if (status === "published") {
-    setFlash(
+    await setFlash(
       "PUBLISHED",
       "It is on the board for the whole City to read.",
       EDGE.blue,
     );
   } else {
-    setFlash("SAVED", "Saved as a draft. Only you can see it.", EDGE.purple);
+    await setFlash("SAVED", "Saved as a draft. Only you can see it.", EDGE.purple);
   }
   revalidatePath("/ball");
   revalidatePath("/");
@@ -435,22 +435,22 @@ export async function setArticleStatus(fd: FormData) {
 
   if (!r.ok) {
     if (r.code === "forbidden") {
-      setFlash("NOT YOURS", "Only witches decide what the City is told.", EDGE.mag);
+      await setFlash("NOT YOURS", "Only witches decide what the City is told.", EDGE.mag);
     } else {
-      wentWrong();
+      await wentWrong();
     }
     revalidatePath(`/ball/${id}`);
     return;
   }
 
   if (r.kind === "oped" && status === "published") {
-    setFlash("APPROVED", "Approved and published under their name.", EDGE.blue);
+    await setFlash("APPROVED", "Approved and published under their name.", EDGE.blue);
   } else if (status === "returned") {
-    setFlash("RETURNED", "Sent back to the writer.", EDGE.mag);
+    await setFlash("RETURNED", "Sent back to the writer.", EDGE.mag);
   } else if (status === "published") {
-    setFlash("PUBLISHED", "Published. The City can read it now.", EDGE.blue);
+    await setFlash("PUBLISHED", "Published. The City can read it now.", EDGE.blue);
   } else {
-    setFlash("PULLED", "Taken down from the board.", EDGE.purple);
+    await setFlash("PULLED", "Taken down from the board.", EDGE.purple);
   }
 
   revalidatePath("/ball");
@@ -470,7 +470,7 @@ export async function updateProfile(fd: FormData) {
 
   const handle = str(fd, "handle").toLowerCase().replace(/[^a-z0-9_.-]/g, "");
   if (!handle) {
-    setFlash("NO NAME", "The City needs something to call you. Pick a handle.", EDGE.mag);
+    await setFlash("NO NAME", "The City needs something to call you. Pick a handle.", EDGE.mag);
     return;
   }
 
@@ -489,7 +489,7 @@ export async function updateProfile(fd: FormData) {
     .eq("id", user.id);
 
   if (error) {
-    setFlash(
+    await setFlash(
       "TAKEN",
       error.code === "23505"
         ? "Someone in the City already answers to that. Pick another."
@@ -499,7 +499,7 @@ export async function updateProfile(fd: FormData) {
     return;
   }
 
-  setFlash("NOTED", "The City has been told.", EDGE.purple);
+  await setFlash("NOTED", "The City has been told.", EDGE.purple);
   revalidatePath("/me");
   redirect("/me");
 }
@@ -520,11 +520,11 @@ export async function setMood(fd: FormData) {
 
   if (error) {
     console.error("setMood:", error.message);
-    wentWrong();
+    await wentWrong();
     return;
   }
 
-  setFlash(
+  await setFlash(
     mood ? "NOTED" : "UNSAID",
     mood
       ? "The City can see what is on your mind. Thoughts are free; posting takes five."
@@ -546,7 +546,7 @@ export async function saveAvatar(fd: FormData) {
   try {
     parsed = JSON.parse(String(fd.get("config") ?? "{}"));
   } catch {
-    setFlash("UNREADABLE", "That portrait did not survive the journey. Try again.", EDGE.mag);
+    await setFlash("UNREADABLE", "That portrait did not survive the journey. Try again.", EDGE.mag);
     return;
   }
 
@@ -557,11 +557,11 @@ export async function saveAvatar(fd: FormData) {
 
   if (error) {
     console.error("saveAvatar:", error.message);
-    wentWrong();
+    await wentWrong();
     return;
   }
 
-  setFlash("A FACE", "Your face is saved. The City will know you now.", EDGE.purple);
+  await setFlash("A FACE", "Your face is saved. The City will know you now.", EDGE.purple);
   revalidatePath("/me");
   revalidatePath("/");
   redirect("/me");
@@ -573,19 +573,19 @@ export async function setTopFriends(fd: FormData) {
 
   if (!r.ok) {
     if (r.code === "insufficient") {
-      broke(r, `Rearranging the Top 6 takes ${COSTS.topSix}, and you have {have}. The Well will help.`);
+      await broke(r, `Rearranging the Top 6 takes ${COSTS.topSix}, and you have {have}. The Well will help.`);
     } else if (r.code === "too_many") {
-      setFlash("SIX", "The Top 6 holds six, no more.", EDGE.mag);
+      await setFlash("SIX", "The Top 6 holds six, no more.", EDGE.mag);
     } else {
-      wentWrong();
+      await wentWrong();
     }
     return;
   }
 
   if (r.unchanged) {
-    setFlash("UNCHANGED", "Nothing changed, so nothing was used.", EDGE.purple);
+    await setFlash("UNCHANGED", "Nothing changed, so nothing was used.", EDGE.purple);
   } else {
-    setFlash("REARRANGED", "Your Top 6 is rearranged.", EDGE.mag);
+    await setFlash("REARRANGED", "Your Top 6 is rearranged.", EDGE.mag);
   }
   revalidatePath("/me");
   redirect("/me");

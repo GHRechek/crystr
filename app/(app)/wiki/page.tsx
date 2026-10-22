@@ -6,7 +6,8 @@ import { ago, corrupt, COSTS, decayLevel } from "@/lib/crystr";
 
 // The low-mana wash is applied by the app layout; this page only has to eat the
 // letters (corrupt) in the words it shows.
-export default async function WikiIndex({ searchParams }: { searchParams: { q?: string } }) {
+export default async function WikiIndex(props: { searchParams: Promise<{ q?: string }> }) {
+  const searchParams = await props.searchParams;
   const { profile } = await requireMe();
   const witch = profile.is_witch;
   const decay = decayLevel(profile.mana);

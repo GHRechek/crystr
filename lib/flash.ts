@@ -8,8 +8,8 @@ export { EDGE } from "@/lib/toast";
 export type { Flash } from "@/lib/toast";
 
 /** Call from a server action. */
-export function setFlash(kicker: string, text: string, edge = "#9184d9") {
-  cookies().set(FLASH_COOKIE, JSON.stringify({ k: kicker, t: text, e: edge }), {
+export async function setFlash(kicker: string, text: string, edge = "#9184d9") {
+  (await cookies()).set(FLASH_COOKIE, JSON.stringify({ k: kicker, t: text, e: edge }), {
     path: "/",
     maxAge: 30,
     httpOnly: false,
@@ -18,8 +18,8 @@ export function setFlash(kicker: string, text: string, edge = "#9184d9") {
 }
 
 /** Call from a server component. */
-export function readFlash(): Flash | null {
-  const raw = cookies().get(FLASH_COOKIE)?.value;
+export async function readFlash(): Promise<Flash | null> {
+  const raw = (await cookies()).get(FLASH_COOKIE)?.value;
   if (!raw) return null;
   try {
     const f = JSON.parse(raw) as Flash;

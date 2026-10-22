@@ -5,13 +5,14 @@ import { PostCard } from "@/components/post-card";
 import { decayLevel } from "@/lib/crystr";
 import { ReplyForm } from "./reply-form";
 
-export default async function ThreadPage({
-  params,
-  searchParams,
-}: {
-  params: { id: string };
-  searchParams: { reply?: string };
-}) {
+export default async function ThreadPage(
+  props: {
+    params: Promise<{ id: string }>;
+    searchParams: Promise<{ reply?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   const { userId, profile } = await requireMe();
   const id = Number(params.id);
   if (!Number.isFinite(id)) notFound();

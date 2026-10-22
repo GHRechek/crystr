@@ -3,11 +3,12 @@ import { requireMe, getMotions, getPlaintiffSince, type Motion } from "@/lib/dat
 import { castVote } from "@/lib/actions";
 import { ago, closesIn, corrupt, COSTS, decayLevel } from "@/lib/crystr";
 
-export default async function VotePage({
-  searchParams,
-}: {
-  searchParams: { tab?: string };
-}) {
+export default async function VotePage(
+  props: {
+    searchParams: Promise<{ tab?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
   const { profile, userId } = await requireMe();
   const [{ open, past }, plaintiffSince] = await Promise.all([getMotions(), getPlaintiffSince(userId)]);
   const registered = !!plaintiffSince;

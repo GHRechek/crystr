@@ -2,7 +2,8 @@ import { notFound, redirect } from "next/navigation";
 import { requireMe, getArticle } from "@/lib/data";
 import { Editor } from "@/components/editor";
 
-export default async function EditArticlePage({ params }: { params: { id: string } }) {
+export default async function EditArticlePage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const { profile } = await requireMe();
   if (!profile.is_witch) redirect("/ball");
 

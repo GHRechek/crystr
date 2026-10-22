@@ -1,13 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, use } from "react";
 import { createClient } from "@/lib/supabase/client";
 
-export default function LoginPage({
-  searchParams,
-}: {
-  searchParams: { e?: string };
-}) {
+export default function LoginPage(
+  props: {
+    searchParams: Promise<{ e?: string }>;
+  }
+) {
+  const searchParams = use(props.searchParams);
   const [busy, setBusy] = useState(false);
   const problem = searchParams?.e;
 
