@@ -8,7 +8,7 @@ type Phase = "idle" | "starting" | "running" | "done";
 
 /** The timer for quests that are about time. Pressing BEGIN has the server stamp the
  *  start; the screen then belongs to the countdown until it finishes. Looking away
- *  (switching apps or tabs) or pressing STOP ends it, and it can be begun again.
+ *  (switching apps or tabs) ends it, and it can be begun again.
  *  The server checks the full time has passed before it will pay, so this screen is
  *  the experience, not the proof. */
 export function StillTimer({
