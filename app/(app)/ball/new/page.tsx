@@ -2,11 +2,12 @@ import { redirect } from "next/navigation";
 import { requireMe } from "@/lib/data";
 import { Editor } from "@/components/editor";
 
-export default async function NewArticlePage({
-  searchParams,
-}: {
-  searchParams: { kind?: string };
-}) {
+export default async function NewArticlePage(
+  props: {
+    searchParams: Promise<{ kind?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
   const { profile } = await requireMe();
 
   // Players file op-eds; dispatches are a witch's business.

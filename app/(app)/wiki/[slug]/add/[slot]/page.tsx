@@ -7,7 +7,8 @@ import { COSTS } from "@/lib/crystr";
 import { FACT_MAX_CHARS, FACT_MAX_WORDS } from "@/lib/wiki-fact";
 
 /** Adding a few words to one spot on a page. */
-export default async function AddFact({ params }: { params: { slug: string; slot: string } }) {
+export default async function AddFact(props: { params: Promise<{ slug: string; slot: string }> }) {
+  const params = await props.params;
   const { profile, userId } = await requireMe();
   const slot = Number(params.slot);
   if (!SLUG.test(params.slug) || !Number.isInteger(slot) || slot < 1) notFound();

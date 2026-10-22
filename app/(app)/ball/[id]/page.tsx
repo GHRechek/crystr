@@ -4,7 +4,8 @@ import { requireMe, getArticle } from "@/lib/data";
 import { setArticleStatus } from "@/lib/actions";
 import { byline, corrupt, decayLevel, paragraphs, readTime } from "@/lib/crystr";
 
-export default async function ArticlePage({ params }: { params: { id: string } }) {
+export default async function ArticlePage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const { profile } = await requireMe();
   const id = Number(params.id);
   if (!Number.isFinite(id)) notFound();

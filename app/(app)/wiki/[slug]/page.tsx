@@ -41,7 +41,8 @@ function sentence(text: string): string {
 
 // The low-mana wash is applied by the app layout; this page only has to eat the
 // letters (corrupt) in the facts it shows.
-export default async function WikiPageView({ params }: { params: { slug: string } }) {
+export default async function WikiPageView(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   const { profile, userId } = await requireMe();
   if (!SLUG.test(params.slug)) notFound();
 

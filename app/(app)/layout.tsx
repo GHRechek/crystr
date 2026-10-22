@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const { profile, userId } = await requireMe();
   const vouches = await getPendingVouches(userId);
-  const flash = readFlash();
+  const flash = await readFlash();
   const mana = profile.mana;
 
   return (

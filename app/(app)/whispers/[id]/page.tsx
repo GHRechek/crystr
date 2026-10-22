@@ -6,7 +6,8 @@ import { sendWhisper, claimVouch } from "@/lib/actions";
 import { corrupt, COSTS, decayLevel } from "@/lib/crystr";
 import type { Vouch } from "@/lib/data";
 
-export default async function ThreadPage({ params }: { params: { id: string } }) {
+export default async function ThreadPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const { userId, profile } = await requireMe();
   const id = Number(params.id);
   if (!Number.isFinite(id)) notFound();

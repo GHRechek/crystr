@@ -4,20 +4,19 @@ import { cookies } from "next/headers";
 // Server-side Supabase client — used in Server Components, route handlers,
 // and server actions. Reads/writes the auth session via cookies.
 export function createClient() {
-  const cookieStore = cookies();
-
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        getAll() {
-          return cookieStore.getAll();
+        async getAll() {
+          return (await cookies()).getAll();
         },
-        setAll(
+        async setAll(
           cookiesToSet: { name: string; value: string; options: CookieOptions }[],
         ) {
           try {
+            const cookieStore = await cookies();
             cookiesToSet.forEach(({ name, value, options }) =>
               cookieStore.set(name, value, options),
             );

@@ -3,11 +3,12 @@ import { requireMe, getArticles, type Article } from "@/lib/data";
 import { setArticleStatus } from "@/lib/actions";
 import { byline, corrupt, COSTS, decayLevel } from "@/lib/crystr";
 
-export default async function BallPage({
-  searchParams,
-}: {
-  searchParams: { as?: string };
-}) {
+export default async function BallPage(
+  props: {
+    searchParams: Promise<{ as?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
   const { userId, profile } = await requireMe();
   const all = await getArticles();
   const decay = decayLevel(profile.mana);
