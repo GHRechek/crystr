@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import { submitQuest } from "@/lib/actions";
 import { untilReady } from "@/lib/crystr";
 import type { Quest } from "@/lib/data";
+import { StillTimer } from "./still-timer";
 
 type Stage = "empty" | "uploading" | "attached" | "failed";
 
@@ -16,8 +17,11 @@ export function ProofForm({ quest, userId }: { quest: Quest; userId: string }) {
   const cameraRef = useRef<HTMLInputElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
+  const [timerDone, setTimerDone] = useState(false);
+
   const waiting = !!quest.ready_at;
-  const hasProof = stage === "attached" || note.trim().length >= 12;
+  const timed = !!quest.timer_seconds;
+  const hasProof = timed ? timerDone : stage === "attached" || note.trim().length >= 12;
 
   async function upload(file: File) {
     setStage("uploading");
@@ -124,6 +128,10 @@ export function ProofForm({ quest, userId }: { quest: Quest; userId: string }) {
         </div>
       ) : null}
 
+      {timed ? (
+        <StillTimer slug={quest.slug} seconds={quest.timer_seconds!} onDone={setTimerDone} />
+      ) : (
+        <>
       {/* Two inputs, because `capture` is all-or-nothing: with it the phone
           opens straight into the camera and the library is unreachable,
           without it you only ever get the library. The tile is the camera —
@@ -211,6 +219,9 @@ export function ProofForm({ quest, userId }: { quest: Quest; userId: string }) {
         />
       </div>
 
+        </>
+      )}
+
       <button
         type="submit"
         className={`btn btn-lg btn-block${hasProof && !waiting ? " btn-blue" : ""}`}
@@ -219,8 +230,12 @@ export function ProofForm({ quest, userId }: { quest: Quest; userId: string }) {
         {waiting
           ? `AVAILABLE IN ${untilReady(quest.ready_at!)}`
           : hasProof
-            ? `SUBMIT PROOF · +${quest.reward}`
-            : "ATTACH PROOF FIRST"}
+            ? timed
+              ? `TAKE IT · +${quest.reward}`
+              : `SUBMIT PROOF · +${quest.reward}`
+            : timed
+              ? "FINISH THE TIMER FIRST"
+              : "ATTACH PROOF FIRST"}
       </button>
     </form>
   );

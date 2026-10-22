@@ -174,6 +174,8 @@ export type Quest = {
   proof_label: string;
   proof_hint: string;
   cooldown_hours: number;
+  /** Set for quests that are about time: the length, in seconds, of the on-screen timer. */
+  timer_seconds: number | null;
   ready_at: string | null;
 };
 
