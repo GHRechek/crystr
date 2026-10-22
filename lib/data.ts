@@ -227,7 +227,7 @@ export async function getThreads(userId: string): Promise<ThreadRow[]> {
       `id, last_message_at,
        a:profiles!dm_threads_user_a_fkey(${AUTHOR_COLS}),
        b:profiles!dm_threads_user_b_fkey(${AUTHOR_COLS}),
-       messages:dm_messages(body, created_at, sender_id)`,
+       messages:dm_messages(body, created_at, sender_id, image_path, deleted_at)`,
     )
     .order("last_message_at", { ascending: false });
 
@@ -236,7 +236,7 @@ export async function getThreads(userId: string): Promise<ThreadRow[]> {
     last_message_at: string;
     a: Author;
     b: Author;
-    messages: { body: string; created_at: string; sender_id: string }[];
+    messages: { body: string; created_at: string; sender_id: string; image_path: string | null; deleted_at: string | null }[];
   }>;
 
   return rows.map((t) => {
@@ -246,13 +246,30 @@ export async function getThreads(userId: string): Promise<ThreadRow[]> {
       id: t.id,
       other: t.a.id === userId ? t.b : t.a,
       last_message_at: t.last_message_at,
-      preview: last?.body ?? "No one has said anything yet.",
+      preview: !last
+        ? "No one has said anything yet."
+        : last.deleted_at
+          ? "Message unsent."
+          : last.body || (last.image_path ? "Sent a picture." : ""),
       unread: !!last && last.sender_id !== userId,
     };
   });
 }
 
-export type Message = { id: number; sender_id: string; body: string; created_at: string };
+export type Reaction = { emoji: string; count: number; mine: boolean };
+
+export type Message = {
+  id: number;
+  sender_id: string;
+  body: string;
+  created_at: string;
+  /** A signed link to the picture, good for an hour; null when there is none. */
+  image_url: string | null;
+  reply_to: number | null;
+  /** True once its sender has unsent it: the words and picture are gone. */
+  unsent: boolean;
+  reactions: Reaction[];
+};
 
 export async function getThread(
   id: number,
@@ -272,15 +289,60 @@ export async function getThread(
   if (!data) return null;
   const t = data as unknown as { a: Author; b: Author };
 
-  const { data: messages } = await supabase
+  const { data: rows } = await supabase
     .from("dm_messages")
-    .select("id, sender_id, body, created_at")
+    .select("id, sender_id, body, created_at, image_path, reply_to, deleted_at")
     .eq("thread_id", id)
     .order("created_at");
+  const msgs = (rows ?? []) as {
+    id: number;
+    sender_id: string;
+    body: string;
+    created_at: string;
+    image_path: string | null;
+    reply_to: number | null;
+    deleted_at: string | null;
+  }[];
+
+  const ids = msgs.map((m) => m.id);
+  const paths = msgs.map((m) => m.image_path).filter((p): p is string => !!p);
+  const [{ data: reacts }, signed] = await Promise.all([
+    ids.length
+      ? supabase.from("dm_reactions").select("message_id, user_id, emoji").in("message_id", ids).not("emoji", "is", null)
+      : Promise.resolve({ data: [] as { message_id: number; user_id: string; emoji: string }[] }),
+    paths.length ? supabase.storage.from("whispers").createSignedUrls(paths, 3600) : Promise.resolve({ data: [] }),
+  ]);
+
+  const urlOf = new Map<string, string>();
+  for (const u of (signed.data ?? []) as { path: string | null; signedUrl: string }[]) {
+    if (u.path) urlOf.set(u.path, u.signedUrl);
+  }
+  const byMessage = new Map<number, { emoji: string; user_id: string }[]>();
+  for (const r of (reacts ?? []) as { message_id: number; user_id: string; emoji: string }[]) {
+    byMessage.set(r.message_id, [...(byMessage.get(r.message_id) ?? []), r]);
+  }
 
   return {
     other: t.a.id === userId ? t.b : t.a,
-    messages: (messages ?? []) as Message[],
+    messages: msgs.map((m) => {
+      const counts = new Map<string, Reaction>();
+      for (const r of byMessage.get(m.id) ?? []) {
+        const c = counts.get(r.emoji) ?? { emoji: r.emoji, count: 0, mine: false };
+        c.count += 1;
+        if (r.user_id === userId) c.mine = true;
+        counts.set(r.emoji, c);
+      }
+      return {
+        id: m.id,
+        sender_id: m.sender_id,
+        body: m.body,
+        created_at: m.created_at,
+        image_url: m.image_path ? (urlOf.get(m.image_path) ?? null) : null,
+        reply_to: m.reply_to,
+        unsent: !!m.deleted_at,
+        reactions: [...counts.values()],
+      };
+    }),
   };
 }
 

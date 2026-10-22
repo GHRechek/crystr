@@ -205,22 +205,56 @@ export async function openThread(fd: FormData) {
 
 export async function sendWhisper(fd: FormData) {
   const threadId = Number(fd.get("thread_id"));
-  const r = await call("cr_send_whisper", {
+  const image = str(fd, "image_path") || null;
+  const reply = Number(fd.get("reply_to")) || null;
+  const r = await call("cr_send_message", {
     p_thread_id: threadId,
     p_body: str(fd, "body"),
+    p_image: image,
+    p_reply: reply,
   });
 
   if (!r.ok) {
     if (r.code === "empty") {
-      await setFlash("EMPTY", "Nothing to send yet. Write a few words first.", EDGE.purple);
+      await setFlash("EMPTY", "Nothing to send yet. Write a few words, or add a picture.", EDGE.purple);
     } else if (r.code === "insufficient") {
       await broke(r, `A whisper takes ${COSTS.whisper}, and you have {have}. Recover at the Well and it will be here when you are back.`);
+    } else if (r.code === "bad_image") {
+      await setFlash("PICTURE LOST", "That picture did not make it. Please add it again.", EDGE.mag);
     } else {
       await wentWrong();
     }
+    revalidatePath(`/whispers/${threadId}`);
+    return;
+  }
+
+  const note = await newBadges();
+  if (note) await setFlash("NEW BADGE", note.trim(), EDGE.blue);
+  revalidatePath(`/whispers/${threadId}`);
+  // Back to the plain conversation, which also puts down any "replying to".
+  redirect(`/whispers/${threadId}`);
+}
+
+/** React to a message, or take the reaction back by choosing the same one again. */
+export async function reactToMessage(fd: FormData) {
+  const threadId = Number(fd.get("thread_id"));
+  const r = await call("cr_react", { p_message: Number(fd.get("message_id")), p_emoji: str(fd, "emoji") });
+  if (!r.ok) await wentWrong();
+  revalidatePath(`/whispers/${threadId}`);
+}
+
+/** Take back something you said. The words and the picture are gone for both people. */
+export async function unsendMessage(fd: FormData) {
+  const threadId = Number(fd.get("thread_id"));
+  const supabase = createClient();
+  const { data, error } = await supabase.rpc("cr_unsend", { p_message: Number(fd.get("message_id")) });
+  const r = data as { ok?: boolean; image?: string | null } | null;
+  if (error || !r?.ok) {
+    await wentWrong();
   } else {
-    const note = await newBadges();
-    if (note) await setFlash("NEW BADGE", note.trim(), EDGE.blue);
+    // Clear the stored picture too, if there was one (best effort: the message itself is already gone).
+    if (r.image) await supabase.storage.from("whispers").remove([r.image]).catch(() => {});
+    await setFlash("UNSENT", "It is gone for both of you.", EDGE.purple);
   }
   revalidatePath(`/whispers/${threadId}`);
 }
