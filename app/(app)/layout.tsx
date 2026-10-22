@@ -4,6 +4,7 @@ import { TERMS_VERSION } from "@/lib/terms";
 import { readFlash } from "@/lib/flash";
 import { Clock, SetupBanner, TabBar, Toast, WellButton } from "@/components/chrome";
 import { DecayFrame } from "@/components/decay";
+import { InfoMenu } from "@/components/info-menu";
 import { VouchBanner } from "@/components/vouch-banner";
 import { TopSixBanner } from "@/components/top-six-banner";
 import { MANA_CAP, hasStarterHandle, manaColor, wellLine } from "@/lib/crystr";
@@ -38,6 +39,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             <div className="mana-count" style={{ color: manaColor(mana) }}>
               {String(mana).padStart(2, "0")}/{MANA_CAP}
             </div>
+            <InfoMenu />
           </div>
           <div className="gauge">
             <i style={{ width: `${Math.max(2, (mana / MANA_CAP) * 100)}%` }} />

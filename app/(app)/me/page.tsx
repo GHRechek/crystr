@@ -290,16 +290,11 @@ export default async function ProfilePage() {
           </div>
         </div>
 
-        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-          {profile.is_witch ? (
-            <Link href="/reports" className="btn btn-sm" style={{ minHeight: 36 }}>
-              REPORTS · {openReports}
-            </Link>
-          ) : null}
-          <Link href="/terms" className="btn btn-sm" style={{ minHeight: 36 }}>
-            TERMS OF SERVICE
+        {profile.is_witch ? (
+          <Link href="/reports" className="btn btn-sm" style={{ minHeight: 36, alignSelf: "flex-start" }}>
+            REPORTS · {openReports}
           </Link>
-        </div>
+        ) : null}
 
         <form action="/auth/signout" method="post">
           <button type="submit" className="btn btn-block" style={{ marginTop: 4 }}>
