@@ -856,3 +856,8 @@ select {
   background: var(--device);
   box-shadow: 0 0 0 1px var(--edge), 0 8px 24px rgba(0, 0, 0, .45);
 }
+
+/* The options under a whisper: closed, only a small line; open, they unfold in place */
+.msg-menu > summary { list-style: none; }
+.msg-menu > summary::-webkit-details-marker { display: none; }
+.msg-menu[open] > summary { color: var(--text-3); }

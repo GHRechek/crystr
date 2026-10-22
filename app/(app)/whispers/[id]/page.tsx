@@ -2,13 +2,19 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireMe, getThread, getVouchesBetween } from "@/lib/data";
 import { Avatar } from "@/components/bits";
-import { sendWhisper, claimVouch } from "@/lib/actions";
+import { claimVouch } from "@/lib/actions";
+import { Bubble, snippet } from "@/components/whisper-bubble";
+import { WhisperComposer } from "./composer";
 import { ReportButton } from "@/components/report-button";
 import { corrupt, COSTS, decayLevel } from "@/lib/crystr";
 import type { Vouch } from "@/lib/data";
 
-export default async function ThreadPage(props: { params: Promise<{ id: string }> }) {
+export default async function ThreadPage(props: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ reply?: string }>;
+}) {
   const params = await props.params;
+  const query = await props.searchParams;
   const { userId, profile } = await requireMe();
   const id = Number(params.id);
   if (!Number.isFinite(id)) notFound();
@@ -19,6 +25,8 @@ export default async function ThreadPage(props: { params: Promise<{ id: string }
   const vouches = await getVouchesBetween(userId, thread.other.id);
   const broke = profile.mana < COSTS.whisper;
   const decay = decayLevel(profile.mana);
+  const wanted = Number(query?.reply);
+  const replyTarget = Number.isFinite(wanted) ? thread.messages.find((m) => m.id === wanted && !m.unsent) : undefined;
 
   return (
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100%" }}>
@@ -61,28 +69,18 @@ export default async function ThreadPage(props: { params: Promise<{ id: string }
           gap: 9,
         }}
       >
-        {thread.messages.map((m) => {
-          const mine = m.sender_id === userId;
-          return (
-            <div
-              key={m.id}
-              style={{
-                maxWidth: "78%",
-                alignSelf: mine ? "flex-end" : "flex-start",
-                padding: "9px 11px",
-                borderRadius: "var(--px-r)",
-                background: mine ? "rgba(76,125,240,.18)" : "var(--surface)",
-                boxShadow: mine ? "0 0 0 1px var(--blu-edge)" : "0 0 0 1px var(--edge)",
-                fontSize: 13,
-                lineHeight: 1.5,
-                color: mine ? "var(--blu-pale)" : "var(--text-2)",
-                whiteSpace: "pre-wrap",
-              }}
-            >
-              {corrupt(m.body, decay)}
-            </div>
-          );
-        })}
+        {thread.messages.map((m) => (
+          <Bubble
+            key={m.id}
+            m={m}
+            mine={m.sender_id === userId}
+            thread={id}
+            decay={decay}
+            other={thread.other.handle}
+            quoted={m.reply_to ? thread.messages.find((x) => x.id === m.reply_to) : undefined}
+            quotedWho={(q) => (q.sender_id === userId ? "you" : thread.other.handle)}
+          />
+        ))}
 
         {thread.messages.length === 0 ? (
           <div className="empty">NOTHING HAS BEEN SAID HERE YET</div>
@@ -113,31 +111,14 @@ export default async function ThreadPage(props: { params: Promise<{ id: string }
 
       <Said thread={id} other={thread.other} me={userId} vouches={vouches} />
 
-      <form
-        action={sendWhisper}
-        style={{
-          flex: "none",
-          padding: "10px 16px 16px",
-          display: "flex",
-          gap: 8,
-          alignItems: "flex-end",
-          background: "var(--device)",
-          position: "sticky",
-          bottom: 0,
-        }}
-      >
-        <input type="hidden" name="thread_id" value={id} />
-        <input
-          name="body"
-          className="input"
-          style={{ flex: 1, fontSize: 13.5 }}
-          placeholder={`whisper (takes ${COSTS.whisper})`}
-          autoComplete="off"
-        />
-        <button type="submit" className="btn btn-blue" style={{ minHeight: 44, minWidth: 56 }}>
-          SEND
-        </button>
-      </form>
+      <WhisperComposer
+        key={thread.messages[thread.messages.length - 1]?.id ?? 0}
+        threadId={id}
+        cost={COSTS.whisper}
+        replyTo={replyTarget?.id ?? null}
+        replyLine={replyTarget ? `${replyTarget.sender_id === userId ? "you" : thread.other.handle}: ${snippet(replyTarget)}` : null}
+        closeReplyHref={`/whispers/${id}`}
+      />
     </div>
   );
 }
