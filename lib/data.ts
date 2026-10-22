@@ -482,6 +482,21 @@ export async function getPendingVouches(userId: string): Promise<Vouch[]> {
   return (data ?? []) as unknown as Vouch[];
 }
 
+/** Handles of the people who have put you in their Top 6 and whom you have not yet been told about. */
+export async function getTopSixNotices(userId: string): Promise<string[]> {
+  const supabase = createClient();
+  const { data } = await supabase
+    .from("top_six_notices")
+    .select("who:profiles!top_six_notices_from_user_fkey(handle)")
+    .eq("user_id", userId)
+    .is("seen_at", null)
+    .order("created_at")
+    .limit(20);
+  return ((data ?? []) as unknown as { who: { handle: string } | null }[])
+    .map((r) => r.who?.handle)
+    .filter((h): h is string => !!h);
+}
+
 /** Everything said between you and one other person, for their whisper thread. */
 export async function getVouchesBetween(userId: string, otherId: string): Promise<Vouch[]> {
   const supabase = createClient();

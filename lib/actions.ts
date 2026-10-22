@@ -280,6 +280,14 @@ export async function answerVouch(fd: FormData) {
   revalidatePath("/", "layout");
 }
 
+/** Dismiss the "someone put you in their Top 6" banner. */
+export async function seeTopSix() {
+  const supabase = createClient();
+  const { error } = await supabase.rpc("cr_seen_top_six");
+  if (error) console.error("cr_seen_top_six:", error.message);
+  revalidatePath("/", "layout");
+}
+
 // ------------------------------------------------------------------ votes
 
 export async function castVote(fd: FormData) {
