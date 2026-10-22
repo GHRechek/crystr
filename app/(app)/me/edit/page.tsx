@@ -36,7 +36,7 @@ export default async function EditProfilePage() {
             placeholder={starter ? "what the City will call you" : undefined}
             autoFocus={starter}
             required
-            maxLength={32}
+            maxLength={10}
             pattern="[a-zA-Z0-9_.\-]+"
           />
         </div>
