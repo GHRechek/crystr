@@ -134,9 +134,6 @@ export function StillTimer({
           <div style={{ fontSize: 13, lineHeight: 1.6, color: "var(--dim)", maxWidth: 260 }}>
             Look at something that is not lit from behind. Stay with it. The first ninety seconds are the worst.
           </div>
-          <button type="button" className="btn btn-sm" onClick={() => stop("Stopped. No harm done. Begin again whenever you like.")}>
-            I NEED TO STOP
-          </button>
         </div>
       ) : null}
 
