@@ -1,9 +1,9 @@
--- Handles: one person per name whatever the capitalisation, at most 10 characters.
+-- Handles: one person per name whatever the capitalisation, at most 15 characters.
 --
 --  * Unique on lower(handle), so "Wren" and "wren" are the same name.
---  * A trigger enforces the shape on any new or changed handle: 1-10 characters from
+--  * A trigger enforces the shape on any new or changed handle: 1-15 characters from
 --    letters, digits, "_", "." and "-", stored lower-case. It only looks when the handle
---    itself is being set, so a handle longer than 10 that existed before this rule keeps
+--    itself is being set, so a handle longer than 15 that existed before this rule keeps
 --    working (and keeps earning mana, etc.) until its owner picks a new one.
 --  * New arrivals get a 10-character starter handle, u_ + 8 hex, instead of
 --    user_ + 8 hex (13 characters), retrying on the rare clash.
@@ -17,9 +17,9 @@ begin
     return new;
   end if;
   new.handle := lower(new.handle);
-  if new.handle is null or length(new.handle) not between 1 and 10
+  if new.handle is null or length(new.handle) not between 1 and 15
      or new.handle !~ '^[a-z0-9_.-]+$' then
-    raise exception 'handle must be 1-10 letters, digits, _ . or -' using errcode = '22023';
+    raise exception 'handle must be 1-15 letters, digits, _ . or -' using errcode = '22023';
   end if;
   return new;
 end;

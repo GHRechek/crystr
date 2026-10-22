@@ -473,11 +473,11 @@ export async function updateProfile(fd: FormData) {
     await setFlash("NO NAME", "The City needs something to call you. Pick a handle.", EDGE.mag);
     return;
   }
-  if (handle.length > 10) {
-    // A handle from before the 10-character rule can stay as it is; a new one cannot.
+  if (handle.length > 15) {
+    // A handle from before the 15-character rule can stay as it is; a new one cannot.
     const { data: current } = await supabase.from("profiles").select("handle").eq("id", user.id).single();
     if (current?.handle !== handle) {
-      await setFlash("TOO LONG", "Handles are ten characters at most. Trim it a little.", EDGE.mag);
+      await setFlash("TOO LONG", "Handles are fifteen characters at most. Trim it a little.", EDGE.mag);
       return;
     }
   }
