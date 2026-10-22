@@ -39,8 +39,13 @@ export default async function ThreadPage(props: { params: Promise<{ id: string }
         <Link href="/whispers" className="btn btn-sm" style={{ padding: "0 9px" }}>
           ←
         </Link>
-        <Avatar person={thread.other} size={28} />
-        <div style={{ fontSize: 13.5, fontWeight: 500 }}>{thread.other.handle}</div>
+        <Link
+          href={`/u/${thread.other.handle}`}
+          style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0, color: "inherit", textDecoration: "none" }}
+        >
+          <Avatar person={thread.other} size={28} />
+          <div style={{ fontSize: 13.5, fontWeight: 500 }}>{thread.other.handle}</div>
+        </Link>
         <div className="spacer" />
         <div className="px" style={{ fontSize: 9, color: "var(--muted)" }}>
           {COSTS.whisper}/MSG
