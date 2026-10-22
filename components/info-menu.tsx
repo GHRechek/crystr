@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { GAME_BLURB, GAME_BLURB_PLACEHOLDER, LOCATION } from "@/lib/info";
+import { GAME_BLURB, LOCATION } from "@/lib/info";
 
 /** The ☰ at the top right of the header. Opens a sheet over the app with the things
  *  that are about the game rather than about you: what it is, where it is, and the
@@ -22,7 +22,7 @@ export function InfoMenu() {
     return () => window.removeEventListener("keydown", onKey);
   }, [open]);
 
-  const paragraphs = (GAME_BLURB.trim() || GAME_BLURB_PLACEHOLDER).split(/\n\s*\n/);
+  const paragraphs = GAME_BLURB.trim().split(/\n\s*\n/);
 
   return (
     <>
@@ -80,6 +80,9 @@ export function InfoMenu() {
                   {p}
                 </p>
               ))}
+              <Link href="/info" className="btn btn-block" style={{ minHeight: 40 }}>
+                GAME INFO
+              </Link>
             </section>
 
             <section>
