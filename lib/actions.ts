@@ -312,7 +312,7 @@ export async function castVote(fd: FormData) {
 }
 
 export async function createMotion(fd: FormData) {
-  const r = await call("cr_table_motion", {
+  const r = await call("cr_create_motion", {
     m_kicker: str(fd, "m_kicker"),
     m_title: str(fd, "m_title"),
     m_blurb: str(fd, "m_blurb"),

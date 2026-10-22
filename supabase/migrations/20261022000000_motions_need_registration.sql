@@ -4,6 +4,10 @@
 -- Applied to the live database on 2026-10-22. Both functions are otherwise exactly
 -- as they were; the only change is the registration check, which returns code
 -- 'not_registered' (and, for voting, charges nothing and records nothing).
+--
+-- The motion-creating function used to be called cr_table_motion. "Tabling" a
+-- motion shelves it, so it is now cr_create_motion; the old name was dropped from
+-- the live database once the app had moved over.
 
 create or replace function public.cr_cast_vote(p_motion bigint, p_side text)
 returns jsonb language plpgsql security definer set search_path = public as $$
@@ -30,7 +34,7 @@ begin
 end;
 $$;
 
-create or replace function public.cr_table_motion(m_kicker text, m_title text, m_blurb text, m_hours integer, b_kicker text, b_headline text, b_standfirst text, b_body text, b_banner boolean default false)
+create or replace function public.cr_create_motion(m_kicker text, m_title text, m_blurb text, m_hours integer, b_kicker text, b_headline text, b_standfirst text, b_body text, b_banner boolean default false)
 returns jsonb language plpgsql security definer set search_path = public as $$
 declare v_article bigint;
         v_motion  bigint;
