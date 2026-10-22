@@ -20,8 +20,19 @@ export default async function WhispersPage() {
       </div>
 
       {threads.map((t) => (
-        <Link key={t.id} href={`/whispers/${t.id}`} className="rowcard">
-          <Avatar person={t.other} />
+        <div key={t.id} className="rowcard" style={{ padding: 0, gap: 0, cursor: "default" }}>
+          {/* The face goes to their profile; the rest of the row opens the conversation. */}
+          <Link
+            href={`/u/${t.other.handle}`}
+            aria-label={`${t.other.handle}'s profile`}
+            style={{ display: "flex", padding: "11px 0 11px 11px", flex: "none" }}
+          >
+            <Avatar person={t.other} />
+          </Link>
+          <Link
+            href={`/whispers/${t.id}`}
+            style={{ flex: 1, minWidth: 0, display: "flex", alignItems: "center", gap: 11, padding: 11, color: "inherit", textDecoration: "none", alignSelf: "stretch" }}
+          >
           <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 2 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
               <span style={{ fontSize: 13, fontWeight: 500 }}>{t.other.handle}</span>
@@ -44,7 +55,8 @@ export default async function WhispersPage() {
           {t.unread ? (
             <div style={{ width: 8, height: 8, flex: "none", background: "var(--mag)" }} />
           ) : null}
-        </Link>
+          </Link>
+        </div>
       ))}
 
       {threads.length === 0 ? (

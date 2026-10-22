@@ -104,9 +104,10 @@ export default async function ProfilePage() {
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 8 }}>
             {slots.map((f, i) => (
-              <div
+              <Link
                 key={f?.id ?? `empty-${i}`}
-                style={{ display: "flex", flexDirection: "column", gap: 5, alignItems: "center" }}
+                href={f ? `/u/${f.handle}` : "/me/edit"}
+                style={{ display: "flex", flexDirection: "column", gap: 5, alignItems: "center", color: "inherit", textDecoration: "none" }}
               >
                 {f ? (
                   <Avatar person={f} size={72} fill />
@@ -131,7 +132,7 @@ export default async function ProfilePage() {
                 >
                   {f ? f.handle : "vacant"}
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>

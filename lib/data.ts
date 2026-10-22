@@ -552,6 +552,13 @@ export async function getBadges(userId: string): Promise<BadgeRow[]> {
   }));
 }
 
+/** Someone's profile by their (lower-case) handle, or null. */
+export async function getProfileByHandle(handle: string): Promise<Profile | null> {
+  const supabase = createClient();
+  const { data } = await supabase.from("profiles").select("*").eq("handle", handle).maybeSingle();
+  return (data as Profile | null) ?? null;
+}
+
 export async function getTopFriends(userId: string): Promise<Author[]> {
   const supabase = createClient();
   const { data } = await supabase
