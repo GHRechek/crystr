@@ -6,8 +6,11 @@
 -- 'not_registered' (and, for voting, charges nothing and records nothing).
 --
 -- The motion-creating function used to be called cr_table_motion. "Tabling" a
--- motion shelves it, so it is now cr_create_motion; the old name was dropped from
--- the live database once the app had moved over.
+-- motion shelves it, so it is now cr_create_motion. The old function is still in
+-- the live database but nobody can call it (execute was revoked from
+-- authenticated); the apply tool hangs on DROP statements, so remove it by hand
+-- in the Supabase SQL editor:
+--   drop function public.cr_table_motion(text, text, text, integer, text, text, text, text, boolean);
 
 create or replace function public.cr_cast_vote(p_motion bigint, p_side text)
 returns jsonb language plpgsql security definer set search_path = public as $$
