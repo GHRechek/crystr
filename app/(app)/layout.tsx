@@ -1,4 +1,6 @@
-import { requireMe, getPendingVouches, getTopSixNotices } from "@/lib/data";
+import { redirect } from "next/navigation";
+import { requireMe, getPendingVouches, getTopSixNotices, hasAcceptedTerms } from "@/lib/data";
+import { TERMS_VERSION } from "@/lib/terms";
 import { readFlash } from "@/lib/flash";
 import { Clock, SetupBanner, TabBar, Toast, WellButton } from "@/components/chrome";
 import { DecayFrame } from "@/components/decay";
@@ -10,7 +12,12 @@ export const dynamic = "force-dynamic";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const { profile, userId } = await requireMe();
-  const [vouches, topSixFrom] = await Promise.all([getPendingVouches(userId), getTopSixNotices(userId)]);
+  const [vouches, topSixFrom, agreed] = await Promise.all([
+    getPendingVouches(userId),
+    getTopSixNotices(userId),
+    hasAcceptedTerms(userId, TERMS_VERSION),
+  ]);
+  if (!agreed) redirect("/terms");
   const flash = await readFlash();
   const mana = profile.mana;
 

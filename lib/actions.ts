@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { setFlash, EDGE } from "@/lib/flash";
+import { TERMS_VERSION } from "@/lib/terms";
 import { COSTS, untilReady } from "@/lib/crystr";
 import { normalizePortrait } from "@/lib/portrait/core";
 import { listBadges } from "@/lib/badges";
@@ -278,6 +279,53 @@ export async function answerVouch(fd: FormData) {
     await setFlash("NO WORRIES", "Left as it was.", EDGE.purple);
   }
   revalidatePath("/", "layout");
+}
+
+/** Agree to the terms. Everything behind the gate waits on this. */
+export async function acceptTerms(fd: FormData) {
+  if (fd.get("agree") !== "on") redirect("/terms");
+  const r = await call("cr_accept_tos", { p_version: TERMS_VERSION });
+  if (!r.ok) {
+    await wentWrong();
+    redirect("/terms");
+  }
+  redirect("/");
+}
+
+/** Send a report on a post or a whisper conversation to the witches. */
+export async function submitReport(fd: FormData) {
+  const back = str(fd, "back");
+  const to = back.startsWith("/") && !back.startsWith("//") ? back : "/";
+  const r = await call("cr_submit_report", {
+    p_kind: str(fd, "kind"),
+    p_target: Number(fd.get("target")),
+    p_reason: str(fd, "reason"),
+    p_note: str(fd, "note"),
+  });
+
+  if (r.ok) {
+    await setFlash("SENT", "Thank you. The witches will read it. You do not have to do anything else.", EDGE.blue);
+  } else if (r.code === "already") {
+    await setFlash("ALREADY SENT", "You have already told us about this one, and it is waiting to be read.", EDGE.purple);
+  } else if (r.code === "self") {
+    await setFlash("THAT IS YOURS", "You cannot report your own words.", EDGE.purple);
+  } else if (r.code === "too_many") {
+    await setFlash("A LOT TODAY", "You have sent many today. If something is wrong, please speak to an organizer directly.", EDGE.purple);
+  } else {
+    await wentWrong();
+  }
+  redirect(to);
+}
+
+/** A witch marks a report dealt with, or not needed. */
+export async function resolveReport(fd: FormData) {
+  const r = await call("cr_resolve_report", {
+    p_id: Number(fd.get("id")),
+    p_status: str(fd, "act") === "action" ? "actioned" : "dismissed",
+    p_note: str(fd, "note"),
+  });
+  if (!r.ok) await setFlash("ALREADY HANDLED", "That one is no longer waiting.", EDGE.purple);
+  revalidatePath("/reports");
 }
 
 /** Dismiss the "someone put you in their Top 6" banner. */

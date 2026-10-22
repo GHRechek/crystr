@@ -558,3 +558,54 @@ export async function getTopFriends(userId: string): Promise<Author[]> {
     .order("position");
   return ((data ?? []) as unknown as { friend: Author }[]).map((r) => r.friend);
 }
+
+
+// ---------------------------------------------------------------- reports
+
+export type Report = {
+  id: number;
+  kind: "post" | "whisper";
+  target_id: number;
+  reason: string;
+  note: string | null;
+  excerpt: string | null;
+  status: "open" | "actioned" | "dismissed";
+  created_at: string;
+  reporter: { handle: string } | null;
+  about: { handle: string } | null;
+};
+
+/** Whether this person has agreed to the current terms. */
+export async function hasAcceptedTerms(userId: string, version: number): Promise<boolean> {
+  const supabase = createClient();
+  const { data } = await supabase
+    .from("tos_acceptances")
+    .select("version")
+    .eq("user_id", userId)
+    .eq("version", version)
+    .maybeSingle();
+  return !!data;
+}
+
+/** Reports waiting to be read (witches only; everyone else's query comes back empty). */
+export async function getOpenReports(): Promise<Report[]> {
+  const supabase = createClient();
+  const { data } = await supabase
+    .from("reports")
+    .select(
+      "id, kind, target_id, reason, note, excerpt, status, created_at, reporter:profiles!reports_reporter_fkey(handle), about:profiles!reports_about_user_fkey(handle)",
+    )
+    .eq("status", "open")
+    .order("created_at")
+    .limit(50);
+  return (data ?? []) as unknown as Report[];
+}
+
+export async function countOpenReports(): Promise<number> {
+  const supabase = createClient();
+  const { count } = await supabase
+    .from("reports")
+    .select("id", { count: "exact", head: true })
+    .eq("status", "open");
+  return count ?? 0;
+}
