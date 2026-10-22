@@ -125,7 +125,7 @@ export function ProfileHead({
               name="mood"
               className="input"
               defaultValue={mood ?? ""}
-              maxLength={80}
+              maxLength={40}
               autoFocus
               placeholder="owed a favour, unsure by whom"
               style={{ flex: 1, minWidth: 0, fontSize: 12.5 }}

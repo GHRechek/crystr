@@ -48,7 +48,7 @@ export default async function EditProfilePage() {
             name="display_name"
             className="input"
             defaultValue={profile.display_name ?? ""}
-            maxLength={60}
+            maxLength={40}
           />
         </div>
 
@@ -60,7 +60,7 @@ export default async function EditProfilePage() {
             className="textarea"
             rows={5}
             defaultValue={profile.bio ?? ""}
-            maxLength={600}
+            maxLength={40}
             placeholder="Who you are in The City, and what you trade in."
           />
         </div>
@@ -80,7 +80,7 @@ export default async function EditProfilePage() {
               name={name}
               className="input"
               defaultValue={profile[name] ?? ""}
-              maxLength={120}
+              maxLength={40}
               placeholder={placeholder}
             />
           </div>

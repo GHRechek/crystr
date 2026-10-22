@@ -535,6 +535,10 @@ export async function setArticleStatus(fd: FormData) {
 
 // ---------------------------------------------------------------- profile
 
+/** Profile text is held to this many characters (the database holds the same line). */
+const PROFILE_FIELD_MAX = 40;
+const field = (fd: FormData, key: string) => str(fd, key).slice(0, PROFILE_FIELD_MAX) || null;
+
 export async function updateProfile(fd: FormData) {
   const supabase = createClient();
   const {
@@ -560,12 +564,12 @@ export async function updateProfile(fd: FormData) {
     .from("profiles")
     .update({
       handle,
-      display_name: str(fd, "display_name") || null,
-      bio: str(fd, "bio") || null,
-      likes: str(fd, "likes") || null,
-      dislikes: str(fd, "dislikes") || null,
-      food: str(fd, "food") || null,
-      obsession: str(fd, "obsession") || null,
+      display_name: field(fd, "display_name"),
+      bio: field(fd, "bio"),
+      likes: field(fd, "likes"),
+      dislikes: field(fd, "dislikes"),
+      food: field(fd, "food"),
+      obsession: field(fd, "obsession"),
       updated_at: new Date().toISOString(),
     })
     .eq("id", user.id);
@@ -593,7 +597,7 @@ export async function setMood(fd: FormData) {
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const mood = str(fd, "mood").slice(0, 80);
+  const mood = str(fd, "mood").slice(0, PROFILE_FIELD_MAX);
 
   const { error } = await supabase
     .from("profiles")
