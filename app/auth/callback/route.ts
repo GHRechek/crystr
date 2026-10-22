@@ -12,7 +12,9 @@ import { NextResponse, type NextRequest } from "next/server";
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
-  const next = searchParams.get("next") ?? "/";
+  // Only ever send people somewhere on this site: a path, not "//evil.com" or "/\\evil.com".
+  const asked = searchParams.get("next") ?? "/";
+  const next = /^\/(?![/\\])/.test(asked) ? asked : "/";
 
   const bounce = (reason: string) =>
     NextResponse.redirect(`${origin}/login?e=${encodeURIComponent(reason)}`);

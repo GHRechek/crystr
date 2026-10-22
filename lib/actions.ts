@@ -149,6 +149,18 @@ export async function submitQuest(fd: FormData) {
         "The Well needs something to go on. Add a photo, or write down what you did.",
         EDGE.mag,
       );
+    } else if (r.code === "repeat") {
+      await setFlash(
+        "SAY IT NEW",
+        "You have already told the Well exactly that. Put this time in your own words.",
+        EDGE.mag,
+      );
+    } else if (r.code === "full") {
+      await setFlash(
+        "ALREADY FULL",
+        "You are as full as you can be right now. Come back when you have spent a little, and this will still be waiting.",
+        EDGE.purple,
+      );
     } else if (r.code === "cooldown") {
       await setFlash(
         "TOO SOON",
