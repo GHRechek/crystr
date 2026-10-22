@@ -149,6 +149,12 @@ export async function submitQuest(fd: FormData) {
         "The Well needs something to go on. Add a photo, or write down what you did.",
         EDGE.mag,
       );
+    } else if (r.code === "too_soon" || r.code === "no_timer") {
+      await setFlash(
+        "NOT YET",
+        "The timer has to run all the way through first. Go to the quest and begin it again.",
+        EDGE.mag,
+      );
     } else if (r.code === "repeat") {
       await setFlash(
         "SAY IT NEW",
