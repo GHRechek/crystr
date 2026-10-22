@@ -1,4 +1,5 @@
 import type { BadgeRow } from "@/lib/badges";
+import { cache } from "react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
@@ -29,7 +30,7 @@ export type Author = Pick<
 const AUTHOR_COLS = "id, handle, display_name, avatar_url, portrait_url, avatar_config";
 
 /** Every screen behind the tab bar needs these two. */
-export async function requireMe(): Promise<{ userId: string; profile: Profile }> {
+export const requireMe = cache(async function requireMe(): Promise<{ userId: string; profile: Profile }> {
   const supabase = createClient();
   const {
     data: { user },
@@ -47,7 +48,7 @@ export async function requireMe(): Promise<{ userId: string; profile: Profile }>
   if (!profile) redirect("/login");
 
   return { userId: user.id, profile: profile as Profile };
-}
+});
 
 // ------------------------------------------------------------------- feed
 

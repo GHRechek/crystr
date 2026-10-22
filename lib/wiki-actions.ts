@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { EDGE, setFlash } from "@/lib/flash";
 import { COSTS } from "@/lib/crystr";
 import { SLUG, slugify } from "@/lib/wiki-slug";
-import { cleanFact, factProblem } from "@/lib/wiki-fact";
+import { INVISIBLE, cleanFact, factProblem } from "@/lib/wiki-fact";
 
 type Rpc = {
   ok: boolean;
@@ -29,7 +29,7 @@ async function call(fn: string, args: Record<string, unknown>): Promise<Rpc> {
   return (data ?? { ok: false, code: "error" }) as Rpc;
 }
 
-const str = (fd: FormData, k: string) => String(fd.get(k) ?? "").trim();
+const str = (fd: FormData, k: string) => String(fd.get(k) ?? "").replace(INVISIBLE, "").trim();
 
 async function wentWrong() {
   await setFlash("SOMETHING WENT WRONG", "That one is on us. Give it another try.", EDGE.mag);

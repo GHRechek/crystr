@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { setFlash, EDGE } from "@/lib/flash";
 import { TERMS_VERSION } from "@/lib/terms";
+import { INVISIBLE } from "@/lib/wiki-fact";
 import { COSTS, untilReady } from "@/lib/crystr";
 import { normalizePortrait } from "@/lib/portrait/core";
 import { listBadges } from "@/lib/badges";
@@ -49,7 +50,7 @@ async function newBadges(): Promise<string> {
 }
 
 function str(fd: FormData, key: string): string {
-  return String(fd.get(key) ?? "").trim();
+  return String(fd.get(key) ?? "").replace(INVISIBLE, "").trim();
 }
 
 /** The house message for "you cannot afford this", with the shortfall. */

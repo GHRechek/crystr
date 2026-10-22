@@ -462,17 +462,25 @@ export function packPortrait(config: PortraitConfig): string {
 }
 
 export function unpackPortrait(packed: string): PortraitConfig | null {
+  if (packed.length > 80) return null;
   const parts = packed.split(".");
   // Links made before the render was versioned are one segment short; they
   // still describe a real face, so draw it rather than 404.
-  if (parts.length === PACK_ORDER.length + 1) parts.shift();
+  if (parts.length === PACK_ORDER.length + 1) {
+    // The version segment can only be a render number we have actually had: any
+    // other value would be one more URL for the same face.
+    const v = parts.shift()!;
+    if (!/^\d{1,2}$/.test(v) || Number(v) > Number(RENDER)) return null;
+  }
   if (parts.length !== PACK_ORDER.length) return null;
   const out: PortraitConfig = {};
   for (let i = 0; i < PACK_ORDER.length; i++) {
     const key = PACK_ORDER[i];
     const at = parseInt(parts[i], 36);
     const list = ALLOWED[key];
-    if (!Number.isFinite(at) || at < 0 || at >= list.length) return null;
+    // Only the one canonical spelling of each number, or "1", "01" and "1!" would
+    // all be different URLs for the same face, and each would be composed afresh.
+    if (!Number.isFinite(at) || at < 0 || at >= list.length || parts[i] !== at.toString(36)) return null;
     out[key] = list[at];
   }
   return out;
