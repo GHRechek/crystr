@@ -18,19 +18,19 @@ export default async function FeedPage() {
   return (
     <>
       <h1 className="sr-only">The feed</h1>
-      <div className="pad" style={{ padding: "14px 16px 24px" }}>
+      <div style={{ display: "flex", flexDirection: "column", paddingBottom: 24 }}>
         {items.map((item) => (
           <Card key={`${item.kind}-${item.id}`} item={item} decay={decay} me={userId} />
         ))}
 
         {items.length === 0 ? (
-          <div className="empty">
+          <div className="empty" style={{ margin: 16 }}>
             NOBODY HAS SAID ANYTHING YET
             <br />
             <span style={{ color: "var(--muted)" }}>BE THE FIRST TO SAY SOMETHING.</span>
           </div>
         ) : (
-          <div className="empty">
+          <div className="empty" style={{ margin: 16 }}>
             {posts > 0 ? "END OF WHAT YOU CAN AFFORD TO SEE" : "THE CITY IS TALKING TO ITSELF"}
           </div>
         )}
@@ -43,7 +43,7 @@ export default async function FeedPage() {
 function Card({ item, decay, me }: { item: FeedItem; decay: number; me: string }) {
   if (item.kind === "ball") {
     return (
-      <div className="card">
+      <div className="card card-flat">
         <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
           <Avatar bg="linear-gradient(135deg,#4c7df0,#9184d9)" glyph="◉" />
           <div style={{ display: "flex", flexDirection: "column", gap: 1, minWidth: 0 }}>

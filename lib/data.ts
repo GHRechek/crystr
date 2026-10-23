@@ -71,6 +71,8 @@ export type FeedPost = {
   image_url: string | null;
   /** Set when the post was shared from the Well: the quest's title. */
   quest_title: string | null;
+  /** On the timeline: the newest reply, shown under the post. */
+  latest_reply?: { id: number; author: Author; body: string; created_at: string } | null;
 };
 
 export type FeedDispatch = {
@@ -146,14 +148,17 @@ export async function getFeed(userId: string): Promise<FeedItem[]> {
   // Reply counts: one plain query, tallied here. (An embedded count over the
   // posts table's own foreign key is ambiguous to PostgREST in a self-join.)
   const replyCount = new Map<number, number>();
+  const latest = new Map<number, { id: number; author: Author; body: string; created_at: string }>();
   if (rows.length) {
     const { data: kids } = await supabase
       .from("posts")
-      .select("parent_id")
-      .in("parent_id", rows.map((p) => p.id));
-    for (const k of kids ?? []) {
-      const id = k.parent_id as number;
-      replyCount.set(id, (replyCount.get(id) ?? 0) + 1);
+      .select(`id, parent_id, body, created_at, author:profiles!posts_author_id_fkey(${AUTHOR_COLS})`)
+      .in("parent_id", rows.map((p) => p.id))
+      .order("created_at", { ascending: false })
+      .limit(500);
+    for (const k of (kids ?? []) as unknown as Array<{ id: number; parent_id: number; body: string; created_at: string; author: Author }>) {
+      replyCount.set(k.parent_id, (replyCount.get(k.parent_id) ?? 0) + 1);
+      if (!latest.has(k.parent_id)) latest.set(k.parent_id, { id: k.id, author: k.author, body: k.body, created_at: k.created_at });
     }
   }
 
@@ -170,6 +175,7 @@ export async function getFeed(userId: string): Promise<FeedItem[]> {
     replies: replyCount.get(p.id) ?? 0,
     image_url: p.proof_path ? (signed.get(p.proof_path) ?? null) : null,
     quest_title: p.quest?.title ?? null,
+    latest_reply: latest.get(p.id) ?? null,
   }));
 
   const ball = ((dispatches ?? []) as unknown as FeedDispatch[]).map((a) => ({
