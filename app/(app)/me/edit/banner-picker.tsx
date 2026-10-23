@@ -67,7 +67,7 @@ export function BannerPicker({ current }: { current: Banner }) {
         <div className="px" style={{ ...label, marginBottom: 6 }}>
           PATTERN
         </div>
-        <div role="radiogroup" aria-label="Pattern" style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 6 }}>
+        <div role="radiogroup" aria-label="Pattern" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
           {PATTERNS.map((p) => {
             const on = p.key === pattern;
             return (
@@ -94,7 +94,7 @@ export function BannerPicker({ current }: { current: Banner }) {
               >
                 <span
                   style={{
-                    height: 40,
+                    height: 44,
                     borderRadius: "var(--px-r)",
                     boxShadow: on ? "0 0 0 2px var(--device), 0 0 0 4px var(--text)" : "0 0 0 1px var(--edge)",
                     ...bannerStyle({ pattern: p.key, a, b }),

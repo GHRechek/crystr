@@ -27,11 +27,28 @@ export const PATTERNS = [
   { key: "dots", label: "Polka dots" },
   { key: "checker", label: "Checkerboard" },
   { key: "gradient", label: "Gradient" },
+  { key: "spiral", label: "Spiral" },
 ] as const;
 
 export type PatternKey = (typeof PATTERNS)[number]["key"];
 
 export type Banner = { pattern: PatternKey; a: SwatchKey; b: SwatchKey };
+
+/** A spiral wound out from the middle, as an SVG that covers whatever box it paints. The arms
+ *  run well past the edges, so a wide banner is filled with them rather than a lone swirl. */
+function spiralImage(A: string, B: string): string {
+  const k = 2.3; // distance between turns, divided by 2π
+  const pts: string[] = [];
+  for (let t = 0; t * k <= 230; t += 0.15) {
+    const r = t * k;
+    pts.push(`${(175 + r * Math.cos(t)).toFixed(1)},${(50 + r * Math.sin(t)).toFixed(1)}`);
+  }
+  const svg =
+    `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 350 100' preserveAspectRatio='xMidYMid slice'>` +
+    `<rect width='350' height='100' fill='${A}'/>` +
+    `<polyline points='${pts.join(" ")}' fill='none' stroke='${B}' stroke-width='5.5' stroke-linejoin='round'/></svg>`;
+  return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+}
 
 /** What everyone has until they choose: the original night-purple diagonal stripe. */
 export const DEFAULT_BANNER: Banner = { pattern: "stripes-diagonal", a: "night", b: "ink" };
@@ -64,6 +81,8 @@ export function bannerStyle(banner: Banner): CSSProperties {
       };
     case "checker":
       return { backgroundColor: A, backgroundImage: `repeating-conic-gradient(${A} 0 25%, ${B} 0 50%)`, backgroundSize: "26px 26px" };
+    case "spiral":
+      return { backgroundColor: A, backgroundImage: spiralImage(A, B), backgroundSize: "100% 100%", backgroundRepeat: "no-repeat" };
     case "gradient":
       return { backgroundColor: A, backgroundImage: `linear-gradient(90deg, ${A}, ${B})` };
     case "stripes-diagonal":

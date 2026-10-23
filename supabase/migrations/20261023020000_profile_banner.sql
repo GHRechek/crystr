@@ -7,6 +7,6 @@ alter table public.profiles
   add column if not exists banner_b text;
 
 alter table public.profiles
-  add constraint profiles_banner_pattern_ok check (banner_pattern is null or banner_pattern in ('stripes-diagonal', 'stripes-straight', 'dots', 'checker', 'gradient')),
+  add constraint profiles_banner_pattern_ok check (banner_pattern is null or banner_pattern in ('stripes-diagonal', 'stripes-straight', 'dots', 'checker', 'gradient', 'spiral')),
   add constraint profiles_banner_a_ok check (banner_a is null or banner_a in ('mag-dark', 'mag', 'mag-light', 'pur-dark', 'pur', 'pur-light', 'blu-dark', 'blu', 'blu-light', 'ink', 'night', 'slate', 'mist')),
   add constraint profiles_banner_b_ok check (banner_b is null or banner_b in ('mag-dark', 'mag', 'mag-light', 'pur-dark', 'pur', 'pur-light', 'blu-dark', 'blu', 'blu-light', 'ink', 'night', 'slate', 'mist'));
