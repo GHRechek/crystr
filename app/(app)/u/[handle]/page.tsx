@@ -4,6 +4,7 @@ import { requireMe, getTopFriends, getBadges, getPlaintiffSince, getProfileByHan
 import { openThread } from "@/lib/actions";
 import { Avatar } from "@/components/bits";
 import { ago, corrupt, decayLevel } from "@/lib/crystr";
+import { bannerOf, bannerStyle } from "@/lib/banner";
 
 /** Someone else's profile: who they are, what they say about themselves, who they
  *  rank, what they've earned. Their mana, ledger and anything private stays theirs.
@@ -44,13 +45,7 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
 
   return (
     <div style={{ paddingBottom: 24 }}>
-      <div
-        style={{
-          height: 96,
-          backgroundColor: "var(--inset)",
-          backgroundImage: "repeating-linear-gradient(135deg,#2a2146 0 8px,#1b1d29 8px 16px)",
-        }}
-      />
+      <div style={{ height: 96, ...bannerStyle(bannerOf(person)) }} />
 
       <div style={{ padding: "0 16px", marginTop: -40, position: "relative", display: "flex", flexDirection: "column", gap: 12 }}>
         <div style={{ display: "flex", alignItems: "flex-end", gap: 12 }}>

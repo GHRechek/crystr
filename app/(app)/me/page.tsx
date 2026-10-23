@@ -3,6 +3,7 @@ import { requireMe, getLedger, getTopFriends, getBadges, getPlaintiffSince, coun
 import { BADGE_GLYPH } from "@/lib/badges";
 import { Avatar } from "@/components/bits";
 import { ProfileHead } from "./face-menu";
+import { bannerOf, bannerStyle } from "@/lib/banner";
 import { portraitFromId, normalizePortrait, packPortrait } from "@/lib/portrait/core";
 import { ago, corrupt, COSTS, decayLevel } from "@/lib/crystr";
 
@@ -43,6 +44,7 @@ export default async function ProfilePage() {
         handle={profile.handle}
         joined={`JOINED THE NEW WORLD · ${days} ${days === 1 ? "DAY" : "DAYS"}`}
         mood={profile.mood}
+        banner={bannerStyle(bannerOf(profile))}
       />
 
       <div

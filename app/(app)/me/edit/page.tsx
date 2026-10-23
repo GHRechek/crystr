@@ -3,6 +3,8 @@ import { requireMe, getPeople, getTopFriends } from "@/lib/data";
 import { updateProfile } from "@/lib/actions";
 import { hasStarterHandle } from "@/lib/crystr";
 import { TopSixPicker } from "./top-six";
+import { BannerPicker } from "./banner-picker";
+import { bannerOf } from "@/lib/banner";
 
 export default async function EditProfilePage() {
   const { userId, profile } = await requireMe();
@@ -25,6 +27,8 @@ export default async function EditProfilePage() {
       <Link href="/me/avatar" className="btn btn-block">
         ☻ {profile.avatar_config ? "CHANGE YOUR FACE" : "MAKE A FACE"}
       </Link>
+
+      <BannerPicker current={bannerOf(profile)} />
 
       <form action={updateProfile} style={{ display: "flex", flexDirection: "column", gap: 11 }}>
         <div className="field">
