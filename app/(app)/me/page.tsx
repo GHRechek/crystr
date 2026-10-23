@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { requireMe, getLedger, getTopFriends, getBadges, getPlaintiffSince, countOpenReports } from "@/lib/data";
+import { requireMe, getLedger, getTopFriends, getBadges, getPlaintiffSince, countOpenReports, countOpenBugs } from "@/lib/data";
 import { BADGE_GLYPH } from "@/lib/badges";
 import { Avatar } from "@/components/bits";
 import { ProfileHead } from "./face-menu";
@@ -15,7 +15,7 @@ export default async function ProfilePage() {
     getBadges(userId),
     getPlaintiffSince(userId),
   ]);
-  const openReports = profile.is_witch ? await countOpenReports() : 0;
+  const [openReports, openBugs] = profile.is_witch ? await Promise.all([countOpenReports(), countOpenBugs()]) : [0, 0];
   const earnedCount = badges.filter((b) => b.earned_at).length;
 
   const days = Math.max(
@@ -294,9 +294,14 @@ export default async function ProfilePage() {
         </div>
 
         {profile.is_witch ? (
-          <Link href="/reports" className="btn btn-sm" style={{ minHeight: 40, alignSelf: "flex-start" }}>
-            REPORTS · {openReports}
-          </Link>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            <Link href="/reports" className="btn btn-sm" style={{ minHeight: 40 }}>
+              REPORTS · {openReports}
+            </Link>
+            <Link href="/bugs" className="btn btn-sm" style={{ minHeight: 40 }}>
+              BUGS · {openBugs}
+            </Link>
+          </div>
         ) : null}
 
         <form action="/auth/signout" method="post">

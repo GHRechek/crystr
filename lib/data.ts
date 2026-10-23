@@ -684,3 +684,32 @@ export async function countOpenReports(): Promise<number> {
     .eq("status", "open");
   return count ?? 0;
 }
+
+// ------------------------------------------------------------------- bugs
+
+export type BugReport = {
+  id: number;
+  body: string;
+  page: string | null;
+  device: string | null;
+  created_at: string;
+  reporter: { handle: string } | null;
+};
+
+/** Bugs waiting to be read (witches only; for anyone else the query comes back empty). */
+export async function getOpenBugs(): Promise<BugReport[]> {
+  const supabase = createClient();
+  const { data } = await supabase
+    .from("bug_reports")
+    .select("id, body, page, device, created_at, reporter:profiles!bug_reports_reporter_fkey(handle)")
+    .eq("status", "open")
+    .order("created_at")
+    .limit(50);
+  return (data ?? []) as unknown as BugReport[];
+}
+
+export async function countOpenBugs(): Promise<number> {
+  const supabase = createClient();
+  const { count } = await supabase.from("bug_reports").select("id", { count: "exact", head: true }).eq("status", "open");
+  return count ?? 0;
+}

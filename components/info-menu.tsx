@@ -100,6 +100,15 @@ export function InfoMenu() {
                 TERMS OF SERVICE
               </Link>
             </section>
+
+            <section>
+              <div className="px" style={{ fontSize: 11, color: "var(--mag)", marginBottom: 8 }}>
+                SOMETHING BROKEN?
+              </div>
+              <Link href={`/bug?from=${encodeURIComponent(path)}`} className="btn btn-block" style={{ minHeight: 40 }}>
+                REPORT A BUG
+              </Link>
+            </section>
           </div>
         </div>
       ) : null}
