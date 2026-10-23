@@ -7,7 +7,7 @@ import { HeartIcon } from "@/components/icons";
 
 /** The heart under a post. Liking costs 1 mana; taking a like back asks first, and the
  *  mana is not returned. */
-export function LikeButton({ postId, likes, liked, thread }: { postId: number; likes: number; liked: boolean; thread?: number }) {
+export function LikeButton({ postId, likes, liked, thread, small }: { postId: number; likes: number; liked: boolean; thread?: number; small?: boolean }) {
   const [asking, setAsking] = useState(false);
 
   const hidden = (
@@ -22,7 +22,7 @@ export function LikeButton({ postId, likes, liked, thread }: { postId: number; l
       <form action={likePost}>
         {hidden}
         <button className="tbtn" type="submit" aria-label={`Like. ${likes} likes`}>
-          <HeartIcon /> <span className="tcount">{likes}</span> <Cost n={1} />
+          <HeartIcon small={small} /> <span className="tcount">{likes}</span> <Cost n={1} />
         </button>
       </form>
     );
@@ -37,7 +37,7 @@ export function LikeButton({ postId, likes, liked, thread }: { postId: number; l
         aria-label={`You liked this. ${likes} likes. Take your like back`}
         style={{ color: "var(--mag)" }}
       >
-        <HeartIcon filled /> <span className="tcount">{likes}</span>
+        <HeartIcon filled small={small} /> <span className="tcount">{likes}</span>
       </button>
     );
   }

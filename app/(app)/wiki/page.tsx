@@ -19,7 +19,7 @@ export default async function WikiIndex(props: { searchParams: Promise<{ q?: str
   const waiting = witch ? live.reduce((n, p) => n + p.waiting, 0) : 0;
 
   return (
-    <div className="pad" style={{ gap: 13 }}>
+    <div className="pad" style={{ gap: 12 }}>
       <div>
         <h1 className="screen-title">THE WIKI</h1>
         <div className="screen-intro">

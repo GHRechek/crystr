@@ -96,10 +96,10 @@ export default async function WikiPageView(props: { params: Promise<{ slug: stri
           display: "flex",
           flexDirection: "column",
           gap: 14,
-          padding: "16px 14px 18px",
-          background: "var(--surface)",
-          boxShadow: "0 0 0 1px var(--edge)",
-          borderRadius: "var(--px-r)",
+          margin: "0 -16px",
+          padding: "16px 16px 18px",
+          borderTop: "1px solid var(--edge)",
+          borderBottom: "1px solid var(--edge)",
         }}
       >
         <header style={{ display: "flex", flexDirection: "column", gap: 8, paddingBottom: 12, borderBottom: "1px solid var(--rule)" }}>
