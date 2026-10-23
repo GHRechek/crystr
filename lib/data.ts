@@ -67,6 +67,10 @@ export type FeedPost = {
   liked: boolean;
   /** How many replies sit under it. Always 0 for a reply itself. */
   replies: number;
+  /** A signed link to the picture, good for an hour; null when there is none. */
+  image_url: string | null;
+  /** Set when the post was shared from the Well: the quest's title. */
+  quest_title: string | null;
 };
 
 export type FeedDispatch = {
@@ -85,13 +89,26 @@ export type FeedDispatch = {
 
 export type FeedItem = FeedPost | FeedDispatch;
 
+/** Signed links, good for an hour, for the pictures on posts shared from the Well. */
+async function signProofs(paths: (string | null)[]): Promise<Map<string, string>> {
+  const wanted = [...new Set(paths.filter((p): p is string => !!p))];
+  const out = new Map<string, string>();
+  if (wanted.length === 0) return out;
+  const supabase = createClient();
+  const { data } = await supabase.storage.from("proofs").createSignedUrls(wanted, 3600);
+  for (const u of (data ?? []) as { path: string | null; signedUrl: string }[]) {
+    if (u.path) out.set(u.path, u.signedUrl);
+  }
+  return out;
+}
+
 export async function getFeed(userId: string): Promise<FeedItem[]> {
   const supabase = createClient();
 
   const [{ data: posts }, { data: dispatches }] = await Promise.all([
     supabase
       .from("posts")
-      .select(`id, body, has_image, cost, created_at, author:profiles!posts_author_id_fkey(${AUTHOR_COLS}), likes:post_likes(count))`)
+      .select(`id, body, has_image, cost, created_at, proof_path, quest:quests!posts_quest_slug_fkey(title), author:profiles!posts_author_id_fkey(${AUTHOR_COLS}), likes:post_likes(count))`)
       .is("parent_id", null)
       .order("created_at", { ascending: false })
       .limit(50),
@@ -109,9 +126,12 @@ export async function getFeed(userId: string): Promise<FeedItem[]> {
     has_image: boolean;
     cost: number;
     created_at: string;
+    proof_path: string | null;
+    quest: { title: string } | null;
     author: Author;
     likes: { count: number }[];
   }>;
+  const signed = await signProofs(rows.map((p) => p.proof_path));
 
   let mine = new Set<number>();
   if (rows.length) {
@@ -148,6 +168,8 @@ export async function getFeed(userId: string): Promise<FeedItem[]> {
     likes: p.likes?.[0]?.count ?? 0,
     liked: mine.has(p.id),
     replies: replyCount.get(p.id) ?? 0,
+    image_url: p.proof_path ? (signed.get(p.proof_path) ?? null) : null,
+    quest_title: p.quest?.title ?? null,
   }));
 
   const ball = ((dispatches ?? []) as unknown as FeedDispatch[]).map((a) => ({
@@ -433,12 +455,12 @@ export async function getPostThread(
   const [{ data: top }, { data: kids }] = await Promise.all([
     supabase
       .from("posts")
-      .select(`id, body, has_image, cost, created_at, parent_id, author:profiles!posts_author_id_fkey(${AUTHOR_COLS}), likes:post_likes(count)`)
+      .select(`id, body, has_image, cost, created_at, parent_id, proof_path, quest:quests!posts_quest_slug_fkey(title), author:profiles!posts_author_id_fkey(${AUTHOR_COLS}), likes:post_likes(count)`)
       .eq("id", id)
       .maybeSingle(),
     supabase
       .from("posts")
-      .select(`id, body, has_image, cost, created_at, parent_id, author:profiles!posts_author_id_fkey(${AUTHOR_COLS}), likes:post_likes(count)`)
+      .select(`id, body, has_image, cost, created_at, parent_id, proof_path, quest:quests!posts_quest_slug_fkey(title), author:profiles!posts_author_id_fkey(${AUTHOR_COLS}), likes:post_likes(count)`)
       .eq("parent_id", id)
       .order("created_at", { ascending: true })
       .limit(200),
@@ -452,10 +474,13 @@ export async function getPostThread(
     has_image: boolean;
     cost: number;
     created_at: string;
+    proof_path: string | null;
+    quest: { title: string } | null;
     author: Author;
     likes: { count: number }[];
   };
   const rows = [top as unknown as Row, ...((kids ?? []) as unknown as Row[])];
+  const signed = await signProofs(rows.map((r) => r.proof_path));
 
   const { data: likes } = await supabase
     .from("post_likes")
@@ -475,6 +500,8 @@ export async function getPostThread(
     likes: r.likes?.[0]?.count ?? 0,
     liked: mine.has(r.id),
     replies,
+    image_url: r.proof_path ? (signed.get(r.proof_path) ?? null) : null,
+    quest_title: r.quest?.title ?? null,
   });
 
   return {
@@ -720,4 +747,51 @@ export async function countOpenBugs(): Promise<number> {
   const supabase = createClient();
   const { count } = await supabase.from("bug_reports").select("id", { count: "exact", head: true }).eq("status", "open");
   return count ?? 0;
+}
+
+// ----------------------------------------------------------- sharing a quest
+
+export type ShareableSubmission = {
+  id: number;
+  quest_slug: string;
+  quest_title: string;
+  note: string | null;
+  /** A signed link to the picture they handed in, or null for a written one. */
+  image_url: string | null;
+};
+
+/** The person's latest hand-in for a quest, if it is recent and not yet a post. */
+export async function getShareable(userId: string, slug: string): Promise<ShareableSubmission | null> {
+  const supabase = createClient();
+  const { data } = await supabase
+    .from("quest_submissions")
+    .select("id, quest_slug, note, proof_url, created_at, quest:quests!quest_submissions_quest_slug_fkey(title)")
+    .eq("user_id", userId)
+    .eq("quest_slug", slug)
+    .neq("status", "void")
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  const row = data as unknown as {
+    id: number;
+    quest_slug: string;
+    note: string | null;
+    proof_url: string | null;
+    created_at: string;
+    quest: { title: string } | null;
+  } | null;
+  if (!row) return null;
+  if (Date.now() - new Date(row.created_at).getTime() > 3600_000) return null;
+
+  const { data: shared } = await supabase.from("posts").select("id").eq("submission_id", row.id).maybeSingle();
+  if (shared) return null;
+
+  const signed = await signProofs([row.proof_url]);
+  return {
+    id: row.id,
+    quest_slug: row.quest_slug,
+    quest_title: row.quest?.title ?? "",
+    note: row.note,
+    image_url: row.proof_url ? (signed.get(row.proof_url) ?? null) : null,
+  };
 }

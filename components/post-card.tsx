@@ -58,13 +58,21 @@ export function PostCard({
           </div>
         </Link>
         <div className="spacer" />
-        <div className="px" style={{ fontSize: 11, color: "var(--dim)" }}>
-          -{post.cost}
-        </div>
+        {post.cost > 0 ? (
+          <div className="px" style={{ fontSize: 11, color: "var(--dim)" }}>
+            -{post.cost}
+          </div>
+        ) : null}
         {mine ? null : (
           <PostMenu kind="post" target={post.id} back={inThread && thread ? `/thread/${thread}` : "/"} />
         )}
       </div>
+
+      {post.quest_title ? (
+        <div className="px" style={{ fontSize: 11, color: "var(--mag-soft)" }}>
+          FROM THE WELL · {post.quest_title.toUpperCase()}
+        </div>
+      ) : null}
 
       {inThread ? (
         body
@@ -74,7 +82,17 @@ export function PostCard({
         </Link>
       )}
 
-      {post.has_image ? <Placeholder label="IMAGE — PENDING TILE" height={132} /> : null}
+      {post.image_url ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={post.image_url}
+          alt="A picture shared with this post"
+          loading="lazy"
+          style={{ display: "block", width: "100%", maxHeight: 420, objectFit: "contain", borderRadius: 4, background: "var(--inset)" }}
+        />
+      ) : post.has_image ? (
+        <Placeholder label="IMAGE — PENDING TILE" height={132} />
+      ) : null}
 
       <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 1 }}>
         <form action={likePost}>
