@@ -1046,3 +1046,31 @@ select {
   border-bottom: 1px solid var(--edge);
   padding: 12px 16px 14px;
 }
+
+/* Post actions the Threads way: just the icon and its count, then the price beside it. */
+.tbtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 0 6px;
+  background: none;
+  border: 0;
+  color: var(--dim);
+  font: inherit;
+  cursor: pointer;
+  text-decoration: none;
+}
+.tcount {
+  font-family: var(--px-font);
+  font-size: 14px;
+}
+.tbtn .cost {
+  margin-left: 2px;
+  font-family: var(--px-font);
+  font-size: 11px;
+}
+/* A reply sits under the post it answers, set in from the left. */
+.treply {
+  margin-left: 26px;
+}

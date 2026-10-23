@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { likePost, unlikePost } from "@/lib/actions";
 import { Cost } from "@/components/mana";
+import { HeartIcon } from "@/components/icons";
 
 /** The heart under a post. Liking costs 1 mana; taking a like back asks first, and the
  *  mana is not returned. */
@@ -20,8 +21,8 @@ export function LikeButton({ postId, likes, liked, thread }: { postId: number; l
     return (
       <form action={likePost}>
         {hidden}
-        <button className="btn btn-sm" type="submit" style={{ borderColor: "var(--edge)", color: "var(--dim)" }}>
-          ♥ {likes} <Cost n={1} />
+        <button className="tbtn" type="submit" aria-label={`Like. ${likes} likes`}>
+          <HeartIcon /> <span className="tcount">{likes}</span> <Cost n={1} />
         </button>
       </form>
     );
@@ -30,13 +31,13 @@ export function LikeButton({ postId, likes, liked, thread }: { postId: number; l
   if (!asking) {
     return (
       <button
-        className="btn btn-sm"
+        className="tbtn"
         type="button"
         onClick={() => setAsking(true)}
         aria-label={`You liked this. ${likes} likes. Take your like back`}
-        style={{ borderColor: "var(--mag)", color: "var(--mag-soft)" }}
+        style={{ color: "var(--mag)" }}
       >
-        ♥ {likes}
+        <HeartIcon filled /> <span className="tcount">{likes}</span>
       </button>
     );
   }
