@@ -2,7 +2,9 @@ import Link from "next/link";
 import { Avatar, Placeholder } from "@/components/bits";
 import { LikeButton } from "@/components/like-button";
 import { PostMenu } from "@/components/report-button";
-import { ago, corrupt } from "@/lib/crystr";
+import { Cost } from "@/components/mana";
+import { ReplyIcon } from "@/components/icons";
+import { COSTS, ago, corrupt } from "@/lib/crystr";
 import type { FeedPost } from "@/lib/data";
 
 /** A post, on the timeline or in a thread. On the timeline the text opens the
@@ -98,11 +100,11 @@ export function PostCard({
           <Placeholder label="IMAGE — PENDING TILE" height={132} />
         ) : null}
 
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 14, marginLeft: -6 }}>
           <LikeButton postId={post.id} likes={post.likes} liked={post.liked} thread={thread} />
           {inThread ? null : (
-            <Link href={`/thread/${post.id}?reply=1`} className="btn btn-sm">
-              ↩ REPLY{post.replies > 0 ? ` · ${post.replies}` : ""}
+            <Link href={`/thread/${post.id}?reply=1`} className="tbtn" aria-label={`Reply. ${post.replies} replies`}>
+              <ReplyIcon /> {post.replies > 0 ? <span className="tcount">{post.replies}</span> : null} <Cost n={COSTS.reply} />
             </Link>
           )}
         </div>

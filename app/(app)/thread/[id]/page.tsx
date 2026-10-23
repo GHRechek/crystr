@@ -41,7 +41,9 @@ export default async function ThreadPage(
       <PostCard post={post} me={userId} decay={decay} inThread thread={post.id} line={replies.length > 0} />
 
       {replies.map((r, i) => (
-        <PostCard key={r.id} post={r} me={userId} decay={decay} inThread thread={post.id} small line={i < replies.length - 1} />
+        <div key={r.id} className="treply">
+          <PostCard post={r} me={userId} decay={decay} inThread thread={post.id} small line={i < replies.length - 1} />
+        </div>
       ))}
 
       <div style={{ padding: "12px 16px 0" }}>

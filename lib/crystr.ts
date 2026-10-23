@@ -9,6 +9,8 @@ export const COSTS = {
   post: 5,
   photo: 3,
   like: 1,
+  /** A reply (3 more with a picture). */
+  reply: 5,
   whisper: 2,
   vote: 3,
   oped: 6,
