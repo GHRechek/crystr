@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { setFlash, EDGE } from "@/lib/flash";
 import { TERMS_VERSION } from "@/lib/terms";
@@ -380,6 +381,39 @@ export async function resolveReport(fd: FormData) {
   });
   if (!r.ok) await setFlash("ALREADY HANDLED", "That one is no longer waiting.", EDGE.purple);
   revalidatePath("/reports");
+}
+
+/** Tell the organizers something is broken. The page it happened on and the browser come
+ *  along, so the person does not have to describe them. */
+export async function reportBug(fd: FormData) {
+  const from = str(fd, "from");
+  const page = from.startsWith("/") && !from.startsWith("//") ? from.slice(0, 200) : "";
+  const device = ((await headers()).get("user-agent") ?? "").slice(0, 300);
+  const r = await call("cr_report_bug", { p_body: str(fd, "body"), p_page: page, p_device: device });
+
+  if (r.ok) {
+    await setFlash("THANK YOU", "That is with the organizers now. You do not need to do anything else.", EDGE.blue);
+    redirect(page || "/");
+  }
+  if (r.code === "empty") {
+    await setFlash("TELL US MORE", "Write a few words about what went wrong.", EDGE.purple);
+  } else if (r.code === "too_many") {
+    await setFlash("A LOT TODAY", "You have sent many today. If it is urgent, please speak to an organizer.", EDGE.purple);
+  } else {
+    await wentWrong();
+  }
+  redirect(`/bug${page ? `?from=${encodeURIComponent(page)}` : ""}`);
+}
+
+/** A witch marks a bug fixed, or closed without a fix. */
+export async function resolveBug(fd: FormData) {
+  const r = await call("cr_resolve_bug", {
+    p_id: Number(fd.get("id")),
+    p_status: str(fd, "act") === "fixed" ? "fixed" : "closed",
+    p_note: str(fd, "note"),
+  });
+  if (!r.ok) await setFlash("ALREADY HANDLED", "That one is no longer waiting.", EDGE.purple);
+  revalidatePath("/bugs");
 }
 
 /** Dismiss the "someone put you in their Top 6" banner. */
