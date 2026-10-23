@@ -153,26 +153,29 @@ function Said({
   else rows.push({ key: "h", text: "", ask: { kind: "helped", label: "I HELPED THEM" } });
 
   return (
-    <div style={{ flex: "none", padding: "8px 16px 0", display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
+    <div style={{ flex: "none", padding: "6px 16px 0", display: "flex", flexDirection: "column", gap: 6 }}>
       <span className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
         SAY WHAT HAPPENED
       </span>
-      {rows.map((r) =>
-        r.ask ? (
-          <form key={r.key} action={claimVouch}>
-            <input type="hidden" name="thread_id" value={thread} />
-            <input type="hidden" name="other_id" value={other.id} />
-            <input type="hidden" name="kind" value={r.ask.kind} />
-            <button type="submit" className="btn btn-sm" style={{ minHeight: 40, fontSize: 11 }}>
-              {r.ask.label}
-            </button>
-          </form>
-        ) : (
-          <span key={r.key} style={{ fontSize: 12, color: "var(--muted)" }}>
-            {r.text}
-          </span>
-        ),
-      )}
+      {/* The two buttons share a line, each taking half; a status sentence takes a full line. */}
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
+        {rows.map((r) =>
+          r.ask ? (
+            <form key={r.key} action={claimVouch} style={{ flex: "1 1 0", minWidth: 0 }}>
+              <input type="hidden" name="thread_id" value={thread} />
+              <input type="hidden" name="other_id" value={other.id} />
+              <input type="hidden" name="kind" value={r.ask.kind} />
+              <button type="submit" className="btn btn-sm btn-block" style={{ minHeight: 40, fontSize: 11, padding: "0 6px" }}>
+                {r.ask.label}
+              </button>
+            </form>
+          ) : (
+            <span key={r.key} style={{ flex: "1 1 100%", fontSize: 12, color: "var(--muted)" }}>
+              {r.text}
+            </span>
+          ),
+        )}
+      </div>
     </div>
   );
 }
