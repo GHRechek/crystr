@@ -106,6 +106,27 @@ export async function likePost(fd: FormData) {
   if (back) revalidatePath(`/thread/${Number(back)}`);
 }
 
+/** Take your like back. The mana is not refunded; liking again costs again. */
+export async function unlikePost(fd: FormData) {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const id = Number(fd.get("post_id"));
+  if (!user || !Number.isInteger(id)) {
+    await wentWrong();
+    return;
+  }
+  const { error } = await supabase.from("post_likes").delete().eq("post_id", id).eq("user_id", user.id);
+  if (error) {
+    console.error("unlikePost:", error.message);
+    await wentWrong();
+  }
+  revalidatePath("/");
+  const back = fd.get("thread");
+  if (back) revalidatePath(`/thread/${Number(back)}`);
+}
+
 export async function createReply(fd: FormData) {
   const parent = Number(fd.get("parent_id"));
   const r = await call("cr_create_reply", { p_parent: parent, p_body: str(fd, "body") });
