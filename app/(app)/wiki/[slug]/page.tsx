@@ -13,9 +13,31 @@ const TEXT = { fontSize: 16, lineHeight: 1.4 } as const;
 /** What a person added: sharp, same size as the text around it. */
 const FOCUS = { color: "#fff", fontWeight: 700 } as const;
 
-/** Each fact drifts at its own slow pace, starting at its own point in the drift. */
-function floatOf(id: number) {
-  return { animationDuration: `${9 + (id % 5)}s`, animationDelay: `-${(id * 3.7) % 9}s` };
+/** Each word drifts on its own: its own pace, its own starting point, its own small direction. */
+function floatOf(seed: number): React.CSSProperties {
+  const h = (n: number) => Math.abs(Math.sin(seed * 12.9898 + n * 78.233) * 43758.5453) % 1;
+  return {
+    animationDuration: `${(7 + h(1) * 7).toFixed(1)}s`,
+    animationDelay: `-${(h(2) * 14).toFixed(1)}s`,
+    // Every word moves a visible amount (1.2 to 3 pixels), each in its own direction.
+    ["--dx" as string]: `${((h(3) < 0.5 ? -1 : 1) * (1.2 + h(5) * 1.8)).toFixed(1)}px`,
+    ["--dy" as string]: `${((h(4) < 0.5 ? -1 : 1) * (1.2 + h(6) * 1.8)).toFixed(1)}px`,
+  } as React.CSSProperties;
+}
+
+/** A fact as a run of single words, each one floating by itself. */
+function Words({ text, id }: { text: string; id: number }) {
+  return (
+    <>
+      {text.split(" ").map((w, i) => (
+        <span key={i}>
+          <span className="wiki-word" style={floatOf(id * 31 + i * 7 + 1)}>
+            {w}
+          </span>{" "}
+        </span>
+      ))}
+    </>
+  );
 }
 
 /** A fact reads as a sentence in the paragraph: end it with a full stop. */
@@ -117,7 +139,6 @@ export default async function WikiPageView(props: { params: Promise<{ slug: stri
                   href={paused ? `/wiki/${page.slug}` : `/wiki/${page.slug}/add/${piece.fact.slot}`}
                   className="wiki-fact"
                   style={{
-                    ...floatOf(piece.fact.id),
                     ...FOCUS,
                     color: "var(--pur-pale)",
                     background: "rgba(140,90,230,.14)",
@@ -126,11 +147,11 @@ export default async function WikiPageView(props: { params: Promise<{ slug: stri
                     padding: "0 2px",
                   }}
                 >
-                  {sentence(corrupt(piece.fact.body, decay))}{" "}
+                  <Words text={sentence(corrupt(piece.fact.body, decay))} id={piece.fact.id} />
                 </Link>
               ) : (
-                <span key={i} className="wiki-fact" style={{ ...FOCUS, ...floatOf(piece.fact.id) }}>
-                  {sentence(corrupt(piece.fact.body, decay))}{" "}
+                <span key={i} className="wiki-fact" style={FOCUS}>
+                  <Words text={sentence(corrupt(piece.fact.body, decay))} id={piece.fact.id} />
                 </span>
               ),
             )}

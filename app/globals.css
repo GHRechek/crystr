@@ -916,23 +916,28 @@ select {
   white-space: nowrap;
 }
 
-/* What people added: a soft glow, and a slow, small drift (a couple of pixels over ten seconds)
-   so the words seem to hover in the runes. Gentle by design; off for reduced motion. */
+/* What people added: a soft glow, and each word drifting by itself, a couple of pixels over
+   seven to fourteen seconds, so the words seem to hover in the runes. Gentle by design; off for
+   reduced motion. The direction and pace of each word are set inline (--dx, --dy, duration). */
 .wiki-fact {
-  position: relative;
   text-shadow: 0 0 5px rgba(255, 255, 255, 0.55), 0 0 12px rgba(190, 196, 230, 0.4);
+}
+
+.wiki-word {
+  position: relative;
+  display: inline-block;
   animation: cr-float 10s ease-in-out infinite;
 }
 
 @keyframes cr-float {
   0%, 100% { top: 0; left: 0; }
-  25% { top: -2px; left: 1px; }
-  50% { top: 1px; left: 2px; }
-  75% { top: 2px; left: -1px; }
+  25% { top: calc(var(--dy, 2px) * -1); left: var(--dx, 1px); }
+  50% { top: calc(var(--dy, 2px) * 0.5); left: calc(var(--dx, 1px) * 2); }
+  75% { top: var(--dy, 2px); left: calc(var(--dx, 1px) * -1); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .wiki-fact {
+  .wiki-word {
     animation: none;
   }
 }
