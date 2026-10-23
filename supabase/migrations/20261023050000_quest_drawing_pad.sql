@@ -9,3 +9,6 @@ alter table public.quests
   add column if not exists proof_required boolean not null default false,
   add column if not exists drawing_pad boolean not null default false;
 update public.quests set proof_required = true, drawing_pad = true where slug = 'draw';
+
+-- "Photo with a friend" needs a real photo too: words alone are no longer accepted.
+update public.quests set proof_required = true where slug = 'photo';
