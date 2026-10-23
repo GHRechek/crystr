@@ -19,7 +19,7 @@ export function NewPageForm({ initialTitle = "" }: { initialTitle?: string }) {
           ✕ DISCARD
         </Link>
         <div className="spacer" />
-        <div className="px" style={{ fontSize: 9, color: "var(--pur-pale)" }}>
+        <div className="px" style={{ fontSize: 11, color: "var(--pur-pale)" }}>
           A NEW PAGE
         </div>
       </div>

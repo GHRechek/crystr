@@ -25,13 +25,13 @@ export function ReportForm({ kind, target, back }: ReportProps) {
         ))}
       </select>
       <input
-        name="note"
+        name="note" aria-label="Anything we should know"
         className="input"
         maxLength={500}
         placeholder="Anything we should know (optional)"
         style={{ fontSize: 12 }}
       />
-      <button type="submit" className="btn btn-sm" style={{ minHeight: 34 }}>
+      <button type="submit" className="btn btn-sm" style={{ minHeight: 40 }}>
         SEND TO THE WITCHES
       </button>
     </form>
@@ -42,7 +42,7 @@ export function ReportForm({ kind, target, back }: ReportProps) {
 export function ReportButton({ label = "REPORT", ...props }: ReportProps & { label?: string }) {
   return (
     <details className="report">
-      <summary className="px" style={{ fontSize: 8, color: "var(--dim)", cursor: "pointer", listStyle: "none" }}>
+      <summary className="px" style={{ fontSize: 11, color: "var(--dim)", cursor: "pointer", listStyle: "none" }}>
         {label}
       </summary>
       <div style={{ marginTop: 8 }}>
@@ -60,7 +60,7 @@ export function PostMenu(props: ReportProps) {
         ☰
       </summary>
       <div className="post-menu-panel">
-        <div className="px" style={{ fontSize: 8, color: "var(--muted)", marginBottom: 8 }}>
+        <div className="px" style={{ fontSize: 11, color: "var(--muted)", marginBottom: 8 }}>
           REPORT THIS POST
         </div>
         <ReportForm {...props} />

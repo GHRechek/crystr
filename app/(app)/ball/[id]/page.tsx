@@ -40,11 +40,11 @@ export default async function ArticlePage(props: { params: Promise<{ id: string 
         </Link>
 
         <div>
-          <div className="kicker" style={{ display: "block", marginBottom: 9, fontSize: 8.5 }}>
+          <div className="kicker" style={{ display: "block", marginBottom: 9, fontSize: 11 }}>
             {article.kicker}
             {article.status === "draft" ? " · DRAFT" : ""}
           </div>
-          <div
+          <h1
             style={{
               fontSize: 25,
               fontWeight: 500,
@@ -55,7 +55,7 @@ export default async function ArticlePage(props: { params: Promise<{ id: string 
             }}
           >
             {corrupt(article.headline, decay)}
-          </div>
+          </h1>
           {article.standfirst ? (
             <div style={{ fontSize: 14, lineHeight: 1.55, color: "var(--text-3)", textWrap: "pretty" }}>
               {corrupt(article.standfirst, decay)}
@@ -91,7 +91,7 @@ export default async function ArticlePage(props: { params: Promise<{ id: string 
               <form action={setArticleStatus} style={{ flex: 1, display: "flex" }}>
                 <input type="hidden" name="id" value={article.id} />
                 <input type="hidden" name="status" value="returned" />
-                <button type="submit" className="btn btn-block" style={{ minHeight: 42, fontSize: 9.5 }}>
+                <button type="submit" className="btn btn-block" style={{ minHeight: 42, fontSize: 11 }}>
                   RETURN
                 </button>
               </form>
@@ -99,7 +99,7 @@ export default async function ArticlePage(props: { params: Promise<{ id: string 
               <Link
                 href={`/ball/${article.id}/edit`}
                 className="btn btn-purple"
-                style={{ flex: 1, minHeight: 42, fontSize: 9.5 }}
+                style={{ flex: 1, minHeight: 42, fontSize: 11 }}
               >
                 EDIT
               </Link>
@@ -108,7 +108,7 @@ export default async function ArticlePage(props: { params: Promise<{ id: string 
             <form action={setArticleStatus} style={{ flex: 1, display: "flex" }}>
               <input type="hidden" name="id" value={article.id} />
               <input type="hidden" name="status" value={nextStatus} />
-              <button type="submit" className="btn btn-block" style={{ minHeight: 42, fontSize: 9.5 }}>
+              <button type="submit" className="btn btn-block" style={{ minHeight: 42, fontSize: 11 }}>
                 {statusLabel}
               </button>
             </form>

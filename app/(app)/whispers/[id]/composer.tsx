@@ -87,7 +87,7 @@ export function WhisperComposer({
             alignItems: "center",
             gap: 8,
             padding: "6px 9px",
-            fontSize: 11.5,
+            fontSize: 12,
             color: "var(--muted)",
             boxShadow: "0 0 0 1px var(--edge)",
           }}
@@ -95,7 +95,7 @@ export function WhisperComposer({
           <span style={{ flex: 1, minWidth: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
             ↩ {replyLine}
           </span>
-          <a href={closeReplyHref} aria-label="Cancel reply" className="px" style={{ fontSize: 9, color: "var(--dim)" }}>
+          <a href={closeReplyHref} aria-label="Cancel reply" className="px" style={{ fontSize: 11, color: "var(--dim)" }}>
             ✕
           </a>
         </div>
@@ -105,14 +105,14 @@ export function WhisperComposer({
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={thumb} alt="Picture to send" style={{ height: 52, width: "auto", borderRadius: 4, boxShadow: "0 0 0 1px var(--edge)" }} />
-          <button type="button" className="btn btn-sm" onClick={clear} style={{ minHeight: 30 }}>
+          <button type="button" className="btn btn-sm" onClick={clear} style={{ minHeight: 40 }}>
             REMOVE
           </button>
         </div>
       ) : null}
 
       {problem ? (
-        <div className="px" style={{ fontSize: 8.5, color: "var(--mag)", lineHeight: 1.7 }}>
+        <div className="px" style={{ fontSize: 11, color: "var(--mag)", lineHeight: 1.7 }}>
           {problem.toUpperCase()}
         </div>
       ) : null}
@@ -139,7 +139,7 @@ export function WhisperComposer({
           {busy ? "…" : "▣"}
         </button>
         <input
-          name="body"
+          name="body" aria-label="Your whisper"
           className="input"
           style={{ flex: 1, fontSize: 13.5 }}
           placeholder={`whisper (takes ${cost})`}

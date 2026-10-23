@@ -52,10 +52,10 @@ export default async function ThreadPage(props: {
           style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0, color: "inherit", textDecoration: "none" }}
         >
           <Avatar person={thread.other} size={28} />
-          <div style={{ fontSize: 13.5, fontWeight: 500 }}>{thread.other.handle}</div>
+          <h1 style={{ fontSize: 13.5, fontWeight: 500 }}>{thread.other.handle}</h1>
         </Link>
         <div className="spacer" />
-        <div className="px" style={{ fontSize: 9, color: "var(--muted)" }}>
+        <div className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
           {COSTS.whisper}/MSG
         </div>
       </div>
@@ -91,7 +91,7 @@ export default async function ThreadPage(props: {
             className="px"
             style={{
               alignSelf: "center",
-              fontSize: 8.5,
+              fontSize: 11,
               color: "var(--mag)",
               textAlign: "center",
               lineHeight: 1.8,
@@ -154,7 +154,7 @@ function Said({
 
   return (
     <div style={{ flex: "none", padding: "8px 16px 0", display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
-      <span className="px" style={{ fontSize: 8, color: "var(--muted)" }}>
+      <span className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
         SAY WHAT HAPPENED
       </span>
       {rows.map((r) =>
@@ -163,12 +163,12 @@ function Said({
             <input type="hidden" name="thread_id" value={thread} />
             <input type="hidden" name="other_id" value={other.id} />
             <input type="hidden" name="kind" value={r.ask.kind} />
-            <button type="submit" className="btn btn-sm" style={{ minHeight: 30, fontSize: 8 }}>
+            <button type="submit" className="btn btn-sm" style={{ minHeight: 40, fontSize: 11 }}>
               {r.ask.label}
             </button>
           </form>
         ) : (
-          <span key={r.key} style={{ fontSize: 11, color: "var(--muted)" }}>
+          <span key={r.key} style={{ fontSize: 12, color: "var(--muted)" }}>
             {r.text}
           </span>
         ),

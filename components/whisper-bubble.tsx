@@ -40,7 +40,7 @@ export function Bubble({
           maxWidth: "78%",
           alignSelf: side,
           padding: "7px 11px",
-          fontSize: 11.5,
+          fontSize: 12,
           fontStyle: "italic",
           color: "var(--dim)",
           boxShadow: "0 0 0 1px var(--edge)",
@@ -74,7 +74,7 @@ export function Bubble({
           {m.reply_to ? (
             <div
               style={{
-                fontSize: 11,
+                fontSize: 12,
                 lineHeight: 1.4,
                 color: "var(--muted)",
                 paddingLeft: 8,
@@ -101,31 +101,31 @@ export function Bubble({
       </div>
 
       <details className="msg-menu" style={{ alignSelf: side }}>
-        <summary aria-label="Message options" className="px" style={{ fontSize: 9, color: "var(--dim)", padding: "3px 4px", cursor: "pointer" }}>
+        <summary aria-label="Message options" className="px" style={{ fontSize: 11, color: "var(--dim)", padding: "3px 4px", cursor: "pointer" }}>
           ⋯ REACT · REPLY{mine ? " · UNSEND" : ""}
         </summary>
         <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 6, alignItems: side }}>
-          <div style={{ display: "flex", gap: 4 }}>
+          <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
             {REACTIONS.map((e) => (
               <form key={e} action={reactToMessage}>
                 <input type="hidden" name="thread_id" value={thread} />
                 <input type="hidden" name="message_id" value={m.id} />
                 <input type="hidden" name="emoji" value={e} />
-                <button type="submit" className="btn btn-sm" aria-label={`React ${e}`} style={{ minHeight: 34, minWidth: 34, padding: 0, fontSize: 16 }}>
+                <button type="submit" className="btn btn-sm" aria-label={`React ${e}`} style={{ minHeight: 40, minWidth: 40, padding: 0, fontSize: 16 }}>
                   {e}
                 </button>
               </form>
             ))}
           </div>
           <div style={{ display: "flex", gap: 6 }}>
-            <Link href={`/whispers/${thread}?reply=${m.id}`} className="btn btn-sm" style={{ minHeight: 32 }}>
+            <Link href={`/whispers/${thread}?reply=${m.id}`} className="btn btn-sm" style={{ minHeight: 40 }}>
               ↩ REPLY
             </Link>
             {mine ? (
               <form action={unsendMessage}>
                 <input type="hidden" name="thread_id" value={thread} />
                 <input type="hidden" name="message_id" value={m.id} />
-                <button type="submit" className="btn btn-sm" style={{ minHeight: 32 }}>
+                <button type="submit" className="btn btn-sm" style={{ minHeight: 40 }}>
                   UNSEND
                 </button>
               </form>
@@ -147,7 +147,7 @@ export function Bubble({
               }}
             >
               {r.emoji}
-              {r.count > 1 ? <span style={{ fontSize: 10, marginLeft: 3, color: "var(--muted)" }}>{r.count}</span> : null}
+              {r.count > 1 ? <span style={{ fontSize: 11, marginLeft: 3, color: "var(--muted)" }}>{r.count}</span> : null}
             </span>
           ))}
         </div>

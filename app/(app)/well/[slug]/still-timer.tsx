@@ -122,7 +122,7 @@ export function StillTimer({
             textAlign: "center",
           }}
         >
-          <div className="px" style={{ fontSize: 9, color: "var(--muted)", lineHeight: 1.8 }}>
+          <div className="px" style={{ fontSize: 11, color: "var(--muted)", lineHeight: 1.8 }}>
             PUT THIS DOWN
           </div>
           <div className="px" style={{ fontSize: 56, color: "var(--pur-bright)", letterSpacing: ".04em" }}>
@@ -153,10 +153,10 @@ export function StillTimer({
         <div className="px" style={{ fontSize: 20, color: phase === "done" ? "var(--blu)" : "var(--pur-soft)" }}>
           {phase === "done" ? "✓" : "◷"}
         </div>
-        <div className="px" style={{ fontSize: 9, color: "var(--dim)", textAlign: "center", lineHeight: 1.7 }}>
+        <div className="px" style={{ fontSize: 11, color: "var(--dim)", textAlign: "center", lineHeight: 1.7 }}>
           {phase === "done" ? "THE TIME IS UP" : "THE TIMER"}
         </div>
-        <div style={{ fontSize: 11.5, color: "var(--muted)", textAlign: "center", lineHeight: 1.5, maxWidth: 250 }}>
+        <div style={{ fontSize: 12, color: "var(--muted)", textAlign: "center", lineHeight: 1.5, maxWidth: 250 }}>
           {phase === "done"
             ? "Two minutes. Well done. Take what it gave you."
             : message ||
@@ -168,7 +168,7 @@ export function StillTimer({
             className="btn btn-sm btn-purple"
             onClick={begin}
             disabled={phase === "starting"}
-            style={{ minHeight: 36 }}
+            style={{ minHeight: 40 }}
           >
             {phase === "starting" ? "ONE MOMENT…" : `BEGIN · ${seconds >= 60 ? `${Math.round(seconds / 60)} MIN` : `${seconds} SEC`}`}
           </button>

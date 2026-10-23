@@ -21,14 +21,14 @@ export default async function PlaintiffPage() {
         </Link>
         <div className="spacer" />
         {since ? (
-          <span className="px" style={{ fontSize: 9, color: "var(--blu-soft)" }}>
+          <span className="px" style={{ fontSize: 11, color: "var(--blu-soft)" }}>
             ✓ REGISTERED
           </span>
         ) : null}
       </div>
 
       <div>
-        <div className="screen-title">CITY OFFICE OF CIVIC PLAINTIFF REGISTRATION</div>
+        <h1 className="screen-title">CITY OFFICE OF CIVIC PLAINTIFF REGISTRATION</h1>
         <div className="screen-intro">
           {since
             ? `Form 12-A is on file. You have been a Registered Plaintiff since ${ago(since)}. There is nothing more to do here.`
@@ -41,11 +41,11 @@ export default async function PlaintiffPage() {
       {profile.is_witch ? (
         <div className="tile" style={{ padding: 12, display: "flex", flexDirection: "column", gap: 10 }}>
           <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
-            <div className="px" style={{ fontSize: 8.5, color: "var(--pur-pale)" }}>
+            <div className="px" style={{ fontSize: 11, color: "var(--pur-pale)" }}>
               REGISTERED PLAINTIFFS
             </div>
             <span className="spacer" />
-            <div className="px" style={{ fontSize: 8, color: "var(--muted)" }}>
+            <div className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
               {forms.length} · ONLY WITCHES SEE THIS
             </div>
           </div>
@@ -57,14 +57,14 @@ export default async function PlaintiffPage() {
                 <div style={{ display: "flex", gap: 8, alignItems: "baseline" }}>
                   <div style={{ fontSize: 13, fontWeight: 500 }}>{f.answers.name ?? "—"}</div>
                   {f.answers.alias ? (
-                    <div style={{ fontSize: 11, color: "var(--muted)" }}>aka {f.answers.alias}</div>
+                    <div style={{ fontSize: 12, color: "var(--muted)" }}>aka {f.answers.alias}</div>
                   ) : null}
                   <span className="spacer" />
-                  <div className="px" style={{ fontSize: 8, color: "var(--muted)" }}>
+                  <div className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
                     {ago(f.submitted_at).toUpperCase()}
                   </div>
                 </div>
-                <div className="px" style={{ fontSize: 8, color: "var(--muted)", marginTop: 4, lineHeight: 1.7 }}>
+                <div className="px" style={{ fontSize: 11, color: "var(--muted)", marginTop: 4, lineHeight: 1.7 }}>
                   @{(f.who?.handle ?? "unknown").toUpperCase()} · {label(REALMS, f.answers.realm).toUpperCase()} ·{" "}
                   {label(DISTRICTS, f.answers.district).toUpperCase()} · {label(SPECIES, f.answers.species).toUpperCase()}
                 </div>

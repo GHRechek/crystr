@@ -25,12 +25,13 @@ export default async function ThreadPage(
 
   return (
     <div className="pad" style={{ gap: 12 }}>
+      <h1 className="sr-only">A thread</h1>
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
         <Link href="/" className="btn btn-sm">
           ← BACK
         </Link>
         <div className="spacer" />
-        <div className="px" style={{ fontSize: 9, color: "var(--muted)" }}>
+        <div className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
           {replies.length === 0
             ? "NO REPLIES YET"
             : `${replies.length} ${replies.length === 1 ? "REPLY" : "REPLIES"}`}

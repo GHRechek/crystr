@@ -11,12 +11,13 @@ export default async function EditProfilePage() {
 
   return (
     <div className="pad">
+      <h1 className="sr-only">Edit your profile</h1>
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
         <Link href="/me" className="btn btn-sm">
           ← ME
         </Link>
         <div className="spacer" />
-        <div className="px" style={{ fontSize: 9, color: "var(--muted)" }}>
+        <div className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
           WORDS ARE FREE HERE
         </div>
       </div>

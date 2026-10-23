@@ -58,10 +58,10 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
             <Avatar person={person} size={88} />
           </div>
           <div style={{ minWidth: 0, paddingBottom: 4 }}>
-            <div style={{ fontSize: 20, fontWeight: 500, letterSpacing: "-.01em", overflowWrap: "anywhere" }}>
+            <h1 style={{ fontSize: 20, fontWeight: 500, letterSpacing: "-.01em", overflowWrap: "anywhere" }}>
               {person.handle}
-            </div>
-            <div className="px" style={{ fontSize: 8, color: "var(--muted)", marginTop: 4 }}>
+            </h1>
+            <div className="px" style={{ fontSize: 11, color: "var(--muted)", marginTop: 4 }}>
               JOINED THE NEW WORLD · {days} {days === 1 ? "DAY" : "DAYS"}
             </div>
           </div>
@@ -84,7 +84,7 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
         </div>
 
         <div className="tile" style={{ padding: 12 }}>
-          <div className="px" style={{ fontSize: 8.5, color: "var(--mag)", letterSpacing: ".07em", marginBottom: 7 }}>
+          <div className="px" style={{ fontSize: 11, color: "var(--mag)", letterSpacing: ".07em", marginBottom: 7 }}>
             ABOUT
           </div>
           <div style={{ fontSize: 12.5, lineHeight: 1.6, color: "var(--text-3)", textWrap: "pretty" }}>
@@ -94,13 +94,13 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
 
         {details.length ? (
           <div className="tile" style={{ padding: 12 }}>
-            <div className="px" style={{ fontSize: 8.5, color: "var(--blu-soft)", letterSpacing: ".07em", marginBottom: 8 }}>
+            <div className="px" style={{ fontSize: 11, color: "var(--blu-soft)", letterSpacing: ".07em", marginBottom: 8 }}>
               THE DETAILS
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
               {details.map(([label, value]) => (
                 <div key={label} style={{ display: "flex", gap: 10, alignItems: "baseline" }}>
-                  <div className="px" style={{ fontSize: 8, color: "var(--muted)", width: 92, flex: "none" }}>
+                  <div className="px" style={{ fontSize: 11, color: "var(--muted)", width: 120, flex: "none" }}>
                     {label}
                   </div>
                   <div style={{ fontSize: 12.5, lineHeight: 1.5, color: "var(--text-2)", minWidth: 0 }}>
@@ -114,7 +114,7 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
 
         {top.length ? (
           <div>
-            <div className="px" style={{ fontSize: 11, color: "var(--blu-soft)", marginBottom: 8 }}>
+            <div className="px" style={{ fontSize: 12, color: "var(--blu-soft)", marginBottom: 8 }}>
               TOP 6
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 8 }}>
@@ -125,7 +125,7 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
                   style={{ display: "flex", flexDirection: "column", gap: 5, alignItems: "center", color: "inherit", textDecoration: "none" }}
                 >
                   <Avatar person={f} size={72} fill />
-                  <div style={{ fontSize: 9.5, color: "var(--muted)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: "100%" }}>
+                  <div style={{ fontSize: 11, color: "var(--muted)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: "100%" }}>
                     {f.handle}
                   </div>
                 </Link>
@@ -136,11 +136,11 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
 
         {plaintiffSince ? (
           <div className="tile" style={{ padding: 12, display: "flex", alignItems: "center", gap: 10 }}>
-            <div className="px" style={{ fontSize: 9, color: "var(--blu-soft)" }}>
+            <div className="px" style={{ fontSize: 11, color: "var(--blu-soft)" }}>
               ✓ REGISTERED PLAINTIFF
             </div>
             <span className="spacer" />
-            <div className="px" style={{ fontSize: 8, color: "var(--muted)" }}>
+            <div className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
               SINCE {ago(plaintiffSince).toUpperCase()}
             </div>
           </div>
@@ -149,11 +149,11 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
         {earned.length ? (
           <div>
             <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 8 }}>
-              <div className="px" style={{ fontSize: 11, color: "var(--mag-soft)" }}>
+              <div className="px" style={{ fontSize: 12, color: "var(--mag-soft)" }}>
                 BADGES
               </div>
               <span className="spacer" />
-              <div className="px" style={{ fontSize: 8, color: "var(--muted)" }}>
+              <div className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
                 {earned.length} OF {badges.length}
               </div>
             </div>
@@ -172,10 +172,10 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
                     </div>
                   )}
                   <div style={{ minWidth: 0 }}>
-                    <div className="px" style={{ fontSize: 8.5, color: "var(--text)", lineHeight: 1.5 }}>
+                    <div className="px" style={{ fontSize: 11, color: "var(--text)", lineHeight: 1.5 }}>
                       {b.title.toUpperCase()}
                     </div>
-                    <div style={{ fontSize: 10.5, lineHeight: 1.4, color: "var(--muted)", marginTop: 3 }}>{b.how}</div>
+                    <div style={{ fontSize: 11, lineHeight: 1.4, color: "var(--muted)", marginTop: 3 }}>{b.how}</div>
                   </div>
                 </div>
               ))}

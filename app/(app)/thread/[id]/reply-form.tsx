@@ -30,7 +30,7 @@ export function ReplyForm({
       <input type="hidden" name="parent_id" value={parent} />
       <textarea
         ref={box}
-        name="body"
+        name="body" aria-label="Your reply"
         className="textarea"
         rows={3}
         maxLength={500}
@@ -40,7 +40,7 @@ export function ReplyForm({
         style={{ fontSize: 14, lineHeight: 1.5 }}
       />
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-        <div className="px" style={{ fontSize: 9, color: "var(--muted)" }}>
+        <div className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
           THIS WILL COST
         </div>
         <div className="px" style={{ fontSize: 14, color: affordable ? "var(--blu-soft)" : "var(--mag)" }}>

@@ -7,5 +7,10 @@ export default async function NewMotionPage() {
   if (!profile.is_witch) redirect("/vote");
   // Creating a motion needs a Registered Plaintiff: send them to the form first.
   if (!(await getPlaintiffSince(userId))) redirect("/me/plaintiff");
-  return <MotionComposer />;
+  return (
+    <>
+      <h1 className="sr-only">Create a motion</h1>
+      <MotionComposer />
+    </>
+  );
 }

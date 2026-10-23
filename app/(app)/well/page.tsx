@@ -9,7 +9,7 @@ export default async function WellPage() {
   return (
     <div className="pad">
       <div>
-        <div className="screen-title">THE WELL</div>
+        <h1 className="screen-title">THE WELL</h1>
         <div className="screen-intro">
           Your mana is your strength, and this is where you recover it. Show us something
           you did with your hands, your voice, or a few quiet minutes.
@@ -28,7 +28,7 @@ export default async function WellPage() {
             </div>
             <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 3 }}>
               <div style={{ fontSize: 13.5, fontWeight: 500 }}>{q.title}</div>
-              <div style={{ fontSize: 11, color: "var(--muted)", lineHeight: 1.4 }}>{q.sub}</div>
+              <div style={{ fontSize: 12, color: "var(--muted)", lineHeight: 1.4 }}>{q.sub}</div>
             </div>
             <div
               className="px"

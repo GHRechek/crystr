@@ -44,21 +44,21 @@ export function PostCard({
       <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
         <Link
           href={`/u/${post.author.handle}`}
-          style={{ display: "flex", alignItems: "center", gap: 9, minWidth: 0, color: "inherit", textDecoration: "none" }}
+          style={{ display: "flex", alignItems: "center", gap: 9, minWidth: 0, minHeight: 40, color: "inherit", textDecoration: "none" }}
         >
           <Avatar person={post.author} />
           <div style={{ display: "flex", flexDirection: "column", gap: 1, minWidth: 0 }}>
             <div style={{ fontSize: 13, fontWeight: 500, letterSpacing: "-.01em" }}>
               {post.author.handle}
             </div>
-            <div className="px" style={{ fontSize: 8.5, color: "var(--muted)" }}>
+            <div className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
               {mine ? "YOU · " : ""}
               {ago(post.created_at)}
             </div>
           </div>
         </Link>
         <div className="spacer" />
-        <div className="px" style={{ fontSize: 8.5, color: "var(--dim)" }}>
+        <div className="px" style={{ fontSize: 11, color: "var(--dim)" }}>
           -{post.cost}
         </div>
         {mine ? null : (
@@ -97,7 +97,7 @@ export function PostCard({
           </Link>
         )}
         <div className="spacer" />
-        <span className="px" style={{ fontSize: 8, color: "var(--dim)" }}>
+        <span className="px" style={{ fontSize: 11, color: "var(--dim)" }}>
           -1 TO LIKE
         </span>
       </div>

@@ -70,6 +70,26 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Real headings carry the page's structure; the look comes from each one's own styles. */
+h1, h2, h3 {
+  margin: 0;
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+/* Read by screen readers, invisible on screen. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 a {
   color: var(--pur-soft);
   text-decoration: none;
@@ -152,7 +172,7 @@ select {
   justify-content: space-between;
   padding: 0 18px;
   font-family: var(--px-font);
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 0.06em;
   color: var(--dim);
 }
@@ -184,7 +204,7 @@ select {
 }
 .mana-label {
   font-family: var(--px-font);
-  font-size: 9px;
+  font-size: 11px;
   color: var(--muted);
 }
 .mana-count {
@@ -209,7 +229,7 @@ select {
   justify-content: space-between;
   align-items: center;
   gap: 10px;
-  font-size: 10.5px;
+  font-size: 11px;
   color: var(--muted);
 }
 
@@ -279,7 +299,7 @@ select {
 }
 .tab .label {
   font-family: var(--px-font);
-  font-size: 7.5px;
+  font-size: 11px;
   letter-spacing: 0.05em;
 }
 
@@ -295,14 +315,14 @@ select {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  min-height: 40px;
+  min-height: 44px;
   padding: 0 12px;
   border: 1px solid var(--edge);
   border-radius: var(--px-r);
   background: transparent;
   color: var(--dim);
   font-family: var(--px-font);
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 0.05em;
   cursor: pointer;
   text-align: center;
@@ -313,12 +333,12 @@ select {
   color: var(--text-2);
 }
 .btn-sm {
-  min-height: 32px;
+  min-height: 40px;
   padding: 0 10px;
 }
 .btn-lg {
   min-height: 50px;
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 0.07em;
 }
 .btn-block {
@@ -411,7 +431,7 @@ select {
   padding: 11px 12px;
   border: 1px dashed var(--edge);
   border-radius: var(--px-r);
-  font-size: 11px;
+  font-size: 12px;
   color: var(--muted);
   line-height: 1.5;
 }
@@ -419,7 +439,7 @@ select {
 .banner-note {
   padding: 10px 12px;
   border-radius: var(--px-r);
-  font-size: 11.5px;
+  font-size: 12px;
   line-height: 1.55;
 }
 .banner-purple {
@@ -454,7 +474,7 @@ select {
 }
 .placeholder span {
   font-family: var(--px-font);
-  font-size: 8.5px;
+  font-size: 11px;
   color: var(--muted);
   letter-spacing: 0.06em;
   padding: 0 20px;
@@ -489,7 +509,7 @@ select {
   padding: 3px 7px;
   border-radius: 3px;
   font-family: var(--px-font);
-  font-size: 7.5px;
+  font-size: 11px;
   letter-spacing: 0.06em;
   white-space: nowrap;
 }
@@ -528,7 +548,7 @@ select {
 .field > label,
 .flabel {
   font-family: var(--px-font);
-  font-size: 8px;
+  font-size: 11px;
   letter-spacing: 0.07em;
   color: var(--dim);
 }
@@ -559,7 +579,7 @@ select {
 }
 .input-px {
   font-family: var(--px-font);
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 0.05em;
   caret-color: var(--pur);
 }
@@ -589,7 +609,7 @@ select {
   border-left: 1px solid var(--edge);
   cursor: pointer;
   font-family: var(--px-font);
-  font-size: 9.5px;
+  font-size: 11px;
   letter-spacing: 0.06em;
   background: transparent;
   color: var(--muted);
@@ -627,13 +647,13 @@ select {
 }
 .kicker {
   font-family: var(--px-font);
-  font-size: 8px;
+  font-size: 11px;
   letter-spacing: 0.07em;
   color: var(--mag-soft);
 }
 .byline {
   font-family: var(--px-font);
-  font-size: 8px;
+  font-size: 11px;
   letter-spacing: 0.05em;
   color: var(--dim);
 }
@@ -653,7 +673,7 @@ select {
 .empty {
   text-align: center;
   font-family: var(--px-font);
-  font-size: 8.5px;
+  font-size: 11px;
   color: var(--dim);
   padding: 10px 0;
   letter-spacing: 0.05em;
@@ -677,7 +697,7 @@ select {
 }
 .toast .k {
   font-family: var(--px-font);
-  font-size: 8.5px;
+  font-size: 11px;
   letter-spacing: 0.07em;
   margin-bottom: 4px;
 }
@@ -758,7 +778,7 @@ select {
   border-radius: var(--px-r);
   background: transparent;
   font-family: var(--px-font);
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 0.06em;
   color: var(--text-2);
   text-align: left;
@@ -839,14 +859,14 @@ select {
 
 /* The small "report" disclosure under posts and whispers */
 .report summary::-webkit-details-marker { display: none; }
-.report summary { padding: 6px 2px; }
+.report summary { display: inline-flex; align-items: center; min-height: 40px; padding: 0 4px; }
 .report[open] summary { color: var(--text-3); }
 
 /* The hamburger menu at the top right of a post */
 .post-menu { position: relative; }
 .post-menu > summary { list-style: none; cursor: pointer; }
 .post-menu > summary::-webkit-details-marker { display: none; }
-.post-menu-btn { min-height: 28px; padding: 0 8px; line-height: 28px; }
+.post-menu-btn { min-height: 40px; min-width: 40px; padding: 0 8px; }
 .post-menu-panel {
   position: absolute;
   right: 0;
@@ -858,6 +878,6 @@ select {
 }
 
 /* The options under a whisper: closed, only a small line; open, they unfold in place */
-.msg-menu > summary { list-style: none; }
+.msg-menu > summary { list-style: none; display: inline-flex; align-items: center; min-height: 40px; }
 .msg-menu > summary::-webkit-details-marker { display: none; }
 .msg-menu[open] > summary { color: var(--text-3); }

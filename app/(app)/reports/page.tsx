@@ -18,13 +18,13 @@ export default async function ReportsPage() {
           ← ME
         </Link>
         <div className="spacer" />
-        <span className="px" style={{ fontSize: 9, color: "var(--text-3)" }}>
+        <span className="px" style={{ fontSize: 11, color: "var(--text-3)" }}>
           {reports.length} WAITING
         </span>
       </div>
 
       <div>
-        <div className="screen-title">REPORTS</div>
+        <h1 className="screen-title">REPORTS</h1>
         <div className="screen-intro">
           Things members have asked us to look at. What was said is copied here, so it stays even
           if it is deleted. Talk to the people involved yourselves, then mark it dealt with.
@@ -42,7 +42,7 @@ export default async function ReportsPage() {
       {reports.map((r) => (
         <form key={r.id} action={resolveReport} className="card" style={{ gap: 9 }}>
           <input type="hidden" name="id" value={r.id} />
-          <div className="px" style={{ fontSize: 8, color: "var(--muted)", lineHeight: 1.8 }}>
+          <div className="px" style={{ fontSize: 11, color: "var(--muted)", lineHeight: 1.8 }}>
             {(REPORT_REASON_LABEL[r.reason] ?? r.reason).toUpperCase()} ·{" "}
             {r.kind === "post" ? "A POST" : "A WHISPER CONVERSATION"} · {ago(r.created_at).toUpperCase()}
             <br />
@@ -65,12 +65,12 @@ export default async function ReportsPage() {
               {r.excerpt}
             </div>
           ) : null}
-          <input name="note" className="input" maxLength={500} placeholder="A note for the record (optional)" style={{ fontSize: 12 }} />
+          <input name="note" aria-label="A note for the record" className="input" maxLength={500} placeholder="A note for the record (optional)" style={{ fontSize: 12 }} />
           <div style={{ display: "flex", gap: 8 }}>
-            <button type="submit" name="act" value="action" className="btn btn-sm btn-purple" style={{ flex: 1, minHeight: 36 }}>
+            <button type="submit" name="act" value="action" className="btn btn-sm btn-purple" style={{ flex: 1, minHeight: 40 }}>
               DEALT WITH
             </button>
-            <button type="submit" name="act" value="dismiss" className="btn btn-sm" style={{ flex: 1, minHeight: 36 }}>
+            <button type="submit" name="act" value="dismiss" className="btn btn-sm" style={{ flex: 1, minHeight: 40 }}>
               NOT NEEDED
             </button>
           </div>

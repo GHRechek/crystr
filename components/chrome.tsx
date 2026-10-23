@@ -39,7 +39,7 @@ export function WellButton({ low }: { low: boolean }) {
       className="btn btn-sm"
       style={{
         fontSize: "8.5px",
-        minHeight: 26,
+        minHeight: 40,
         padding: "0 9px",
         borderColor: here ? "var(--pur)" : low ? "var(--mag)" : "var(--edge)",
         background: low ? "rgba(224,57,138,.16)" : "transparent",
@@ -77,6 +77,7 @@ export function TabBar() {
             prefetch={false}
             className="tab"
             data-active={active}
+            aria-current={active ? "page" : undefined}
           >
             <span className="glyph" aria-hidden>
               {t.glyph}
@@ -124,11 +125,11 @@ export function SetupBanner() {
 
   return (
     <Link href="/me/edit" className="setup-banner">
-      <span className="px" style={{ fontSize: 9 }}>
+      <span className="px" style={{ fontSize: 11 }}>
         FINISH SETTING UP YOUR PROFILE
       </span>
       <span className="spacer" />
-      <span className="px" style={{ fontSize: 9 }}>
+      <span className="px" style={{ fontSize: 11 }}>
         PICK A HANDLE →
       </span>
     </Link>

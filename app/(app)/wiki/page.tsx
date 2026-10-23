@@ -21,7 +21,7 @@ export default async function WikiIndex(props: { searchParams: Promise<{ q?: str
   return (
     <div className="pad" style={{ gap: 13 }}>
       <div>
-        <div className="screen-title">THE WIKI</div>
+        <h1 className="screen-title">THE WIKI</h1>
         <div className="screen-intro">
           What the City knows, a few words at a time. Reading is free. Adding a fact to a page
           takes {COSTS.wikiEdit}, and a witch reads everything before the City sees it.
@@ -30,14 +30,14 @@ export default async function WikiIndex(props: { searchParams: Promise<{ q?: str
 
       {witch ? (
         <div className="witchbar">
-          <span className="px" style={{ fontSize: 8.5, color: "var(--pur-pale)" }}>
+          <span className="px" style={{ fontSize: 11, color: "var(--pur-pale)" }}>
             WITCH ACCESS
           </span>
           <span className="spacer" />
-          <Link href="/wiki/to-read" className="btn btn-sm" style={{ minHeight: 36 }}>
+          <Link href="/wiki/to-read" className="btn btn-sm" style={{ minHeight: 40 }}>
             TO READ · {waiting}
           </Link>
-          <Link href="/wiki/new" className="btn btn-sm btn-purple" style={{ minHeight: 36 }}>
+          <Link href="/wiki/new" className="btn btn-sm btn-purple" style={{ minHeight: 40 }}>
             ＋ NEW PAGE
           </Link>
         </div>
@@ -62,7 +62,7 @@ export default async function WikiIndex(props: { searchParams: Promise<{ q?: str
       {hits ? (
         <>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <div className="px" style={{ fontSize: 9, color: "var(--muted)" }}>
+            <div className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
               {hits.length === 0
                 ? "NOTHING FOR"
                 : `${hits.length}${hits.length === 50 ? "+" : ""} ${hits.length === 1 ? "PAGE" : "PAGES"} FOR`}{" "}
@@ -104,7 +104,7 @@ export default async function WikiIndex(props: { searchParams: Promise<{ q?: str
 
       {!hits && witch && archived.length ? (
         <>
-          <div className="px" style={{ fontSize: 9, color: "var(--dim)", marginTop: 6 }}>
+          <div className="px" style={{ fontSize: 11, color: "var(--dim)", marginTop: 6 }}>
             ARCHIVED · ONLY WITCHES SEE THESE
           </div>
           {archived.map((p) => (
@@ -128,12 +128,12 @@ function Row({ page, decay, witch }: { page: WikiListing; decay: number; witch: 
           {corrupt(page.title, decay)}
         </div>
         {page.locked ? (
-          <span className="px" style={{ fontSize: 8, color: "var(--mag-soft)" }}>
+          <span className="px" style={{ fontSize: 11, color: "var(--mag-soft)" }}>
             ◈ PAUSED
           </span>
         ) : null}
       </div>
-      <div className="px" style={{ fontSize: 8, color: "var(--muted)" }}>
+      <div className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
         /{page.slug} · {page.facts} {page.facts === 1 ? "FACT" : "FACTS"}
         {witch && page.waiting ? ` · ${page.waiting} WAITING FOR A WITCH` : ""} · EDITED {ago(page.updated_at)}
       </div>
@@ -153,12 +153,12 @@ function Hit({ hit, decay }: { hit: WikiHit; decay: number }) {
           {corrupt(hit.title, decay)}
         </div>
         {hit.archived ? (
-          <span className="px" style={{ fontSize: 8, color: "var(--mag-soft)" }}>
+          <span className="px" style={{ fontSize: 11, color: "var(--mag-soft)" }}>
             ARCHIVED
           </span>
         ) : null}
       </div>
-      <div className="px" style={{ fontSize: 8, color: "var(--muted)" }}>
+      <div className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
         /{hit.slug} · MATCHES THE {hit.in === "fact" ? "FACTS" : hit.in.toUpperCase()}
       </div>
       {hit.fact ? (

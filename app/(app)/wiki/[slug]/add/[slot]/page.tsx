@@ -28,13 +28,14 @@ export default async function AddFact(props: { params: Promise<{ slug: string; s
       <input type="hidden" name="page" value={page.id} />
       <input type="hidden" name="slug" value={page.slug} />
       <input type="hidden" name="slot" value={slot} />
+      <h1 className="sr-only">Add a fact</h1>
 
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
         <Link href={`/wiki/${page.slug}`} className="btn btn-sm">
           ✕ BACK
         </Link>
         <div className="spacer" />
-        <div className="px" style={{ fontSize: 9, color: "var(--pur-pale)" }}>
+        <div className="px" style={{ fontSize: 11, color: "var(--pur-pale)" }}>
           A GAP IN “{page.title.toUpperCase()}”
         </div>
       </div>
@@ -71,7 +72,7 @@ export default async function AddFact(props: { params: Promise<{ slug: string; s
             : "REST FIRST"}
       </button>
 
-      <div style={{ fontSize: 11, lineHeight: 1.5, color: "var(--muted)" }}>
+      <div style={{ fontSize: 12, lineHeight: 1.5, color: "var(--muted)" }}>
         {profile.is_witch
           ? "As a witch, what you add goes straight onto the page. Nobody needs to approve it."
           : "Everyone else sees it only once a witch has read and kept it. Until then it is just for you and the witches. They can keep it, change the wording, or send it back."}

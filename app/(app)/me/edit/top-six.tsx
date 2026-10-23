@@ -33,10 +33,10 @@ export function TopSixPicker({
       ))}
 
       <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginTop: 6 }}>
-        <div className="px" style={{ fontSize: 11, color: "var(--blu-soft)" }}>
+        <div className="px" style={{ fontSize: 12, color: "var(--blu-soft)" }}>
           TOP 6
         </div>
-        <div style={{ fontSize: 10.5, color: "var(--muted)" }}>
+        <div style={{ fontSize: 11, color: "var(--muted)" }}>
           {picked.length}/6 picked · changing it takes {COSTS.topSix} mana
         </div>
       </div>
@@ -60,7 +60,7 @@ export function TopSixPicker({
             <div style={{ flex: 1, minWidth: 0, fontSize: 13 }}>{p.handle}</div>
             <div
               className="px"
-              style={{ fontSize: 10, color: on ? "var(--pur-bright)" : "var(--muted)" }}
+              style={{ fontSize: 11, color: on ? "var(--pur-bright)" : "var(--muted)" }}
             >
               {on ? `#${at + 1}` : "—"}
             </div>

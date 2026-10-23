@@ -43,7 +43,7 @@ export default function LoginPage(
               </div>
               <div
                 className="px"
-                style={{ fontSize: 8.5, color: "var(--dim)", marginTop: 8, lineHeight: 1.8 }}
+                style={{ fontSize: 11, color: "var(--dim)", marginTop: 8, lineHeight: 1.8 }}
               >
                 THE CITY · THE NEW WORLD
               </div>
@@ -57,7 +57,7 @@ export default function LoginPage(
 
             {problem ? (
               <div className="banner-mag banner-note">
-                <div className="px" style={{ fontSize: 8.5, marginBottom: 5 }}>
+                <div className="px" style={{ fontSize: 11, marginBottom: 5 }}>
                   THE GATE REFUSED YOU
                 </div>
                 {problem}

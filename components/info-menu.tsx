@@ -32,7 +32,7 @@ export function InfoMenu() {
         aria-label="About the game"
         aria-expanded={open}
         onClick={() => setOpen((o) => !o)}
-        style={{ minHeight: 30, padding: "0 9px" }}
+        style={{ minHeight: 40, minWidth: 40, padding: "0 9px" }}
       >
         ☰
       </button>
@@ -62,17 +62,17 @@ export function InfoMenu() {
             }}
           >
             <div style={{ display: "flex", alignItems: "center" }}>
-              <div className="px" style={{ fontSize: 11, color: "var(--pur-soft)" }}>
+              <div className="px" style={{ fontSize: 12, color: "var(--pur-soft)" }}>
                 THE GAME
               </div>
               <div className="spacer" />
-              <button type="button" className="btn btn-sm" onClick={() => setOpen(false)} style={{ minHeight: 30, padding: "0 9px" }}>
+              <button type="button" className="btn btn-sm" onClick={() => setOpen(false)} style={{ minHeight: 40, padding: "0 9px" }}>
                 ✕
               </button>
             </div>
 
             <section>
-              <div className="px" style={{ fontSize: 8.5, color: "var(--mag)", marginBottom: 8 }}>
+              <div className="px" style={{ fontSize: 11, color: "var(--mag)", marginBottom: 8 }}>
                 ABOUT
               </div>
               {paragraphs.map((p, i) => (
@@ -86,14 +86,14 @@ export function InfoMenu() {
             </section>
 
             <section>
-              <div className="px" style={{ fontSize: 8.5, color: "var(--mag)", marginBottom: 8 }}>
+              <div className="px" style={{ fontSize: 11, color: "var(--mag)", marginBottom: 8 }}>
                 WHERE
               </div>
               <div style={{ fontSize: 13.5, lineHeight: 1.5, color: "var(--text-2)" }}>{LOCATION}</div>
             </section>
 
             <section>
-              <div className="px" style={{ fontSize: 8.5, color: "var(--mag)", marginBottom: 8 }}>
+              <div className="px" style={{ fontSize: 11, color: "var(--mag)", marginBottom: 8 }}>
                 THE RULES WE KEEP
               </div>
               <Link href="/terms" className="btn btn-block" style={{ minHeight: 40 }}>

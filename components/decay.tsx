@@ -21,10 +21,10 @@ export function DecayFrame({ mana, children }: { mana: number; children: ReactNo
             !
           </span>
           <div>
-            <div className="px" style={{ fontSize: 9.5, color: "var(--mag-soft)", marginBottom: 4 }}>
+            <div className="px" style={{ fontSize: 11, color: "var(--mag-soft)", marginBottom: 4 }}>
               SIGNAL DEGRADING
             </div>
-            <div style={{ fontSize: 11.5, lineHeight: 1.5, color: "var(--text-3)" }}>
+            <div style={{ fontSize: 12, lineHeight: 1.5, color: "var(--text-3)" }}>
               {DECAY_NOTE[level]}
             </div>
           </div>
