@@ -1020,6 +1020,14 @@ select {
   min-height: 10px;
   background: repeating-linear-gradient(to bottom, var(--edge) 0 4px, transparent 4px 6px);
 }
+/* The newest reply under a post, set in from the left like a reply in a thread. */
+.tpost-replyrow {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  column-gap: 12px;
+  margin-left: 26px;
+}
 .tpost-side-reply {
   padding-top: 2px;
 }

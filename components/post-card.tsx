@@ -17,7 +17,6 @@ export function PostCard({
   inThread,
   thread,
   line,
-  small,
 }: {
   post: FeedPost;
   me: string;
@@ -28,8 +27,6 @@ export function PostCard({
   thread?: number;
   /** Draw the thread line down from the picture, to the next post in the thread. */
   line?: boolean;
-  /** A reply: a smaller picture. */
-  small?: boolean;
 }) {
   const mine = post.author.id === me;
 
@@ -51,7 +48,7 @@ export function PostCard({
     <div className="tpost">
       <div className="tpost-side">
         <Link href={`/u/${post.author.handle}`} aria-label={`${post.author.handle}'s profile`}>
-          <Avatar person={post.author} size={small ? 30 : 40} />
+          <Avatar person={post.author} size={40} />
         </Link>
         {line || post.latest_reply ? <div className="tline" aria-hidden /> : null}
       </div>
@@ -111,10 +108,10 @@ export function PostCard({
       </div>
 
       {post.latest_reply && !inThread ? (
-        <>
+        <div className="tpost-replyrow">
           <div className="tpost-side tpost-side-reply">
             <Link href={`/u/${post.latest_reply.author.handle}`} aria-label={`${post.latest_reply.author.handle}'s profile`}>
-              <Avatar person={post.latest_reply.author} size={30} />
+              <Avatar person={post.latest_reply.author} size={40} />
             </Link>
           </div>
           <Link href={`/thread/${post.id}`} className="tpost-main tpost-reply">
@@ -131,7 +128,7 @@ export function PostCard({
               </span>
             ) : null}
           </Link>
-        </>
+        </div>
       ) : null}
     </div>
   );
