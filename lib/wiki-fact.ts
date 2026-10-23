@@ -1,13 +1,13 @@
-// A wiki fact is a few key words: one line, up to 3 words and 80 characters when someone adds
+// A wiki fact is a few key words: one line, up to 4 words and 80 characters when someone adds
 // one. Pure, so the form and the server agree (the database says the same in cr_wiki_add_fact).
 // A witch reading what is waiting can keep or reword a fact up to 10 words, so facts sent
 // before the limit came down can still be kept (cr_wiki_review_fact).
 
 export const FACT_MAX_CHARS = 80;
-export const FACT_MAX_WORDS = 3;
+export const FACT_MAX_WORDS = 4;
 export const FACT_REVIEW_MAX_WORDS = 10;
 /** FACT_MAX_WORDS in words, for messages. */
-export const FACT_MAX_WORDS_TEXT = "three";
+export const FACT_MAX_WORDS_TEXT = "four";
 
 /** Zero-width spaces, bidi marks and overrides, soft hyphen and BOM: they show nothing but
  *  can hide words or reorder what is displayed. The database strips the same set. The two
