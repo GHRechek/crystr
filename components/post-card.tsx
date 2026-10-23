@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Avatar, Placeholder } from "@/components/bits";
 import { likePost } from "@/lib/actions";
 import { PostMenu } from "@/components/report-button";
+import { Cost } from "@/components/mana";
 import { ago, corrupt } from "@/lib/crystr";
 import type { FeedPost } from "@/lib/data";
 
@@ -60,7 +61,7 @@ export function PostCard({
         <div className="spacer" />
         {post.cost > 0 ? (
           <div className="px" style={{ fontSize: 11, color: "var(--dim)" }}>
-            -{post.cost}
+            <Cost n={post.cost} />
           </div>
         ) : null}
         {mine ? null : (
@@ -106,7 +107,7 @@ export function PostCard({
               color: post.liked ? "var(--mag-soft)" : "var(--dim)",
             }}
           >
-            ♥ {post.likes}
+            ♥ {post.likes} <Cost n={1} />
           </button>
         </form>
         {inThread ? null : (
@@ -115,9 +116,7 @@ export function PostCard({
           </Link>
         )}
         <div className="spacer" />
-        <span className="px" style={{ fontSize: 11, color: "var(--dim)" }}>
-          -1 TO LIKE
-        </span>
+
       </div>
     </div>
   );

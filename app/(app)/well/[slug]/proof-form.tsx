@@ -7,6 +7,7 @@ import { submitQuest } from "@/lib/actions";
 import { untilReady } from "@/lib/crystr";
 import type { Quest } from "@/lib/data";
 import { StillTimer } from "./still-timer";
+import { Gain } from "@/components/mana";
 import { DrawingPad } from "./drawing-pad";
 
 type Stage = "empty" | "uploading" | "attached" | "failed";
@@ -118,7 +119,7 @@ export function ProofForm({ quest, userId }: { quest: Quest; userId: string }) {
             RESTORES
           </div>
           <div className="px" style={{ fontSize: 16, color: "var(--blu-soft)" }}>
-            +{quest.reward}
+            <Gain n={quest.reward} />
           </div>
         </div>
         <div className="tile" style={{ flex: 1 }}>

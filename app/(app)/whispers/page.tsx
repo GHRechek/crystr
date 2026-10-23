@@ -14,9 +14,7 @@ export default async function WhispersPage() {
         <h1 className="screen-title" style={{ marginBottom: 0 }}>
           WHISPERS
         </h1>
-        <div style={{ fontSize: 12, color: "var(--muted)" }}>
-          A whisper takes {COSTS.whisper} mana. Silence is free.
-        </div>
+        <div style={{ fontSize: 12, color: "var(--muted)" }}>Silence is free.</div>
       </div>
 
       {threads.map((t) => (

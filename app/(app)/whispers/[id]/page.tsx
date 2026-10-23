@@ -55,9 +55,6 @@ export default async function ThreadPage(props: {
           <h1 style={{ fontSize: 13.5, fontWeight: 500 }}>{thread.other.handle}</h1>
         </Link>
         <div className="spacer" />
-        <div className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
-          {COSTS.whisper}/MSG
-        </div>
       </div>
 
       <div

@@ -23,8 +23,8 @@ export default async function WikiIndex(props: { searchParams: Promise<{ q?: str
       <div>
         <h1 className="screen-title">THE WIKI</h1>
         <div className="screen-intro">
-          What the City knows, a few words at a time. Reading is free. Adding a fact to a page
-          takes {COSTS.wikiEdit}, and a witch reads everything before the City sees it.
+          What the City knows, a few words at a time. Reading is free, and a witch reads everything
+          before the City sees it.
         </div>
       </div>
 

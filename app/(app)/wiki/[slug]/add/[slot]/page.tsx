@@ -4,6 +4,7 @@ import { requireMe } from "@/lib/data";
 import { getWikiFacts, getWikiPage, SLUG } from "@/lib/wiki";
 import { addFact } from "@/lib/wiki-actions";
 import { COSTS } from "@/lib/crystr";
+import { Cost } from "@/components/mana";
 import { FACT_MAX_CHARS, FACT_MAX_WORDS_TEXT } from "@/lib/wiki-fact";
 
 /** Adding a few words to one spot on a page. */
@@ -68,7 +69,11 @@ export default async function AddFact(props: { params: Promise<{ slug: string; s
             ? "PUT IT ON THE PAGE · FREE"
             : "UPDATE YOUR WORDS · FREE"
           : affordable
-            ? `ADD TO THE PAGE · USES ${COSTS.wikiEdit}`
+            ? (
+              <>
+                ADD TO THE PAGE <Cost n={COSTS.wikiEdit} />
+              </>
+            )
             : "REST FIRST"}
       </button>
 

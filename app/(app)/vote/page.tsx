@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Cost } from "@/components/mana";
 import { requireMe, getMotions, getPlaintiffSince, type Motion } from "@/lib/data";
 import { castVote } from "@/lib/actions";
 import { ago, closesIn, corrupt, COSTS, decayLevel } from "@/lib/crystr";
@@ -20,8 +21,7 @@ export default async function VotePage(
       <div>
         <h1 className="screen-title">THE MOTION BOARD</h1>
         <div className="screen-intro">
-          Three mana a vote. The charge is deliberate: opinions people pay for are held
-          slightly better than opinions they don&apos;t.
+          Opinions people pay for are held slightly better than opinions they don&apos;t.
         </div>
       </div>
 
@@ -210,7 +210,7 @@ function Open({ motion, mana, decay, registered }: { motion: Motion; mana: numbe
             color: motion.my_side === "for" ? "var(--mag-pale)" : "var(--blu-pale)",
           }}
         >
-          YOU VOTED {motion.my_side.toUpperCase()} · {COSTS.vote} MANA USED
+          YOU VOTED {motion.my_side.toUpperCase()} <Cost n={COSTS.vote} />
         </div>
       ) : !registered ? (
         <Link href="/me/plaintiff" className="btn btn-block" style={{ minHeight: 44, fontSize: 11 }}>
@@ -227,7 +227,7 @@ function Open({ motion, mana, decay, registered }: { motion: Motion; mana: numbe
                 className={`btn btn-block ${side === "for" ? "btn-mag" : "btn-blue"}`}
                 style={{ minHeight: 44, fontSize: 11, opacity: mana >= COSTS.vote ? 1 : 0.5 }}
               >
-                {side.toUpperCase()} · USES {COSTS.vote}
+                {side.toUpperCase()} <Cost n={COSTS.vote} />
               </button>
             </form>
           ))}

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { setTopFriends } from "@/lib/actions";
 import { Avatar } from "@/components/bits";
 import { COSTS } from "@/lib/crystr";
+import { Cost } from "@/components/mana";
 import type { Author } from "@/lib/data";
 
 /** Order matters and is the order you pick them in — which is the whole
@@ -37,7 +38,7 @@ export function TopSixPicker({
           TOP 6
         </div>
         <div style={{ fontSize: 11, color: "var(--muted)" }}>
-          {picked.length}/6 picked · changing it takes {COSTS.topSix} mana
+          {picked.length}/6 picked
         </div>
       </div>
 
@@ -76,7 +77,13 @@ export function TopSixPicker({
           className={`btn btn-lg btn-block${changed ? " btn-mag" : ""}`}
           aria-disabled={!changed}
         >
-          {changed ? `SAVE THE TOP 6 · USES ${COSTS.topSix}` : "TOP 6 UNCHANGED"}
+          {changed ? (
+            <>
+              SAVE THE TOP 6 <Cost n={COSTS.topSix} />
+            </>
+          ) : (
+            "TOP 6 UNCHANGED"
+          )}
         </button>
       )}
     </form>

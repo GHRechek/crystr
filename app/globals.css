@@ -947,3 +947,19 @@ select {
   position: relative;
 }
 
+
+/* The mana potion */
+.mana-icon {
+  width: 13px;
+  height: 13px;
+  vertical-align: -2px;
+  image-rendering: pixelated;
+}
+.mana-icon-lg {
+  width: 26px;
+  height: 26px;
+  vertical-align: middle;
+}
+.cost {
+  white-space: nowrap;
+}
