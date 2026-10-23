@@ -909,6 +909,8 @@ select {
   vertical-align: -1px;
   background: url("/runes/runes-bold-white.png") no-repeat;
   image-rendering: pixelated;
+  /* A touch dimmer than the facts, so what people wrote stands out against them. */
+  opacity: 0.68;
 }
 .rune-word {
   white-space: nowrap;
