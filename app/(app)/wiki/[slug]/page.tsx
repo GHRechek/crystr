@@ -13,6 +13,11 @@ const TEXT = { fontSize: 16, lineHeight: 1.4 } as const;
 /** What a person added: sharp, same size as the text around it. */
 const FOCUS = { color: "#fff", fontWeight: 700 } as const;
 
+/** Each fact drifts at its own slow pace, starting at its own point in the drift. */
+function floatOf(id: number) {
+  return { animationDuration: `${9 + (id % 5)}s`, animationDelay: `-${(id * 3.7) % 9}s` };
+}
+
 /** A fact reads as a sentence in the paragraph: end it with a full stop. */
 function sentence(text: string): string {
   return /[.!?…]$/.test(text) ? text : `${text}.`;
@@ -93,7 +98,7 @@ export default async function WikiPageView(props: { params: Promise<{ slug: stri
           <p
             key={pi}
             className="wiki-px"
-            style={{ ...TEXT, margin: 0, textAlign: "justify", textIndent: "1.6em", color: "var(--text-2)" }}
+            style={{ ...TEXT, margin: 0, textAlign: "left", color: "var(--text-2)" }}
           >
             {pieces.map((piece, i) =>
               piece.kind === "runes" ? (
@@ -110,7 +115,9 @@ export default async function WikiPageView(props: { params: Promise<{ slug: stri
                 <Link
                   key={i}
                   href={paused ? `/wiki/${page.slug}` : `/wiki/${page.slug}/add/${piece.fact.slot}`}
+                  className="wiki-fact"
                   style={{
+                    ...floatOf(piece.fact.id),
                     ...FOCUS,
                     color: "var(--pur-pale)",
                     background: "rgba(140,90,230,.14)",
@@ -122,7 +129,7 @@ export default async function WikiPageView(props: { params: Promise<{ slug: stri
                   {sentence(corrupt(piece.fact.body, decay))}{" "}
                 </Link>
               ) : (
-                <span key={i} style={FOCUS}>
+                <span key={i} className="wiki-fact" style={{ ...FOCUS, ...floatOf(piece.fact.id) }}>
                   {sentence(corrupt(piece.fact.body, decay))}{" "}
                 </span>
               ),
