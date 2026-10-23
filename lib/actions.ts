@@ -190,6 +190,26 @@ export async function submitQuest(fd: FormData) {
   );
   revalidatePath("/well");
   revalidatePath("/");
+  // Handed in. Offer to show it to the City before heading back.
+  redirect(`/well/${slug}/share`);
+}
+
+/** Turn a hand-in into a post, with something said about it. Free: the Well already asked
+ *  enough of you. Passing (no caption, no post) goes back to the feed. */
+export async function shareQuest(fd: FormData) {
+  const slug = str(fd, "slug");
+  const caption = str(fd, "caption").slice(0, 500);
+  if (str(fd, "skip") === "1") redirect("/");
+
+  const r = await call("cr_share_quest", { p_submission: Number(fd.get("submission")), p_caption: caption });
+  if (!r.ok) {
+    if (r.code === "already") await setFlash("ALREADY SHARED", "That one is already on the feed.", EDGE.purple);
+    else await wentWrong();
+    redirect("/");
+  }
+  const note = await newBadges();
+  await setFlash("POSTED", `It is on the feed now.${note}`, EDGE.blue);
+  revalidatePath("/");
   redirect("/");
 }
 
