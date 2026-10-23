@@ -149,7 +149,7 @@ export async function submitQuest(fd: FormData) {
     if (r.code === "no_proof") {
       await setFlash(
         "NO PROOF",
-        "The Well needs something to go on. Add a photo, or write down what you did.",
+        "The Well needs something to go on. Add a drawing or a photo where it asks for one, or write down what you did.",
         EDGE.mag,
       );
     } else if (r.code === "too_soon" || r.code === "no_timer") {

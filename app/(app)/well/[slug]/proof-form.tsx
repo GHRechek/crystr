@@ -7,6 +7,7 @@ import { submitQuest } from "@/lib/actions";
 import { untilReady } from "@/lib/crystr";
 import type { Quest } from "@/lib/data";
 import { StillTimer } from "./still-timer";
+import { DrawingPad } from "./drawing-pad";
 
 type Stage = "empty" | "uploading" | "attached" | "failed";
 
@@ -14,6 +15,7 @@ export function ProofForm({ quest, userId }: { quest: Quest; userId: string }) {
   const [stage, setStage] = useState<Stage>("empty");
   const [path, setPath] = useState("");
   const [note, setNote] = useState("");
+  const [preview, setPreview] = useState("");
   const cameraRef = useRef<HTMLInputElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -21,10 +23,15 @@ export function ProofForm({ quest, userId }: { quest: Quest; userId: string }) {
 
   const waiting = !!quest.ready_at;
   const timed = !!quest.timer_seconds;
-  const hasProof = timed ? timerDone : stage === "attached" || note.trim().length >= 12;
+  const drawing = quest.drawing_pad;
+  // Where a picture is required, words are not an option at all.
+  const wordsOk = !timed && !quest.proof_required;
+  const hasProof = timed ? timerDone : stage === "attached" || (wordsOk && note.trim().length >= 12);
 
   async function upload(file: File) {
     setStage("uploading");
+    if (preview) URL.revokeObjectURL(preview);
+    setPreview(URL.createObjectURL(file));
     const supabase = createClient();
     const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
     const key = `${userId}/${quest.slug}-${Date.now()}.${ext}`;
@@ -132,6 +139,41 @@ export function ProofForm({ quest, userId }: { quest: Quest; userId: string }) {
         <StillTimer slug={quest.slug} seconds={quest.timer_seconds!} onDone={setTimerDone} />
       ) : (
         <>
+      {drawing && stage === "attached" ? (
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={preview}
+            alt="Your drawing, ready to hand in"
+            style={{ width: "100%", borderRadius: "var(--px-r)", boxShadow: "0 0 0 2px var(--blu)" }}
+          />
+          <button
+            type="button"
+            className="btn btn-sm"
+            onClick={() => {
+              setStage("empty");
+              setPath("");
+              if (preview) URL.revokeObjectURL(preview);
+              setPreview("");
+            }}
+            style={{ alignSelf: "flex-start" }}
+          >
+            ↶ DRAW IT AGAIN
+          </button>
+        </div>
+      ) : null}
+
+      {drawing && stage !== "attached" ? (
+        <>
+          <DrawingPad onDone={(f) => void upload(f)} disabled={stage === "uploading"} />
+          <div className="px" style={{ fontSize: 11, color: "var(--muted)", lineHeight: 1.7 }}>
+            OR PHOTOGRAPH A DRAWING YOU MADE ON PAPER
+          </div>
+        </>
+      ) : null}
+
+      {drawing && stage === "attached" ? null : (
+        <>
       {/* Two inputs, because `capture` is all-or-nothing: with it the phone
           opens straight into the camera and the library is unreachable,
           without it you only ever get the library. The tile is the camera —
@@ -206,6 +248,10 @@ export function ProofForm({ quest, userId }: { quest: Quest; userId: string }) {
         ▣ OR CHOOSE ONE YOU ALREADY TOOK
       </button>
 
+        </>
+      )}
+
+      {wordsOk ? (
       <div className="field">
         <label htmlFor="note">OR WRITE IT DOWN — WHAT YOU DID, IN YOUR WORDS</label>
         <textarea
@@ -218,6 +264,7 @@ export function ProofForm({ quest, userId }: { quest: Quest; userId: string }) {
           placeholder="For the quests whose artifact is a sentence rather than a photograph."
         />
       </div>
+      ) : null}
 
         </>
       )}
@@ -235,6 +282,8 @@ export function ProofForm({ quest, userId }: { quest: Quest; userId: string }) {
               : `SUBMIT PROOF · +${quest.reward}`
             : timed
               ? "FINISH THE TIMER FIRST"
+              : drawing
+              ? "ADD YOUR DRAWING FIRST"
               : "ATTACH PROOF FIRST"}
       </button>
     </form>

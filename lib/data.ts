@@ -180,6 +180,10 @@ export type Quest = {
   cooldown_hours: number;
   /** Set for quests that are about time: the length, in seconds, of the on-screen timer. */
   timer_seconds: number | null;
+  /** A picture is required (words alone are not accepted). */
+  proof_required: boolean;
+  /** Offer the in-app drawing pad. */
+  drawing_pad: boolean;
   ready_at: string | null;
 };
 
