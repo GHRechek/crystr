@@ -61,7 +61,7 @@ export default async function EditProfilePage() {
             className="textarea"
             rows={5}
             defaultValue={profile.bio ?? ""}
-            maxLength={40}
+            maxLength={500}
             placeholder="Who you are in The City, and what you trade in."
           />
         </div>

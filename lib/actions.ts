@@ -570,9 +570,10 @@ export async function setArticleStatus(fd: FormData) {
 
 // ---------------------------------------------------------------- profile
 
-/** Profile text is held to this many characters (the database holds the same line). */
+/** Profile text is held to this many characters (the database holds the same line; the about-me box allows more). */
 const PROFILE_FIELD_MAX = 40;
-const field = (fd: FormData, key: string) => str(fd, key).slice(0, PROFILE_FIELD_MAX) || null;
+const BIO_MAX = 500;
+const field = (fd: FormData, key: string, max = PROFILE_FIELD_MAX) => str(fd, key).slice(0, max) || null;
 
 export async function updateProfile(fd: FormData) {
   const supabase = createClient();
@@ -600,7 +601,7 @@ export async function updateProfile(fd: FormData) {
     .update({
       handle,
       display_name: field(fd, "display_name"),
-      bio: field(fd, "bio"),
+      bio: field(fd, "bio", BIO_MAX),
       likes: field(fd, "likes"),
       dislikes: field(fd, "dislikes"),
       food: field(fd, "food"),

@@ -15,7 +15,7 @@
 
 alter table public.profiles
   add constraint profiles_display_name_len check (char_length(display_name) <= 40),
-  add constraint profiles_bio_len          check (char_length(bio) <= 40),
+  add constraint profiles_bio_len          check (char_length(bio) <= 40),  -- later raised to 500, see 20261023010000
   add constraint profiles_likes_len        check (char_length(likes) <= 40),
   add constraint profiles_dislikes_len     check (char_length(dislikes) <= 40),
   add constraint profiles_food_len         check (char_length(food) <= 40),
