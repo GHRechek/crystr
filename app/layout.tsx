@@ -20,7 +20,7 @@ const silkscreen = Silkscreen({
 // only, which is fine for labels and tiring for paragraphs.
 const pixelBody = Pixelify_Sans({
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-pixel-body",
   display: "swap",
 });

@@ -891,8 +891,8 @@ select {
 
 /* ------------------------------------------------------------------- wiki */
 /* The wiki reads in a pixel face and looks a little corrupted: the unreadable text between
-   facts is blurred past reading and split into magenta and blue fringes. Nothing on the wiki
-   moves. What people actually wrote stays crisp. */
+   facts is written in runes, white and crisp; what people actually wrote is in the bold pixel
+   face. Nothing on the wiki moves. */
 .wiki-px {
   font-family: var(--font-pixel-body), var(--px-font), ui-monospace, monospace;
   font-optical-sizing: none;
@@ -900,17 +900,18 @@ select {
   -webkit-font-smoothing: none;
 }
 
-.wiki-blur {
-  color: transparent;
-  /* Every layer is blurred, fringes included: a sharp offset copy of the letters would
-     keep them readable. Heavy enough that only the shapes of words survive. */
-  text-shadow:
-    -3px 0 8px rgba(224, 57, 138, 0.75),
-    3px 0 8px rgba(76, 125, 240, 0.75),
-    0 0 9px rgba(190, 196, 230, 1);
-  user-select: none;
-  pointer-events: none;
-  position: relative;
+/* One rune: 12 pixels square, cut out of the sprite sheet, white and bold. */
+.rune {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin-right: 1px;
+  vertical-align: -1px;
+  background: url("/runes/runes-bold-white.png") no-repeat;
+  image-rendering: pixelated;
+}
+.rune-word {
+  white-space: nowrap;
 }
 
 .wiki-title {
