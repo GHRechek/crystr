@@ -10,5 +10,10 @@ export default async function EditArticlePage(props: { params: Promise<{ id: str
   const article = await getArticle(Number(params.id));
   if (!article) notFound();
 
-  return <Editor kind="dispatch" article={article} />;
+  return (
+    <>
+      <h1 className="sr-only">Edit a dispatch</h1>
+      <Editor kind="dispatch" article={article} />
+    </>
+  );
 }

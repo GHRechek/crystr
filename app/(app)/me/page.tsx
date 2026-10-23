@@ -56,7 +56,7 @@ export default async function ProfilePage() {
         <div className="tile" style={{ padding: 12 }}>
           <div
             className="px"
-            style={{ fontSize: 8.5, color: "var(--mag)", letterSpacing: ".07em", marginBottom: 7 }}
+            style={{ fontSize: 11, color: "var(--mag)", letterSpacing: ".07em", marginBottom: 7 }}
           >
             ABOUT ME
           </div>
@@ -71,7 +71,7 @@ export default async function ProfilePage() {
           <div className="tile" style={{ padding: 12 }}>
             <div
               className="px"
-              style={{ fontSize: 8.5, color: "var(--blu-soft)", letterSpacing: ".07em", marginBottom: 8 }}
+              style={{ fontSize: 11, color: "var(--blu-soft)", letterSpacing: ".07em", marginBottom: 8 }}
             >
               THE DETAILS
             </div>
@@ -80,7 +80,7 @@ export default async function ProfilePage() {
                 <div key={label} style={{ display: "flex", gap: 10, alignItems: "baseline" }}>
                   <div
                     className="px"
-                    style={{ fontSize: 8, color: "var(--muted)", width: 92, flex: "none" }}
+                    style={{ fontSize: 11, color: "var(--muted)", width: 120, flex: "none" }}
                   >
                     {label}
                   </div>
@@ -95,10 +95,10 @@ export default async function ProfilePage() {
 
         <div>
           <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 8 }}>
-            <div className="px" style={{ fontSize: 11, color: "var(--blu-soft)" }}>
+            <div className="px" style={{ fontSize: 12, color: "var(--blu-soft)" }}>
               TOP 6
             </div>
-            <div style={{ fontSize: 10.5, color: "var(--muted)" }}>
+            <div style={{ fontSize: 11, color: "var(--muted)" }}>
               reordering takes {COSTS.topSix} mana
             </div>
           </div>
@@ -121,7 +121,7 @@ export default async function ProfilePage() {
                 )}
                 <div
                   style={{
-                    fontSize: 9.5,
+                    fontSize: 11,
                     color: "var(--muted)",
                     textAlign: "center",
                     whiteSpace: "nowrap",
@@ -139,21 +139,21 @@ export default async function ProfilePage() {
 
         {plaintiffSince ? (
           <div className="tile" style={{ padding: 12, display: "flex", alignItems: "center", gap: 10 }}>
-            <div className="px" style={{ fontSize: 9, color: "var(--blu-soft)" }}>
+            <div className="px" style={{ fontSize: 11, color: "var(--blu-soft)" }}>
               ✓ REGISTERED PLAINTIFF
             </div>
             <span className="spacer" />
-            <div className="px" style={{ fontSize: 8, color: "var(--muted)" }}>
+            <div className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
               SINCE {ago(plaintiffSince).toUpperCase()}
             </div>
           </div>
         ) : (
           <Link href="/me/plaintiff" className="tile" style={{ padding: 12, display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
             <div>
-              <div className="px" style={{ fontSize: 9, color: "var(--pur-pale)" }}>
+              <div className="px" style={{ fontSize: 11, color: "var(--pur-pale)" }}>
                 BECOME A REGISTERED PLAINTIFF
               </div>
-              <div style={{ fontSize: 11, lineHeight: 1.45, color: "var(--muted)", marginTop: 4 }}>
+              <div style={{ fontSize: 12, lineHeight: 1.45, color: "var(--muted)", marginTop: 4 }}>
                 File Form 12-A and go on the City's books.
               </div>
             </div>
@@ -167,11 +167,11 @@ export default async function ProfilePage() {
         {badges.length ? (
           <div>
             <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 8 }}>
-              <div className="px" style={{ fontSize: 11, color: "var(--mag-soft)" }}>
+              <div className="px" style={{ fontSize: 12, color: "var(--mag-soft)" }}>
                 BADGES
               </div>
               <span className="spacer" />
-              <div className="px" style={{ fontSize: 8, color: "var(--muted)" }}>
+              <div className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
                 {earnedCount} OF {badges.length}
               </div>
             </div>
@@ -218,10 +218,10 @@ export default async function ProfilePage() {
                       </div>
                     )}
                     <div style={{ minWidth: 0 }}>
-                      <div className="px" style={{ fontSize: 8, color: got ? "var(--text)" : "var(--muted)", lineHeight: 1.5 }}>
+                      <div className="px" style={{ fontSize: 11, color: got ? "var(--text)" : "var(--muted)", lineHeight: 1.5 }}>
                         {b.title}
                       </div>
-                      <div style={{ fontSize: 10.5, lineHeight: 1.45, color: "var(--muted)", marginTop: 3 }}>
+                      <div style={{ fontSize: 11, lineHeight: 1.45, color: "var(--muted)", marginTop: 3 }}>
                         {got ? b.blurb : b.how}
                       </div>
                     </div>
@@ -236,11 +236,11 @@ export default async function ProfilePage() {
           <div
             style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 8 }}
           >
-            <div className="px" style={{ fontSize: 11, color: "var(--pur-soft)" }}>
+            <div className="px" style={{ fontSize: 12, color: "var(--pur-soft)" }}>
               LEDGER
             </div>
             <span className="spacer" />
-            <div className="px" style={{ fontSize: 8, color: "var(--muted)" }}>
+            <div className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
               SPENT TOTAL
             </div>
             <div className="px" style={{ fontSize: 12, color: "var(--pur-soft)" }}>
@@ -262,7 +262,7 @@ export default async function ProfilePage() {
                 <div
                   className="px"
                   style={{
-                    fontSize: 11,
+                    fontSize: 12,
                     width: 40,
                     flex: "none",
                     color: l.amount > 0 ? "var(--blu-soft)" : "var(--mag-soft)",
@@ -283,7 +283,7 @@ export default async function ProfilePage() {
                 >
                   {l.reason}
                 </div>
-                <div className="px" style={{ fontSize: 8, color: "var(--dim)", flex: "none" }}>
+                <div className="px" style={{ fontSize: 11, color: "var(--dim)", flex: "none" }}>
                   {ago(l.created_at)}
                 </div>
               </div>
@@ -292,7 +292,7 @@ export default async function ProfilePage() {
         </div>
 
         {profile.is_witch ? (
-          <Link href="/reports" className="btn btn-sm" style={{ minHeight: 36, alignSelf: "flex-start" }}>
+          <Link href="/reports" className="btn btn-sm" style={{ minHeight: 40, alignSelf: "flex-start" }}>
             REPORTS · {openReports}
           </Link>
         ) : null}

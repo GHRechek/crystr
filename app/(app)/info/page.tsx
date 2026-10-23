@@ -15,7 +15,7 @@ export default function GameInfoPage() {
       </div>
 
       <div>
-        <div className="screen-title">GAME INFO</div>
+        <h1 className="screen-title">GAME INFO</h1>
         <div style={{ fontSize: 18, fontWeight: 500, letterSpacing: "-.01em", lineHeight: 1.25, marginTop: 4 }}>
           {G.title}
         </div>
@@ -30,7 +30,7 @@ export default function GameInfoPage() {
       <div className="card" style={{ gap: 10 }}>
         {G.details.map(([k, v]) => (
           <div key={k}>
-            <div className="px" style={{ fontSize: 8, color: "var(--mag)", marginBottom: 4 }}>
+            <div className="px" style={{ fontSize: 11, color: "var(--mag)", marginBottom: 4 }}>
               {k}
             </div>
             <div style={{ fontSize: 13, lineHeight: 1.5 }}>{v}</div>
@@ -54,9 +54,9 @@ export default function GameInfoPage() {
       ))}
 
       <div>
-        <div className="screen-title" style={{ marginTop: 6 }}>
+        <h2 className="screen-title" style={{ marginTop: 6 }}>
           {G.rulesTitle.toUpperCase()}
-        </div>
+        </h2>
         <div className="card" style={{ gap: 9 }}>
           {G.rules.map(([lead, rest]) => (
             <div key={lead} style={body}>
@@ -68,9 +68,9 @@ export default function GameInfoPage() {
       </div>
 
       <div>
-        <div className="screen-title" style={{ marginTop: 6 }}>
+        <h2 className="screen-title" style={{ marginTop: 6 }}>
           {G.worldTitle.toUpperCase()}
-        </div>
+        </h2>
         {G.world.map((p, i) => (
           <div key={i} style={{ ...body, marginBottom: 10 }}>
             {p}

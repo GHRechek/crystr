@@ -35,7 +35,7 @@ export default async function TermsPage() {
         <main className="screen">
           <div className="pad" style={{ gap: 14 }}>
             <div>
-              <div className="screen-title">BEFORE YOU COME IN</div>
+              <h1 className="screen-title">BEFORE YOU COME IN</h1>
               <div className="screen-intro">
                 {accepted
                   ? "The terms you agreed to."
@@ -44,7 +44,7 @@ export default async function TermsPage() {
             </div>
 
             <div className="card" style={{ gap: 11 }}>
-              <div className="px" style={{ fontSize: 8.5, color: "var(--mag)" }}>
+              <div className="px" style={{ fontSize: 11, color: "var(--mag)" }}>
                 TERMS OF SERVICE
               </div>
               <div style={{ fontSize: 13, lineHeight: 1.6, color: "var(--text-2)" }}>

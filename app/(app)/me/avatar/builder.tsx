@@ -57,7 +57,7 @@ export function AvatarBuilder({ start, fresh }: { start: PortraitConfig; fresh: 
           ← ME
         </Link>
         <div className="spacer" />
-        <div className="px" style={{ fontSize: 9, color: "var(--muted)" }}>
+        <div className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
           A FACE COSTS NOTHING
         </div>
       </div>
@@ -160,13 +160,13 @@ export function AvatarBuilder({ start, fresh }: { start: PortraitConfig; fresh: 
               borderBottom: "1px solid var(--rule-soft)",
             }}
           >
-            <div className="px" style={{ fontSize: 9, color: "var(--dim)", flex: 1 }}>
+            <div className="px" style={{ fontSize: 11, color: "var(--dim)", flex: 1 }}>
               {control.label}
             </div>
             <button
               type="button"
               className="btn btn-sm"
-              style={{ minWidth: 38 }}
+              style={{ minWidth: 40 }}
               onClick={() => step(control.key, -1)}
               aria-label={`${control.label} previous`}
             >
@@ -174,7 +174,7 @@ export function AvatarBuilder({ start, fresh }: { start: PortraitConfig; fresh: 
             </button>
             <div
               className="px"
-              style={{ fontSize: 9, color: "var(--muted)", width: 46, textAlign: "center" }}
+              style={{ fontSize: 11, color: "var(--muted)", width: 46, textAlign: "center" }}
             >
               {c[control.key] === NONE
                 ? "NONE"
@@ -183,7 +183,7 @@ export function AvatarBuilder({ start, fresh }: { start: PortraitConfig; fresh: 
             <button
               type="button"
               className="btn btn-sm"
-              style={{ minWidth: 38 }}
+              style={{ minWidth: 40 }}
               onClick={() => step(control.key, 1)}
               aria-label={`${control.label} next`}
             >

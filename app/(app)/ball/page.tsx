@@ -24,6 +24,7 @@ export default async function BallPage(
 
   return (
     <div className="pad">
+      <h1 className="sr-only">The Ball</h1>
       <div>
         <div
           className="px"
@@ -57,7 +58,7 @@ export default async function BallPage(
             boxShadow: "inset 0 0 0 1px var(--edge)",
           }}
         >
-          <span className="px" style={{ fontSize: 8, color: "var(--dim)" }}>
+          <span className="px" style={{ fontSize: 11, color: "var(--dim)" }}>
             VIEWING AS
           </span>
           <span className="spacer" />
@@ -65,12 +66,12 @@ export default async function BallPage(
             href="/ball"
             className="px"
             style={{
-              minHeight: 30,
+              minHeight: 40,
               padding: "0 10px",
               display: "grid",
               placeItems: "center",
               borderRadius: 4,
-              fontSize: 8.5,
+              fontSize: 11,
               background: asWitch ? "rgba(145,132,217,.3)" : "transparent",
               color: asWitch ? "var(--pur-bright)" : "var(--muted)",
             }}
@@ -81,12 +82,12 @@ export default async function BallPage(
             href="/ball?as=player"
             className="px"
             style={{
-              minHeight: 30,
+              minHeight: 40,
               padding: "0 10px",
               display: "grid",
               placeItems: "center",
               borderRadius: 4,
-              fontSize: 8.5,
+              fontSize: 11,
               background: !asWitch ? "rgba(224,57,138,.26)" : "transparent",
               color: !asWitch ? "var(--mag-pale)" : "var(--muted)",
             }}
@@ -98,11 +99,11 @@ export default async function BallPage(
 
       {asWitch ? (
         <div className="witchbar">
-          <span className="px" style={{ fontSize: 8.5, color: "var(--pur-pale)" }}>
+          <span className="px" style={{ fontSize: 11, color: "var(--pur-pale)" }}>
             WITCH ACCESS
           </span>
           <span className="spacer" />
-          <Link href="/ball/new" className="btn btn-sm btn-purple" style={{ minHeight: 36 }}>
+          <Link href="/ball/new" className="btn btn-sm btn-purple" style={{ minHeight: 40 }}>
             ＋ NEW DISPATCH
           </Link>
         </div>
@@ -125,31 +126,31 @@ export default async function BallPage(
           }}
         >
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <span className="px" style={{ fontSize: 9.5, color: "var(--pur-pale)" }}>
+            <span className="px" style={{ fontSize: 11, color: "var(--pur-pale)" }}>
               IN REVIEW
             </span>
-            <span className="px" style={{ fontSize: 9.5, color: "var(--mag-soft)" }}>
+            <span className="px" style={{ fontSize: 11, color: "var(--mag-soft)" }}>
               {queue.length}
             </span>
             <span className="spacer" />
-            <span style={{ fontSize: 10.5, color: "var(--muted)" }}>player op-eds</span>
+            <span style={{ fontSize: 11, color: "var(--muted)" }}>player op-eds</span>
           </div>
 
           {queue.map((a) => (
             <div key={a.id} className="card" style={{ padding: 11, gap: 8 }}>
-              <div className="px" style={{ fontSize: 8, color: "var(--mag-soft)" }}>
+              <div className="px" style={{ fontSize: 11, color: "var(--mag-soft)" }}>
                 OP-ED · {a.author.handle.toUpperCase()}
               </div>
               <div style={{ fontSize: 13.5, fontWeight: 500, lineHeight: 1.3, textWrap: "pretty" }}>
                 {corrupt(a.headline, decay)}
               </div>
               {a.standfirst ? (
-                <div style={{ fontSize: 11.5, lineHeight: 1.5, color: "var(--dim)" }}>
+                <div style={{ fontSize: 12, lineHeight: 1.5, color: "var(--dim)" }}>
                   {corrupt(a.standfirst, decay)}
                 </div>
               ) : null}
               <div style={{ display: "flex", gap: 7 }}>
-                <Link href={`/ball/${a.id}`} className="btn btn-sm" style={{ minHeight: 38 }}>
+                <Link href={`/ball/${a.id}`} className="btn btn-sm" style={{ minHeight: 40 }}>
                   READ
                 </Link>
                 <ReviewButton id={a.id} status="published" label="APPROVE" tone="btn-blue" />
@@ -224,7 +225,7 @@ function ReviewButton({
     <form action={setArticleStatus} style={{ flex: 1, display: "flex" }}>
       <input type="hidden" name="id" value={id} />
       <input type="hidden" name="status" value={status} />
-      <button type="submit" className={`btn btn-block ${tone}`} style={{ minHeight: 38, fontSize: 8.5 }}>
+      <button type="submit" className={`btn btn-block ${tone}`} style={{ minHeight: 40, fontSize: 11 }}>
         {label}
       </button>
     </form>

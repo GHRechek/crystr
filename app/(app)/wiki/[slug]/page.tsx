@@ -22,7 +22,7 @@ const FOCUS = { color: "var(--text)", fontWeight: 500 } as const;
 
 const CHIP = {
   display: "inline-block",
-  fontSize: 8,
+  fontSize: 11,
   lineHeight: 1,
   padding: "4px 7px",
   margin: "0 2px",
@@ -81,22 +81,22 @@ export default async function WikiPageView(props: { params: Promise<{ slug: stri
         </Link>
         <div className="spacer" />
         {page.archived ? (
-          <span className="px" style={{ fontSize: 9, color: "var(--mag-soft)" }}>
+          <span className="px" style={{ fontSize: 11, color: "var(--mag-soft)" }}>
             ARCHIVED
           </span>
         ) : null}
         {page.locked ? (
-          <span className="px" style={{ fontSize: 9, color: "var(--mag-soft)" }}>
+          <span className="px" style={{ fontSize: 11, color: "var(--mag-soft)" }}>
             ◈ PAUSED
           </span>
         ) : null}
       </div>
 
       <div>
-        <div style={{ fontSize: 25, fontWeight: 500, lineHeight: 1.15, letterSpacing: "-.025em" }}>
+        <h1 style={{ fontSize: 25, fontWeight: 500, lineHeight: 1.15, letterSpacing: "-.025em" }}>
           {corrupt(page.title, decay)}
-        </div>
-        <div className="px" style={{ fontSize: 8.5, color: "var(--muted)", marginTop: 8 }}>
+        </h1>
+        <div className="px" style={{ fontSize: 11, color: "var(--muted)", marginTop: 8 }}>
           {filled} {filled === 1 ? "FACT" : "FACTS"} · EDITED {ago(page.updated_at)}
           {page.updated_by ? ` BY ${page.updated_by.handle}` : ""}
         </div>
@@ -158,21 +158,21 @@ export default async function WikiPageView(props: { params: Promise<{ slug: stri
 
       {witch && kept.size ? (
         <div className="tile" style={{ padding: 12, display: "flex", flexDirection: "column", gap: 8 }}>
-          <div className="px" style={{ fontSize: 8.5, color: "var(--pur-pale)" }}>
+          <div className="px" style={{ fontSize: 11, color: "var(--pur-pale)" }}>
             THE FACTS ON THIS PAGE
           </div>
           {[...kept.values()].map((f) => (
             <div key={f.id} style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <div style={{ flex: 1, minWidth: 0, fontSize: 12.5, color: "var(--text-2)" }}>
                 {f.body}
-                <span className="px" style={{ display: "block", fontSize: 7.5, color: "var(--muted)", marginTop: 2 }}>
+                <span className="px" style={{ display: "block", fontSize: 11, color: "var(--muted)", marginTop: 2 }}>
                   {(f.author?.handle ?? "unknown").toUpperCase()} · {ago(f.created_at).toUpperCase()}
                 </span>
               </div>
               <form action={removeFact}>
                 <input type="hidden" name="id" value={f.id} />
                 <input type="hidden" name="slug" value={page.slug} />
-                <button type="submit" className="btn btn-sm" style={{ minHeight: 28, fontSize: 7.5, padding: "0 8px" }}>
+                <button type="submit" className="btn btn-sm" style={{ minHeight: 40, fontSize: 11, padding: "0 8px" }}>
                   TAKE DOWN
                 </button>
               </form>
@@ -183,7 +183,7 @@ export default async function WikiPageView(props: { params: Promise<{ slug: stri
 
       {witch ? (
         <div className="witchbar" style={{ flexWrap: "wrap", gap: 8 }}>
-          <span className="px" style={{ fontSize: 8.5, color: "var(--pur-pale)" }}>
+          <span className="px" style={{ fontSize: 11, color: "var(--pur-pale)" }}>
             MODERATE
           </span>
           <span className="spacer" />
@@ -201,7 +201,7 @@ function Moderate({ id, slug, act, label }: { id: number; slug: string; act: str
       <input type="hidden" name="id" value={id} />
       <input type="hidden" name="slug" value={slug} />
       <input type="hidden" name="act" value={act} />
-      <button type="submit" className="btn btn-sm" style={{ minHeight: 36 }}>
+      <button type="submit" className="btn btn-sm" style={{ minHeight: 40 }}>
         {label}
       </button>
     </form>

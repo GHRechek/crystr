@@ -28,7 +28,7 @@ export function Editor({
           ✕ DISCARD
         </Link>
         <div className="spacer" />
-        <div className="px" style={{ fontSize: 9, color: "var(--pur-pale)" }}>
+        <div className="px" style={{ fontSize: 11, color: "var(--pur-pale)" }}>
           {oped ? "OP-ED · FOR REVIEW" : article ? "EDITING DISPATCH" : "NEW DISPATCH"}
         </div>
       </div>
@@ -118,7 +118,7 @@ export function Editor({
             name="status"
             value="draft"
             className="btn btn-lg"
-            style={{ flex: 1, fontSize: 10 }}
+            style={{ flex: 1, fontSize: 11 }}
           >
             SAVE DRAFT
           </button>
@@ -129,7 +129,7 @@ export function Editor({
           name="status"
           value="published"
           className={`btn btn-lg${ready ? " btn-blue" : ""}`}
-          style={{ flex: 1, fontSize: 10 }}
+          style={{ flex: 1, fontSize: 11 }}
           aria-disabled={!ready}
         >
           {oped ? `SUBMIT FOR REVIEW · USES ${COSTS.oped}` : "PUBLISH TO THE CITY"}

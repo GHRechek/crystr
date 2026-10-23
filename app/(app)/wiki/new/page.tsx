@@ -7,5 +7,10 @@ export default async function NewWikiPage(props: { searchParams: Promise<{ title
   const searchParams = await props.searchParams;
   const { profile } = await requireMe();
   if (!profile.is_witch) redirect("/wiki");
-  return <NewPageForm initialTitle={(searchParams.title ?? "").slice(0, 120)} />;
+  return (
+    <>
+      <h1 className="sr-only">New wiki page</h1>
+      <NewPageForm initialTitle={(searchParams.title ?? "").slice(0, 120)} />
+    </>
+  );
 }

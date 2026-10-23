@@ -18,7 +18,7 @@ export default async function VotePage(
   return (
     <div className="pad" style={{ gap: 13 }}>
       <div>
-        <div className="screen-title">THE MOTION BOARD</div>
+        <h1 className="screen-title">THE MOTION BOARD</h1>
         <div className="screen-intro">
           Three mana a vote. The charge is deliberate: opinions people pay for are held
           slightly better than opinions they don&apos;t.
@@ -28,10 +28,10 @@ export default async function VotePage(
       {registered ? null : (
         <Link href="/me/plaintiff" className="tile" style={{ padding: 12, display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
           <div>
-            <div className="px" style={{ fontSize: 9, color: "var(--pur-pale)" }}>
+            <div className="px" style={{ fontSize: 11, color: "var(--pur-pale)" }}>
               REGISTER TO TAKE PART
             </div>
-            <div style={{ fontSize: 11, lineHeight: 1.45, color: "var(--muted)", marginTop: 4 }}>
+            <div style={{ fontSize: 12, lineHeight: 1.45, color: "var(--muted)", marginTop: 4 }}>
               Voting on motions, and creating them, is for Registered Plaintiffs. File Form 12-A
               and you are in.
             </div>
@@ -45,11 +45,11 @@ export default async function VotePage(
 
       {profile.is_witch ? (
         <div className="witchbar">
-          <span className="px" style={{ fontSize: 8.5, color: "var(--pur-pale)" }}>
+          <span className="px" style={{ fontSize: 11, color: "var(--pur-pale)" }}>
             WITCH ACCESS
           </span>
           <span className="spacer" />
-          <Link href={registered ? "/vote/new" : "/me/plaintiff"} className="btn btn-sm btn-purple" style={{ minHeight: 36 }}>
+          <Link href={registered ? "/vote/new" : "/me/plaintiff"} className="btn btn-sm btn-purple" style={{ minHeight: 40 }}>
             {registered ? "＋ CREATE A MOTION" : "REGISTER TO CREATE ONE"}
           </Link>
         </div>
@@ -129,7 +129,7 @@ function Open({ motion, mana, decay, registered }: { motion: Motion; mana: numbe
     <div className="card" style={{ gap: 10 }}>
       <div style={{ display: "flex", alignItems: "flex-start", gap: 9 }}>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div className="px" style={{ fontSize: 8, color: "var(--dim)", marginBottom: 5 }}>
+          <div className="px" style={{ fontSize: 11, color: "var(--dim)", marginBottom: 5 }}>
             {motion.kicker}
           </div>
           <div
@@ -147,7 +147,7 @@ function Open({ motion, mana, decay, registered }: { motion: Motion; mana: numbe
         <div
           className="px"
           style={{
-            fontSize: 8.5,
+            fontSize: 11,
             color: urgent ? "var(--mag-soft)" : "var(--dim)",
             flex: "none",
             textAlign: "right",
@@ -170,7 +170,7 @@ function Open({ motion, mana, decay, registered }: { motion: Motion; mana: numbe
         <Link
           href={`/ball/${motion.briefing_id}`}
           className="btn btn-sm"
-          style={{ alignSelf: "flex-start", fontSize: 8.5, color: "var(--pur-pale)" }}
+          style={{ alignSelf: "flex-start", fontSize: 11, color: "var(--pur-pale)" }}
         >
           ◉ READ THE BRIEFING
         </Link>
@@ -180,7 +180,7 @@ function Open({ motion, mana, decay, registered }: { motion: Motion; mana: numbe
         <Tally motion={motion} height={10} />
         <div
           className="px"
-          style={{ display: "flex", justifyContent: "space-between", fontSize: 8.5 }}
+          style={{ display: "flex", justifyContent: "space-between", fontSize: 11 }}
         >
           <span style={{ color: "var(--mag-soft)" }}>FOR {total ? `${pct}%` : "—"}</span>
           <span style={{ color: "var(--muted)" }}>
@@ -201,7 +201,7 @@ function Open({ motion, mana, decay, registered }: { motion: Motion; mana: numbe
             alignItems: "center",
             justifyContent: "center",
             borderRadius: "var(--px-r)",
-            fontSize: 9,
+            fontSize: 11,
             background:
               motion.my_side === "for" ? "rgba(224,57,138,.12)" : "rgba(76,125,240,.12)",
             boxShadow: `inset 0 0 0 1px ${
@@ -213,7 +213,7 @@ function Open({ motion, mana, decay, registered }: { motion: Motion; mana: numbe
           YOU VOTED {motion.my_side.toUpperCase()} · {COSTS.vote} MANA USED
         </div>
       ) : !registered ? (
-        <Link href="/me/plaintiff" className="btn btn-block" style={{ minHeight: 44, fontSize: 10 }}>
+        <Link href="/me/plaintiff" className="btn btn-block" style={{ minHeight: 44, fontSize: 11 }}>
           REGISTER TO VOTE
         </Link>
       ) : (
@@ -225,7 +225,7 @@ function Open({ motion, mana, decay, registered }: { motion: Motion; mana: numbe
               <button
                 type="submit"
                 className={`btn btn-block ${side === "for" ? "btn-mag" : "btn-blue"}`}
-                style={{ minHeight: 44, fontSize: 10, opacity: mana >= COSTS.vote ? 1 : 0.5 }}
+                style={{ minHeight: 44, fontSize: 11, opacity: mana >= COSTS.vote ? 1 : 0.5 }}
               >
                 {side.toUpperCase()} · USES {COSTS.vote}
               </button>
@@ -257,14 +257,14 @@ function Decided({ motion, decay }: { motion: Motion; decay: number }) {
         >
           {corrupt(motion.title, decay)}
         </div>
-        <div className={`pill ${passed ? "pill-passed" : "pill-failed"}`} style={{ fontSize: 8 }}>
+        <div className={`pill ${passed ? "pill-passed" : "pill-failed"}`} style={{ fontSize: 11 }}>
           {total === 0 ? "NO QUORUM" : passed ? "PASSED" : "FAILED"}
         </div>
       </div>
 
       <Tally motion={motion} height={6} />
 
-      <div className="px" style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 8 }}>
+      <div className="px" style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 11 }}>
         <span style={{ color: "var(--mag-soft)" }}>
           {total ? `${pct} / ${100 - pct}` : "—"}
         </span>

@@ -87,7 +87,7 @@ export function ProofForm({ quest, userId }: { quest: Quest; userId: string }) {
         <div className="kicker" style={{ color: "var(--mag)", display: "block", marginBottom: 8 }}>
           {quest.kicker}
         </div>
-        <div
+        <h1
           style={{
             fontSize: 24,
             fontWeight: 500,
@@ -97,7 +97,7 @@ export function ProofForm({ quest, userId }: { quest: Quest; userId: string }) {
           }}
         >
           {quest.title}
-        </div>
+        </h1>
         <div style={{ fontSize: 13, lineHeight: 1.6, color: "var(--dim)", textWrap: "pretty" }}>
           {quest.blurb}
         </div>
@@ -180,13 +180,13 @@ export function ProofForm({ quest, userId }: { quest: Quest; userId: string }) {
         </div>
         <div
           className="px"
-          style={{ fontSize: 9, color: "var(--dim)", textAlign: "center", lineHeight: 1.7 }}
+          style={{ fontSize: 11, color: "var(--dim)", textAlign: "center", lineHeight: 1.7 }}
         >
           {zone.label}
         </div>
         <div
           style={{
-            fontSize: 11,
+            fontSize: 12,
             color: "var(--muted)",
             textAlign: "center",
             lineHeight: 1.45,

@@ -40,7 +40,7 @@ export function MotionComposer() {
           </button>
         )}
         <div className="spacer" />
-        <div className="px" style={{ fontSize: 9, color: "var(--pur-pale)" }}>
+        <div className="px" style={{ fontSize: 11, color: "var(--pur-pale)" }}>
           {step === 1 ? "STEP 1 OF 2 · THE MOTION" : "STEP 2 OF 2 · THE BRIEFING"}
         </div>
       </div>

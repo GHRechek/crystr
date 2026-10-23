@@ -17,6 +17,7 @@ export default async function FeedPage() {
 
   return (
     <>
+      <h1 className="sr-only">The feed</h1>
       <div className="pad" style={{ padding: "14px 16px 24px" }}>
         {items.map((item) => (
           <Card key={`${item.kind}-${item.id}`} item={item} decay={decay} me={userId} />
@@ -49,13 +50,13 @@ function Card({ item, decay, me }: { item: FeedItem; decay: number; me: string }
             <div style={{ fontSize: 13, fontWeight: 500, letterSpacing: "-.01em" }}>
               {item.byline_name?.trim().toLowerCase() || "crystr ball"}
             </div>
-            <div className="px" style={{ fontSize: 8.5, color: "var(--muted)" }}>
+            <div className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
               {item.kicker} · {ago(item.published_at || item.created_at)}
             </div>
           </div>
           <div className="spacer" />
           <div className="pill pill-ball">◉ BALL</div>
-          <div className="px" style={{ fontSize: 8.5, color: "var(--dim)" }}>
+          <div className="px" style={{ fontSize: 11, color: "var(--dim)" }}>
             FREE
           </div>
         </div>

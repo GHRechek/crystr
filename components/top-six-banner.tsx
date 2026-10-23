@@ -15,7 +15,7 @@ export function TopSixBanner({ who }: { who: string[] }) {
   return (
     <form action={seeTopSix} className="setup-banner" style={{ gap: 10, alignItems: "center", flexWrap: "wrap" }}>
       <span style={{ fontSize: 12, lineHeight: 1.4, flex: "1 1 160px" }}>{line}</span>
-      <button type="submit" className="btn btn-sm btn-purple" style={{ minHeight: 32 }}>
+      <button type="submit" className="btn btn-sm btn-purple" style={{ minHeight: 40 }}>
         NICE
       </button>
     </form>

@@ -23,7 +23,7 @@ export function Composer({ mana }: { mana: number }) {
           ✕ CLOSE
         </Link>
         <div className="spacer" />
-        <div className="px" style={{ fontSize: 9, color: "var(--muted)" }}>
+        <div className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
           THIS WILL COST
         </div>
         <div
@@ -35,7 +35,7 @@ export function Composer({ mana }: { mana: number }) {
       </div>
 
       <textarea
-        name="body"
+        name="body" aria-label="Your post"
         className="textarea"
         rows={6}
         value={text}
@@ -60,7 +60,7 @@ export function Composer({ mana }: { mana: number }) {
 
       <div
         className="tile"
-        style={{ padding: "11px 12px", fontSize: 11.5, lineHeight: 1.55, color: "var(--muted)" }}
+        style={{ padding: "11px 12px", fontSize: 12, lineHeight: 1.55, color: "var(--muted)" }}
       >
         {affordable
           ? `You have ${mana}. After this, ${mana - cost}. The well does not do credit.`

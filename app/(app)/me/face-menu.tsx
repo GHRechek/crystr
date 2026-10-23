@@ -91,8 +91,8 @@ export function ProfileHead({
           </button>
 
           <div style={{ paddingBottom: 4, minWidth: 0, flex: 1 }}>
-            <div style={{ fontSize: 19, fontWeight: 500, letterSpacing: "-.02em" }}>{handle}</div>
-            <div className="px" style={{ fontSize: 8.5, color: "var(--muted)" }}>
+            <h1 style={{ fontSize: 19, fontWeight: 500, letterSpacing: "-.02em" }}>{handle}</h1>
+            <div className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
               {joined}
             </div>
           </div>
@@ -122,7 +122,7 @@ export function ProfileHead({
         {editing ? (
           <form action={setMood} style={{ display: "flex", gap: 7, alignItems: "center" }}>
             <input
-              name="mood"
+              name="mood" aria-label="What you are thinking"
               className="input"
               defaultValue={mood ?? ""}
               maxLength={40}

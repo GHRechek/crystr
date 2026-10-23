@@ -14,5 +14,10 @@ export default async function NewArticlePage(
   const kind = searchParams.kind === "oped" || !profile.is_witch ? "oped" : "dispatch";
   if (kind === "dispatch" && !profile.is_witch) redirect("/ball");
 
-  return <Editor kind={kind} />;
+  return (
+    <>
+      <h1 className="sr-only">New piece for the Ball</h1>
+      <Editor kind={kind} />
+    </>
+  );
 }

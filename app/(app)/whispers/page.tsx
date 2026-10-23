@@ -11,10 +11,10 @@ export default async function WhispersPage() {
   return (
     <div className="pad" style={{ padding: "14px 16px 24px", gap: 8 }}>
       <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 2 }}>
-        <div className="screen-title" style={{ marginBottom: 0 }}>
+        <h1 className="screen-title" style={{ marginBottom: 0 }}>
           WHISPERS
-        </div>
-        <div style={{ fontSize: 11, color: "var(--muted)" }}>
+        </h1>
+        <div style={{ fontSize: 12, color: "var(--muted)" }}>
           A whisper takes {COSTS.whisper} mana. Silence is free.
         </div>
       </div>
@@ -36,13 +36,13 @@ export default async function WhispersPage() {
           <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 2 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
               <span style={{ fontSize: 13, fontWeight: 500 }}>{t.other.handle}</span>
-              <span className="px" style={{ fontSize: 8, color: "var(--dim)" }}>
+              <span className="px" style={{ fontSize: 11, color: "var(--dim)" }}>
                 {ago(t.last_message_at)}
               </span>
             </div>
             <div
               style={{
-                fontSize: 11.5,
+                fontSize: 12,
                 color: "var(--muted)",
                 whiteSpace: "nowrap",
                 overflow: "hidden",

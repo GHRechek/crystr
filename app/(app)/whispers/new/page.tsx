@@ -9,12 +9,13 @@ export default async function NewWhisperPage() {
 
   return (
     <div className="pad" style={{ gap: 8 }}>
+      <h1 className="sr-only">Whisper someone</h1>
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
         <Link href="/whispers" className="btn btn-sm">
           ← WHISPERS
         </Link>
         <div className="spacer" />
-        <div className="px" style={{ fontSize: 9, color: "var(--muted)" }}>
+        <div className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
           OPENING ONE IS FREE
         </div>
       </div>
@@ -41,10 +42,10 @@ export default async function NewWhisperPage() {
               <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 2 }}>
                 <div style={{ fontSize: 13, fontWeight: 500 }}>{p.handle}</div>
                 {p.display_name ? (
-                  <div style={{ fontSize: 11, color: "var(--muted)" }}>{p.display_name}</div>
+                  <div style={{ fontSize: 12, color: "var(--muted)" }}>{p.display_name}</div>
                 ) : null}
               </div>
-              <span className="px" style={{ fontSize: 8.5, color: "var(--dim)" }}>
+              <span className="px" style={{ fontSize: 11, color: "var(--dim)" }}>
                 →
               </span>
             </button>

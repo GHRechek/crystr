@@ -81,7 +81,7 @@ export function PlaintiffForm() {
 
       {d ? (
         <div className="field">
-          <div className="px" style={{ fontSize: 8.5, color: "var(--pur-pale)", marginBottom: 6 }}>
+          <div className="px" style={{ fontSize: 11, color: "var(--pur-pale)", marginBottom: 6 }}>
             {d.section.toUpperCase()}
           </div>
           <label htmlFor="district_code">{d.field.toUpperCase()} *</label>
@@ -113,7 +113,7 @@ export function PlaintiffForm() {
 
       {sp ? (
         <div className="field">
-          <div className="px" style={{ fontSize: 8.5, color: "var(--pur-pale)", marginBottom: 6 }}>
+          <div className="px" style={{ fontSize: 11, color: "var(--pur-pale)", marginBottom: 6 }}>
             {sp.section}
           </div>
           <label htmlFor="species_code">5 DIGIT SDC *</label>
@@ -123,10 +123,10 @@ export function PlaintiffForm() {
       ) : null}
 
       <div className="field">
-        <div className="px" style={{ fontSize: 8.5, color: "var(--pur-pale)", marginBottom: 2 }}>
+        <div className="px" style={{ fontSize: 11, color: "var(--pur-pale)", marginBottom: 2 }}>
           CIVIC REGISTRY · PETITION CODE
         </div>
-        <div style={{ fontSize: 11, lineHeight: 1.5, color: "var(--muted)", marginBottom: 6 }}>
+        <div style={{ fontSize: 12, lineHeight: 1.5, color: "var(--muted)", marginBottom: 6 }}>
           If you are signing or have signed a petition, please submit its 3 Digit Code
         </div>
         <label htmlFor="pcode">P-CODE REALM ALLOCATION SERIES *</label>

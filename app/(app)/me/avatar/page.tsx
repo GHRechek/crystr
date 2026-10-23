@@ -11,5 +11,10 @@ export default async function AvatarPage() {
     ? normalizePortrait(profile.avatar_config)
     : portraitFromId(userId);
 
-  return <AvatarBuilder start={start} fresh={!profile.avatar_config} />;
+  return (
+    <>
+      <h1 className="sr-only">Make a face</h1>
+      <AvatarBuilder start={start} fresh={!profile.avatar_config} />
+    </>
+  );
 }
