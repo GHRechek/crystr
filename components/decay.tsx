@@ -15,6 +15,7 @@ export function DecayFrame({ mana, children }: { mana: number; children: ReactNo
 
   return (
     <>
+      <div className="scanlines" style={{ opacity: SCAN_OPACITY[level] }} />
       <div style={{ filter: DECAY_FILTER[level] }}>
         <div className="degrading" style={{ margin: "14px 16px 0" }}>
           <span className="px" style={{ fontSize: 13, color: "var(--mag)" }}>
@@ -31,7 +32,6 @@ export function DecayFrame({ mana, children }: { mana: number; children: ReactNo
         </div>
         {children}
       </div>
-      <div className="scanlines" style={{ opacity: SCAN_OPACITY[level] }} />
     </>
   );
 }
