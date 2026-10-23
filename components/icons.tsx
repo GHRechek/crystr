@@ -1,27 +1,29 @@
-/** Chunky pixel icons for the post actions. They take the surrounding text colour. */
-const HEART = ["01100110", "11111111", "11111111", "11111111", "01111110", "00111100", "00011000"];
-const REPLY = ["01111110", "11111111", "11000011", "11000011", "11111111", "01111111", "00011000", "00010000"];
+/** Fine pixel icons for the post actions: a one-pixel outline on an 11-pixel grid, drawn
+ *  two screen pixels to the cell. They take the surrounding text colour. */
+const HEART = ["01110011100", "11111111111", "11111111111", "11111111111", "01111111110", "00111111100", "00011111000", "00001110000", "00000100000"];
+const REPLY = ["01111111110", "11111111111", "11111111111", "11111111111", "11111111111", "11111111111", "01111111110", "00111000000", "00011000000"];
 
-function Pixels({ rows, size, fill }: { rows: string[]; size: number; fill?: boolean }) {
-  const h = rows.length;
+function Pixels({ rows, solid }: { rows: string[]; solid?: boolean }) {
+  const on = (x: number, y: number) => rows[y]?.[x] === "1";
+  const cells: React.ReactNode[] = [];
+  rows.forEach((row, y) =>
+    [...row].forEach((c, x) => {
+      if (c !== "1") return;
+      const edge = !on(x - 1, y) || !on(x + 1, y) || !on(x, y - 1) || !on(x, y + 1);
+      if (solid || edge) cells.push(<rect key={`${x}-${y}`} x={x} y={y} width={1} height={1} />);
+    }),
+  );
   return (
-    <svg aria-hidden width={size} height={(size * h) / 8} viewBox={`0 0 8 ${h}`} shapeRendering="crispEdges" style={{ display: "block", flex: "none" }}>
-      {rows.flatMap((row, y) =>
-        [...row].map((c, x) =>
-          c === "1" ? (
-            // the speech bubble is an outline: its inner cells are blank
-            <rect key={`${x}-${y}`} x={x} y={y} width={1} height={1} fill="currentColor" opacity={!fill && y > 1 && y < 4 && x > 1 && x < 6 ? 0 : 1} />
-          ) : null,
-        ),
-      )}
+    <svg aria-hidden width={22} height={rows.length * 2} viewBox={`0 0 11 ${rows.length}`} shapeRendering="crispEdges" fill="currentColor" style={{ display: "block", flex: "none" }}>
+      {cells}
     </svg>
   );
 }
 
-export function HeartIcon({ size = 26, filled }: { size?: number; filled?: boolean }) {
-  return <Pixels rows={HEART} size={size} fill={filled} />;
+export function HeartIcon({ filled }: { filled?: boolean }) {
+  return <Pixels rows={HEART} solid={filled} />;
 }
 
-export function ReplyIcon({ size = 26 }: { size?: number }) {
-  return <Pixels rows={REPLY} size={size} />;
+export function ReplyIcon() {
+  return <Pixels rows={REPLY} />;
 }

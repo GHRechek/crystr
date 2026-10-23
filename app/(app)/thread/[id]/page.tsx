@@ -40,11 +40,15 @@ export default async function ThreadPage(
 
       <PostCard post={post} me={userId} decay={decay} inThread thread={post.id} line={replies.length > 0} />
 
-      {replies.map((r, i) => (
-        <div key={r.id} className="treply">
-          <PostCard post={r} me={userId} decay={decay} inThread thread={post.id} small line={i < replies.length - 1} />
+      {replies.length ? (
+        <div className="tchain-end">
+          {replies.map((r) => (
+            <div key={r.id} className="treply">
+              <PostCard post={r} me={userId} decay={decay} inThread thread={post.id} />
+            </div>
+          ))}
         </div>
-      ))}
+      ) : null}
 
       <div style={{ padding: "12px 16px 0" }}>
         <ReplyForm parent={post.id} mana={profile.mana} focus={searchParams.reply === "1"} />
