@@ -26,6 +26,8 @@ export function ProofForm({ quest, userId }: { quest: Quest; userId: string }) {
   const drawing = quest.drawing_pad;
   // Where a picture is required, words are not an option at all.
   const wordsOk = !timed && !quest.proof_required;
+  // Quests meant to be done in the moment (a poem): the writing box leads, a photo is the backup.
+  const textFirst = quest.text_first && wordsOk;
   const hasProof = timed ? timerDone : stage === "attached" || (wordsOk && note.trim().length >= 12);
 
   async function upload(file: File) {
@@ -139,6 +141,22 @@ export function ProofForm({ quest, userId }: { quest: Quest; userId: string }) {
         <StillTimer slug={quest.slug} seconds={quest.timer_seconds!} onDone={setTimerDone} />
       ) : (
         <>
+      {textFirst ? (
+        <div className="field">
+          <label htmlFor="note">WRITE IT HERE, RIGHT NOW</label>
+          <textarea
+            id="note"
+            name="note"
+            className="textarea"
+            rows={9}
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+            placeholder="Off the cuff is the point. It does not have to be good. It does have to be now."
+            style={{ fontSize: 16, lineHeight: 1.5 }}
+          />
+        </div>
+      ) : null}
+
       {drawing && stage === "attached" ? (
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -200,6 +218,45 @@ export function ProofForm({ quest, userId }: { quest: Quest; userId: string }) {
         }}
       />
 
+      {textFirst ? (
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          <div className="px" style={{ fontSize: 11, color: "var(--muted)", lineHeight: 1.7 }}>
+            OR PHOTOGRAPH A POEM YOU WROTE BY HAND
+          </div>
+          {stage === "attached" ? (
+            <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+              <span className="px" style={{ fontSize: 11, color: "var(--blu-soft)" }}>
+                ✓ PHOTO ATTACHED
+              </span>
+              <button
+                type="button"
+                className="btn btn-sm"
+                onClick={() => {
+                  setStage("empty");
+                  setPath("");
+                }}
+              >
+                REMOVE
+              </button>
+            </div>
+          ) : (
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+              <button type="button" className="btn btn-sm" onClick={() => cameraRef.current?.click()} disabled={stage === "uploading"}>
+                ▣ TAKE A PHOTO
+              </button>
+              <button type="button" className="btn btn-sm" onClick={() => fileRef.current?.click()} disabled={stage === "uploading"}>
+                CHOOSE ONE YOU TOOK
+              </button>
+            </div>
+          )}
+          {stage === "uploading" ? (
+            <div style={{ fontSize: 12, color: "var(--muted)" }}>On its way to the Well…</div>
+          ) : stage === "failed" ? (
+            <div style={{ fontSize: 12, color: "var(--mag-soft)" }}>It did not arrive. Try again, or just write it above.</div>
+          ) : null}
+        </div>
+      ) : (
+        <>
       <button
         type="button"
         onClick={() => cameraRef.current?.click()}
@@ -247,11 +304,13 @@ export function ProofForm({ quest, userId }: { quest: Quest; userId: string }) {
       >
         ▣ OR CHOOSE ONE YOU ALREADY TOOK
       </button>
+        </>
+      )}
 
         </>
       )}
 
-      {wordsOk ? (
+      {wordsOk && !textFirst ? (
       <div className="field">
         <label htmlFor="note">OR WRITE IT DOWN — WHAT YOU DID, IN YOUR WORDS</label>
         <textarea
@@ -284,7 +343,9 @@ export function ProofForm({ quest, userId }: { quest: Quest; userId: string }) {
               ? "FINISH THE TIMER FIRST"
               : drawing
               ? "ADD YOUR DRAWING FIRST"
-              : "ATTACH PROOF FIRST"}
+              : textFirst
+                ? "WRITE SOMETHING FIRST"
+                : "ATTACH PROOF FIRST"}
       </button>
     </form>
   );
