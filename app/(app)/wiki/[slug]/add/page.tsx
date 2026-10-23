@@ -4,7 +4,7 @@ import { requireMe } from "@/lib/data";
 import { getWikiPage, SLUG } from "@/lib/wiki";
 import { addFact } from "@/lib/wiki-actions";
 import { COSTS } from "@/lib/crystr";
-import { FACT_MAX_CHARS, FACT_MAX_WORDS } from "@/lib/wiki-fact";
+import { FACT_MAX_CHARS, FACT_MAX_WORDS_TEXT } from "@/lib/wiki-fact";
 
 /** Adding something new to the end of a page. (Changing words you already sent is the
  *  neighbouring /add/<slot> screen.) */
@@ -42,14 +42,14 @@ export default async function AddSomething(props: { params: Promise<{ slug: stri
           name="text"
           className="input wiki-px"
           maxLength={FACT_MAX_CHARS}
-          placeholder="Founded by Old Maren"
+          placeholder="Founded by Maren"
           autoComplete="off"
           autoFocus
           required
           style={{ fontSize: 16 }}
         />
         <span className="flabel" style={{ color: "var(--muted)" }}>
-          ONE FACT, UP TO {FACT_MAX_WORDS} WORDS. THERE IS NO WRONG ANSWER, ONLY WHAT THE CITY BELIEVES.
+          A FEW KEY WORDS: UP TO {FACT_MAX_WORDS_TEXT.toUpperCase()} WORDS. THERE IS NO WRONG ANSWER, ONLY WHAT THE CITY BELIEVES.
         </span>
       </div>
 

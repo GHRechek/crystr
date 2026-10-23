@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { EDGE, setFlash } from "@/lib/flash";
 import { COSTS } from "@/lib/crystr";
 import { SLUG, slugify } from "@/lib/wiki-slug";
-import { INVISIBLE, cleanFact, factProblem } from "@/lib/wiki-fact";
+import { INVISIBLE, FACT_MAX_WORDS_TEXT, FACT_REVIEW_MAX_WORDS, cleanFact, factProblem } from "@/lib/wiki-fact";
 
 type Rpc = {
   ok: boolean;
@@ -77,7 +77,7 @@ export async function addFact(fd: FormData) {
     redirect(form);
   }
   if (problem === "too_long") {
-    await setFlash("A HANDFUL, PLEASE", "Keep it to a few key words: up to ten, on one line.", EDGE.mag);
+    await setFlash("A HANDFUL, PLEASE", `Keep it to a few key words: up to ${FACT_MAX_WORDS_TEXT}, on one line.`, EDGE.mag);
     redirect(form);
   }
 
@@ -91,7 +91,7 @@ export async function addFact(fd: FormData) {
     } else if (r.code === "locked") {
       await setFlash("PAUSED", "A witch has paused this page for now.", EDGE.purple);
     } else if (r.code === "too_long") {
-      await setFlash("A HANDFUL, PLEASE", "Keep it to a few key words: up to ten, on one line.", EDGE.mag);
+      await setFlash("A HANDFUL, PLEASE", `Keep it to a few key words: up to ${FACT_MAX_WORDS_TEXT}, on one line.`, EDGE.mag);
       redirect(form);
     } else if (r.code === "missing") {
       await setFlash("GONE", "That spot is no longer there.", EDGE.mag);
@@ -119,7 +119,7 @@ export async function reviewFact(fd: FormData) {
   const keep = str(fd, "act") === "keep";
   const text = cleanFact(String(fd.get("text") ?? ""));
 
-  if (keep && factProblem(text)) {
+  if (keep && factProblem(text, FACT_REVIEW_MAX_WORDS)) {
     await setFlash("A HANDFUL, PLEASE", "Keep it to a few key words: up to ten, on one line.", EDGE.mag);
     return;
   }

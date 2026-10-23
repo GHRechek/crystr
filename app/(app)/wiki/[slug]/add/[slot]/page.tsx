@@ -4,7 +4,7 @@ import { requireMe } from "@/lib/data";
 import { getWikiFacts, getWikiPage, SLUG } from "@/lib/wiki";
 import { addFact } from "@/lib/wiki-actions";
 import { COSTS } from "@/lib/crystr";
-import { FACT_MAX_CHARS, FACT_MAX_WORDS } from "@/lib/wiki-fact";
+import { FACT_MAX_CHARS, FACT_MAX_WORDS_TEXT } from "@/lib/wiki-fact";
 
 /** Adding a few words to one spot on a page. */
 export default async function AddFact(props: { params: Promise<{ slug: string; slot: string }> }) {
@@ -48,13 +48,13 @@ export default async function AddFact(props: { params: Promise<{ slug: string; s
           className="input wiki-px"
           maxLength={FACT_MAX_CHARS}
           defaultValue={own?.body ?? ""}
-          placeholder="Founded by Old Maren"
+          placeholder="Founded by Maren"
           autoComplete="off"
           autoFocus
           required
         />
         <span className="flabel" style={{ color: "var(--muted)" }}>
-          ONE FACT, UP TO {FACT_MAX_WORDS} WORDS. THERE IS NO WRONG ANSWER, ONLY WHAT THE CITY BELIEVES.
+          A FEW KEY WORDS: UP TO {FACT_MAX_WORDS_TEXT.toUpperCase()} WORDS. THERE IS NO WRONG ANSWER, ONLY WHAT THE CITY BELIEVES.
         </span>
       </div>
 
