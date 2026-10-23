@@ -4,13 +4,14 @@ import { requireMe } from "@/lib/data";
 import { getWikiFacts, getWikiPage, SLUG, touchWikiPage, type WikiFact } from "@/lib/wiki";
 import { moderateWikiPage, removeFact } from "@/lib/wiki-actions";
 import { layoutPage } from "@/lib/wiki-layout";
+import { runePosition } from "@/lib/wiki-runes";
 import { COSTS } from "@/lib/crystr";
 import { ago, corrupt, decayLevel } from "@/lib/crystr";
 
-const TEXT = { fontSize: 16, lineHeight: 1.7 } as const;
+const TEXT = { fontSize: 16, lineHeight: 1.4 } as const;
 
 /** What a person added: sharp, same size as the text around it. */
-const FOCUS = { color: "var(--text)", fontWeight: 500 } as const;
+const FOCUS = { color: "#fff", fontWeight: 700 } as const;
 
 /** A fact reads as a sentence in the paragraph: end it with a full stop. */
 function sentence(text: string): string {
@@ -86,8 +87,8 @@ export default async function WikiPageView(props: { params: Promise<{ slug: stri
           </div>
         </header>
 
-        {/* A few paragraphs of text nobody can read, with what the City has added standing
-            clear inside them, two facts to a paragraph. */}
+        {/* A few paragraphs in runes, with what the City has added standing in bold letters
+            inside them, two facts to a paragraph. */}
         {paragraphs.map((pieces, pi) => (
           <p
             key={pi}
@@ -95,9 +96,15 @@ export default async function WikiPageView(props: { params: Promise<{ slug: stri
             style={{ ...TEXT, margin: 0, textAlign: "justify", textIndent: "1.6em", color: "var(--text-2)" }}
           >
             {pieces.map((piece, i) =>
-              piece.kind === "blur" ? (
-                <span key={i} aria-hidden className="wiki-blur">
-                  {piece.text}{" "}
+              piece.kind === "runes" ? (
+                <span key={i} aria-hidden>
+                  {piece.words.map((word, wi) => (
+                    <span key={wi} className="rune-word">
+                      {word.map((g, gi) => (
+                        <span key={gi} className="rune" style={{ backgroundPosition: runePosition(g) }} />
+                      ))}
+                    </span>
+                  ))}{" "}
                 </span>
               ) : piece.fact.status === "pending" ? (
                 <Link
