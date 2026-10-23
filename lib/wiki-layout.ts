@@ -2,7 +2,7 @@ import { fillerRun } from "@/lib/wiki-filler";
 
 /** One run of the page: unreadable text, or a fact somebody added. */
 export type Piece<F> =
-  | { kind: "blur"; text: string; glitch: boolean; delay: number }
+  | { kind: "blur"; text: string }
   | { kind: "fact"; fact: F };
 
 function rng(seed: number) {
@@ -24,21 +24,16 @@ function rng(seed: number) {
  *  which is where "add something" sits. */
 export function layoutPage<F>(pageId: number, facts: F[]): Piece<F>[][] {
   const paragraphs: Piece<F>[][] = [];
-  const blur = (seed: number, words: number, r: () => number): Piece<F> => ({
-    kind: "blur",
-    text: fillerRun(seed, words),
-    glitch: r() < 0.34,
-    delay: Math.round(r() * 70) / 10,
-  });
+  const blur = (seed: number, words: number): Piece<F> => ({ kind: "blur", text: fillerRun(seed, words) });
 
   for (let i = 0, p = 0; i < facts.length; i += 2, p++) {
     const r = rng(pageId * 31 + p * 977 + 5);
     const seed = pageId * 1009 + p * 4231;
-    const para: Piece<F>[] = [blur(seed + 1, 12 + Math.floor(r() * 30), r), { kind: "fact", fact: facts[i] }];
+    const para: Piece<F>[] = [blur(seed + 1, 12 + Math.floor(r() * 30)), { kind: "fact", fact: facts[i] }];
     if (i + 1 < facts.length) {
-      para.push(blur(seed + 2, 8 + Math.floor(r() * 26), r), { kind: "fact", fact: facts[i + 1] });
+      para.push(blur(seed + 2, 8 + Math.floor(r() * 26)), { kind: "fact", fact: facts[i + 1] });
     }
-    para.push(blur(seed + 3, 6 + Math.floor(r() * 16), r));
+    para.push(blur(seed + 3, 6 + Math.floor(r() * 16)));
     paragraphs.push(para);
   }
 
@@ -47,7 +42,7 @@ export function layoutPage<F>(pageId: number, facts: F[]): Piece<F>[][] {
   for (let c = 0; c < closing; c++) {
     const p = Math.ceil(facts.length / 2) + c;
     const r = rng(pageId * 31 + p * 977 + 9);
-    paragraphs.push([blur(pageId * 1009 + p * 4231 + 7, 34 + Math.floor(r() * 30), r)]);
+    paragraphs.push([blur(pageId * 1009 + p * 4231 + 7, 34 + Math.floor(r() * 30))]);
   }
   return paragraphs;
 }

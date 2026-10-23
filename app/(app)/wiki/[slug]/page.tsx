@@ -96,12 +96,7 @@ export default async function WikiPageView(props: { params: Promise<{ slug: stri
           >
             {pieces.map((piece, i) =>
               piece.kind === "blur" ? (
-                <span
-                  key={i}
-                  aria-hidden
-                  className={piece.glitch ? "wiki-blur wiki-glitch" : "wiki-blur"}
-                  style={piece.glitch ? { animationDelay: `-${piece.delay}s` } : undefined}
-                >
+                <span key={i} aria-hidden className="wiki-blur">
                   {piece.text}{" "}
                 </span>
               ) : piece.fact.status === "pending" ? (
