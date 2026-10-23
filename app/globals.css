@@ -963,3 +963,17 @@ select {
 .cost {
   white-space: nowrap;
 }
+/* The small potion with its number inside (11 x 13 pixels, one sprite per number): magenta
+   for a cost, blue (.mana-bottle-gain) for a reward. */
+.mana-bottle {
+  display: inline-block;
+  width: 11px;
+  height: 13px;
+  margin-left: 2px;
+  vertical-align: -2px;
+  background: url("/mana-cost.png") no-repeat;
+  image-rendering: pixelated;
+}
+.mana-bottle-gain {
+  background-image: url("/mana-gain.png");
+}

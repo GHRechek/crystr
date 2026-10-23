@@ -17,20 +17,33 @@ export function ManaIcon({ big }: { big?: boolean }) {
   );
 }
 
-/** A price: "(-2 [potion])", for the end of the button that takes it. */
+/** The potion with a number inside it, from a sheet of 0 to 20: magenta for what you spend
+ *  (public/mana-cost.png), blue for what you get back (public/mana-gain.png). */
+function Bottle({ n, gain }: { n: number; gain?: boolean }) {
+  if (!Number.isInteger(n) || n < 0 || n > 20) return <span>{n}</span>;
+  return (
+    <span
+      aria-hidden
+      className={gain ? "mana-bottle mana-bottle-gain" : "mana-bottle"}
+      style={{ backgroundPosition: `-${n * 11}px 0` }}
+    />
+  );
+}
+
+/** A price, at the end of the button that takes it: "-" and the potion with the cost inside. */
 export function Cost({ n }: { n: number }) {
   return (
-    <span className="cost">
-      (-{n} <ManaIcon />)
+    <span className="cost" role="img" aria-label={`costs ${n} mana`} title={`${n} mana`}>
+      -<Bottle n={n} />
     </span>
   );
 }
 
-/** A reward: "+14 [potion]". */
+/** A reward: "+" and the potion with the amount inside. */
 export function Gain({ n }: { n: number }) {
   return (
-    <span className="cost">
-      +{n} <ManaIcon />
+    <span className="cost" role="img" aria-label={`restores ${n} mana`} title={`${n} mana`}>
+      +<Bottle n={n} gain />
     </span>
   );
 }
