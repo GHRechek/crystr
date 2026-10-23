@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Silkscreen } from "next/font/google";
+import { Inter, Pixelify_Sans, Silkscreen } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
@@ -13,6 +13,15 @@ const silkscreen = Silkscreen({
   subsets: ["latin"],
   weight: ["400", "700"],
   variable: "--font-silkscreen",
+  display: "swap",
+});
+
+// A pixel face with lower-case letters, for the wiki's reading text: Silkscreen is capitals
+// only, which is fine for labels and tiring for paragraphs.
+const pixelBody = Pixelify_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-pixel-body",
   display: "swap",
 });
 
@@ -31,7 +40,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${silkscreen.variable}`}>
+    <html lang="en" className={`${inter.variable} ${silkscreen.variable} ${pixelBody.variable}`}>
       <body>{children}</body>
     </html>
   );

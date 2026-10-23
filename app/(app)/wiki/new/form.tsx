@@ -25,9 +25,9 @@ export function NewPageForm({ initialTitle = "" }: { initialTitle?: string }) {
       </div>
 
       <div className="banner-note banner-purple">
-        The page starts as blurred text with gaps in it. Anyone signed in can add a few key
-        words to a gap, and you read what they add. Pick the title and how many gaps to start
-        with; more open up as facts are kept.
+        The page starts as blurred text under its title. Anyone signed in can add something to
+        the end of it, a few key words at a time, and you read what they add. What is kept shows
+        up clear inside the blur, two facts to a paragraph.
       </div>
 
       <div className="field">
@@ -65,13 +65,7 @@ export function NewPageForm({ initialTitle = "" }: { initialTitle?: string }) {
         </span>
       </div>
 
-      <div className="field">
-        <label htmlFor="slots">GAPS TO START WITH</label>
-        <input id="slots" name="slots" type="number" className="input" min={2} max={60} defaultValue={6} required />
-        <span className="flabel" style={{ color: "var(--muted)" }}>
-          EACH GAP TAKES ONE FACT. THERE ARE ALWAYS AT LEAST TWO OPEN.
-        </span>
-      </div>
+      <input type="hidden" name="slots" value="6" />
 
       <button type="submit" className="btn btn-lg btn-purple btn-block">
         START THE PAGE

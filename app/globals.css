@@ -888,3 +888,57 @@ select {
 .msg-menu > summary { list-style: none; display: inline-flex; align-items: center; min-height: 40px; }
 .msg-menu > summary::-webkit-details-marker { display: none; }
 .msg-menu[open] > summary { color: var(--text-3); }
+
+/* ------------------------------------------------------------------- wiki */
+/* The wiki reads in a pixel face and looks a little corrupted: the unreadable text between
+   facts is lightly blurred, split into magenta and blue fringes, and now and then it slips
+   sideways. What people actually wrote stays crisp. */
+.wiki-px {
+  font-family: var(--font-pixel-body), var(--px-font), ui-monospace, monospace;
+  font-optical-sizing: none;
+  font-variant-ligatures: none; /* the face draws "fi" as a single glyph that reads wrong */
+  -webkit-font-smoothing: none;
+}
+
+.wiki-blur {
+  color: transparent;
+  text-shadow:
+    -1px 0 rgba(224, 57, 138, 0.55),
+    1px 0 rgba(76, 125, 240, 0.55),
+    0 0 3px rgba(190, 196, 230, 0.85);
+  user-select: none;
+  pointer-events: none;
+  position: relative;
+}
+
+.wiki-glitch {
+  animation: cr-glitch 7s steps(1, end) infinite;
+}
+
+@keyframes cr-glitch {
+  0%, 91%, 100% { left: 0; text-shadow: -1px 0 rgba(224, 57, 138, 0.55), 1px 0 rgba(76, 125, 240, 0.55), 0 0 3px rgba(190, 196, 230, 0.85); }
+  92% { left: -3px; text-shadow: -4px 0 rgba(224, 57, 138, 0.8), 4px 0 rgba(76, 125, 240, 0.8), 0 0 3px rgba(190, 196, 230, 0.6); }
+  94% { left: 4px; text-shadow: 3px 0 rgba(224, 57, 138, 0.8), -3px 0 rgba(76, 125, 240, 0.8), 0 0 2px rgba(190, 196, 230, 0.5); }
+  96% { left: -2px; }
+  97% { left: 0; }
+}
+
+.wiki-title {
+  text-shadow: -2px 0 rgba(224, 57, 138, 0.7), 2px 0 rgba(76, 125, 240, 0.7);
+  position: relative;
+  animation: cr-glitch-title 9s steps(1, end) infinite;
+}
+
+@keyframes cr-glitch-title {
+  0%, 93%, 100% { left: 0; }
+  94% { left: -3px; text-shadow: -5px 0 rgba(224, 57, 138, 0.9), 5px 0 rgba(76, 125, 240, 0.9); }
+  96% { left: 3px; text-shadow: 4px 0 rgba(224, 57, 138, 0.9), -4px 0 rgba(76, 125, 240, 0.9); }
+  97% { left: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wiki-glitch,
+  .wiki-title {
+    animation: none;
+  }
+}

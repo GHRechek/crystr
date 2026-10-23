@@ -37,3 +37,26 @@ export function fillerChunk(pageId: number, slot: number): string {
   out[out.length - 1] = out[out.length - 1].replace(/[.,]$/, "") + ".";
   return out.join(" ");
 }
+
+/** `count` words of nonsense in sentences of about six to twelve words, for a stretch of the
+ *  page between facts. Seeded, so a page looks the same every visit and to every viewer. */
+export function fillerRun(seed: number, count: number): string {
+  const r = rng(seed);
+  const out: string[] = [];
+  let sentence = 0;
+  let length = 6 + Math.floor(r() * 7);
+  for (let i = 0; i < count; i++) {
+    let w = WORDS[Math.floor(r() * WORDS.length)];
+    if (sentence === 0) w = w[0].toUpperCase() + w.slice(1);
+    sentence++;
+    if (sentence >= length || i === count - 1) {
+      w += ".";
+      sentence = 0;
+      length = 6 + Math.floor(r() * 7);
+    } else if (sentence > 3 && r() < 0.1) {
+      w += ",";
+    }
+    out.push(w);
+  }
+  return out.join(" ");
+}

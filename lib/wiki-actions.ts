@@ -64,10 +64,12 @@ export async function createWikiPage(fd: FormData) {
 /** Anyone signed in adds a handful of words to an open slot. */
 export async function addFact(fd: FormData) {
   const page = Number(fd.get("page"));
-  const slot = Number(fd.get("slot"));
+  // A slot means changing words already sent from that place; none means "add something new".
+  const rawSlot = String(fd.get("slot") ?? "").trim();
+  const slot = rawSlot ? Number(rawSlot) : null;
   const slug = str(fd, "slug");
   const text = cleanFact(String(fd.get("text") ?? ""));
-  const form = `/wiki/${slug}/add/${slot}`;
+  const form = slot ? `/wiki/${slug}/add/${slot}` : `/wiki/${slug}/add`;
 
   const problem = factProblem(text);
   if (problem === "empty") {
@@ -85,7 +87,7 @@ export async function addFact(fd: FormData) {
       await setFlash("REST FIRST", `Adding a fact takes ${r.need ?? COSTS.wikiEdit}, and you have ${r.have ?? 0}. Recover at the Well and it will be here when you are back.`, EDGE.mag);
       redirect(form);
     } else if (r.code === "settled") {
-      await setFlash("ALREADY FILLED", "A witch has already kept a fact for that spot. Try one of the open ones.", EDGE.purple);
+      await setFlash("ALREADY FILLED", "A witch has already kept a fact for that spot. Try adding something new instead.", EDGE.purple);
     } else if (r.code === "locked") {
       await setFlash("PAUSED", "A witch has paused this page for now.", EDGE.purple);
     } else if (r.code === "too_long") {

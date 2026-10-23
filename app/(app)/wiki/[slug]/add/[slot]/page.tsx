@@ -36,7 +36,7 @@ export default async function AddFact(props: { params: Promise<{ slug: string; s
         </Link>
         <div className="spacer" />
         <div className="px" style={{ fontSize: 11, color: "var(--pur-pale)" }}>
-          A GAP IN “{page.title.toUpperCase()}”
+          CHANGING YOUR WORDS IN “{page.title.toUpperCase()}”
         </div>
       </div>
 
@@ -45,7 +45,7 @@ export default async function AddFact(props: { params: Promise<{ slug: string; s
         <input
           id="text"
           name="text"
-          className="input"
+          className="input wiki-px"
           maxLength={FACT_MAX_CHARS}
           defaultValue={own?.body ?? ""}
           placeholder="Founded by Old Maren"
