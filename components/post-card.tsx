@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Avatar, Placeholder } from "@/components/bits";
-import { likePost } from "@/lib/actions";
+import { LikeButton } from "@/components/like-button";
 import { PostMenu } from "@/components/report-button";
 import { Cost } from "@/components/mana";
 import { ago, corrupt } from "@/lib/crystr";
@@ -96,20 +96,7 @@ export function PostCard({
       ) : null}
 
       <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 1 }}>
-        <form action={likePost}>
-          <input type="hidden" name="post_id" value={post.id} />
-          {thread ? <input type="hidden" name="thread" value={thread} /> : null}
-          <button
-            className="btn btn-sm"
-            type="submit"
-            style={{
-              borderColor: post.liked ? "var(--mag)" : "var(--edge)",
-              color: post.liked ? "var(--mag-soft)" : "var(--dim)",
-            }}
-          >
-            ♥ {post.likes} <Cost n={1} />
-          </button>
-        </form>
+        <LikeButton postId={post.id} likes={post.likes} liked={post.liked} thread={thread} />
         {inThread ? null : (
           <Link href={`/thread/${post.id}?reply=1`} className="btn btn-sm">
             ↩ REPLY{post.replies > 0 ? ` · ${post.replies}` : ""}

@@ -17,16 +17,15 @@ export function ManaIcon({ big }: { big?: boolean }) {
   );
 }
 
-/** The potion with a number inside it, from a sheet of 0 to 20: magenta for what you spend
- *  (public/mana-cost.png), blue for what you get back (public/mana-gain.png). */
+/** The potion with a number inside it. The bottle is one sheet (magenta for what you spend,
+ *  blue for what you get back); the number is a mask over it painted in the surrounding text
+ *  colour, so it always matches the button it sits in. */
 function Bottle({ n, gain }: { n: number; gain?: boolean }) {
   if (!Number.isInteger(n) || n < 0 || n > 20) return <span>{n}</span>;
   return (
-    <span
-      aria-hidden
-      className={gain ? "mana-bottle mana-bottle-gain" : "mana-bottle"}
-      style={{ backgroundPosition: `-${n * 11}px 0` }}
-    />
+    <span aria-hidden className={gain ? "mana-bottle mana-bottle-gain" : "mana-bottle"}>
+      <span className="mana-digits" style={{ ["--x" as string]: `-${n * 11}px` } as React.CSSProperties} />
+    </span>
   );
 }
 

@@ -961,19 +961,30 @@ select {
   vertical-align: middle;
 }
 .cost {
+  display: inline-flex;
+  align-items: center;
   white-space: nowrap;
 }
-/* The small potion with its number inside (11 x 13 pixels, one sprite per number): magenta
-   for a cost, blue (.mana-bottle-gain) for a reward. */
+/* The small potion with its number inside (11 x 13 pixels): magenta for a cost, blue
+   (.mana-bottle-gain) for a reward. The number is a mask painted in the text's own colour. */
 .mana-bottle {
+  position: relative;
   display: inline-block;
   width: 11px;
   height: 13px;
   margin-left: 2px;
-  vertical-align: -2px;
+  flex: none;
   background: url("/mana-cost.png") no-repeat;
   image-rendering: pixelated;
 }
 .mana-bottle-gain {
   background-image: url("/mana-gain.png");
+}
+.mana-digits {
+  position: absolute;
+  inset: 0;
+  background: currentColor;
+  -webkit-mask: url("/mana-digits.png") var(--x, 0) 0 / auto 13px no-repeat;
+  mask: url("/mana-digits.png") var(--x, 0) 0 / auto 13px no-repeat;
+  image-rendering: pixelated;
 }
