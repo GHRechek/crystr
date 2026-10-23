@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { sendWhisper } from "@/lib/actions";
 import { WHISPER_IMAGE_MAX, WHISPER_IMAGE_TYPES } from "@/lib/whisper";
+import { Cost } from "@/components/mana";
 
 /** The box at the bottom of a conversation: words, an optional picture, and, when
  *  you are answering something, which message that is. The picture goes straight to
@@ -142,12 +143,12 @@ export function WhisperComposer({
           name="body" aria-label="Your whisper"
           className="input"
           style={{ flex: 1, fontSize: 13.5 }}
-          placeholder={`whisper (takes ${cost})`}
+          placeholder="whisper"
           autoComplete="off"
           maxLength={2000}
         />
         <button type="submit" className="btn btn-blue" disabled={busy} style={{ minHeight: 44, minWidth: 56 }}>
-          SEND
+          SEND <Cost n={cost} />
         </button>
       </div>
     </form>

@@ -4,6 +4,7 @@ import { requireMe } from "@/lib/data";
 import { getWikiPage, SLUG } from "@/lib/wiki";
 import { addFact } from "@/lib/wiki-actions";
 import { COSTS } from "@/lib/crystr";
+import { Cost } from "@/components/mana";
 import { FACT_MAX_CHARS, FACT_MAX_WORDS_TEXT } from "@/lib/wiki-fact";
 
 /** Adding something new to the end of a page. (Changing words you already sent is the
@@ -58,7 +59,13 @@ export default async function AddSomething(props: { params: Promise<{ slug: stri
         className={`btn btn-lg btn-block${affordable ? " btn-purple" : ""}`}
         aria-disabled={!affordable}
       >
-        {affordable ? `ADD TO THE PAGE · USES ${COSTS.wikiEdit}` : "REST FIRST"}
+        {affordable ? (
+          <>
+            ADD TO THE PAGE <Cost n={COSTS.wikiEdit} />
+          </>
+        ) : (
+          "REST FIRST"
+        )}
       </button>
 
       <div style={{ fontSize: 12, lineHeight: 1.5, color: "var(--muted)" }}>

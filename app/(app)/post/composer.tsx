@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { createPost, voiceLocked } from "@/lib/actions";
 import { COSTS } from "@/lib/crystr";
+import { Cost } from "@/components/mana";
 import { Placeholder } from "@/components/bits";
 
 export function Composer({ mana }: { mana: number }) {
@@ -49,7 +50,7 @@ export function Composer({ mana }: { mana: number }) {
           className={`btn${photo ? " btn-mag" : ""}`}
           onClick={() => setPhoto((p) => !p)}
         >
-          ▣ ATTACH IMAGE +{COSTS.photo}
+          ▣ ATTACH IMAGE <Cost n={COSTS.photo} />
         </button>
         <button type="submit" formAction={voiceLocked} className="btn" style={{ color: "var(--muted)" }}>
           ♪ VOICE — LOCKED
@@ -58,14 +59,14 @@ export function Composer({ mana }: { mana: number }) {
 
       {photo ? <Placeholder label="YOUR IMAGE GOES HERE" height={120} /> : null}
 
-      <div
-        className="tile"
-        style={{ padding: "11px 12px", fontSize: 12, lineHeight: 1.55, color: "var(--muted)" }}
-      >
-        {affordable
-          ? `You have ${mana}. After this, ${mana - cost}. The well does not do credit.`
-          : `You need ${cost} and have ${mana}. The well is accepting poems, photographs and two minutes of your silence.`}
-      </div>
+      {affordable ? null : (
+        <div
+          className="tile"
+          style={{ padding: "11px 12px", fontSize: 12, lineHeight: 1.55, color: "var(--muted)" }}
+        >
+          Not enough mana for this yet. The Well is accepting poems, photographs and two minutes of your silence.
+        </div>
+      )}
 
       <button
         type="submit"
@@ -73,7 +74,11 @@ export function Composer({ mana }: { mana: number }) {
         aria-disabled={!canPublish}
       >
         {canPublish
-          ? `PUBLISH · USES ${cost}`
+          ? (
+            <>
+              PUBLISH <Cost n={cost} />
+            </>
+          )
           : !affordable
             ? "REST FIRST"
             : "WRITE SOMETHING"}

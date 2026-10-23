@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { createReply } from "@/lib/actions";
 import { COSTS } from "@/lib/crystr";
+import { Cost } from "@/components/mana";
 
 /** The reply box. Costs what a post costs, and says so before you commit. */
 export function ReplyForm({
@@ -40,12 +41,6 @@ export function ReplyForm({
         style={{ fontSize: 14, lineHeight: 1.5 }}
       />
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-        <div className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
-          THIS WILL COST
-        </div>
-        <div className="px" style={{ fontSize: 14, color: affordable ? "var(--blu-soft)" : "var(--mag)" }}>
-          -{cost}
-        </div>
         <div className="spacer" />
         <button
           type="submit"
@@ -53,7 +48,13 @@ export function ReplyForm({
           aria-disabled={!ready}
           disabled={!ready}
         >
-          {affordable ? "REPLY" : "REST FIRST"}
+          {affordable ? (
+            <>
+              REPLY <Cost n={cost} />
+            </>
+          ) : (
+            "REST FIRST"
+          )}
         </button>
       </div>
     </form>

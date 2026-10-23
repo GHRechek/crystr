@@ -100,9 +100,7 @@ export default async function ProfilePage() {
             <div className="px" style={{ fontSize: 12, color: "var(--blu-soft)" }}>
               TOP 6
             </div>
-            <div style={{ fontSize: 11, color: "var(--muted)" }}>
-              reordering takes {COSTS.topSix} mana
-            </div>
+
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 8 }}>
             {slots.map((f, i) => (

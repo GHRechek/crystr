@@ -6,6 +6,7 @@ import { moderateWikiPage, removeFact } from "@/lib/wiki-actions";
 import { layoutPage } from "@/lib/wiki-layout";
 import { runePosition } from "@/lib/wiki-runes";
 import { COSTS } from "@/lib/crystr";
+import { Cost } from "@/components/mana";
 import { ago, corrupt, decayLevel } from "@/lib/crystr";
 
 const TEXT = { fontSize: 16, lineHeight: 1.4 } as const;
@@ -165,10 +166,10 @@ export default async function WikiPageView(props: { params: Promise<{ slug: stri
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             <Link href={`/wiki/${page.slug}/add`} className="btn btn-lg btn-block btn-purple">
-              ＋ ADD SOMETHING
+              ＋ ADD SOMETHING <Cost n={COSTS.wikiEdit} />
             </Link>
             <div style={{ fontSize: 12.5, lineHeight: 1.5, color: "var(--muted)" }}>
-              A few key words about {page.title}. It costs {COSTS.wikiEdit} mana and joins the page once a witch has read it.
+              A few key words about {page.title}. It joins the page once a witch has read it.
             </div>
           </div>
         )}

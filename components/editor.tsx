@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { saveDispatch, submitOpEd } from "@/lib/actions";
 import { COSTS } from "@/lib/crystr";
+import { Cost } from "@/components/mana";
 import type { Article } from "@/lib/data";
 
 export function Editor({
@@ -35,8 +36,7 @@ export function Editor({
 
       {oped ? (
         <div className="banner-note banner-mag">
-          An op-ed takes {COSTS.oped} mana to file and goes to a witch before anyone else
-          sees it. They can publish it or send it back.
+          An op-ed goes to a witch before anyone else sees it. They can publish it or send it back.
         </div>
       ) : null}
 
@@ -132,7 +132,13 @@ export function Editor({
           style={{ flex: 1, fontSize: 11 }}
           aria-disabled={!ready}
         >
-          {oped ? `SUBMIT FOR REVIEW · USES ${COSTS.oped}` : "PUBLISH TO THE CITY"}
+          {oped ? (
+            <>
+              SUBMIT FOR REVIEW <Cost n={COSTS.oped} />
+            </>
+          ) : (
+            "PUBLISH TO THE CITY"
+          )}
         </button>
       </div>
     </form>
