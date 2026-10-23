@@ -40,9 +40,9 @@ export default async function ThreadPage(
 
       <PostCard post={post} me={userId} decay={decay} inThread thread={post.id} line={replies.length > 0} />
 
-      {replies.map((r, i) => (
+      {replies.map((r) => (
         <div key={r.id} className="treply">
-          <PostCard post={r} me={userId} decay={decay} inThread thread={post.id} line={i < replies.length - 1} />
+          <PostCard post={r} me={userId} decay={decay} inThread thread={post.id} />
         </div>
       ))}
 

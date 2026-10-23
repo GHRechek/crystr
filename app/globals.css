@@ -1026,7 +1026,21 @@ select {
   display: grid;
   grid-template-columns: 40px 1fr;
   column-gap: 12px;
-  margin-left: 26px;
+  margin-left: 52px;
+  position: relative;
+}
+/* The thread line bends out of the post's picture into the reply's picture. */
+.tpost-replyrow::before,
+.treply::before {
+  content: "";
+  position: absolute;
+  left: -33px;
+  top: 0;
+  width: 33px;
+  height: 22px;
+  border-left: 2px dotted var(--edge);
+  border-bottom: 2px dotted var(--edge);
+  pointer-events: none;
 }
 .tpost-side-reply {
   padding-top: 2px;
@@ -1080,5 +1094,21 @@ select {
 }
 /* A reply sits under the post it answers, set in from the left. */
 .treply {
-  margin-left: 26px;
+  margin-left: 52px;
+  position: relative;
+}
+.treply::before {
+  left: -17px;
+  width: 33px;
+  height: 32px;
+}
+/* Down to the next reply in the thread. */
+.treply:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: -17px;
+  top: 32px;
+  bottom: 0;
+  border-left: 2px dotted var(--edge);
+  pointer-events: none;
 }
