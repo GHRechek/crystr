@@ -1125,3 +1125,44 @@ select {
 .tchain-end {
   border-bottom: 1px solid var(--edge);
 }
+
+/* Pages are bands across the whole screen, not boxes floating in it: a card, a tile row or a
+   notice straight under .pad runs edge to edge, closed by a thin rule, with no corners. */
+.pad > .card,
+.pad > .rowcard,
+.pad > .notice,
+.pad > .banner-note,
+.pad > .witchbar {
+  margin-inline: -16px;
+  padding-inline: 16px;
+  border-radius: 0;
+}
+.pad > .card,
+.pad > .rowcard {
+  width: auto;
+  background: transparent;
+  box-shadow: none;
+  border: 0;
+  border-bottom: 1px solid var(--edge);
+  padding-block: 12px;
+}
+/* Rows of one list sit flush against each other (.pad's gap is 12px). */
+.pad > .card + .card,
+.pad > .rowcard + .rowcard,
+.pad > .card + .rowcard,
+.pad > .rowcard + .card {
+  margin-top: -12px;
+}
+.pad > .rowcard:hover {
+  background: var(--surface);
+}
+.pad > .notice,
+.pad > .banner-note,
+.pad > .witchbar {
+  border-left: 0;
+  border-right: 0;
+}
+
+.tsmall .tcount {
+  font-size: 12px;
+}

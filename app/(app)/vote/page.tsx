@@ -17,7 +17,7 @@ export default async function VotePage(
   const decay = decayLevel(profile.mana);
 
   return (
-    <div className="pad" style={{ gap: 13 }}>
+    <div className="pad" style={{ gap: 12 }}>
       <div>
         <h1 className="screen-title">THE MOTION BOARD</h1>
         <div className="screen-intro">

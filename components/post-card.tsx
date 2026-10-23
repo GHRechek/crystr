@@ -29,6 +29,8 @@ export function PostCard({
   line?: boolean;
 }) {
   const mine = post.author.id === me;
+  /** A reply inside its thread: the same actions, a touch smaller. */
+  const isReply = !!inThread && thread !== undefined && post.id !== thread;
 
   const body = (
     <div
@@ -97,13 +99,11 @@ export function PostCard({
           <Placeholder label="IMAGE — PENDING TILE" height={132} />
         ) : null}
 
-        <div style={{ display: "flex", alignItems: "center", gap: 14, marginLeft: -6 }}>
-          <LikeButton postId={post.id} likes={post.likes} liked={post.liked} thread={thread} />
-          {inThread ? null : (
-            <Link href={`/thread/${post.id}?reply=1`} className="tbtn" aria-label={`Reply. ${post.replies} replies`}>
-              <ReplyIcon /> {post.replies > 0 ? <span className="tcount">{post.replies}</span> : null} <Cost n={COSTS.reply} />
-            </Link>
-          )}
+        <div className={isReply ? "tsmall" : undefined} style={{ display: "flex", alignItems: "center", gap: isReply ? 10 : 14, marginLeft: -6 }}>
+          <LikeButton postId={post.id} likes={post.likes} liked={post.liked} thread={thread} small={isReply} />
+          <Link href={`/thread/${thread ?? post.id}?reply=1`} className="tbtn" aria-label={`Reply. ${post.replies} replies`}>
+            <ReplyIcon small={isReply} /> {post.replies > 0 ? <span className="tcount">{post.replies}</span> : null} <Cost n={COSTS.reply} />
+          </Link>
         </div>
       </div>
 
