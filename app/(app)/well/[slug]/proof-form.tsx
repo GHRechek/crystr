@@ -151,7 +151,7 @@ export function ProofForm({ quest, userId }: { quest: Quest; userId: string }) {
             rows={9}
             value={note}
             onChange={(e) => setNote(e.target.value)}
-            placeholder="Off the cuff is the point. It does not have to be good. It does have to be now."
+            placeholder={quest.write_prompt ?? "Write it here, in the moment."}
             style={{ fontSize: 16, lineHeight: 1.5 }}
           />
         </div>
@@ -221,7 +221,7 @@ export function ProofForm({ quest, userId }: { quest: Quest; userId: string }) {
       {textFirst ? (
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
           <div className="px" style={{ fontSize: 11, color: "var(--muted)", lineHeight: 1.7 }}>
-            OR PHOTOGRAPH A POEM YOU WROTE BY HAND
+            OR ADD A PHOTO INSTEAD
           </div>
           {stage === "attached" ? (
             <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>

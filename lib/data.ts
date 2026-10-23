@@ -186,6 +186,8 @@ export type Quest = {
   drawing_pad: boolean;
   /** Writing is the main way to hand it in; a photo is the secondary option. */
   text_first: boolean;
+  /** The placeholder in the writing box, for text-first quests. */
+  write_prompt: string | null;
   ready_at: string | null;
 };
 
