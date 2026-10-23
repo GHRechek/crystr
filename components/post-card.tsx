@@ -2,7 +2,6 @@ import Link from "next/link";
 import { Avatar, Placeholder } from "@/components/bits";
 import { LikeButton } from "@/components/like-button";
 import { PostMenu } from "@/components/report-button";
-import { Cost } from "@/components/mana";
 import { ago, corrupt } from "@/lib/crystr";
 import type { FeedPost } from "@/lib/data";
 
@@ -15,6 +14,8 @@ export function PostCard({
   decay = 0,
   inThread,
   thread,
+  line,
+  small,
 }: {
   post: FeedPost;
   me: string;
@@ -23,6 +24,10 @@ export function PostCard({
   inThread?: boolean;
   /** The thread's top post id, so liking can refresh that page. */
   thread?: number;
+  /** Draw the thread line down from the picture, to the next post in the thread. */
+  line?: boolean;
+  /** A reply: a smaller picture. */
+  small?: boolean;
 }) {
   const mine = post.author.id === me;
 
@@ -41,70 +46,91 @@ export function PostCard({
   );
 
   return (
-    <div className="card">
-      <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
-        <Link
-          href={`/u/${post.author.handle}`}
-          style={{ display: "flex", alignItems: "center", gap: 9, minWidth: 0, minHeight: 40, color: "inherit", textDecoration: "none" }}
-        >
-          <Avatar person={post.author} />
-          <div style={{ display: "flex", flexDirection: "column", gap: 1, minWidth: 0 }}>
-            <div style={{ fontSize: 13, fontWeight: 500, letterSpacing: "-.01em" }}>
-              {post.author.handle}
-            </div>
-            <div className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
+    <div className="tpost">
+      <div className="tpost-side">
+        <Link href={`/u/${post.author.handle}`} aria-label={`${post.author.handle}'s profile`}>
+          <Avatar person={post.author} size={small ? 30 : 40} />
+        </Link>
+        {line || post.latest_reply ? <div className="tline" aria-hidden /> : null}
+      </div>
+
+      <div className="tpost-main">
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <Link
+            href={`/u/${post.author.handle}`}
+            style={{ display: "flex", alignItems: "baseline", gap: 8, minWidth: 0, color: "inherit", textDecoration: "none" }}
+          >
+            <span style={{ fontSize: 13.5, fontWeight: 600, letterSpacing: "-.01em" }}>{post.author.handle}</span>
+            <span className="px" style={{ fontSize: 11, color: "var(--muted)", whiteSpace: "nowrap" }}>
               {mine ? "YOU · " : ""}
               {ago(post.created_at)}
-            </div>
-          </div>
-        </Link>
-        <div className="spacer" />
-        {post.cost > 0 ? (
-          <div className="px" style={{ fontSize: 11, color: "var(--dim)" }}>
-            <Cost n={post.cost} />
+            </span>
+          </Link>
+          <div className="spacer" />
+          {mine ? null : (
+            <PostMenu kind="post" target={post.id} back={inThread && thread ? `/thread/${thread}` : "/"} />
+          )}
+        </div>
+
+        {post.quest_title ? (
+          <div className="px" style={{ fontSize: 11, color: "var(--mag-soft)" }}>
+            FROM THE WELL · {post.quest_title.toUpperCase()}
           </div>
         ) : null}
-        {mine ? null : (
-          <PostMenu kind="post" target={post.id} back={inThread && thread ? `/thread/${thread}` : "/"} />
-        )}
-      </div>
 
-      {post.quest_title ? (
-        <div className="px" style={{ fontSize: 11, color: "var(--mag-soft)" }}>
-          FROM THE WELL · {post.quest_title.toUpperCase()}
-        </div>
-      ) : null}
-
-      {inThread ? (
-        body
-      ) : (
-        <Link href={`/thread/${post.id}`} style={{ color: "inherit", textDecoration: "none" }}>
-          {body}
-        </Link>
-      )}
-
-      {post.image_url ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={post.image_url}
-          alt="A picture shared with this post"
-          loading="lazy"
-          style={{ display: "block", width: "100%", maxHeight: 420, objectFit: "contain", borderRadius: 4, background: "var(--inset)" }}
-        />
-      ) : post.has_image ? (
-        <Placeholder label="IMAGE — PENDING TILE" height={132} />
-      ) : null}
-
-      <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 1 }}>
-        <LikeButton postId={post.id} likes={post.likes} liked={post.liked} thread={thread} />
-        {inThread ? null : (
-          <Link href={`/thread/${post.id}?reply=1`} className="btn btn-sm">
-            ↩ REPLY{post.replies > 0 ? ` · ${post.replies}` : ""}
+        {inThread ? (
+          body
+        ) : (
+          <Link href={`/thread/${post.id}`} style={{ color: "inherit", textDecoration: "none" }}>
+            {body}
           </Link>
         )}
-        <div className="spacer" />
 
+        {post.image_url ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={post.image_url}
+            alt="A picture shared with this post"
+            loading="lazy"
+            style={{ display: "block", width: "100%", maxHeight: 420, objectFit: "contain", background: "var(--inset)" }}
+          />
+        ) : post.has_image ? (
+          <Placeholder label="IMAGE — PENDING TILE" height={132} />
+        ) : null}
+
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <LikeButton postId={post.id} likes={post.likes} liked={post.liked} thread={thread} />
+          {inThread ? null : (
+            <Link href={`/thread/${post.id}?reply=1`} className="btn btn-sm">
+              ↩ REPLY{post.replies > 0 ? ` · ${post.replies}` : ""}
+            </Link>
+          )}
+        </div>
       </div>
+
+      {post.latest_reply && !inThread ? (
+        <>
+          <div className="tpost-side tpost-side-reply">
+            <Link href={`/u/${post.latest_reply.author.handle}`} aria-label={`${post.latest_reply.author.handle}'s profile`}>
+              <Avatar person={post.latest_reply.author} size={30} />
+            </Link>
+          </div>
+          <Link href={`/thread/${post.id}`} className="tpost-main tpost-reply">
+            <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
+              <span style={{ fontSize: 13, fontWeight: 600 }}>{post.latest_reply.author.handle}</span>
+              <span className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
+                {ago(post.latest_reply.created_at)}
+              </span>
+            </div>
+            <div className="tpost-reply-body">{corrupt(post.latest_reply.body, decay)}</div>
+            {post.replies > 1 ? (
+              <span className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
+                {post.replies - 1} MORE {post.replies - 1 === 1 ? "REPLY" : "REPLIES"}
+              </span>
+            ) : null}
+          </Link>
+        </>
+      ) : null}
     </div>
   );
 }

@@ -24,9 +24,9 @@ export default async function ThreadPage(
   const decay = decayLevel(profile.mana);
 
   return (
-    <div className="pad" style={{ gap: 12 }}>
+    <div className="pad" style={{ gap: 0, padding: "16px 0 24px" }}>
       <h1 className="sr-only">A thread</h1>
-      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "0 16px 12px" }}>
         <Link href="/" className="btn btn-sm">
           ← BACK
         </Link>
@@ -38,15 +38,15 @@ export default async function ThreadPage(
         </div>
       </div>
 
-      <PostCard post={post} me={userId} decay={decay} inThread thread={post.id} />
+      <PostCard post={post} me={userId} decay={decay} inThread thread={post.id} line={replies.length > 0} />
 
-      <ReplyForm parent={post.id} mana={profile.mana} focus={searchParams.reply === "1"} />
-
-      {replies.map((r) => (
-        <div key={r.id} style={{ paddingLeft: 14, borderLeft: "2px solid var(--edge)" }}>
-          <PostCard post={r} me={userId} decay={decay} inThread thread={post.id} />
-        </div>
+      {replies.map((r, i) => (
+        <PostCard key={r.id} post={r} me={userId} decay={decay} inThread thread={post.id} small line={i < replies.length - 1} />
       ))}
+
+      <div style={{ padding: "12px 16px 0" }}>
+        <ReplyForm parent={post.id} mana={profile.mana} focus={searchParams.reply === "1"} />
+      </div>
     </div>
   );
 }
