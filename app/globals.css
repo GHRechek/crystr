@@ -942,9 +942,10 @@ select {
   }
 }
 
+/* One flat colour: the old pink and blue fringe made it read as blurry. */
 .wiki-title {
-  text-shadow: -2px 0 rgba(224, 57, 138, 0.7), 2px 0 rgba(76, 125, 240, 0.7);
-  position: relative;
+  color: var(--text);
+  text-shadow: none;
 }
 
 
