@@ -3,36 +3,14 @@ import { notFound } from "next/navigation";
 import { requireMe } from "@/lib/data";
 import { getWikiFacts, getWikiPage, SLUG, touchWikiPage, type WikiFact } from "@/lib/wiki";
 import { moderateWikiPage, removeFact } from "@/lib/wiki-actions";
-import { fillerChunk } from "@/lib/wiki-filler";
+import { layoutPage } from "@/lib/wiki-layout";
+import { COSTS } from "@/lib/crystr";
 import { ago, corrupt, decayLevel } from "@/lib/crystr";
 
-const TEXT = { fontSize: 14, lineHeight: 1.75 } as const;
-
-/** Blurred by a soft glow where the letters were, rather than a filter, so it
- *  wraps and justifies like any other run of text. */
-const BLUR = {
-  color: "transparent",
-  textShadow: "0 0 5px rgba(170,176,214,.9)",
-  userSelect: "none",
-  pointerEvents: "none",
-} as const;
+const TEXT = { fontSize: 16, lineHeight: 1.7 } as const;
 
 /** What a person added: sharp, same size as the text around it. */
 const FOCUS = { color: "var(--text)", fontWeight: 500 } as const;
-
-const CHIP = {
-  display: "inline-block",
-  fontSize: 11,
-  lineHeight: 1,
-  padding: "4px 7px",
-  margin: "0 2px",
-  border: "1px dashed var(--pur)",
-  borderRadius: 3,
-  color: "var(--pur-pale)",
-  textDecoration: "none",
-  textIndent: 0,
-  verticalAlign: "1px",
-} as const;
 
 /** A fact reads as a sentence in the paragraph: end it with a full stop. */
 function sentence(text: string): string {
@@ -56,22 +34,13 @@ export default async function WikiPageView(props: { params: Promise<{ slug: stri
   const decay = decayLevel(profile.mana);
   const paused = page.locked && !witch;
 
-  // What each slot holds for this person: the kept fact, or their own waiting
-  // or sent-back one, or nothing (open).
-  const kept = new Map<number, WikiFact>();
-  const mine = new Map<number, WikiFact>();
-  for (const f of facts) {
-    if (f.status === "kept") kept.set(f.slot, f);
-    else if (f.author?.id === userId) mine.set(f.slot, f);
-  }
-  const filled = kept.size;
-
-  // Three gaps to a paragraph, in order.
-  const paragraphs: number[][] = [];
-  for (let slot = 1; slot <= page.slots; slot++) {
-    if (paragraphs.length === 0 || paragraphs[paragraphs.length - 1].length === 3) paragraphs.push([]);
-    paragraphs[paragraphs.length - 1].push(slot);
-  }
+  // The facts this person sees, in the order they were added: every kept one, plus their
+  // own waiting one(s). Returned ones are mentioned below the article instead.
+  const kept = facts.filter((f) => f.status === "kept");
+  const mine = facts.filter((f) => f.status !== "kept" && f.author?.id === userId);
+  const shown = [...kept, ...mine.filter((m) => m.status === "pending")].sort((x, y) => x.slot - y.slot);
+  const filled = kept.length;
+  const paragraphs = layoutPage(page.id, shown);
 
   return (
     <div className="pad" style={{ gap: 12 }}>
@@ -92,76 +61,103 @@ export default async function WikiPageView(props: { params: Promise<{ slug: stri
         ) : null}
       </div>
 
-      <div>
-        <h1 style={{ fontSize: 25, fontWeight: 500, lineHeight: 1.15, letterSpacing: "-.025em" }}>
-          {corrupt(page.title, decay)}
-        </h1>
-        <div className="px" style={{ fontSize: 11, color: "var(--muted)", marginTop: 8 }}>
-          {filled} {filled === 1 ? "FACT" : "FACTS"} · EDITED {ago(page.updated_at)}
-          {page.updated_by ? ` BY ${page.updated_by.handle}` : ""}
-        </div>
-      </div>
+      {/* The article: its title at the head, then the text the City is writing. */}
+      <article
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 14,
+          padding: "16px 14px 18px",
+          background: "var(--surface)",
+          boxShadow: "0 0 0 1px var(--edge)",
+          borderRadius: "var(--px-r)",
+        }}
+      >
+        <header style={{ display: "flex", flexDirection: "column", gap: 8, paddingBottom: 12, borderBottom: "1px solid var(--rule)" }}>
+          <h1
+            className="wiki-px wiki-title"
+            style={{ fontSize: 30, fontWeight: 600, lineHeight: 1.1, letterSpacing: ".01em", overflowWrap: "anywhere" }}
+          >
+            {corrupt(page.title, decay)}
+          </h1>
+          <div className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
+            {filled} {filled === 1 ? "FACT" : "FACTS"} · EDITED {ago(page.updated_at)}
+            {page.updated_by ? ` BY ${page.updated_by.handle}` : ""}
+          </div>
+        </header>
 
-      <div className="screen-intro" style={{ margin: 0 }}>
-        {paused
-          ? "A witch has paused this page for now."
-          : "Tap a gap to add a few key words. A witch will read what you write."}
-      </div>
-
-      {/* The page is a few paragraphs of text nobody can read, with the facts the
-          City has added standing in focus inside it, as if they were part of the
-          prose. Open gaps are small chips in the same flow. */}
-      {paragraphs.map((slots, pi) => (
-        <p key={pi} style={{ ...TEXT, margin: 0, textAlign: "justify", textIndent: "1.6em", color: "var(--text-2)" }}>
-          {slots.map((slot) => {
-            const fact = kept.get(slot);
-            const own = mine.get(slot);
-            return (
-              <span key={slot}>
-                <span aria-hidden style={BLUR}>
-                  {fillerChunk(page.id, slot)}{" "}
+        {/* A few paragraphs of text nobody can read, with what the City has added standing
+            clear inside them, two facts to a paragraph. */}
+        {paragraphs.map((pieces, pi) => (
+          <p
+            key={pi}
+            className="wiki-px"
+            style={{ ...TEXT, margin: 0, textAlign: "justify", textIndent: "1.6em", color: "var(--text-2)" }}
+          >
+            {pieces.map((piece, i) =>
+              piece.kind === "blur" ? (
+                <span
+                  key={i}
+                  aria-hidden
+                  className={piece.glitch ? "wiki-blur wiki-glitch" : "wiki-blur"}
+                  style={piece.glitch ? { animationDelay: `-${piece.delay}s` } : undefined}
+                >
+                  {piece.text}{" "}
                 </span>
-                {fact ? (
-                  <span style={FOCUS}>{sentence(corrupt(fact.body, decay))} </span>
-                ) : own?.status === "pending" ? (
-                  <Link
-                    href={paused ? `/wiki/${page.slug}` : `/wiki/${page.slug}/add/${slot}`}
-                    style={{
-                      ...FOCUS,
-                      color: "var(--pur-pale)",
-                      background: "rgba(140,90,230,.14)",
-                      borderBottom: "1px dashed var(--pur)",
-                      textDecoration: "none",
-                      padding: "0 2px",
-                    }}
-                  >
-                    {sentence(corrupt(own.body, decay))}
-                  </Link>
-                ) : paused ? null : (
-                  <Link href={`/wiki/${page.slug}/add/${slot}`} className="px" style={CHIP}>
-                    ＋ ADD
-                  </Link>
-                )}{" "}
-              </span>
-            );
-          })}
-        </p>
-      ))}
+              ) : piece.fact.status === "pending" ? (
+                <Link
+                  key={i}
+                  href={paused ? `/wiki/${page.slug}` : `/wiki/${page.slug}/add/${piece.fact.slot}`}
+                  style={{
+                    ...FOCUS,
+                    color: "var(--pur-pale)",
+                    background: "rgba(140,90,230,.14)",
+                    borderBottom: "1px dashed var(--pur)",
+                    textDecoration: "none",
+                    padding: "0 2px",
+                  }}
+                >
+                  {sentence(corrupt(piece.fact.body, decay))}{" "}
+                </Link>
+              ) : (
+                <span key={i} style={FOCUS}>
+                  {sentence(corrupt(piece.fact.body, decay))}{" "}
+                </span>
+              ),
+            )}
+          </p>
+        ))}
 
-      {[...mine.values()].map((m) => (
+        {paused ? (
+          <div className="screen-intro" style={{ margin: 0 }}>
+            A witch has paused this page for now.
+          </div>
+        ) : (
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            <Link href={`/wiki/${page.slug}/add`} className="btn btn-lg btn-block btn-purple">
+              ＋ ADD SOMETHING
+            </Link>
+            <div style={{ fontSize: 12.5, lineHeight: 1.5, color: "var(--muted)" }}>
+              A few key words about {page.title}. It costs {COSTS.wikiEdit} mana and joins the page once a witch has read it.
+            </div>
+          </div>
+        )}
+      </article>
+
+      {mine.map((m) => (
         <div key={m.id} className="notice" style={m.status === "pending" ? { borderColor: "var(--pur)" } : undefined}>
           {m.status === "pending"
             ? `YOU ADDED “${m.body}”. ONLY YOU AND THE WITCHES CAN SEE IT UNTIL IT HAS BEEN READ.`
-            : `A WITCH SENT BACK “${m.body}”${m.note ? ` — ${m.note}` : ""}. THE GAP IS OPEN IF YOU WANT TO TRY AGAIN.`}
+            : `A WITCH SENT BACK “${m.body}”${m.note ? ` — ${m.note}` : ""}. YOU CAN ADD SOMETHING ELSE ABOVE.`}
         </div>
       ))}
 
-      {witch && kept.size ? (
+      {witch && kept.length ? (
         <div className="tile" style={{ padding: 12, display: "flex", flexDirection: "column", gap: 8 }}>
           <div className="px" style={{ fontSize: 11, color: "var(--pur-pale)" }}>
             THE FACTS ON THIS PAGE
           </div>
-          {[...kept.values()].map((f) => (
+          {kept.map((f) => (
             <div key={f.id} style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <div style={{ flex: 1, minWidth: 0, fontSize: 12.5, color: "var(--text-2)" }}>
                 {f.body}

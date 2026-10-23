@@ -125,7 +125,7 @@ function Row({ page, decay, witch }: { page: WikiListing; decay: number; witch: 
     >
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
         <div style={{ fontSize: 14.5, fontWeight: 500, letterSpacing: "-.01em", flex: 1, minWidth: 0 }}>
-          {corrupt(page.title, decay)}
+          <span className="wiki-px" style={{ fontSize: 16 }}>{corrupt(page.title, decay)}</span>
         </div>
         {page.locked ? (
           <span className="px" style={{ fontSize: 11, color: "var(--mag-soft)" }}>
@@ -150,7 +150,7 @@ function Hit({ hit, decay }: { hit: WikiHit; decay: number }) {
     >
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
         <div style={{ fontSize: 14.5, fontWeight: 500, letterSpacing: "-.01em", flex: 1, minWidth: 0 }}>
-          {corrupt(hit.title, decay)}
+          <span className="wiki-px" style={{ fontSize: 16 }}>{corrupt(hit.title, decay)}</span>
         </div>
         {hit.archived ? (
           <span className="px" style={{ fontSize: 11, color: "var(--mag-soft)" }}>
