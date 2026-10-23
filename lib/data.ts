@@ -19,6 +19,9 @@ export type Profile = {
   mana: number;
   spent_total: number;
   is_witch: boolean;
+  banner_pattern: string | null;
+  banner_a: string | null;
+  banner_b: string | null;
   created_at: string;
 };
 

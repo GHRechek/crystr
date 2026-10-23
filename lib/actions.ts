@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { setFlash, EDGE } from "@/lib/flash";
 import { TERMS_VERSION } from "@/lib/terms";
 import { INVISIBLE } from "@/lib/wiki-fact";
+import { isPattern, isSwatch } from "@/lib/banner";
 import { COSTS, untilReady } from "@/lib/crystr";
 import { normalizePortrait } from "@/lib/portrait/core";
 import { listBadges } from "@/lib/badges";
@@ -622,6 +623,42 @@ export async function updateProfile(fd: FormData) {
   }
 
   await setFlash("NOTED", "The City has been told.", EDGE.purple);
+  revalidatePath("/me");
+  redirect("/me");
+}
+
+/** Choose how your profile banner looks, or put it back to the original. */
+export async function setBanner(fd: FormData) {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const reset = str(fd, "reset") === "1";
+  const pattern = str(fd, "pattern");
+  const a = str(fd, "a");
+  const b = str(fd, "b");
+  if (!reset && !(isPattern(pattern) && isSwatch(a) && isSwatch(b))) {
+    await setFlash("NOT QUITE", "Pick a pattern and two colours from the lists.", EDGE.mag);
+    return;
+  }
+
+  const { error } = await supabase
+    .from("profiles")
+    .update(
+      reset
+        ? { banner_pattern: null, banner_a: null, banner_b: null, updated_at: new Date().toISOString() }
+        : { banner_pattern: pattern, banner_a: a, banner_b: b, updated_at: new Date().toISOString() },
+    )
+    .eq("id", user.id);
+
+  if (error) {
+    console.error("setBanner:", error.message);
+    await wentWrong();
+    return;
+  }
+  await setFlash("BANNER SAVED", reset ? "Back to the original." : "Your banner is up.", EDGE.purple);
   revalidatePath("/me");
   redirect("/me");
 }

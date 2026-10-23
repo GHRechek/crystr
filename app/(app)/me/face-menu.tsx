@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
 import { setMood } from "@/lib/actions";
 
 /** The banner, the portrait and the thought hanging in the air above it.
@@ -12,11 +12,14 @@ export function ProfileHead({
   handle,
   joined,
   mood,
+  banner,
 }: {
   src: string;
   handle: string;
   joined: string;
   mood: string | null;
+  /** The banner's CSS, from bannerStyle(). */
+  banner: CSSProperties;
 }) {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -24,13 +27,7 @@ export function ProfileHead({
   return (
     <>
       <div style={{ position: "relative" }}>
-        <div
-          style={{
-            height: 112,
-            backgroundColor: "var(--inset)",
-            backgroundImage: "repeating-linear-gradient(135deg,#2a2146 0 8px,#1b1d29 8px 16px)",
-          }}
-        />
+        <div style={{ height: 112, ...banner }} />
 
         {/* The thought floats in the banner, tail stepping down to the face. */}
         {!editing ? (
