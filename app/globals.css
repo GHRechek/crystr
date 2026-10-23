@@ -143,7 +143,10 @@ select {
   display: flex;
   flex-direction: column;
   width: 100%;
-  min-height: 100dvh;
+  /* The frame is exactly the screen, so the area inside it (.screen) is what scrolls. With
+     min-height instead, a long page grew the frame and the whole document scrolled: the header
+     and tab bar went with it, and nothing marked position: sticky could ever stick. */
+  height: 100dvh;
   overflow: hidden;
   background: var(--device);
   color: var(--text);
@@ -251,9 +254,13 @@ select {
   gap: 12px;
 }
 
+/* First in .screen, pinned to its top while the page scrolls under it, so the lines cover
+   what is on screen however far down you are (margin-bottom takes back the space it holds). */
 .scanlines {
-  position: absolute;
-  inset: 0;
+  position: sticky;
+  top: 0;
+  height: 100%;
+  margin-bottom: -100%;
   pointer-events: none;
   z-index: 1;
   background-image: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.5) 0 1px, transparent 1px 3px);
