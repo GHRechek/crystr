@@ -1112,3 +1112,16 @@ select {
   border-left: 2px dotted var(--edge);
   pointer-events: none;
 }
+
+/* In a thread the post and its replies run as one chain: no rule between them, so the
+   line is not cut; one rule closes the chain. */
+.tpost-chain {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+.treply .tpost {
+  border-bottom: 0;
+}
+.tchain-end {
+  border-bottom: 1px solid var(--edge);
+}

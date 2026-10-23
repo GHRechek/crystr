@@ -45,7 +45,7 @@ export function PostCard({
   );
 
   return (
-    <div className="tpost">
+    <div className={line ? "tpost tpost-chain" : "tpost"}>
       <div className="tpost-side">
         <Link href={`/u/${post.author.handle}`} aria-label={`${post.author.handle}'s profile`}>
           <Avatar person={post.author} size={40} />
