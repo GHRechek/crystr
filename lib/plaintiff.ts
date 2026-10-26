@@ -23,6 +23,8 @@ export const PLAINTIFF_ERRORS = {
   incomplete: { field: "form", message: "Please answer every question marked with a star." },
   bad_adc: { field: "district_code", message: "That is not the ADC for that part of the City. Check it and try again." },
   enclave_elves: { field: "species", message: "Only elves live in the Elven Enclaves. Choose Elf, or a different part of the City." },
+  planar_caster: { field: "spellcaster", message: "Contact arcane enforcement immediately." },
+  bad_arcn: { field: "arcn", message: "That is not an ARCN. Check it and try again." },
   bad_sdc: { field: "species_code", message: "That is not the SDC for that species. Check it and try again." },
 } as const;
 
