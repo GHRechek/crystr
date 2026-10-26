@@ -151,7 +151,7 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
 
         {token ? (
           <div className="tile" style={{ padding: 12, display: "flex", gap: 12, alignItems: "center" }}>
-            <TokenImage design={token.design} size={64} />
+            <TokenImage design={token.design} size={80} />
             <div style={{ minWidth: 0 }}>
               <div className="px" style={{ fontSize: 11, color: "var(--text)", lineHeight: 1.5 }}>
                 {tokenTitle(person.display_name, person.handle).toUpperCase()}

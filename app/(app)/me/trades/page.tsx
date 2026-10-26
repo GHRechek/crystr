@@ -23,7 +23,7 @@ function Side({
     const worth = item.kind === "token" ? BADGE_MANA.token : BADGE_MANA.tradable;
     return (
       <div style={{ display: "flex", gap: 8, alignItems: "center", minWidth: 0 }}>
-        <ItemArt item={item} size={item.kind === "token" ? 64 : 42} />
+        <ItemArt item={item} size={item.kind === "token" ? 80 : 42} />
         <div style={{ minWidth: 0 }}>
           <div className="px" style={{ fontSize: 11, lineHeight: 1.5 }}>
             {itemTitle(item).toUpperCase()}
@@ -36,7 +36,7 @@ function Side({
   if (token) {
     return (
       <div style={{ display: "flex", gap: 8, alignItems: "center", minWidth: 0 }}>
-        <TokenImage design={token.design} size={64} />
+        <TokenImage design={token.design} size={80} />
         <div style={{ minWidth: 0 }}>
           <div className="px" style={{ fontSize: 11, lineHeight: 1.5 }}>
             {token.title.toUpperCase()}

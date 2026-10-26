@@ -6,7 +6,9 @@ import { TOKEN_SIZE, colourHex, isFramed, normalizeToken, type SizeKey, type Tok
 // Drawing a token: one badge shape in three tones of its colour (the outline is the art's
 // own near-black), a band in the rim colour just inside the edge when the shape is framed,
 // then the two items from the uploaded set, flipped, turned or sized as asked, centred,
-// the chosen one on top. 32 cells; the browser shows it two or three times larger with
+// the chosen one on top. The shape takes the middle 27 of the 40 cells, so a big item
+// (drawn at twice its size, pixel for pixel) hangs over its edges; a small one (seven in
+// ten) sits inside it like heraldry. The browser shows it two or three times larger with
 // the pixels kept square.
 
 const ITEMS_DIR = join(process.cwd(), "public", "badges", "items");
@@ -27,9 +29,9 @@ function item(slug: string): Sprite | null {
   return out;
 }
 
-/** Three in ten bigger or smaller, pixel for pixel (nearest), as a pixel tool would. */
+/** Twice as drawn, or seven in ten, pixel for pixel (nearest), as a pixel tool would. */
 function resized(sp: Sprite, size: SizeKey): Sprite {
-  const f = size === "big" ? 1.3 : size === "small" ? 0.7 : 1;
+  const f = size === "big" ? 2 : size === "small" ? 0.7 : 1;
   if (f === 1) return sp;
   const w = Math.max(1, Math.round(sp.w * f));
   const h = Math.max(1, Math.round(sp.h * f));
@@ -65,6 +67,8 @@ function tones(hex: string): Tones {
 
 const N = TOKEN_SIZE;
 const C = N / 2;
+/** The shape's reach from the centre: 27 cells across, leaving room to hang over. */
+const R = 13.5;
 
 // Inside tests take the pixel's centre. Each shape is a family by size, so the framed
 // kinds can draw the same shape again, three cells in.
@@ -165,10 +169,10 @@ export function composeToken(raw: TokenDesign): Buffer {
   // The shape, and for a framed one the same shape again inside the rim band.
   const family = SHAPE[d.shape.replace("-frame", "")] ?? SHAPE.circle;
   if (isFramed(d.shape)) {
-    paintShape(px, family(C - 0.5), tones(colourHex(d.rim)));
-    paintShape(px, family(C - 3.5), tones(colourHex(d.fill)));
+    paintShape(px, family(R), tones(colourHex(d.rim)));
+    paintShape(px, family(R - 3), tones(colourHex(d.fill)));
   } else {
-    paintShape(px, family(C - 0.5), tones(colourHex(d.fill)));
+    paintShape(px, family(R), tones(colourHex(d.fill)));
   }
 
   const first = d.top === "a" ? "b" : "a";

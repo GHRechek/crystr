@@ -83,7 +83,7 @@ function ShapeChoices({ design, onPick }: { design: TokenDesign; onPick: (k: Tok
             }}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={tokenSrc(preview)} alt="" width={48} height={48} style={{ imageRendering: "pixelated" }} />
+            <img src={tokenSrc(preview)} alt="" width={40} height={40} style={{ imageRendering: "pixelated" }} />
             <span>{s.label}</span>
           </button>
         );
@@ -228,7 +228,7 @@ export function TokenDesigner({ start, fresh }: { start: TokenDesign; fresh: boo
         }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={src} alt="Your token" width={128} height={128} style={{ imageRendering: "pixelated", flex: "none" }} />
+        <img src={src} alt="Your token" width={120} height={120} style={{ imageRendering: "pixelated", flex: "none" }} />
         <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 7 }}>
           <div style={{ fontSize: 12, lineHeight: 1.5, color: "var(--muted)" }}>
             {fresh ? "Nobody has seen this yet." : "Changing it changes what you give next; tokens already given keep their look."}

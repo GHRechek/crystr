@@ -2,11 +2,14 @@
 // months, for 10 max mana. It is built from parts rather than drawn: a badge shape (a
 // circle, a framed circle, a shield, a diamond...) in a colour of their choosing, with a
 // rim colour for the framed shapes, and two items from the uploaded set, each of which can
-// be flipped, turned, made big or small, and sit over or under the other. Everything here
+// be flipped, turned, made big (twice as drawn, hanging over the edges) or small (seven in
+// ten, like heraldry inside a shield), and sit over or under the other. Everything here
 // is shared by the designer (browser) and the compositor (server, lib/token.server.ts);
 // /token/<packed>.png draws one, and the packed spec fully describes it.
 
-export const TOKEN_SIZE = 32;
+/** The picture is 40 cells; the badge shape takes the middle 27, so a big item can hang
+ *  over its edges, hilts and points past the rim. */
+export const TOKEN_SIZE = 40;
 
 /** The colours a shape and its rim can be. Keys are what is saved. */
 export const TOKEN_COLOURS = [
@@ -137,7 +140,7 @@ export type TokenDesign = {
   a_flip: boolean;
   /** Quarter turns clockwise, 0–3. */
   a_rot: 0 | 1 | 2 | 3;
-  /** Three in ten bigger or smaller than drawn, or as drawn. */
+  /** Twice as drawn (over the edges), seven in ten (inside the shape), or as drawn. */
   a_size: SizeKey;
   b: ItemSlug | typeof NO_ITEM;
   b_flip: boolean;
@@ -201,7 +204,7 @@ export function normalizeToken(raw: unknown): TokenDesign {
 // ------------------------------------------------------------ url packing
 
 /** Bump when the compositor changes: tokens are cached immutably by their packed spec. */
-export const TOKEN_RENDER = "2";
+export const TOKEN_RENDER = "3";
 
 /** flip, size and turn of one item in one number: flip × 12 + size × 4 + turn, 0–23. */
 const flags = (flip: boolean, size: SizeKey, r: number) => (flip ? 12 : 0) + SIZE_KEYS.indexOf(size) * 4 + r;

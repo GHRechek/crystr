@@ -48,7 +48,7 @@ function Row({
 function ItemRow({ item }: { item: BadgeItem }) {
   return (
     <>
-      <ItemArt item={item} size={item.kind === "token" ? 48 : 42} />
+      <ItemArt item={item} size={item.kind === "token" ? 80 : 42} />
       <div style={{ flex: 1, minWidth: 0 }}>
         <div className="px" style={{ fontSize: 11 }}>
           {itemTitle(item).toUpperCase()}
@@ -98,9 +98,9 @@ export function TradeForm({
       <div role="radiogroup" aria-label="What you give" style={{ display: "flex", flexDirection: "column", gap: 6 }}>
         <Row on={give === "token"} onPick={() => setGive("token")} disabled={!tokenOk}>
           {myToken ? (
-            <TokenImage design={myToken.design} size={48} />
+            <TokenImage design={myToken.design} size={80} />
           ) : (
-            <div aria-hidden style={{ width: 48, height: 48, flex: "none", display: "grid", placeItems: "center", color: "var(--dim)", border: "1px dashed var(--edge)", borderRadius: "var(--px-r)" }}>
+            <div aria-hidden style={{ width: 80, height: 80, flex: "none", display: "grid", placeItems: "center", color: "var(--dim)", border: "1px dashed var(--edge)", borderRadius: "var(--px-r)" }}>
               ?
             </div>
           )}

@@ -87,8 +87,8 @@ export function BadgeArt({ b, got, progress }: { b: Pick<BadgeRow, "art" | "slug
   );
 }
 
-/** A token's picture at `size` (a whole multiple of 32 keeps the pixels square). */
-export function TokenImage({ design, size = 64, alt = "" }: { design: unknown; size?: number; alt?: string }) {
+/** A token's picture at `size` (a whole multiple of 40 keeps the pixels square). */
+export function TokenImage({ design, size = 80, alt = "" }: { design: unknown; size?: number; alt?: string }) {
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
@@ -103,7 +103,7 @@ export function TokenImage({ design, size = 64, alt = "" }: { design: unknown; s
 
 /** The picture of a tradable badge or a token, as it sits in a list. */
 export function ItemArt({ item, size }: { item: Pick<BadgeItem, "kind" | "design" | "kindRow">; size?: number }) {
-  if (item.kind === "token") return <TokenImage design={item.design} size={size ?? 64} />;
+  if (item.kind === "token") return <TokenImage design={item.design} size={size ?? 80} />;
   if (!item.kindRow?.art) {
     return (
       <div aria-hidden style={{ width: 42, height: 42, flex: "none", display: "grid", placeItems: "center", color: "var(--mag-soft)" }}>
