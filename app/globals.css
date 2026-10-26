@@ -1030,18 +1030,26 @@ select {
   margin-left: 52px;
   position: relative;
 }
-/* The thread line bends out of the post's picture into the reply's picture. */
+/* The thread line bends out of the post's picture into the reply's picture. It is drawn
+   with the same dashes as the line running down (4 on, 2 off, 2 wide) and ends underneath
+   the reply's picture, so the picture sits on top of it. */
 .tpost-replyrow::before,
 .treply::before {
   content: "";
   position: absolute;
   left: -33px;
   top: 0;
-  width: 33px;
-  height: 22px;
-  border-left: 2px dotted var(--edge);
-  border-bottom: 2px dotted var(--edge);
+  width: 53px;
+  height: 23px;
+  background:
+    repeating-linear-gradient(to bottom, var(--edge) 0 4px, transparent 4px 6px) left top / 2px 100% no-repeat,
+    repeating-linear-gradient(to right, var(--edge) 0 4px, transparent 4px 6px) left bottom / 100% 2px no-repeat;
   pointer-events: none;
+}
+.tpost-replyrow .avatar,
+.treply .avatar {
+  position: relative;
+  z-index: 1;
 }
 .tpost-side-reply {
   padding-top: 2px;
@@ -1100,17 +1108,17 @@ select {
 }
 .treply::before {
   left: -17px;
-  width: 33px;
-  height: 32px;
+  height: 33px;
 }
 /* Down to the next reply in the thread. */
 .treply:not(:last-child)::after {
   content: "";
   position: absolute;
   left: -17px;
-  top: 32px;
+  top: 31px;
   bottom: 0;
-  border-left: 2px dotted var(--edge);
+  width: 2px;
+  background: repeating-linear-gradient(to bottom, var(--edge) 0 4px, transparent 4px 6px);
   pointer-events: none;
 }
 
