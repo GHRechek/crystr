@@ -7,6 +7,7 @@ export const DISTRICTS = [
   { value: "city", label: "City District", field: "ADC", example: "the City District is 856" },
   { value: "gate", label: "Gate Districts", field: "ADC", example: "" },
   { value: "outland", label: "Outlands", field: "ADC", example: "" },
+  { value: "enclave", label: "Elven Enclaves", field: "ADC", example: "the Elven Enclaves are 111" },
 ] as const;
 
 export const SPECIES = [
@@ -21,6 +22,7 @@ export const SPECIES = [
 export const PLAINTIFF_ERRORS = {
   incomplete: { field: "form", message: "Please answer every question marked with a star." },
   bad_adc: { field: "district_code", message: "That is not the ADC for that part of the City. Check it and try again." },
+  enclave_elves: { field: "species", message: "Only elves live in the Elven Enclaves. Choose Elf, or a different part of the City." },
   bad_sdc: { field: "species_code", message: "That is not the SDC for that species. Check it and try again." },
 } as const;
 

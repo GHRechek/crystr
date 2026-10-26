@@ -84,7 +84,8 @@ export function WelcomeForm({ handle, displayName, hasFace }: { handle: string; 
       <div className="field">
         <label htmlFor="district_code">YOUR AREA DESIGNATION CODE (ADC) *</label>
         <div style={{ fontSize: 12, lineHeight: 1.5, color: "var(--muted)" }}>
-          A three-digit number for the part of the City you live in. For example, {DISTRICTS[0].example}.
+          A three-digit number for the part of the City you live in. For example, {DISTRICTS[0].example},
+          and {DISTRICTS[3].example}.
           {d ? ` Enter the one for the ${d.label}.` : ""}
         </div>
         <input id="district_code" name="district_code" className="input" maxLength={24} required autoComplete="off" inputMode="numeric" />
@@ -105,6 +106,12 @@ export function WelcomeForm({ handle, displayName, hasFace }: { handle: string; 
         </select>
       </div>
 
+      {district === "enclave" && species && species !== "elf" ? (
+        <div className="banner-note banner-mag" role="alert">
+          Only elves live in the Elven Enclaves. Choose Elf, or a different part of the City.
+        </div>
+      ) : null}
+
       <div className="field">
         <label htmlFor="species_code">YOUR SPECIES DESIGNATION CODE (SDC) *</label>
         <div style={{ fontSize: 12, lineHeight: 1.5, color: "var(--muted)" }}>
@@ -113,6 +120,7 @@ export function WelcomeForm({ handle, displayName, hasFace }: { handle: string; 
         </div>
         <input id="species_code" name="species_code" className="input" maxLength={24} required autoComplete="off" inputMode="numeric" />
         {problem("species_code")}
+        {problem("species")}
       </div>
 
       {error?.field === "form" ? <div className="banner-note banner-mag">{error.message}</div> : null}
