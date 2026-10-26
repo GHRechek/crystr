@@ -14,6 +14,7 @@ export const DISTRICTS = [
 export const SPECIES = [
   { value: "orc", label: "Orc" },
   { value: "human", label: "Human" },
+  { value: "goblin", label: "Goblin" },
   { value: "shifter", label: "Shifter" },
   { value: "elf", label: "Elf" },
   { value: "planar", label: "Planar" },

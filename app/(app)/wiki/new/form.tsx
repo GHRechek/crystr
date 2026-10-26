@@ -6,7 +6,14 @@ import { createWikiPage } from "@/lib/wiki-actions";
 import { slugify } from "@/lib/wiki-slug";
 
 /** Start a page. The address follows the title until you type one of your own. */
-export function NewPageForm({ initialTitle = "" }: { initialTitle?: string }) {
+export function NewPageForm({
+  initialTitle = "",
+  pages,
+}: {
+  initialTitle?: string;
+  /** The pages this one could sit under. */
+  pages: { id: number; title: string }[];
+}) {
   const [title, setTitle] = useState(initialTitle);
   const [slug, setSlug] = useState("");
   const [custom, setCustom] = useState(false);
@@ -62,6 +69,21 @@ export function NewPageForm({ initialTitle = "" }: { initialTitle?: string }) {
         />
         <span className="flabel" style={{ color: "var(--muted)" }}>
           /wiki/{shown || "…"} · LOWERCASE, NUMBERS, SINGLE DASHES
+        </span>
+      </div>
+
+      <div className="field">
+        <label htmlFor="parent">UNDER</label>
+        <select id="parent" name="parent" className="input" defaultValue="">
+          <option value="">On its own</option>
+          {pages.map((p) => (
+            <option key={p.id} value={p.id}>
+              {p.title}
+            </option>
+          ))}
+        </select>
+        <span className="flabel" style={{ color: "var(--muted)" }}>
+          A PAGE CAN SIT UNDER ANOTHER, AS ORCS SIT UNDER MORDLS
         </span>
       </div>
 

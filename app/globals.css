@@ -715,19 +715,7 @@ select {
 }
 
 /* the decay warning */
-.degrading {
-  padding: 10px 12px;
-  border: 1px solid var(--mag-edge);
-  background: #2a1524;
-  border-radius: var(--px-r);
-  display: flex;
-  gap: 10px;
-  align-items: flex-start;
-  animation: cr-jitter 2.4s steps(2, end) infinite;
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .degrading,
   .toast {
     animation: none;
   }
@@ -1201,4 +1189,39 @@ select {
   .haywire-note {
     animation: none;
   }
+}
+
+/* The signal-degrading card: floats in the middle of the screen, over the washed-out page,
+   and stays there as the page scrolls under it until it is put away. The wrapper takes no
+   room in the flow; the card hangs from it. */
+.signal-float {
+  position: sticky;
+  top: 34%;
+  height: 0;
+  z-index: 30;
+  pointer-events: none;
+}
+.signal-card {
+  pointer-events: auto;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70%;
+  min-width: 240px;
+  max-width: 360px;
+  padding: 16px 16px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--device);
+  border-radius: var(--px-r);
+  box-shadow: 0 0 0 1px var(--mag-edge), 0 0 0 4px rgba(224, 57, 138, 0.18), 0 18px 48px rgba(0, 0, 0, 0.65);
+}
+.signal-x {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  min-height: 36px;
+  min-width: 36px;
+  padding: 0;
 }
