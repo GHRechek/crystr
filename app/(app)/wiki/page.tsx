@@ -1,13 +1,13 @@
 import Link from "next/link";
 import { requireMe } from "@/lib/data";
-import { getWikiPages, searchWikiPages, type WikiHit, type WikiListing } from "@/lib/wiki";
+import { getWikiPages, nestPages, searchWikiPages, type WikiHit, type WikiListing } from "@/lib/wiki";
 import { cleanQuery } from "@/lib/wiki-search";
-import { hideNumbers } from "@/lib/wiki-mask";
+import { wikiText } from "@/lib/wiki-mask";
 import { WellHint } from "@/components/well-hint";
-import { ago, corrupt, COSTS, decayLevel } from "@/lib/crystr";
+import { ago, COSTS, decayLevel } from "@/lib/crystr";
 
-// The low-mana wash is applied by the app layout; this page only has to eat the
-// letters (corrupt) in the words it shows.
+// The low-mana wash is applied by the app layout; this page only has to break the
+// numbers, then the letters, in the words it shows (wikiText).
 export default async function WikiIndex(props: { searchParams: Promise<{ q?: string }> }) {
   const searchParams = await props.searchParams;
   const { profile, userId } = await requireMe();
@@ -102,7 +102,18 @@ export default async function WikiIndex(props: { searchParams: Promise<{ q?: str
           <span style={{ color: "var(--muted)" }}>{witch ? "START A PAGE." : "A WITCH WILL START ONE."}</span>
         </div>
       ) : (
-        live.map((p) => <Row key={p.id} page={p} decay={decay} witch={witch} />)
+        nestPages(live).map(({ page, under }) => (
+          <div key={page.id} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            <Row page={page} decay={decay} witch={witch} />
+            {under.length ? (
+              <div style={{ display: "flex", flexDirection: "column", gap: 8, marginLeft: 18, borderLeft: "2px solid var(--edge)", paddingLeft: 10 }}>
+                {under.map((c) => (
+                  <Row key={c.id} page={c} decay={decay} witch={witch} />
+                ))}
+              </div>
+            ) : null}
+          </div>
+        ))
       )}
 
       {!hits && witch && archived.length ? (
@@ -128,7 +139,7 @@ function Row({ page, decay, witch }: { page: WikiListing; decay: number; witch: 
     >
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
         <div style={{ fontSize: 14.5, fontWeight: 500, letterSpacing: "-.01em", flex: 1, minWidth: 0 }}>
-          <span className="wiki-px" style={{ fontSize: 16 }}>{corrupt(witch ? page.title : hideNumbers(page.title), decay)}</span>
+          <span className="wiki-px" style={{ fontSize: 16 }}>{wikiText(page.title, decay, witch)}</span>
         </div>
         {page.locked ? (
           <span className="px" style={{ fontSize: 11, color: "var(--mag-soft)" }}>
@@ -145,7 +156,7 @@ function Row({ page, decay, witch }: { page: WikiListing; decay: number; witch: 
 }
 
 function Hit({ hit, decay, witch }: { hit: WikiHit; decay: number; witch: boolean }) {
-  const mask = (t: string) => (witch ? t : hideNumbers(t));
+  const mask = (t: string) => wikiText(t, decay, witch);
   return (
     <Link
       href={`/wiki/${hit.slug}`}
@@ -154,7 +165,7 @@ function Hit({ hit, decay, witch }: { hit: WikiHit; decay: number; witch: boolea
     >
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
         <div style={{ fontSize: 14.5, fontWeight: 500, letterSpacing: "-.01em", flex: 1, minWidth: 0 }}>
-          <span className="wiki-px" style={{ fontSize: 16 }}>{corrupt(mask(hit.title), decay)}</span>
+          <span className="wiki-px" style={{ fontSize: 16 }}>{mask(hit.title)}</span>
         </div>
         {hit.archived ? (
           <span className="px" style={{ fontSize: 11, color: "var(--mag-soft)" }}>
@@ -166,7 +177,7 @@ function Hit({ hit, decay, witch }: { hit: WikiHit; decay: number; witch: boolea
         /{hit.slug} · MATCHES THE {hit.in === "fact" ? "FACTS" : hit.in.toUpperCase()}
       </div>
       {hit.fact ? (
-        <div style={{ fontSize: 12.5, lineHeight: 1.5, color: "var(--text-2)" }}>{corrupt(mask(hit.fact), decay)}</div>
+        <div style={{ fontSize: 12.5, lineHeight: 1.5, color: "var(--text-2)" }}>{mask(hit.fact)}</div>
       ) : null}
     </Link>
   );

@@ -10,6 +10,8 @@ export type WikiPage = {
   id: number;
   slug: string;
   title: string;
+  /** The page this one sits under, if any. */
+  parent_id: number | null;
   slots: number;
   locked: boolean;
   archived: boolean;
@@ -28,7 +30,7 @@ export type WikiFact = {
 };
 
 const PAGE_COLS =
-  "id, slug, title, slots, locked, archived, updated_at, updated_by:profiles!wiki_pages_updated_by_fkey(handle)";
+  "id, slug, title, parent_id, slots, locked, archived, updated_at, updated_by:profiles!wiki_pages_updated_by_fkey(handle)";
 const FACT_COLS =
   "id, slot, body, status, note, created_at, author:profiles!wiki_facts_author_fkey(id, handle)";
 
@@ -100,6 +102,32 @@ export async function getWikiPage(slug: string): Promise<WikiPage | null> {
   const supabase = createClient();
   const { data } = await supabase.from("wiki_pages").select(PAGE_COLS).eq("slug", slug).maybeSingle();
   return (data as unknown as WikiPage | null) ?? null;
+}
+
+export async function getWikiPageById(id: number): Promise<WikiPage | null> {
+  const supabase = createClient();
+  const { data } = await supabase.from("wiki_pages").select(PAGE_COLS).eq("id", id).maybeSingle();
+  return (data as unknown as WikiPage | null) ?? null;
+}
+
+/** The pages that sit under this one, by title. */
+export async function getWikiChildren(id: number): Promise<WikiPage[]> {
+  const supabase = createClient();
+  const { data } = await supabase.from("wiki_pages").select(PAGE_COLS).eq("parent_id", id).order("title").limit(200);
+  return (data ?? []) as unknown as WikiPage[];
+}
+
+/** The listing as a tree one level deep: each page that has none of the listed pages above
+ *  it, with the listed pages under it. Pure, so it can be tested. */
+export function nestPages<T extends { id: number; parent_id: number | null }>(pages: T[]): { page: T; under: T[] }[] {
+  const ids = new Set(pages.map((p) => p.id));
+  const under = new Map<number, T[]>();
+  for (const p of pages) {
+    if (p.parent_id !== null && ids.has(p.parent_id)) under.set(p.parent_id, [...(under.get(p.parent_id) ?? []), p]);
+  }
+  return pages
+    .filter((p) => p.parent_id === null || !ids.has(p.parent_id))
+    .map((p) => ({ page: p, under: under.get(p.id) ?? [] }));
 }
 
 /** The facts on a page this person may see: every kept one, plus their own

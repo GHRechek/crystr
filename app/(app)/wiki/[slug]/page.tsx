@@ -1,15 +1,15 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireMe } from "@/lib/data";
-import { getWikiFacts, getWikiPage, SLUG, touchWikiPage, type WikiFact } from "@/lib/wiki";
+import { getWikiChildren, getWikiFacts, getWikiPage, getWikiPageById, SLUG, touchWikiPage, type WikiFact } from "@/lib/wiki";
 import { moderateWikiPage, removeFact } from "@/lib/wiki-actions";
 import { layoutPage } from "@/lib/wiki-layout";
-import { hideNumbers } from "@/lib/wiki-mask";
+import { wikiText } from "@/lib/wiki-mask";
 import { WellHint } from "@/components/well-hint";
 import { runePosition } from "@/lib/wiki-runes";
 import { COSTS } from "@/lib/crystr";
 import { Cost } from "@/components/mana";
-import { ago, corrupt, decayLevel } from "@/lib/crystr";
+import { ago, decayLevel } from "@/lib/crystr";
 
 const TEXT = { fontSize: 16, lineHeight: 1.4 } as const;
 
@@ -48,8 +48,8 @@ function sentence(text: string): string {
   return /[.!?…]$/.test(text) ? text : `${text}.`;
 }
 
-// The low-mana wash is applied by the app layout; this page only has to eat the
-// letters (corrupt) in the facts it shows.
+// The low-mana wash is applied by the app layout; this page only has to break the
+// numbers, then the letters, in the facts it shows (wikiText).
 export default async function WikiPageView(props: { params: Promise<{ slug: string }> }) {
   const params = await props.params;
   const { profile, userId } = await requireMe();
@@ -60,12 +60,16 @@ export default async function WikiPageView(props: { params: Promise<{ slug: stri
 
   // Opening a page moves it to the top of this person's list.
   await touchWikiPage(page.id);
-  const facts = await getWikiFacts(page.id);
+  const [facts, parent, children] = await Promise.all([
+    getWikiFacts(page.id),
+    page.parent_id ? getWikiPageById(page.parent_id) : Promise.resolve(null),
+    getWikiChildren(page.id),
+  ]);
   const witch = profile.is_witch;
   const decay = decayLevel(profile.mana);
   const paused = page.locked && !witch;
-  // Numbers are broken for everyone but witches (see lib/wiki-mask.ts).
-  const mask = (t: string) => (witch ? t : hideNumbers(t));
+  // Low on mana, numbers break first, then letters; witches read everything (lib/wiki-mask.ts).
+  const mask = (t: string) => wikiText(t, decay, witch);
 
   // The facts this person sees, in the order they were added: every kept one, plus their
   // own waiting one(s). Returned ones are mentioned below the article instead.
@@ -73,7 +77,7 @@ export default async function WikiPageView(props: { params: Promise<{ slug: stri
   const mine = facts.filter((f) => f.status !== "kept" && f.author?.id === userId);
   const shown = [...kept, ...mine.filter((m) => m.status === "pending")].sort((x, y) => x.slot - y.slot);
   const filled = kept.length;
-  const paragraphs = layoutPage(page.id, shown);
+  const paragraphs = layoutPage(page.id, shown, children);
 
   return (
     <div className="pad" style={{ gap: 12 }}>
@@ -112,12 +116,17 @@ export default async function WikiPageView(props: { params: Promise<{ slug: stri
             className="wiki-px wiki-title"
             style={{ fontSize: 30, fontWeight: 600, lineHeight: 1.1, letterSpacing: ".01em", overflowWrap: "anywhere" }}
           >
-            {corrupt(mask(page.title), decay)}
+            {mask(page.title)}
           </h1>
           <div className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
             {filled} {filled === 1 ? "FACT" : "FACTS"} · EDITED {ago(page.updated_at)}
             {page.updated_by ? ` BY ${page.updated_by.handle}` : ""}
           </div>
+          {parent ? (
+            <Link href={`/wiki/${parent.slug}`} className="px" style={{ fontSize: 11, color: "var(--pur-pale)" }}>
+              ↑ PART OF {mask(parent.title).toUpperCase()}
+            </Link>
+          ) : null}
         </header>
 
         {/* A few paragraphs in runes, with what the City has added standing in bold letters
@@ -139,6 +148,15 @@ export default async function WikiPageView(props: { params: Promise<{ slug: stri
                     </span>
                   ))}{" "}
                 </span>
+              ) : piece.kind === "link" ? (
+                <Link
+                  key={i}
+                  href={`/wiki/${piece.page.slug}`}
+                  className="wiki-fact"
+                  style={{ ...FOCUS, color: "var(--blu-mid)", borderBottom: "1px dotted var(--blu)", textDecoration: "none", padding: "0 2px" }}
+                >
+                  <Words text={`${mask(piece.page.title)} →`} id={piece.page.id * 101} />
+                </Link>
               ) : piece.fact.status === "pending" ? (
                 <Link
                   key={i}
@@ -153,11 +171,11 @@ export default async function WikiPageView(props: { params: Promise<{ slug: stri
                     padding: "0 2px",
                   }}
                 >
-                  <Words text={sentence(corrupt(mask(piece.fact.body), decay))} id={piece.fact.id} />
+                  <Words text={sentence(mask(piece.fact.body))} id={piece.fact.id} />
                 </Link>
               ) : (
                 <span key={i} className="wiki-fact" style={FOCUS}>
-                  <Words text={sentence(corrupt(mask(piece.fact.body), decay))} id={piece.fact.id} />
+                  <Words text={sentence(mask(piece.fact.body))} id={piece.fact.id} />
                 </span>
               ),
             )}
@@ -178,6 +196,21 @@ export default async function WikiPageView(props: { params: Promise<{ slug: stri
             </div>
           </div>
         )}
+
+        {children.length ? (
+          <div style={{ display: "flex", flexDirection: "column", gap: 6, paddingTop: 12, borderTop: "1px solid var(--rule)" }}>
+            <div className="px" style={{ fontSize: 11, color: "var(--pur-pale)" }}>
+              UNDER THIS
+            </div>
+            <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+              {children.map((c) => (
+                <Link key={c.id} href={`/wiki/${c.slug}`} className="btn btn-sm" style={{ minHeight: 40 }}>
+                  <span className="wiki-px" style={{ fontSize: 14 }}>{mask(c.title)}</span> →
+                </Link>
+              ))}
+            </div>
+          </div>
+        ) : null}
       </article>
 
       {mine.map((m) => (

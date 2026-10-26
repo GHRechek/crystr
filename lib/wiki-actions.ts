@@ -40,15 +40,17 @@ export async function createWikiPage(fd: FormData) {
   const title = str(fd, "title");
   const slug = str(fd, "slug") || slugify(title);
   const slots = Math.max(2, Math.min(60, Number(fd.get("slots")) || 6));
+  const parent = Number(fd.get("parent")) || null;
 
   if (!SLUG.test(slug)) {
     await setFlash("BAD ADDRESS", "A page address is lowercase letters, numbers and single dashes.", EDGE.mag);
     return;
   }
 
-  const r = await call("cr_wiki_create_page", { p_slug: slug, p_title: title, p_slots: slots });
+  const r = await call("cr_wiki_create_page", { p_slug: slug, p_title: title, p_slots: slots, p_parent: parent });
   if (!r.ok) {
     if (r.code === "taken") await setFlash("TAKEN", "A page already lives at that address.", EDGE.mag);
+    else if (r.code === "bad_parent") await setFlash("NO SUCH PAGE", "The page it would sit under is not there.", EDGE.mag);
     else if (r.code === "no_title") await setFlash("NO TITLE", "Give the page a name first.", EDGE.mag);
     else if (r.code === "bad_slug") await setFlash("BAD ADDRESS", "A page address is lowercase letters, numbers and single dashes.", EDGE.mag);
     else if (r.code === "forbidden") await setFlash("NOT YOURS", "Only witches start pages.", EDGE.mag);
