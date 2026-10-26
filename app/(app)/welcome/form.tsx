@@ -84,11 +84,11 @@ export function WelcomeForm({ handle, displayName, hasFace }: { handle: string; 
       <div className="field">
         <label htmlFor="district_code">YOUR AREA DESIGNATION CODE (ADC) *</label>
         <div style={{ fontSize: 12, lineHeight: 1.5, color: "var(--muted)" }}>
-          A short code for the part of the City you live in: three digits, or three letters for the
-          Enclaves. For example, {DISTRICTS[0].example}, and {DISTRICTS[3].example}.
+          A three-digit number for the part of the City you live in. For example, {DISTRICTS[0].example},
+          and {DISTRICTS[3].example}.
           {d ? ` Enter the one for the ${d.label}.` : ""}
         </div>
-        <input id="district_code" name="district_code" className="input" maxLength={24} required autoComplete="off" />
+        <input id="district_code" name="district_code" className="input" maxLength={24} required autoComplete="off" inputMode="numeric" />
         {problem("district_code")}
       </div>
 

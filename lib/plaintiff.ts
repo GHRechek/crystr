@@ -7,7 +7,7 @@ export const DISTRICTS = [
   { value: "city", label: "City District", field: "ADC", example: "the City District is 856" },
   { value: "gate", label: "Gate Districts", field: "ADC", example: "" },
   { value: "outland", label: "Outlands", field: "ADC", example: "" },
-  { value: "enclave", label: "Elven Enclaves", field: "ADC", example: "the Elven Enclaves are SYL" },
+  { value: "enclave", label: "Elven Enclaves", field: "ADC", example: "the Elven Enclaves are 111" },
 ] as const;
 
 export const SPECIES = [

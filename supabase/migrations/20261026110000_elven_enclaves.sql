@@ -1,5 +1,5 @@
 -- A fourth part of the City: the Elven Enclaves, where only elves live. Its ADC is three
--- letters. (The code itself is kept in plaintiff_codes, set directly in the database.)
+-- digits. (The code itself is kept in plaintiff_codes, set directly in the database.)
 create or replace function public.cr_register(p_district text, p_district_code text, p_species text, p_species_code text)
  returns jsonb
  language plpgsql
