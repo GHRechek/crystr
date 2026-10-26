@@ -6,10 +6,10 @@ import { TOKEN_SIZE, colourHex, isFramed, normalizeToken, type SizeKey, type Tok
 // Drawing a token: one badge shape in three tones of its colour (the outline is the art's
 // own near-black), a band in the rim colour just inside the edge when the shape is framed,
 // then the two items from the uploaded set, flipped, turned or sized as asked, centred,
-// the chosen one on top. The shape takes the middle 27 of the 40 cells, so a big item
-// (drawn at twice its size, pixel for pixel) hangs over its edges; a small one (seven in
-// ten) sits inside it like heraldry. The browser shows it two or three times larger with
-// the pixels kept square.
+// the chosen one on top. The shape takes the middle 22 of the 32 cells, small on purpose:
+// an item at its drawn size reaches the rim, a larger one hangs over it, a smaller one
+// sits inside like heraldry. The browser shows it two to four times larger with the
+// pixels kept square.
 
 const ITEMS_DIR = join(process.cwd(), "public", "badges", "items");
 type Sprite = { w: number; h: number; data: Uint8ClampedArray };
@@ -29,9 +29,9 @@ function item(slug: string): Sprite | null {
   return out;
 }
 
-/** Twice as drawn, or seven in ten, pixel for pixel (nearest), as a pixel tool would. */
+/** Scaled by hundredths, pixel for pixel (nearest), as a pixel tool would. */
 function resized(sp: Sprite, size: SizeKey): Sprite {
-  const f = size === "big" ? 2 : size === "small" ? 0.7 : 1;
+  const f = size / 100;
   if (f === 1) return sp;
   const w = Math.max(1, Math.round(sp.w * f));
   const h = Math.max(1, Math.round(sp.h * f));
@@ -67,8 +67,8 @@ function tones(hex: string): Tones {
 
 const N = TOKEN_SIZE;
 const C = N / 2;
-/** The shape's reach from the centre: 27 cells across, leaving room to hang over. */
-const R = 13.5;
+/** The shape's reach from the centre: 22 cells across, leaving room to hang over. */
+const R = 11;
 
 // Inside tests take the pixel's centre. Each shape is a family by size, so the framed
 // kinds can draw the same shape again, three cells in.
