@@ -402,6 +402,7 @@ $$;
 -- come first and keep their defaults, so an app from before this file still registers.
 drop function if exists public.cr_register(text, text, text, text);
 drop function if exists public.cr_register(text, text, text, text, boolean, text);
+drop function if exists public.cr_register(text, text, text, text, date, text);
 create or replace function public.cr_register(
   p_district text, p_district_code text, p_species text, p_species_code text,
   p_spellcaster boolean default false, p_arcn text default '',
