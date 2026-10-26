@@ -116,12 +116,13 @@ Nobody has a flat ceiling any more. `profiles.mana_cap` is each person's own:
 A **token** is the badge a person designs for themselves on `/me/token`: a
 badge shape (circle, framed circle, shield, diamond, plate, hexagon, each with
 or without a rim band) in their colours, and two items from the uploaded set
-(`public/badges/items/`), each of which can be flipped, turned in quarters,
-sized from 70 to 130 percent in steps of fifteen, and sit over or under the
-other. The shape is drawn small on purpose, the middle 22 of the picture's 32
-cells: an item at its drawn size already reaches the rim, a larger one hangs
-over it (hilts and points past the edge), a smaller one sits inside like
-heraldry. It is named
+(`public/badges/items/`), added from a sheet and placed by dragging them on a
+stage, each of which can be flipped, turned in quarters, shrunk from 100 to 55
+percent in steps of fifteen, and sit over or under the other. The shape is
+drawn small on purpose, the middle 22 of the picture's 32 cells: an item at
+its drawn size already reaches the rim, one dragged outward hangs over it
+(hilts and points past the edge), a shrunk one sits inside like heraldry. It
+is named
 "<Character's first name>'s Token". `/token/<packed>.png` draws one the way
 `/face` draws a face: the URL describes the whole picture, so it caches
 forever (`lib/token.ts` packs it, `lib/token.server.ts` paints it). Giving

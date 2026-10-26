@@ -1,13 +1,13 @@
 // A token: the badge a person designs for themselves and gives away, once every six
 // months, for 10 max mana. It is built from parts rather than drawn: a badge shape (a
 // circle, a framed circle, a shield, a diamond...) in a colour of their choosing, with a
-// rim colour for the framed shapes, and two items from the uploaded set, each of which can
-// be flipped, turned, sized in steps of fifteen in a hundred, and sit over or under the
-// other. The shape is drawn small on purpose, so an item at its drawn size already reaches
-// the rim and a larger one hangs over it: crossed swords with hilts and points past the
-// edge. Everything here is shared by the designer (browser) and the compositor (server,
-// lib/token.server.ts); /token/<packed>.png draws one, and the packed spec fully
-// describes it.
+// rim colour for the framed shapes, and up to two items from the uploaded set, placed by
+// dragging, each of which can be flipped, turned, shrunk in steps of fifteen in a hundred,
+// and sit over or under the other. The shape is drawn small on purpose, so an item at its
+// drawn size already reaches the rim and one dragged outward hangs over it: crossed swords
+// with hilts and points past the edge. Everything here is shared by the designer (browser)
+// and the compositor (server, lib/token.server.ts); /token/<packed>.png draws one, and the
+// packed spec fully describes it.
 
 /** The picture is 32 cells; the badge shape takes the middle 22. */
 export const TOKEN_SIZE = 32;
@@ -48,81 +48,84 @@ export const SHAPES = [
 ] as const;
 export type ShapeKey = (typeof SHAPES)[number]["key"];
 
-/** An item's size, in hundredths of how it was drawn, in steps of fifteen. */
-export const SIZES = [70, 85, 100, 115, 130] as const;
+/** An item's size, in hundredths of how it was drawn: never larger, smaller in steps of fifteen. */
+export const SIZES = [55, 70, 85, 100] as const;
 export type SizeKey = (typeof SIZES)[number];
+
+/** How far an item's centre can sit from the middle, in cells, either way. */
+export const OFFSET_MAX = 12;
 
 /** The items, as files under /badges/items/ (public/badges/items). */
 export const ITEMS = [
-  { slug: "sword", label: "Sword" },
-  { slug: "longsword", label: "Longsword" },
-  { slug: "medal", label: "Medal" },
-  { slug: "mace", label: "Mace" },
-  { slug: "star", label: "Star" },
-  { slug: "compass", label: "Compass" },
-  { slug: "crown", label: "Crown" },
-  { slug: "gold-coin", label: "Gold coin" },
-  { slug: "coin", label: "Coin" },
-  { slug: "heart", label: "Heart" },
-  { slug: "sparkle-star", label: "Sparkling star" },
-  { slug: "red-shield", label: "Red shield" },
-  { slug: "blue-shield", label: "Blue shield" },
-  { slug: "key", label: "Key" },
-  { slug: "red-vial", label: "Red vial" },
-  { slug: "scroll", label: "Scroll" },
-  { slug: "chest", label: "Chest" },
-  { slug: "flask", label: "Flask" },
-  { slug: "map", label: "Map" },
-  { slug: "compass-rose", label: "Compass rose" },
-  { slug: "skull-and-bones", label: "Skull and bones" },
-  { slug: "crested-shield", label: "Crested shield" },
-  { slug: "wooden-shield", label: "Wooden shield" },
-  { slug: "open-chest", label: "Open chest" },
-  { slug: "green-vial", label: "Green vial" },
-  { slug: "treasure-map", label: "Treasure map" },
-  { slug: "skull", label: "Skull" },
-  { slug: "round-crest", label: "Round crest" },
-  { slug: "bones", label: "Bones" },
-  { slug: "ghost", label: "Ghost" },
-  { slug: "moon", label: "Moon" },
-  { slug: "old-compass", label: "Old compass" },
-  { slug: "wand", label: "Wand" },
-  { slug: "arrow", label: "Arrow" },
-  { slug: "flame", label: "Flame" },
-  { slug: "pickaxe", label: "Pickaxe" },
-  { slug: "boots", label: "Boots" },
-  { slug: "lion-crest", label: "Lion crest" },
-  { slug: "dragon", label: "Dragon" },
-  { slug: "fire", label: "Fire" },
-  { slug: "staff", label: "Staff" },
-  { slug: "hatchet", label: "Hatchet" },
-  { slug: "axe", label: "Axe" },
-  { slug: "hammer", label: "Hammer" },
-  { slug: "bow", label: "Bow" },
-  { slug: "gauntlet", label: "Gauntlet" },
-  { slug: "helm", label: "Helm" },
-  { slug: "knight-helm", label: "Knight's helm" },
-  { slug: "gold-helm", label: "Gold helm" },
-  { slug: "plank", label: "Plank" },
-  { slug: "red-orb", label: "Red orb" },
-  { slug: "beast-head", label: "Beast head" },
-  { slug: "gold-bar", label: "Gold bar" },
-  { slug: "stone", label: "Stone" },
-  { slug: "green-bar", label: "Green bar" },
-  { slug: "log", label: "Log" },
-  { slug: "silver-bar", label: "Silver bar" },
-  { slug: "coal", label: "Coal" },
-  { slug: "diamond", label: "Diamond" },
-  { slug: "dagger-crest", label: "Dagger crest" },
-  { slug: "ribbon-medal", label: "Ribbon medal" },
-  { slug: "old-map", label: "Old map" },
-  { slug: "golem", label: "Golem" },
-  { slug: "demon", label: "Demon" },
-  { slug: "imp", label: "Imp" },
-  { slug: "trophy", label: "Trophy" },
-  { slug: "gem", label: "Gem" },
-  { slug: "shovel", label: "Shovel" },
-  { slug: "feather", label: "Feather" },
+  { slug: "sword", label: "Sword", w: 16, h: 17 },
+  { slug: "longsword", label: "Longsword", w: 16, h: 17 },
+  { slug: "medal", label: "Medal", w: 14, h: 17 },
+  { slug: "mace", label: "Mace", w: 15, h: 15 },
+  { slug: "star", label: "Star", w: 16, h: 15 },
+  { slug: "compass", label: "Compass", w: 14, h: 15 },
+  { slug: "crown", label: "Crown", w: 16, h: 13 },
+  { slug: "gold-coin", label: "Gold coin", w: 14, h: 13 },
+  { slug: "coin", label: "Coin", w: 12, h: 13 },
+  { slug: "heart", label: "Heart", w: 15, h: 14 },
+  { slug: "sparkle-star", label: "Sparkling star", w: 16, h: 15 },
+  { slug: "red-shield", label: "Red shield", w: 14, h: 15 },
+  { slug: "blue-shield", label: "Blue shield", w: 14, h: 15 },
+  { slug: "key", label: "Key", w: 14, h: 15 },
+  { slug: "red-vial", label: "Red vial", w: 10, h: 15 },
+  { slug: "scroll", label: "Scroll", w: 16, h: 15 },
+  { slug: "chest", label: "Chest", w: 15, h: 14 },
+  { slug: "flask", label: "Flask", w: 12, h: 15 },
+  { slug: "map", label: "Map", w: 16, h: 14 },
+  { slug: "compass-rose", label: "Compass rose", w: 14, h: 15 },
+  { slug: "skull-and-bones", label: "Skull and bones", w: 15, h: 15 },
+  { slug: "crested-shield", label: "Crested shield", w: 14, h: 15 },
+  { slug: "wooden-shield", label: "Wooden shield", w: 14, h: 14 },
+  { slug: "open-chest", label: "Open chest", w: 16, h: 14 },
+  { slug: "green-vial", label: "Green vial", w: 10, h: 14 },
+  { slug: "treasure-map", label: "Treasure map", w: 16, h: 14 },
+  { slug: "skull", label: "Skull", w: 14, h: 14 },
+  { slug: "round-crest", label: "Round crest", w: 14, h: 14 },
+  { slug: "bones", label: "Bones", w: 15, h: 15 },
+  { slug: "ghost", label: "Ghost", w: 10, h: 14 },
+  { slug: "moon", label: "Moon", w: 14, h: 14 },
+  { slug: "old-compass", label: "Old compass", w: 14, h: 14 },
+  { slug: "wand", label: "Wand", w: 15, h: 15 },
+  { slug: "arrow", label: "Arrow", w: 10, h: 15 },
+  { slug: "flame", label: "Flame", w: 16, h: 15 },
+  { slug: "pickaxe", label: "Pickaxe", w: 15, h: 15 },
+  { slug: "boots", label: "Boots", w: 16, h: 15 },
+  { slug: "lion-crest", label: "Lion crest", w: 16, h: 15 },
+  { slug: "dragon", label: "Dragon", w: 16, h: 15 },
+  { slug: "fire", label: "Fire", w: 16, h: 15 },
+  { slug: "staff", label: "Staff", w: 16, h: 15 },
+  { slug: "hatchet", label: "Hatchet", w: 15, h: 15 },
+  { slug: "axe", label: "Axe", w: 14, h: 15 },
+  { slug: "hammer", label: "Hammer", w: 16, h: 15 },
+  { slug: "bow", label: "Bow", w: 15, h: 15 },
+  { slug: "gauntlet", label: "Gauntlet", w: 15, h: 15 },
+  { slug: "helm", label: "Helm", w: 14, h: 15 },
+  { slug: "knight-helm", label: "Knight's helm", w: 12, h: 15 },
+  { slug: "gold-helm", label: "Gold helm", w: 14, h: 14 },
+  { slug: "plank", label: "Plank", w: 14, h: 14 },
+  { slug: "red-orb", label: "Red orb", w: 14, h: 14 },
+  { slug: "beast-head", label: "Beast head", w: 16, h: 15 },
+  { slug: "gold-bar", label: "Gold bar", w: 15, h: 13 },
+  { slug: "stone", label: "Stone", w: 14, h: 12 },
+  { slug: "green-bar", label: "Green bar", w: 14, h: 12 },
+  { slug: "log", label: "Log", w: 14, h: 12 },
+  { slug: "silver-bar", label: "Silver bar", w: 14, h: 12 },
+  { slug: "coal", label: "Coal", w: 14, h: 12 },
+  { slug: "diamond", label: "Diamond", w: 14, h: 11 },
+  { slug: "dagger-crest", label: "Dagger crest", w: 14, h: 15 },
+  { slug: "ribbon-medal", label: "Ribbon medal", w: 12, h: 16 },
+  { slug: "old-map", label: "Old map", w: 16, h: 15 },
+  { slug: "golem", label: "Golem", w: 16, h: 15 },
+  { slug: "demon", label: "Demon", w: 16, h: 15 },
+  { slug: "imp", label: "Imp", w: 16, h: 15 },
+  { slug: "trophy", label: "Trophy", w: 16, h: 15 },
+  { slug: "gem", label: "Gem", w: 14, h: 14 },
+  { slug: "shovel", label: "Shovel", w: 13, h: 13 },
+  { slug: "feather", label: "Feather", w: 14, h: 13 },
 ] as const;
 export type ItemSlug = (typeof ITEMS)[number]["slug"];
 
@@ -138,12 +141,17 @@ export type TokenDesign = {
   a_flip: boolean;
   /** Quarter turns clockwise, 0–3. */
   a_rot: 0 | 1 | 2 | 3;
-  /** Hundredths of the drawn size: 70, 85, 100, 115 or 130. */
+  /** Hundredths of the drawn size: 55, 70, 85 or 100. */
   a_size: SizeKey;
+  /** Where its centre sits, in cells from the middle of the picture. */
+  a_x: number;
+  a_y: number;
   b: ItemSlug | typeof NO_ITEM;
   b_flip: boolean;
   b_rot: 0 | 1 | 2 | 3;
   b_size: SizeKey;
+  b_x: number;
+  b_y: number;
   /** Which item is drawn last, over the other. */
   top: "a" | "b";
 };
@@ -166,10 +174,14 @@ export function defaultToken(): TokenDesign {
     a_flip: false,
     a_rot: 0,
     a_size: 100,
+    a_x: 0,
+    a_y: 0,
     b: "sword",
     b_flip: true,
     b_rot: 0,
     b_size: 100,
+    b_x: 0,
+    b_y: 0,
     top: "b",
   };
 }
@@ -178,11 +190,14 @@ const pick = <T extends string>(v: unknown, list: readonly string[], fallback: T
   typeof v === "string" && list.includes(v) ? (v as T) : fallback;
 const rot = (v: unknown, fallback: 0 | 1 | 2 | 3): 0 | 1 | 2 | 3 =>
   v === 0 || v === 1 || v === 2 || v === 3 ? v : fallback;
-/** A size from the list; the first designs said "big", "small" or "normal". */
+/** A size from the list; the first designs said "big", "small" or "normal", or went above 100. */
 const size = (v: unknown): SizeKey => {
   if (typeof v === "number" && (SIZES as readonly number[]).includes(v)) return v as SizeKey;
-  return v === "big" ? 130 : v === "small" ? 70 : 100;
+  return v === "small" ? 70 : 100;
 };
+/** An offset in cells, whole and within reach. */
+const offset = (v: unknown): number =>
+  typeof v === "number" && Number.isFinite(v) ? Math.max(-OFFSET_MAX, Math.min(OFFSET_MAX, Math.round(v))) : 0;
 
 /** Whatever was saved, as a complete design. Anything unknown falls back to the default. */
 export function normalizeToken(raw: unknown): TokenDesign {
@@ -196,10 +211,14 @@ export function normalizeToken(raw: unknown): TokenDesign {
     a_flip: c.a_flip === true,
     a_rot: rot(c.a_rot, 0),
     a_size: size(c.a_size),
+    a_x: offset(c.a_x),
+    a_y: offset(c.a_y),
     b: pick(c.b, ITEM_KEYS, d.b),
     b_flip: c.b_flip === true,
     b_rot: rot(c.b_rot, 0),
     b_size: size(c.b_size),
+    b_x: offset(c.b_x),
+    b_y: offset(c.b_y),
     top: c.top === "a" ? "a" : "b",
   };
 }
@@ -207,11 +226,11 @@ export function normalizeToken(raw: unknown): TokenDesign {
 // ------------------------------------------------------------ url packing
 
 /** Bump when the compositor changes: tokens are cached immutably by their packed spec. */
-export const TOKEN_RENDER = "4";
+export const TOKEN_RENDER = "5";
 
-/** flip, size and turn of one item in one number: flip × 20 + size step × 4 + turn, 0–39. */
-const flags = (flip: boolean, sz: SizeKey, r: number) => (flip ? 20 : 0) + SIZE_KEYS.indexOf(sz) * 4 + r;
-const unflags = (n: number) => ({ flip: n >= 20, size: SIZE_KEYS[Math.floor((n % 20) / 4)] as SizeKey, rot: (n % 4) as 0 | 1 | 2 | 3 });
+/** flip, size and turn of one item in one number: flip × 16 + size step × 4 + turn, 0–31. */
+const flags = (flip: boolean, sz: SizeKey, r: number) => (flip ? 16 : 0) + SIZE_KEYS.indexOf(sz) * 4 + r;
+const unflags = (n: number) => ({ flip: n >= 16, size: SIZE_KEYS[Math.floor((n % 16) / 4)] as SizeKey, rot: (n % 4) as 0 | 1 | 2 | 3 });
 
 /** `/token/<this>.png` draws the design. Each part is an index into its list, base 36. */
 export function packToken(design: TokenDesign): string {
@@ -222,17 +241,21 @@ export function packToken(design: TokenDesign): string {
     COLOUR_KEYS.indexOf(d.rim),
     ITEM_KEYS.indexOf(d.a),
     flags(d.a_flip, d.a_size, d.a_rot),
+    d.a_x + OFFSET_MAX,
+    d.a_y + OFFSET_MAX,
     ITEM_KEYS.indexOf(d.b),
     flags(d.b_flip, d.b_size, d.b_rot),
+    d.b_x + OFFSET_MAX,
+    d.b_y + OFFSET_MAX,
     d.top === "a" ? 0 : 1,
   ];
   return [TOKEN_RENDER, ...parts.map((n) => n.toString(36))].join(".");
 }
 
 export function unpackToken(packed: string): TokenDesign | null {
-  if (packed.length > 40) return null;
+  if (packed.length > 48) return null;
   const parts = packed.split(".");
-  if (parts.length !== 9 || parts[0] !== TOKEN_RENDER) return null;
+  if (parts.length !== 13 || parts[0] !== TOKEN_RENDER) return null;
   const nums: number[] = [];
   for (const p of parts.slice(1)) {
     const n = parseInt(p, 36);
@@ -245,11 +268,12 @@ export function unpackToken(packed: string): TokenDesign | null {
   const fill = at(COLOUR_KEYS, nums[1]);
   const rim = at(COLOUR_KEYS, nums[2]);
   const a = at(ITEM_KEYS, nums[3]);
-  const b = at(ITEM_KEYS, nums[5]);
+  const b = at(ITEM_KEYS, nums[7]);
   if (!shape || !fill || !rim || !a || !b) return null;
-  if (nums[4] > 39 || nums[6] > 39 || nums[7] > 1) return null;
+  if (nums[4] > 31 || nums[8] > 31 || nums[11] > 1) return null;
+  if ([nums[5], nums[6], nums[9], nums[10]].some((n) => n > 2 * OFFSET_MAX)) return null;
   const fa = unflags(nums[4]);
-  const fb = unflags(nums[6]);
+  const fb = unflags(nums[8]);
   return normalizeToken({
     shape,
     fill,
@@ -258,11 +282,15 @@ export function unpackToken(packed: string): TokenDesign | null {
     a_flip: fa.flip,
     a_rot: fa.rot,
     a_size: fa.size,
+    a_x: nums[5] - OFFSET_MAX,
+    a_y: nums[6] - OFFSET_MAX,
     b,
     b_flip: fb.flip,
     b_rot: fb.rot,
     b_size: fb.size,
-    top: nums[7] === 0 ? "a" : "b",
+    b_x: nums[9] - OFFSET_MAX,
+    b_y: nums[10] - OFFSET_MAX,
+    top: nums[11] === 0 ? "a" : "b",
   });
 }
 
