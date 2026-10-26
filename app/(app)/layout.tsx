@@ -22,12 +22,12 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   ]);
   if (!agreed) redirect("/terms");
 
-  // Until they have registered, the welcome page, the wiki (to look up codes), the Well and
-  // the face maker are all there is. A missing flag means a database from before it: let them in.
+  // Until they have registered, the welcome page, the wiki (to look up codes) and the face
+  // maker are all there is. A missing flag means a database from before it: let them in.
   const welcoming = profile.onboarded === false;
   if (welcoming) {
     const path = (await headers()).get("x-pathname") ?? "";
-    const open = ["/welcome", "/wiki", "/well", "/me/avatar", "/info", "/bug"].some((p) => path === p || path.startsWith(`${p}/`));
+    const open = ["/welcome", "/wiki", "/me/avatar"].some((p) => path === p || path.startsWith(`${p}/`));
     if (!open) redirect("/welcome");
   }
   const cap = welcoming ? 10 : MANA_CAP;
@@ -51,14 +51,14 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             <div className="mana-count" style={{ color: manaColor(mana) }}>
               {String(mana).padStart(2, "0")}/{cap}
             </div>
-            <InfoMenu />
+            {welcoming ? null : <InfoMenu />}
           </div>
           <div className="gauge">
             <i style={{ width: `${Math.max(2, (mana / cap) * 100)}%` }} />
           </div>
           <div className="head-foot">
             <span>{wellLine(mana)}</span>
-            <WellButton low={mana < 11} />
+            {welcoming ? null : <WellButton low={mana < 11} />}
           </div>
         </header>
 
@@ -73,7 +73,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
         {flash ? <Toast flash={flash} /> : null}
 
-        <TabBar />
+        <TabBar limited={welcoming} />
       </div>
     </div>
   );

@@ -1,21 +1,20 @@
 // Registering to use the app: which part of the City you live in, and your kind. The right
 // answers to the code questions are NOT here: they are checked in the database (cr_register),
-// so they never reach the browser or the repo. (The two examples shown on the welcome page
-// are the only ones that are public.)
+// so they never reach the browser or the repo. (The orc code is shown on the welcome page as an example; nothing for the districts is.)
 
 export const DISTRICTS = [
-  { value: "city", label: "City District", field: "ADC", example: "the City District is 856" },
-  { value: "gate", label: "Gate Districts", field: "ADC", example: "" },
-  { value: "outland", label: "Outlands", field: "ADC", example: "" },
-  { value: "enclave", label: "Elven Enclaves", field: "ADC", example: "the Elven Enclaves are 111" },
+  { value: "city", label: "City District", field: "ADC" },
+  { value: "gate", label: "Gate Districts", field: "ADC" },
+  { value: "outland", label: "Outlands", field: "ADC" },
+  { value: "enclave", label: "Elven Enclaves", field: "ADC" },
 ] as const;
 
 export const SPECIES = [
   { value: "orc", label: "Orc", example: "Orcs are 33110" },
-  { value: "human", label: "Human", example: "" },
-  { value: "shifter", label: "Shifter", example: "" },
-  { value: "elf", label: "Elf", example: "" },
-  { value: "planar", label: "Planar / Forsaken", example: "" },
+  { value: "human", label: "Human" },
+  { value: "shifter", label: "Shifter" },
+  { value: "elf", label: "Elf" },
+  { value: "planar", label: "Planar / Forsaken" },
 ] as const;
 
 /** Which question an error belongs under, and what the form said. */

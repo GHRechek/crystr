@@ -61,12 +61,28 @@ const TABS = [
   { href: "/me", glyph: "☻", label: "ME" },
 ];
 
-export function TabBar() {
+/** What someone who has not registered yet gets: the registry and the wiki, nothing else. */
+const LIMITED_TABS = [
+  { href: "/welcome", glyph: "▤", label: "REGISTRY" },
+  { href: "/wiki", glyph: "☰", label: "WIKI" },
+];
+
+/** A little pixel exclamation mark, red: something here still needs doing. */
+function Alert() {
+  const rows = ["010", "010", "010", "010", "010", "000", "010"];
+  return (
+    <svg aria-hidden className="tab-alert" width={6} height={14} viewBox="0 0 3 7" shapeRendering="crispEdges" fill="#ff3b3b">
+      {rows.flatMap((r, y) => [...r].map((c, x) => (c === "1" ? <rect key={`${x}-${y}`} x={x} y={y} width={1} height={1} /> : null)))}
+    </svg>
+  );
+}
+
+export function TabBar({ limited }: { limited?: boolean }) {
   const path = usePathname();
 
   return (
     <nav className="tabbar">
-      {TABS.map((t) => {
+      {(limited ? LIMITED_TABS : TABS).map((t) => {
         const active = t.href === "/" ? path === "/" : path.startsWith(t.href);
         return (
           // Not prefetched: every tab is a dynamic, auth'd route, and six of
@@ -83,6 +99,12 @@ export function TabBar() {
               {t.glyph}
             </span>
             <span className="label">{t.label}</span>
+            {limited && t.href === "/welcome" ? (
+              <>
+                <Alert />
+                <span className="sr-only">Not finished yet</span>
+              </>
+            ) : null}
           </Link>
         );
       })}

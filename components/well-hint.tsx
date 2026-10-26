@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 /** The first time someone opens the wiki with little mana: a low-mana page blurs and eats
  *  letters, which makes the wiki hard to read, so the Well comes first. Shown once per
  *  person on this device. */
-export function WellHint({ userId, mana }: { userId: string; mana: number }) {
+export function WellHint({ userId, mana, registered }: { userId: string; mana: number; registered: boolean }) {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
@@ -28,10 +28,17 @@ export function WellHint({ userId, mana }: { userId: string; mana: number }) {
         FILL THE WELL FIRST
       </div>
       With {mana} mana the City is hard to read: the page blurs and letters go missing. You will
-      read the wiki far better after a visit to the Well.{" "}
-      <Link href="/well" style={{ color: "var(--pur-pale)", textDecoration: "underline" }}>
-        GO TO THE WELL
-      </Link>
+      read the wiki far better after a visit to the Well.
+      {registered ? (
+        <>
+          {" "}
+          <Link href="/well" style={{ color: "var(--pur-pale)", textDecoration: "underline" }}>
+            GO TO THE WELL
+          </Link>
+        </>
+      ) : (
+        " The Well opens as soon as you have finished the registry."
+      )}
       <button
         type="button"
         className="btn btn-sm"

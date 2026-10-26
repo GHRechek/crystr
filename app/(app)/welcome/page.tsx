@@ -24,7 +24,7 @@ export default async function WelcomePage() {
       </div>
 
       <div className="px" style={{ fontSize: 11, color: "var(--pur-pale)" }}>
-        1 · YOUR FACE
+        1 · YOUR FACE{profile.avatar_config ? " ✓" : ""}
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         <Avatar person={profile} size={56} />
@@ -34,6 +34,7 @@ export default async function WelcomePage() {
       </div>
 
       <WelcomeForm
+        userId={profile.id}
         handle={starter ? "" : profile.handle}
         displayName={profile.display_name ?? ""}
         hasFace={!!profile.avatar_config}
@@ -41,13 +42,10 @@ export default async function WelcomePage() {
 
       <div className="notice">
         Not sure what to write in the registry? The wiki may help. Look around, then come back to
-        this page. A visit to the Well first will make the City easier to read.
+        this page: what you have filled in will still be here.
         <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
           <Link href="/wiki" className="btn btn-sm">
             OPEN THE WIKI
-          </Link>
-          <Link href="/well" className="btn btn-sm">
-            THE WELL
           </Link>
         </div>
       </div>

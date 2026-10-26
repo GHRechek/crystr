@@ -278,6 +278,7 @@ select {
   padding-bottom: env(safe-area-inset-bottom);
 }
 .tab {
+  position: relative;
   flex: 1;
   min-height: 48px;
   display: flex;
@@ -1166,4 +1167,11 @@ select {
 
 .tsmall .tcount {
   font-size: 12px;
+}
+
+/* The red exclamation mark on the Registry tab while the registry is unfinished. */
+.tab-alert {
+  position: absolute;
+  top: 6px;
+  right: calc(50% - 34px);
 }
