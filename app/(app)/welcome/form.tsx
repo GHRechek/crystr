@@ -8,6 +8,7 @@ import { DISTRICTS, SPECIES, type PlaintiffError } from "@/lib/plaintiff";
 export function WelcomeForm({ handle, displayName, hasFace }: { handle: string; displayName: string; hasFace: boolean }) {
   const [district, setDistrict] = useState("");
   const [species, setSpecies] = useState("");
+  const [caster, setCaster] = useState(false);
   const [error, setError] = useState<PlaintiffError | null>(null);
   const [pending, start] = useTransition();
 
@@ -122,6 +123,36 @@ export function WelcomeForm({ handle, displayName, hasFace }: { handle: string; 
         {problem("species_code")}
         {problem("species")}
       </div>
+
+      <div className="field">
+        <label style={{ display: "flex", alignItems: "center", gap: 10, minHeight: 44, cursor: "pointer" }}>
+          <input
+            type="checkbox"
+            name="spellcaster"
+            checked={caster}
+            onChange={(e) => setCaster(e.target.checked)}
+            style={{ width: 22, height: 22, accentColor: "var(--pur)" }}
+          />
+          ARE YOU A REGISTERED SPELLCASTER?
+        </label>
+        {caster && species === "planar" ? (
+          <div className="banner-note banner-mag" role="alert">
+            Contact arcane enforcement immediately.
+          </div>
+        ) : null}
+        {problem("spellcaster")}
+      </div>
+
+      {caster ? (
+        <div className="field">
+          <label htmlFor="arcn">YOUR ARCANE REGISTRY CODEX NUMBER (ARCN) *</label>
+          <div style={{ fontSize: 12, lineHeight: 1.5, color: "var(--muted)" }}>
+            ARCNs contain 8 digits. The Magic page on the wiki can tell you more.
+          </div>
+          <input id="arcn" name="arcn" className="input" maxLength={8} required autoComplete="off" inputMode="numeric" pattern="[0-9]{8}" />
+          {problem("arcn")}
+        </div>
+      ) : null}
 
       {error?.field === "form" ? <div className="banner-note banner-mag">{error.message}</div> : null}
 
