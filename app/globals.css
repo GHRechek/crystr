@@ -167,6 +167,22 @@ select {
   }
 }
 
+/* The mock status bar belongs to the phone drawn on a desktop; on a real phone it only
+   doubled the real one and pushed everything down, so it goes, and the frame keeps clear of
+   the notch on its own. */
+.statusbar {
+  display: none;
+}
+@media (min-width: 480px) {
+  .statusbar {
+    display: flex;
+  }
+}
+@media (max-width: 479.98px) {
+  .frame {
+    padding-top: env(safe-area-inset-top);
+  }
+}
 .statusbar {
   flex: none;
   height: 34px;
@@ -1223,4 +1239,27 @@ select {
   min-height: 36px;
   min-width: 36px;
   padding: 0;
+}
+
+/* The wiki's stack: a page's sub pages fold under a count, opened and closed by a click. */
+.subpages > summary {
+  list-style: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 0 4px 0 10px;
+  font-size: 11px;
+  color: var(--pur-pale);
+}
+.subpages > summary::-webkit-details-marker {
+  display: none;
+}
+.subpages > summary .caret {
+  display: inline-block;
+  transition: transform 0.15s;
+}
+.subpages[open] > summary .caret {
+  transform: rotate(90deg);
 }

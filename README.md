@@ -298,6 +298,24 @@ the originals kept in `assets/portrait/_sheets/`. This is paid art — check its
 licence covers redistribution before this repo goes public, and serve the
 cells from the Supabase bucket instead if it doesn't.
 
+## Wiki pages under pages
+
+A page can sit under another (`wiki_pages.parent_id`), to any depth: MORDLs holds
+Orcs, Humans and Goblins; The Forsaken holds Planar and Undead, and Undead holds
+Zombies, Vampires and Banshees. On the shelf (`/wiki`) the pages under a page are
+folded under a count and open with a click; on the page itself they are listed at
+the bottom and also turn up inside the rune text as links, each at a spot of its
+own. Anyone adding a few words to a page can instead start a new page under it
+for 40 mana (`cr_wiki_add_subpage`), with those words as its first fact, on the
+shelf at once. Witches start pages under others from the new-page form, move a
+page under another or out on its own (`cr_wiki_set_parent`, which refuses a
+loop), and put a page's facts and sub pages in order with the arrows on the
+moderation tile (`cr_wiki_move_fact`, `cr_wiki_move_page`; `wiki_pages.sort`).
+
+Low on mana, the wiki breaks numbers first (a digit or two from each run of
+three or more) and only lower still starts eating letters; with mana to spare,
+and for witches, it reads clean (`lib/wiki-mask.ts`).
+
 ## Replies
 
 A reply is a post with a `parent_id`, written by `cr_create_reply` at the price

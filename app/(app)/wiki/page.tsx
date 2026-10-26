@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { requireMe } from "@/lib/data";
-import { getWikiPages, nestPages, searchWikiPages, type WikiHit, type WikiListing } from "@/lib/wiki";
+import { getWikiPages, nestPages, searchWikiPages, type PageTree, type WikiHit, type WikiListing } from "@/lib/wiki";
 import { cleanQuery } from "@/lib/wiki-search";
 import { wikiText } from "@/lib/wiki-mask";
 import { WellHint } from "@/components/well-hint";
@@ -102,18 +102,7 @@ export default async function WikiIndex(props: { searchParams: Promise<{ q?: str
           <span style={{ color: "var(--muted)" }}>{witch ? "START A PAGE." : "A WITCH WILL START ONE."}</span>
         </div>
       ) : (
-        nestPages(live).map(({ page, under }) => (
-          <div key={page.id} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            <Row page={page} decay={decay} witch={witch} />
-            {under.length ? (
-              <div style={{ display: "flex", flexDirection: "column", gap: 8, marginLeft: 18, borderLeft: "2px solid var(--edge)", paddingLeft: 10 }}>
-                {under.map((c) => (
-                  <Row key={c.id} page={c} decay={decay} witch={witch} />
-                ))}
-              </div>
-            ) : null}
-          </div>
-        ))
+        nestPages(live).map((node) => <Branch key={node.page.id} node={node} decay={decay} witch={witch} />)
       )}
 
       {!hits && witch && archived.length ? (
@@ -125,6 +114,32 @@ export default async function WikiIndex(props: { searchParams: Promise<{ q?: str
             <Row key={p.id} page={p} decay={decay} witch={witch} />
           ))}
         </>
+      ) : null}
+    </div>
+  );
+}
+
+/** A page and, folded under a count, the pages under it, each of which folds its own. */
+function Branch({ node, decay, witch }: { node: PageTree<WikiListing>; decay: number; witch: boolean }) {
+  const { page, under } = node;
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+      <Row page={page} decay={decay} witch={witch} />
+      {under.length ? (
+        // Folded until clicked, and clicked again to fold: the stack stays a stack.
+        <details className="subpages">
+          <summary className="px">
+            <span className="caret" aria-hidden>
+              ▸
+            </span>
+            {under.length} {under.length === 1 ? "SUBPAGE" : "SUBPAGES"}
+          </summary>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8, marginLeft: 18, borderLeft: "2px solid var(--edge)", paddingLeft: 10, marginTop: 8 }}>
+            {under.map((child) => (
+              <Branch key={child.page.id} node={child} decay={decay} witch={witch} />
+            ))}
+          </div>
+        </details>
       ) : null}
     </div>
   );

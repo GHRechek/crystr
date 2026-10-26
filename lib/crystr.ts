@@ -26,6 +26,8 @@ export const COSTS = {
   topSix: 4,
   /** What adding a fact to a wiki page takes. Display only: the database charges it. */
   wikiEdit: 2,
+  /** Starting a page of your own under another, with your words as its first fact. */
+  wikiSubpage: 40,
 } as const;
 
 /** Below eleven the feed starts to smear; at zero it is barely legible. */
