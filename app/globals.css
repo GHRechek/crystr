@@ -1186,7 +1186,8 @@ select {
 }
 @media (prefers-reduced-motion: reduce) {
   .haywire,
-  .haywire-note {
+  .haywire-note,
+  .signal-card {
     animation: none;
   }
 }
@@ -1204,12 +1205,10 @@ select {
 .signal-card {
   pointer-events: auto;
   position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 15%;
   width: 70%;
-  min-width: 240px;
-  max-width: 360px;
   padding: 16px 16px 14px;
+  animation: cr-jitter 2.4s steps(2, end) infinite;
   display: flex;
   flex-direction: column;
   gap: 10px;

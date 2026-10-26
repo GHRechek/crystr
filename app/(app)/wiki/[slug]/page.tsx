@@ -7,6 +7,7 @@ import { layoutPage } from "@/lib/wiki-layout";
 import { wikiText } from "@/lib/wiki-mask";
 import { WellHint } from "@/components/well-hint";
 import { runePosition } from "@/lib/wiki-runes";
+import { ArrowIcon } from "@/components/icons";
 import { COSTS } from "@/lib/crystr";
 import { Cost } from "@/components/mana";
 import { ago, decayLevel } from "@/lib/crystr";
@@ -123,8 +124,8 @@ export default async function WikiPageView(props: { params: Promise<{ slug: stri
             {page.updated_by ? ` BY ${page.updated_by.handle}` : ""}
           </div>
           {parent ? (
-            <Link href={`/wiki/${parent.slug}`} className="px" style={{ fontSize: 11, color: "var(--pur-pale)" }}>
-              ↑ PART OF {mask(parent.title).toUpperCase()}
+            <Link href={`/wiki/${parent.slug}`} className="px" style={{ fontSize: 11, color: "var(--pur-pale)", display: "inline-flex", alignItems: "center", gap: 6 }}>
+              <ArrowIcon dir="up" /> PART OF {mask(parent.title).toUpperCase()}
             </Link>
           ) : null}
         </header>
@@ -155,7 +156,8 @@ export default async function WikiPageView(props: { params: Promise<{ slug: stri
                   className="wiki-fact"
                   style={{ ...FOCUS, color: "var(--blu-mid)", borderBottom: "1px dotted var(--blu)", textDecoration: "none", padding: "0 2px" }}
                 >
-                  <Words text={`${mask(piece.page.title)} →`} id={piece.page.id * 101} />
+                  <Words text={mask(piece.page.title)} id={piece.page.id * 101} />
+                  <ArrowIcon />
                 </Link>
               ) : piece.fact.status === "pending" ? (
                 <Link
@@ -204,8 +206,9 @@ export default async function WikiPageView(props: { params: Promise<{ slug: stri
             </div>
             <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
               {children.map((c) => (
-                <Link key={c.id} href={`/wiki/${c.slug}`} className="btn btn-sm" style={{ minHeight: 40 }}>
-                  <span className="wiki-px" style={{ fontSize: 14 }}>{mask(c.title)}</span> →
+                <Link key={c.id} href={`/wiki/${c.slug}`} className="btn btn-sm" style={{ minHeight: 40, gap: 6 }}>
+                  <span className="wiki-px" style={{ fontSize: 14 }}>{mask(c.title)}</span>
+                  <ArrowIcon />
                 </Link>
               ))}
             </div>
