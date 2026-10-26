@@ -28,3 +28,25 @@ export function HeartIcon({ filled, small }: { filled?: boolean; small?: boolean
 export function ReplyIcon({ small }: { small?: boolean }) {
   return <Pixels rows={REPLY} small={small} />;
 }
+
+/** A short pixel arrow (five cells each way, two screen pixels to the cell), for links that
+ *  go somewhere. `dir` turns it. It takes the surrounding text colour and sits on the line. */
+const ARROW = ["00100", "00010", "11111", "00010", "00100"];
+export function ArrowIcon({ dir = "right" }: { dir?: "right" | "up" | "down" | "left" }) {
+  const turn = { right: 0, down: 90, left: 180, up: 270 }[dir];
+  const cells: React.ReactNode[] = [];
+  ARROW.forEach((row, y) => [...row].forEach((c, x) => c === "1" && cells.push(<rect key={`${x}${y}`} x={x} y={y} width={1} height={1} />)));
+  return (
+    <svg
+      aria-hidden
+      viewBox="0 0 5 5"
+      width={10}
+      height={10}
+      shapeRendering="crispEdges"
+      fill="currentColor"
+      style={{ display: "inline-block", verticalAlign: "middle", flex: "none", transform: turn ? `rotate(${turn}deg)` : undefined }}
+    >
+      {cells}
+    </svg>
+  );
+}
