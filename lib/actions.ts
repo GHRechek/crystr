@@ -319,6 +319,10 @@ export async function completeWelcome(fd: FormData): Promise<PlaintiffError | un
     return { field: "face", message: "Make your face first. The button is at the top of this page." };
   }
 
+  if (str(fd, "species") === "other") {
+    return { field: "species", message: "Contact your local Crystr administrator." };
+  }
+
   const handle = str(fd, "handle").toLowerCase().replace(/[^a-z0-9_.-]/g, "");
   if (!handle || hasStarterHandle(handle)) return { field: "handle", message: "Pick a handle: what the City will call you." };
   if (handle.length > 15) return { field: "handle", message: "Handles are fifteen characters at most." };

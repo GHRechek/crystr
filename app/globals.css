@@ -1175,3 +1175,32 @@ select {
   top: 6px;
   right: calc(50% - 34px);
 }
+
+/* "Other" species: the registry cannot take them, and says so by coming apart. Red, fringed,
+   shaking, for as long as it is selected. */
+.registry-corrupt {
+  filter: saturate(2) contrast(1.15);
+  animation: registry-glitch 0.8s steps(2, end) infinite;
+}
+.registry-corrupt,
+.registry-corrupt * {
+  color: #ff3b3b !important;
+  border-color: #ff3b3b !important;
+  text-shadow: -2px 0 rgba(255, 0, 0, 0.8), 2px 0 rgba(0, 255, 255, 0.45);
+}
+.registry-corrupt .input {
+  background: rgba(255, 59, 59, 0.1);
+}
+@keyframes registry-glitch {
+  0% { transform: translate(0, 0); }
+  20% { transform: translate(-2px, 1px) skewX(-1deg); }
+  40% { transform: translate(2px, -1px); }
+  60% { transform: translate(-1px, 0) skewX(1.5deg); }
+  80% { transform: translate(1px, 1px); }
+  100% { transform: translate(0, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .registry-corrupt {
+    animation: none;
+  }
+}

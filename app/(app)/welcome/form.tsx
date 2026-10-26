@@ -3,6 +3,7 @@
 import { useEffect, useState, useTransition } from "react";
 import { completeWelcome } from "@/lib/actions";
 import { DISTRICTS, SPECIES, type PlaintiffError } from "@/lib/plaintiff";
+import { corrupt } from "@/lib/crystr";
 
 type Draft = {
   handle: string;
@@ -67,6 +68,8 @@ export function WelcomeForm({
 
   const d = DISTRICTS.find((x) => x.value === v.district);
   const sp = SPECIES.find((x) => x.value === v.species);
+  const other = v.species === "other";
+  const examples = SPECIES.flatMap((x) => ("example" in x ? [x.example] : []));
   const nameDone = v.handle.trim().length > 0;
   const booksDone = !!(v.district && v.districtCode.trim() && v.species && v.speciesCode.trim() && (!v.caster || v.arcn.length === 8));
   const problem = (name: string) =>
@@ -78,6 +81,7 @@ export function WelcomeForm({
 
   return (
     <form
+      className={other ? "registry-corrupt" : undefined}
       style={{ display: "flex", flexDirection: "column", gap: 14 }}
       onSubmit={(e) => {
         e.preventDefault();
@@ -186,11 +190,17 @@ export function WelcomeForm({
         </div>
       ) : null}
 
+      {other ? (
+        <div className="banner-note banner-mag" role="alert" aria-label="Contact your local Crystr administrator.">
+          <span aria-hidden>{corrupt("CONTACT YOUR LOCAL CRYSTR ADMINISTRATOR.", 1)}</span>
+        </div>
+      ) : null}
+
       <div className="field">
         <label htmlFor="species_code">YOUR SPECIES DESIGNATION CODE (SDC) *</label>
         <div style={{ fontSize: 12, lineHeight: 1.5, color: "var(--muted)" }}>
-          A five-digit number for your kind. For example, {SPECIES[0].example}.
-          {sp ? ` Enter the one for ${sp.label}.` : ""}
+          A five-digit number for your kind. For example, {examples.join(" and ")}.
+          {sp && !other ? ` Enter the one for ${sp.label}.` : ""}
         </div>
         <input
           id="species_code"
@@ -250,7 +260,7 @@ export function WelcomeForm({
 
       {error?.field === "form" ? <div className="banner-note banner-mag">{error.message}</div> : null}
 
-      <button type="submit" className="btn btn-lg btn-purple btn-block" disabled={pending}>
+      <button type="submit" className="btn btn-lg btn-purple btn-block" disabled={pending || other}>
         {pending ? "CHECKING…" : "REGISTER AND ENTER THE CITY"}
       </button>
     </form>

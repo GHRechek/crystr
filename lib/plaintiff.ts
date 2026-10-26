@@ -13,8 +13,9 @@ export const SPECIES = [
   { value: "orc", label: "Orc", example: "Orcs are 33110" },
   { value: "human", label: "Human" },
   { value: "shifter", label: "Shifter" },
-  { value: "elf", label: "Elf" },
-  { value: "planar", label: "Planar / Forsaken" },
+  { value: "elf", label: "Elf", example: "Elves are 21876" },
+  { value: "planar", label: "Planar" },
+  { value: "other", label: "Other" },
 ] as const;
 
 /** Which question an error belongs under, and what the form said. */
