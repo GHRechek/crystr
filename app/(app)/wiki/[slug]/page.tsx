@@ -4,6 +4,8 @@ import { requireMe } from "@/lib/data";
 import { getWikiFacts, getWikiPage, SLUG, touchWikiPage, type WikiFact } from "@/lib/wiki";
 import { moderateWikiPage, removeFact } from "@/lib/wiki-actions";
 import { layoutPage } from "@/lib/wiki-layout";
+import { hideNumbers } from "@/lib/wiki-mask";
+import { WellHint } from "@/components/well-hint";
 import { runePosition } from "@/lib/wiki-runes";
 import { COSTS } from "@/lib/crystr";
 import { Cost } from "@/components/mana";
@@ -62,6 +64,8 @@ export default async function WikiPageView(props: { params: Promise<{ slug: stri
   const witch = profile.is_witch;
   const decay = decayLevel(profile.mana);
   const paused = page.locked && !witch;
+  // Numbers are broken for everyone but witches (see lib/wiki-mask.ts).
+  const mask = (t: string) => (witch ? t : hideNumbers(t));
 
   // The facts this person sees, in the order they were added: every kept one, plus their
   // own waiting one(s). Returned ones are mentioned below the article instead.
@@ -73,6 +77,7 @@ export default async function WikiPageView(props: { params: Promise<{ slug: stri
 
   return (
     <div className="pad" style={{ gap: 12 }}>
+      <WellHint userId={userId} mana={profile.mana} />
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
         <Link href="/wiki" className="btn btn-sm">
           ← THE WIKI
@@ -107,7 +112,7 @@ export default async function WikiPageView(props: { params: Promise<{ slug: stri
             className="wiki-px wiki-title"
             style={{ fontSize: 30, fontWeight: 600, lineHeight: 1.1, letterSpacing: ".01em", overflowWrap: "anywhere" }}
           >
-            {corrupt(page.title, decay)}
+            {corrupt(mask(page.title), decay)}
           </h1>
           <div className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
             {filled} {filled === 1 ? "FACT" : "FACTS"} · EDITED {ago(page.updated_at)}
@@ -148,11 +153,11 @@ export default async function WikiPageView(props: { params: Promise<{ slug: stri
                     padding: "0 2px",
                   }}
                 >
-                  <Words text={sentence(corrupt(piece.fact.body, decay))} id={piece.fact.id} />
+                  <Words text={sentence(corrupt(mask(piece.fact.body), decay))} id={piece.fact.id} />
                 </Link>
               ) : (
                 <span key={i} className="wiki-fact" style={FOCUS}>
-                  <Words text={sentence(corrupt(piece.fact.body, decay))} id={piece.fact.id} />
+                  <Words text={sentence(corrupt(mask(piece.fact.body), decay))} id={piece.fact.id} />
                 </span>
               ),
             )}

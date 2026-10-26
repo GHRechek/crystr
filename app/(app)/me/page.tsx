@@ -147,22 +147,7 @@ export default async function ProfilePage() {
               SINCE {ago(plaintiffSince).toUpperCase()}
             </div>
           </div>
-        ) : (
-          <Link href="/me/plaintiff" className="tile" style={{ padding: 12, display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
-            <div>
-              <div className="px" style={{ fontSize: 11, color: "var(--pur-pale)" }}>
-                BECOME A REGISTERED PLAINTIFF
-              </div>
-              <div style={{ fontSize: 12, lineHeight: 1.45, color: "var(--muted)", marginTop: 4 }}>
-                File Form 12-A and go on the City's books.
-              </div>
-            </div>
-            <span className="spacer" />
-            <span className="px" style={{ fontSize: 12, color: "var(--pur-pale)" }}>
-              →
-            </span>
-          </Link>
-        )}
+        ) : null}
 
         {badges.length ? (
           <div>
