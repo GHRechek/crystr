@@ -10,6 +10,8 @@ import { INVISIBLE } from "@/lib/wiki-fact";
 import { isPattern, isSwatch } from "@/lib/banner";
 import { COSTS, hasStarterHandle, untilReady } from "@/lib/crystr";
 import { normalizePortrait } from "@/lib/portrait/core";
+import { normalizeToken } from "@/lib/token";
+import { composeBirthday } from "@/lib/birthday";
 import { listBadges } from "@/lib/badges";
 import { PLAINTIFF_ERRORS, type PlaintiffError } from "@/lib/plaintiff";
 
@@ -304,8 +306,9 @@ export async function unsendMessage(fd: FormData) {
 
 // ------------------------------------------------------------- plaintiffs
 
-/** The welcome page: their name, then the registry (district and species codes). Nothing
- *  is changed unless the name is acceptable; the codes are checked in the database. On
+/** The welcome page: their own name (kept with the registry, for witches), their username and
+ *  character name, then the registry (birthday, district and species codes). Nothing is
+ *  changed unless the names are acceptable; the codes are checked in the database. On
  *  success the person is in and goes to the timeline. */
 export async function completeWelcome(fd: FormData): Promise<PlaintiffError | undefined> {
   const supabase = createClient();
@@ -319,10 +322,16 @@ export async function completeWelcome(fd: FormData): Promise<PlaintiffError | un
     return { field: "face", message: "Make your face first. The button is at the top of this page." };
   }
 
+  const name = str(fd, "name").slice(0, 120);
+  if (!name) return { field: "name", message: "Your name, please. The real one." };
   const handle = str(fd, "handle").toLowerCase().replace(/[^a-z0-9_.-]/g, "");
-  if (!handle || hasStarterHandle(handle)) return { field: "handle", message: "Pick a handle: what the City will call you." };
-  if (handle.length > 15) return { field: "handle", message: "Handles are fifteen characters at most." };
+  if (!handle || hasStarterHandle(handle)) return { field: "handle", message: "Pick a username: what the City will call you." };
+  if (handle.length > 15) return { field: "handle", message: "Usernames are fifteen characters at most." };
   const display = field(fd, "display_name");
+  if (!display) return { field: "display_name", message: "Your character needs a name." };
+  const birthday = composeBirthday(str(fd, "birth_day"), str(fd, "birth_month"), str(fd, "birth_year"));
+  if (birthday === "bad") return PLAINTIFF_ERRORS.bad_birthday;
+  if (!birthday) return { field: "birthday", message: "The registry needs your birthday." };
 
   const { error } = await supabase
     .from("profiles")
@@ -342,6 +351,8 @@ export async function completeWelcome(fd: FormData): Promise<PlaintiffError | un
     p_species_code: str(fd, "species_code"),
     p_spellcaster: fd.get("spellcaster") === "on",
     p_arcn: str(fd, "arcn"),
+    p_birthday: birthday,
+    p_name: name,
   });
   if (!r.ok) {
     const known = PLAINTIFF_ERRORS[r.code as keyof typeof PLAINTIFF_ERRORS];
@@ -375,7 +386,7 @@ export async function claimVouch(fd: FormData) {
       "ASKED",
       kind === "meetup"
         ? "They will see a note asking whether you met up. If they say yes, you both earn a badge."
-        : "They will see a note asking whether you helped. If they say yes, you earn a badge.",
+        : "They will see a note asking whether you helped. If they say yes, it counts: every five helps earn a tradable badge.",
       EDGE.blue,
     );
   }
@@ -692,12 +703,20 @@ export async function updateProfile(fd: FormData) {
     }
   }
 
+  const birthday = composeBirthday(str(fd, "birth_day"), str(fd, "birth_month"), str(fd, "birth_year"));
+  if (birthday === "bad") {
+    await setFlash("NOT A DAY", "That birthday is not a day that happened. Check the day, the month and the year.", EDGE.mag);
+    return;
+  }
+
   const { error } = await supabase
     .from("profiles")
     .update({
       handle,
       display_name: field(fd, "display_name"),
       bio: field(fd, "bio", BIO_MAX),
+      // Left out when the boxes are empty, so a birthday is never cleared by accident.
+      ...(birthday ? { birthday } : {}),
       likes: field(fd, "likes"),
       dislikes: field(fd, "dislikes"),
       food: field(fd, "food"),
@@ -844,4 +863,92 @@ export async function setTopFriends(fd: FormData) {
   }
   revalidatePath("/me");
   redirect("/me");
+}
+
+// ------------------------------------------------------------------ badges
+
+/** Save the token you designed. Free, and changeable until you give it. */
+export async function setToken(fd: FormData) {
+  let parsed: unknown = {};
+  try {
+    parsed = JSON.parse(String(fd.get("design") ?? "{}"));
+  } catch {
+    await setFlash("UNREADABLE", "That token did not survive the journey. Try again.", EDGE.mag);
+    return;
+  }
+  const r = await call("cr_set_token", { p_design: normalizeToken(parsed) });
+  if (!r.ok) {
+    await wentWrong();
+    return;
+  }
+  await setFlash("YOUR TOKEN", "Saved. Give it to someone from their page, once every six months.", EDGE.purple);
+  revalidatePath("/me");
+  revalidatePath("/me/token");
+  redirect("/me");
+}
+
+const longDate = (iso: string) =>
+  new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+
+/** Offer someone a badge of yours, or your token, for one of theirs or for nothing. */
+export async function offerTrade(fd: FormData) {
+  const to = str(fd, "to_id");
+  const handle = str(fd, "to_handle").toLowerCase().replace(/[^a-z0-9_.-]/g, "");
+  const give = str(fd, "give");
+  const want = str(fd, "want");
+  const back = `/u/${handle}`;
+  const giveItem = give.startsWith("item:") ? Number(give.slice(5)) || null : null;
+  const giveToken = give === "token";
+  const wantItem = want.startsWith("item:") ? Number(want.slice(5)) || null : null;
+  if (!giveItem && !giveToken) {
+    await setFlash("NOTHING OFFERED", "Pick a badge of yours to give, or your token.", EDGE.mag);
+    redirect(`${back}/trade`);
+  }
+
+  const r = await call("cr_offer_trade", { p_to: to, p_give: giveItem, p_give_token: giveToken, p_want: wantItem });
+  if (!r.ok) {
+    if (r.code === "too_soon") {
+      await setFlash("NOT YET", `Your token can be given again on ${r.ready_at ? longDate(r.ready_at) : "a later day"}.`, EDGE.purple);
+    } else if (r.code === "already") {
+      await setFlash("ALREADY WAITING", "They already have an offer from you waiting. Let them answer that one first.", EDGE.purple);
+    } else if (r.code === "not_yours" || r.code === "not_theirs") {
+      await setFlash("NOT THERE", "That badge has moved on since the page was drawn. Have another look.", EDGE.purple);
+    } else if (r.code === "own_token") {
+      await setFlash("THEIR OWN", "You cannot hand someone their own token.", EDGE.purple);
+    } else if (r.code === "no_design") {
+      await setFlash("NO TOKEN YET", "Design your token first, from your profile.", EDGE.purple);
+    } else {
+      await wentWrong();
+    }
+    redirect(`${back}/trade`);
+  }
+
+  await setFlash("OFFERED", "They will see it at the top of their screen. Nothing moves until they say yes.", EDGE.blue);
+  revalidatePath("/", "layout");
+  redirect(back);
+}
+
+/** The other person says yes, or no. Yes moves the badges and recounts both ceilings. */
+export async function answerTrade(fd: FormData) {
+  const yes = str(fd, "answer") === "yes";
+  const r = await call("cr_answer_trade", { p_id: Number(fd.get("id")), p_yes: yes });
+  if (!r.ok) {
+    if (r.code === "stale") {
+      await setFlash("TOO LATE", "That offer no longer holds: a badge in it has moved on.", EDGE.purple);
+    } else {
+      await setFlash("ALREADY ANSWERED", "That offer is no longer waiting for you.", EDGE.purple);
+    }
+  } else if (yes) {
+    await setFlash("TRADED", `Done. Your max mana has been worked out again.${await newBadges()}`, EDGE.blue);
+  } else {
+    await setFlash("DECLINED", "Left as it was.", EDGE.purple);
+  }
+  revalidatePath("/", "layout");
+}
+
+/** The offerer takes an offer back. */
+export async function cancelTrade(fd: FormData) {
+  const r = await call("cr_cancel_trade", { p_id: Number(fd.get("id")) });
+  await setFlash(r.ok ? "TAKEN BACK" : "ALREADY SETTLED", r.ok ? "The offer is withdrawn." : "That offer was already answered.", EDGE.purple);
+  revalidatePath("/", "layout");
 }

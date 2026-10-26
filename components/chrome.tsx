@@ -61,12 +61,40 @@ const TABS = [
   { href: "/me", glyph: "☻", label: "ME" },
 ];
 
-export function TabBar() {
+/** Until someone has registered there are two places to be: the registry and the wiki. */
+const WELCOME_TABS = [
+  { href: "/welcome", glyph: "✎", label: "REGISTRY", alert: true },
+  { href: "/wiki", glyph: "☰", label: "WIKI" },
+];
+
+/** A small red "!" in pixels, on the registry tab until the form is done. */
+function AlertMark() {
+  const rows = ["01110", "01110", "01110", "01110", "01110", "00000", "01110", "01110"];
+  const cells: React.ReactNode[] = [];
+  rows.forEach((row, y) => [...row].forEach((c, x) => c === "1" && cells.push(<rect key={`${x}${y}`} x={x} y={y} width={1} height={1} />)));
+  return (
+    <svg
+      aria-label="Not yet registered"
+      role="img"
+      viewBox="0 0 5 8"
+      width={10}
+      height={16}
+      shapeRendering="crispEdges"
+      fill="#f02828"
+      style={{ position: "absolute", top: 6, right: "calc(50% - 22px)", display: "block" }}
+    >
+      {cells}
+    </svg>
+  );
+}
+
+export function TabBar({ welcoming = false }: { welcoming?: boolean }) {
   const path = usePathname();
+  const tabs: { href: string; glyph: string; label: string; alert?: boolean }[] = welcoming ? WELCOME_TABS : TABS;
 
   return (
     <nav className="tabbar">
-      {TABS.map((t) => {
+      {tabs.map((t) => {
         const active = t.href === "/" ? path === "/" : path.startsWith(t.href);
         return (
           // Not prefetched: every tab is a dynamic, auth'd route, and six of
@@ -78,11 +106,13 @@ export function TabBar() {
             className="tab"
             data-active={active}
             aria-current={active ? "page" : undefined}
+            style={{ position: "relative" }}
           >
             <span className="glyph" aria-hidden>
               {t.glyph}
             </span>
             <span className="label">{t.label}</span>
+            {t.alert ? <AlertMark /> : null}
           </Link>
         );
       })}

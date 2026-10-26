@@ -1,14 +1,17 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { requireMe, getTopFriends, getBadges, getPlaintiffSince, getProfileByHandle } from "@/lib/data";
+import { requireMe, getTopFriends, getBadges, getBadgeItems, getToken, getPlaintiffSince, getProfileByHandle } from "@/lib/data";
 import { openThread } from "@/lib/actions";
 import { Avatar } from "@/components/bits";
-import { ago, corrupt, decayLevel } from "@/lib/crystr";
+import { BadgeArt, ItemTile, TokenImage } from "@/components/badges";
+import { ago, corrupt, decayLevel, BADGE_MANA } from "@/lib/crystr";
 import { bannerOf, bannerStyle } from "@/lib/banner";
+import { tokenTitle } from "@/lib/token";
 
 /** Someone else's profile: who they are, what they say about themselves, who they
- *  rank, what they've earned. Their mana, ledger and anything private stays theirs.
- *  Your own handle sends you to your own page, where you can change things. */
+ *  rank, what they've earned and what they hold that could be traded. Their mana,
+ *  ledger and anything private stays theirs. Your own handle sends you to your own
+ *  page, where you can change things. */
 export default async function PersonPage(props: { params: Promise<{ handle: string }> }) {
   const { handle: raw } = await props.params;
   const { userId, profile: me } = await requireMe();
@@ -25,9 +28,11 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
   if (!person) notFound();
   if (person.id === userId) redirect("/me");
 
-  const [top, badges, plaintiffSince] = await Promise.all([
+  const [top, badges, items, token, plaintiffSince] = await Promise.all([
     getTopFriends(person.id),
     getBadges(person.id),
+    getBadgeItems(person.id),
+    getToken(person.id),
     getPlaintiffSince(person.id),
   ]);
   const earned = badges.filter((b) => b.earned_at);
@@ -76,6 +81,9 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
               WHISPER
             </button>
           </form>
+          <Link href={`/u/${person.handle}/trade`} className="btn btn-purple" style={{ minHeight: 40, flex: 1, display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
+            TRADE BADGES
+          </Link>
         </div>
 
         <div className="tile" style={{ padding: 12 }}>
@@ -141,6 +149,20 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
           </div>
         ) : null}
 
+        {token ? (
+          <div className="tile" style={{ padding: 12, display: "flex", gap: 12, alignItems: "center" }}>
+            <TokenImage design={token.design} size={80} />
+            <div style={{ minWidth: 0 }}>
+              <div className="px" style={{ fontSize: 11, color: "var(--text)", lineHeight: 1.5 }}>
+                {tokenTitle(person.display_name, person.handle).toUpperCase()}
+              </div>
+              <div style={{ fontSize: 11, lineHeight: 1.45, color: "var(--muted)", marginTop: 3 }}>
+                Their own token. Worth {BADGE_MANA.token} max mana to whoever they give it to.
+              </div>
+            </div>
+          </div>
+        ) : null}
+
         {earned.length ? (
           <div>
             <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 8 }}>
@@ -155,17 +177,7 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
             <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 8 }}>
               {earned.map((b) => (
                 <div key={b.slug} className="tile" style={{ padding: 10, display: "flex", gap: 9, alignItems: "flex-start" }}>
-                  {b.art ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={`/badges/${b.art}`} alt="" width={42} height={42} style={{ flex: "none", imageRendering: "pixelated" }} />
-                  ) : (
-                    <div
-                      aria-hidden
-                      style={{ width: 42, height: 42, flex: "none", display: "grid", placeItems: "center", fontSize: 16, color: "var(--mag-soft)", border: "1px solid var(--mag-edge)", borderRadius: 6 }}
-                    >
-                      ✦
-                    </div>
-                  )}
+                  <BadgeArt b={b} got />
                   <div style={{ minWidth: 0 }}>
                     <div className="px" style={{ fontSize: 11, color: "var(--text)", lineHeight: 1.5 }}>
                       {b.title.toUpperCase()}
@@ -173,6 +185,25 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
                     <div style={{ fontSize: 11, lineHeight: 1.4, color: "var(--muted)", marginTop: 3 }}>{b.how}</div>
                   </div>
                 </div>
+              ))}
+            </div>
+          </div>
+        ) : null}
+
+        {items.length ? (
+          <div>
+            <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 8 }}>
+              <div className="px" style={{ fontSize: 12, color: "var(--pur-soft)" }}>
+                WHAT THEY HOLD
+              </div>
+              <span className="spacer" />
+              <Link href={`/u/${person.handle}/trade`} className="px" style={{ fontSize: 11, color: "var(--pur-pale)" }}>
+                OFFER A TRADE →
+              </Link>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 8 }}>
+              {items.map((it) => (
+                <ItemTile key={it.id} item={it} />
               ))}
             </div>
           </div>

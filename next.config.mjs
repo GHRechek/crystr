@@ -4,6 +4,8 @@ const nextConfig = {
   // to be traced into the serverless bundle.
   outputFileTracingIncludes: {
     "/face/[spec]": ["./assets/portrait/**/*.png"],
+    // Likewise the token items, read by /token.
+    "/token/[spec]": ["./public/badges/items/*.png"],
   },
 
   // Nobody else gets to put this app inside their own page: a framed copy can
