@@ -1,17 +1,18 @@
 import Link from "next/link";
-import { requireMe, getPlaintiffSince, getPlaintiffForms } from "@/lib/data";
-import { DISTRICTS, REALMS, SPECIES } from "@/lib/plaintiff";
+import { requireMe, getPlaintiffForms } from "@/lib/data";
+import { redirect } from "next/navigation";
+import { DISTRICTS, SPECIES } from "@/lib/plaintiff";
 import { ago } from "@/lib/crystr";
-import { PlaintiffForm } from "./form";
 
 const label = (list: readonly { value: string; label: string }[], v?: string) =>
   list.find((x) => x.value === v)?.label.replace(/^\d+\.\s*/, "") ?? "—";
 
-/** Form 12-A, the City Office of Civic Plaintiff Registration. */
+/** The City's books: who has registered. Only witches see the list; registering itself now
+ *  happens on the welcome page. */
 export default async function PlaintiffPage() {
-  const { userId, profile } = await requireMe();
-  const since = await getPlaintiffSince(userId);
-  const forms = profile.is_witch ? await getPlaintiffForms() : [];
+  const { profile } = await requireMe();
+  if (!profile.is_witch) redirect("/me");
+  const forms = await getPlaintiffForms();
 
   return (
     <div className="pad" style={{ gap: 12 }}>
@@ -19,26 +20,14 @@ export default async function PlaintiffPage() {
         <Link href="/me" className="btn btn-sm">
           ← ME
         </Link>
-        <div className="spacer" />
-        {since ? (
-          <span className="px" style={{ fontSize: 11, color: "var(--blu-soft)" }}>
-            ✓ REGISTERED
-          </span>
-        ) : null}
       </div>
 
       <div>
-        <h1 className="screen-title">CITY OFFICE OF CIVIC PLAINTIFF REGISTRATION</h1>
-        <div className="screen-intro">
-          {since
-            ? `Form 12-A is on file. You have been a Registered Plaintiff since ${ago(since)}. There is nothing more to do here.`
-            : "Form 12-A · Interim Capacity. Answer the questions below to go on the City's books as a Registered Plaintiff. Questions marked * are required."}
-        </div>
+        <h1 className="screen-title">THE CITY&apos;S BOOKS</h1>
+        <div className="screen-intro">Everyone who has registered, with their district and species. Only witches see this.</div>
       </div>
 
-      {since ? null : <PlaintiffForm />}
-
-      {profile.is_witch ? (
+      {true ? (
         <div className="tile" style={{ padding: 12, display: "flex", flexDirection: "column", gap: 10 }}>
           <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
             <div className="px" style={{ fontSize: 11, color: "var(--pur-pale)" }}>
@@ -65,8 +54,7 @@ export default async function PlaintiffPage() {
                   </div>
                 </div>
                 <div className="px" style={{ fontSize: 11, color: "var(--muted)", marginTop: 4, lineHeight: 1.7 }}>
-                  @{(f.who?.handle ?? "unknown").toUpperCase()} · {label(REALMS, f.answers.realm).toUpperCase()} ·{" "}
-                  {label(DISTRICTS, f.answers.district).toUpperCase()} · {label(SPECIES, f.answers.species).toUpperCase()}
+                  @{(f.who?.handle ?? "unknown").toUpperCase()} · {label(DISTRICTS, f.answers.district).toUpperCase()} · {label(SPECIES, f.answers.species).toUpperCase()}
                 </div>
               </div>
             ))

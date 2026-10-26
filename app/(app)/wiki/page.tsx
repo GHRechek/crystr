@@ -2,13 +2,15 @@ import Link from "next/link";
 import { requireMe } from "@/lib/data";
 import { getWikiPages, searchWikiPages, type WikiHit, type WikiListing } from "@/lib/wiki";
 import { cleanQuery } from "@/lib/wiki-search";
+import { hideNumbers } from "@/lib/wiki-mask";
+import { WellHint } from "@/components/well-hint";
 import { ago, corrupt, COSTS, decayLevel } from "@/lib/crystr";
 
 // The low-mana wash is applied by the app layout; this page only has to eat the
 // letters (corrupt) in the words it shows.
 export default async function WikiIndex(props: { searchParams: Promise<{ q?: string }> }) {
   const searchParams = await props.searchParams;
-  const { profile } = await requireMe();
+  const { profile, userId } = await requireMe();
   const witch = profile.is_witch;
   const decay = decayLevel(profile.mana);
   const q = cleanQuery(searchParams.q);
@@ -20,6 +22,7 @@ export default async function WikiIndex(props: { searchParams: Promise<{ q?: str
 
   return (
     <div className="pad" style={{ gap: 12 }}>
+      <WellHint userId={userId} mana={profile.mana} />
       <div>
         <h1 className="screen-title">THE WIKI</h1>
         <div className="screen-intro">
@@ -75,7 +78,7 @@ export default async function WikiIndex(props: { searchParams: Promise<{ q?: str
           </div>
 
           {hits.map((h) => (
-            <Hit key={h.id} hit={h} decay={decay} />
+            <Hit key={h.id} hit={h} decay={decay} witch={witch} />
           ))}
 
           {hits.length === 0 ? (
@@ -125,7 +128,7 @@ function Row({ page, decay, witch }: { page: WikiListing; decay: number; witch: 
     >
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
         <div style={{ fontSize: 14.5, fontWeight: 500, letterSpacing: "-.01em", flex: 1, minWidth: 0 }}>
-          <span className="wiki-px" style={{ fontSize: 16 }}>{corrupt(page.title, decay)}</span>
+          <span className="wiki-px" style={{ fontSize: 16 }}>{corrupt(witch ? page.title : hideNumbers(page.title), decay)}</span>
         </div>
         {page.locked ? (
           <span className="px" style={{ fontSize: 11, color: "var(--mag-soft)" }}>
@@ -141,7 +144,8 @@ function Row({ page, decay, witch }: { page: WikiListing; decay: number; witch: 
   );
 }
 
-function Hit({ hit, decay }: { hit: WikiHit; decay: number }) {
+function Hit({ hit, decay, witch }: { hit: WikiHit; decay: number; witch: boolean }) {
+  const mask = (t: string) => (witch ? t : hideNumbers(t));
   return (
     <Link
       href={`/wiki/${hit.slug}`}
@@ -150,7 +154,7 @@ function Hit({ hit, decay }: { hit: WikiHit; decay: number }) {
     >
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
         <div style={{ fontSize: 14.5, fontWeight: 500, letterSpacing: "-.01em", flex: 1, minWidth: 0 }}>
-          <span className="wiki-px" style={{ fontSize: 16 }}>{corrupt(hit.title, decay)}</span>
+          <span className="wiki-px" style={{ fontSize: 16 }}>{corrupt(mask(hit.title), decay)}</span>
         </div>
         {hit.archived ? (
           <span className="px" style={{ fontSize: 11, color: "var(--mag-soft)" }}>
@@ -162,7 +166,7 @@ function Hit({ hit, decay }: { hit: WikiHit; decay: number }) {
         /{hit.slug} · MATCHES THE {hit.in === "fact" ? "FACTS" : hit.in.toUpperCase()}
       </div>
       {hit.fact ? (
-        <div style={{ fontSize: 12.5, lineHeight: 1.5, color: "var(--text-2)" }}>{corrupt(hit.fact, decay)}</div>
+        <div style={{ fontSize: 12.5, lineHeight: 1.5, color: "var(--text-2)" }}>{corrupt(mask(hit.fact), decay)}</div>
       ) : null}
     </Link>
   );

@@ -9,14 +9,19 @@ export async function proxy(request: NextRequest) {
   // those requests try to refresh at once the losers present a token that
   // has already been spent, and the person is quietly signed out. A
   // prefetch only needs to warm the route, so let it past untouched.
+  // Layouts can't see the path they are rendering, so pass it along for the welcome gate.
+  const forward = new Headers(request.headers);
+  forward.set("x-pathname", request.nextUrl.pathname);
+  const next = () => NextResponse.next({ request: { headers: forward } });
+
   if (
     request.headers.get("next-router-prefetch") === "1" ||
     request.headers.get("purpose") === "prefetch"
   ) {
-    return NextResponse.next({ request });
+    return next();
   }
 
-  let response = NextResponse.next({ request });
+  let response = next();
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -32,7 +37,7 @@ export async function proxy(request: NextRequest) {
           cookiesToSet.forEach(({ name, value }) =>
             request.cookies.set(name, value),
           );
-          response = NextResponse.next({ request });
+          response = next();
           cookiesToSet.forEach(({ name, value, options }) =>
             response.cookies.set(name, value, options),
           );

@@ -8,7 +8,7 @@ import { setFlash, EDGE } from "@/lib/flash";
 import { TERMS_VERSION } from "@/lib/terms";
 import { INVISIBLE } from "@/lib/wiki-fact";
 import { isPattern, isSwatch } from "@/lib/banner";
-import { COSTS, untilReady } from "@/lib/crystr";
+import { COSTS, hasStarterHandle, untilReady } from "@/lib/crystr";
 import { normalizePortrait } from "@/lib/portrait/core";
 import { listBadges } from "@/lib/badges";
 import { PLAINTIFF_ERRORS, type PlaintiffError } from "@/lib/plaintiff";
@@ -304,34 +304,52 @@ export async function unsendMessage(fd: FormData) {
 
 // ------------------------------------------------------------- plaintiffs
 
-/** Form 12-A. The rules (including the code questions) are checked in the
- *  database. On a mistake this returns where it went wrong, so the form keeps
- *  what was typed; on success the person is registered and sent to their profile. */
-export async function submitPlaintiff(fd: FormData): Promise<PlaintiffError | undefined> {
-  const r = await call("cr_submit_plaintiff", {
-    p_name: str(fd, "name"),
-    p_alias: str(fd, "alias"),
-    p_realm: str(fd, "realm"),
+/** The welcome page: their name, then the registry (district and species codes). Nothing
+ *  is changed unless the name is acceptable; the codes are checked in the database. On
+ *  success the person is in and goes to the timeline. */
+export async function completeWelcome(fd: FormData): Promise<PlaintiffError | undefined> {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const { data: me } = await supabase.from("profiles").select("avatar_config, handle").eq("id", user.id).single();
+  if (!me?.avatar_config) {
+    return { field: "face", message: "Make your face first. The button is at the top of this page." };
+  }
+
+  const handle = str(fd, "handle").toLowerCase().replace(/[^a-z0-9_.-]/g, "");
+  if (!handle || hasStarterHandle(handle)) return { field: "handle", message: "Pick a handle: what the City will call you." };
+  if (handle.length > 15) return { field: "handle", message: "Handles are fifteen characters at most." };
+  const display = field(fd, "display_name");
+
+  const { error } = await supabase
+    .from("profiles")
+    .update({ handle, display_name: display, updated_at: new Date().toISOString() })
+    .eq("id", user.id);
+  if (error) {
+    return {
+      field: "handle",
+      message: error.code === "23505" ? "Someone in the City already answers to that. Pick another." : "That did not save. Please try again.",
+    };
+  }
+
+  const r = await call("cr_register", {
     p_district: str(fd, "district"),
     p_district_code: str(fd, "district_code"),
     p_species: str(fd, "species"),
     p_species_code: str(fd, "species_code"),
-    p_pcode: str(fd, "pcode"),
   });
-
   if (!r.ok) {
     const known = PLAINTIFF_ERRORS[r.code as keyof typeof PLAINTIFF_ERRORS];
     if (known) return known;
     return { field: "form", message: "That one is on us. Give it another try." };
   }
 
-  await setFlash(
-    "REGISTERED",
-    `You are on the City's books as a Registered Plaintiff.${await newBadges()}`,
-    EDGE.blue,
-  );
-  revalidatePath("/me");
-  redirect("/me");
+  await setFlash("WELCOME", `You are on the City's books.${await newBadges()}`, EDGE.blue);
+  revalidatePath("/", "layout");
+  redirect("/");
 }
 
 // ----------------------------------------------------------------- vouches
@@ -798,7 +816,8 @@ export async function saveAvatar(fd: FormData) {
   await setFlash("A FACE", "Your face is saved. The City will know you now.", EDGE.purple);
   revalidatePath("/me");
   revalidatePath("/");
-  redirect("/me");
+  const { data: who } = await supabase.from("profiles").select("onboarded").eq("id", user.id).single();
+  redirect(who && who.onboarded === false ? "/welcome" : "/me");
 }
 
 export async function setTopFriends(fd: FormData) {

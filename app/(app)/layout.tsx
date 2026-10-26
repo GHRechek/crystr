@@ -1,3 +1,4 @@
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { requireMe, getPendingVouches, getTopSixNotices, hasAcceptedTerms } from "@/lib/data";
 import { TERMS_VERSION } from "@/lib/terms";
@@ -20,6 +21,16 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     hasAcceptedTerms(userId, TERMS_VERSION),
   ]);
   if (!agreed) redirect("/terms");
+
+  // Until they have registered, the welcome page, the wiki (to look up codes), the Well and
+  // the face maker are all there is. A missing flag means a database from before it: let them in.
+  const welcoming = profile.onboarded === false;
+  if (welcoming) {
+    const path = (await headers()).get("x-pathname") ?? "";
+    const open = ["/welcome", "/wiki", "/well", "/me/avatar", "/info", "/bug"].some((p) => path === p || path.startsWith(`${p}/`));
+    if (!open) redirect("/welcome");
+  }
+  const cap = welcoming ? 10 : MANA_CAP;
   const flash = await readFlash();
   const mana = profile.mana;
 
@@ -38,12 +49,12 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             <div className="spacer" />
             <ManaButton />
             <div className="mana-count" style={{ color: manaColor(mana) }}>
-              {String(mana).padStart(2, "0")}/{MANA_CAP}
+              {String(mana).padStart(2, "0")}/{cap}
             </div>
             <InfoMenu />
           </div>
           <div className="gauge">
-            <i style={{ width: `${Math.max(2, (mana / MANA_CAP) * 100)}%` }} />
+            <i style={{ width: `${Math.max(2, (mana / cap) * 100)}%` }} />
           </div>
           <div className="head-foot">
             <span>{wellLine(mana)}</span>
@@ -51,7 +62,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           </div>
         </header>
 
-        {hasStarterHandle(profile.handle) ? <SetupBanner /> : null}
+        {hasStarterHandle(profile.handle) && !welcoming ? <SetupBanner /> : null}
 
         <VouchBanner vouches={vouches} />
         <TopSixBanner who={topSixFrom} />

@@ -19,6 +19,8 @@ export type Profile = {
   mana: number;
   spent_total: number;
   is_witch: boolean;
+  /** False until they have registered on the welcome page. Missing means a database from before the flag. */
+  onboarded?: boolean;
   banner_pattern: string | null;
   banner_a: string | null;
   banner_b: string | null;
