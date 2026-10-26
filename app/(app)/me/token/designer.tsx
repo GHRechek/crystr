@@ -1,13 +1,15 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useRef, useState } from "react";
 import { setToken } from "@/lib/actions";
 import {
   ITEMS,
   NO_ITEM,
+  OFFSET_MAX,
   SHAPES,
   SIZES,
   TOKEN_COLOURS,
+  TOKEN_SIZE,
   isFramed,
   normalizeToken,
   tokenSrc,
@@ -15,6 +17,46 @@ import {
   type TokenColour,
   type TokenDesign,
 } from "@/lib/token";
+
+/** Stage pixels per token cell: the 32-cell token fills a 256px square. */
+const CELL = 8;
+const STAGE = TOKEN_SIZE * CELL;
+type Slot = "a" | "b";
+type Panel = "icons" | "shape" | "colours" | null;
+
+const clamp = (n: number) => Math.max(-OFFSET_MAX, Math.min(OFFSET_MAX, n));
+
+/** A panel that slides up over the page, like a sticker drawer. Tapping outside closes it. */
+function Sheet({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
+  return (
+    <div role="dialog" aria-label={title} style={{ position: "absolute", inset: 0, zIndex: 60, display: "flex", flexDirection: "column" }}>
+      <button type="button" aria-label="Close" onClick={onClose} style={{ flex: 1, border: 0, background: "rgba(5,5,12,.6)", cursor: "default" }} />
+      <div
+        style={{
+          maxHeight: "72%",
+          overflowY: "auto",
+          background: "var(--device)",
+          boxShadow: "0 -1px 0 var(--edge), 0 -12px 36px rgba(0,0,0,.5)",
+          padding: "12px 16px 24px",
+          display: "flex",
+          flexDirection: "column",
+          gap: 12,
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <div className="px" style={{ fontSize: 12, color: "var(--pur-soft)" }}>
+            {title}
+          </div>
+          <div className="spacer" />
+          <button type="button" className="btn btn-sm" onClick={onClose} style={{ minHeight: 40, padding: "0 9px" }}>
+            ✕
+          </button>
+        </div>
+        {children}
+      </div>
+    </div>
+  );
+}
 
 function Swatches({ value, onPick, name }: { value: TokenColour; onPick: (k: TokenColour) => void; name: string }) {
   return (
@@ -51,165 +93,123 @@ function Swatches({ value, onPick, name }: { value: TokenColour; onPick: (k: Tok
   );
 }
 
-/** A shape, drawn as a token of its own in the chosen colours, so the choice is seen. */
-function ShapeChoices({ design, onPick }: { design: TokenDesign; onPick: (k: TokenDesign["shape"]) => void }) {
-  return (
-    <div role="radiogroup" aria-label="Badge shape" style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 6 }}>
-      {SHAPES.map((s) => {
-        const on = s.key === design.shape;
-        const preview = normalizeToken({ ...design, shape: s.key, a: NO_ITEM, b: NO_ITEM });
-        return (
-          <button
-            key={s.key}
-            type="button"
-            role="radio"
-            aria-checked={on}
-            aria-label={s.label}
-            title={s.label}
-            onClick={() => onPick(s.key)}
-            style={{
-              padding: 4,
-              cursor: "pointer",
-              background: on ? "rgba(145,132,217,.18)" : "var(--surface)",
-              border: `1px solid ${on ? "var(--pur)" : "var(--edge)"}`,
-              borderRadius: "var(--px-r)",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: 3,
-              color: on ? "var(--text)" : "var(--muted)",
-              fontSize: 9,
-              lineHeight: 1.2,
-              textAlign: "center",
-            }}
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={tokenSrc(preview)} alt="" width={64} height={64} style={{ imageRendering: "pixelated" }} />
-            <span>{s.label}</span>
-          </button>
-        );
-      })}
-    </div>
-  );
-}
-
-/** One of the two items: which, flipped or not, turned how far, how big, on top. */
-function ItemControl({
+/** One item on the stage: drag it to place it, tap it to pick it. Arrow keys nudge it. */
+function Sticker({
   which,
-  design,
-  set,
+  d,
+  selected,
+  onSelect,
+  onMove,
 }: {
-  which: "a" | "b";
-  design: TokenDesign;
-  set: (patch: Partial<TokenDesign>) => void;
+  which: Slot;
+  d: TokenDesign;
+  selected: boolean;
+  onSelect: (s: Slot) => void;
+  onMove: (s: Slot, x: number, y: number) => void;
 }) {
-  const slug = design[which];
-  const flip = design[`${which}_flip`];
-  const rot = design[`${which}_rot`];
-  const size = design[`${which}_size`];
-  const onTop = design.top === which;
-  const at = SIZES.indexOf(size);
-  const sizeBy = (step: number) => {
-    const next = SIZES[Math.max(0, Math.min(SIZES.length - 1, at + step))] as SizeKey;
-    set({ [`${which}_size`]: next } as Partial<TokenDesign>);
-  };
+  const drag = useRef<{ px: number; py: number; x: number; y: number } | null>(null);
+  const slug = d[which];
+  const it = ITEMS.find((i) => i.slug === slug);
+  if (slug === NO_ITEM || !it) return null;
+  const x = d[`${which}_x`];
+  const y = d[`${which}_y`];
+  const flip = d[`${which}_flip`];
+  const rot = d[`${which}_rot`];
+  const size = d[`${which}_size`];
+
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-      <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-        <button
-          type="button"
-          className={`btn btn-sm${flip ? " btn-purple" : ""}`}
-          aria-pressed={flip}
-          onClick={() => set({ [`${which}_flip`]: !flip } as Partial<TokenDesign>)}
-          style={{ minHeight: 40 }}
-        >
-          ⇄ FLIP
-        </button>
-        <button
-          type="button"
-          className="btn btn-sm"
-          onClick={() => set({ [`${which}_rot`]: ((rot + 1) % 4) as 0 | 1 | 2 | 3 } as Partial<TokenDesign>)}
-          style={{ minHeight: 40 }}
-        >
-          ↻ TURN · {rot * 90}°
-        </button>
-        <span role="group" aria-label="Size" style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
-          <button type="button" className="btn btn-sm" onClick={() => sizeBy(-1)} disabled={at <= 0} aria-label="Smaller" style={{ minHeight: 40, minWidth: 40 }}>
-            −
-          </button>
-          <span className="px" style={{ fontSize: 11, minWidth: 44, textAlign: "center" }}>
-            {size}%
-          </span>
-          <button type="button" className="btn btn-sm" onClick={() => sizeBy(1)} disabled={at >= SIZES.length - 1} aria-label="Bigger" style={{ minHeight: 40, minWidth: 40 }}>
-            +
-          </button>
-        </span>
-        <button
-          type="button"
-          className={`btn btn-sm${onTop ? " btn-purple" : ""}`}
-          aria-pressed={onTop}
-          onClick={() => set({ top: which })}
-          style={{ minHeight: 40 }}
-        >
-          {onTop ? "ON TOP" : "PUT ON TOP"}
-        </button>
-      </div>
-      <div role="radiogroup" aria-label={`Item ${which.toUpperCase()}`} style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 6 }}>
-        <button
-          type="button"
-          role="radio"
-          aria-checked={slug === NO_ITEM}
-          onClick={() => set({ [which]: NO_ITEM } as Partial<TokenDesign>)}
-          className="btn btn-sm"
-          style={{ minHeight: 44, padding: 0, fontSize: 10, borderColor: slug === NO_ITEM ? "var(--pur)" : undefined }}
-        >
-          NONE
-        </button>
-        {ITEMS.map((it) => {
-          const on = it.slug === slug;
-          return (
-            <button
-              key={it.slug}
-              type="button"
-              role="radio"
-              aria-checked={on}
-              aria-label={it.label}
-              title={it.label}
-              onClick={() => set({ [which]: it.slug } as Partial<TokenDesign>)}
-              style={{
-                minHeight: 44,
-                padding: 0,
-                cursor: "pointer",
-                background: on ? "rgba(145,132,217,.18)" : "var(--surface)",
-                border: `1px solid ${on ? "var(--pur)" : "var(--edge)"}`,
-                borderRadius: "var(--px-r)",
-                display: "grid",
-                placeItems: "center",
-              }}
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={`/badges/items/${it.slug}.png`} alt="" width={32} height={32} style={{ imageRendering: "pixelated", objectFit: "contain" }} />
-            </button>
-          );
-        })}
-      </div>
+    <div
+      role="button"
+      tabIndex={0}
+      aria-label={`${it.label}${selected ? ", picked" : ""}. Drag to move.`}
+      aria-pressed={selected}
+      onPointerDown={(e) => {
+        e.preventDefault();
+        e.currentTarget.setPointerCapture(e.pointerId);
+        drag.current = { px: e.clientX, py: e.clientY, x, y };
+        onSelect(which);
+      }}
+      onPointerMove={(e) => {
+        const s = drag.current;
+        if (!s) return;
+        const nx = clamp(s.x + Math.round((e.clientX - s.px) / CELL));
+        const ny = clamp(s.y + Math.round((e.clientY - s.py) / CELL));
+        if (nx !== x || ny !== y) onMove(which, nx, ny);
+      }}
+      onPointerUp={() => (drag.current = null)}
+      onPointerCancel={() => (drag.current = null)}
+      onKeyDown={(e) => {
+        const step = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key];
+        if (!step) return;
+        e.preventDefault();
+        onSelect(which);
+        onMove(which, clamp(x + step[0]), clamp(y + step[1]));
+      }}
+      style={{
+        position: "absolute",
+        left: (TOKEN_SIZE / 2 + x) * CELL,
+        top: (TOKEN_SIZE / 2 + y) * CELL,
+        width: it.w * CELL,
+        height: it.h * CELL,
+        // Flip first, then turn, then shrink, about the middle; the server draws it the same way.
+        transform: `translate(-50%, -50%) rotate(${rot * 90}deg) scaleX(${flip ? -1 : 1}) scale(${size / 100})`,
+        touchAction: "none",
+        cursor: "grab",
+        outline: selected ? "2px dashed var(--pur-bright)" : "none",
+        outlineOffset: 4,
+        zIndex: d.top === which ? 2 : 1,
+        userSelect: "none",
+      }}
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={`/badges/items/${slug}.png`}
+        alt=""
+        width={it.w * CELL}
+        height={it.h * CELL}
+        draggable={false}
+        style={{ display: "block", imageRendering: "pixelated", pointerEvents: "none" }}
+      />
     </div>
   );
 }
 
-/** Design your token from parts: a shape in your colours, then two items. The picture at
- *  the top is the real thing, drawn by /token as you go. */
+/** Design your token like a post: the badge on a stage, icons added from a drawer and
+ *  dragged into place. Pick an icon to flip it, turn it, shrink it, put it on top or take
+ *  it off. The small picture by the save button is the real thing, drawn by /token. */
 export function TokenDesigner({ start, fresh }: { start: TokenDesign; fresh: boolean }) {
   const [d, setD] = useState<TokenDesign>(() => normalizeToken(start));
+  const [selected, setSelected] = useState<Slot | null>(null);
+  const [panel, setPanel] = useState<Panel>(null);
   const set = (patch: Partial<TokenDesign>) => setD((prev) => normalizeToken({ ...prev, ...patch }));
-  const src = useMemo(() => tokenSrc(d), [d]);
-  const label = { fontSize: 11, color: "var(--muted)", letterSpacing: ".05em", marginBottom: 6 } as const;
+
+  const placed = (["a", "b"] as const).filter((s) => d[s] !== NO_ITEM);
+  const free = (["a", "b"] as const).find((s) => d[s] === NO_ITEM);
+  const sel = selected && d[selected] !== NO_ITEM ? selected : null;
+  const selItem = sel ? ITEMS.find((i) => i.slug === d[sel]) : null;
+
+  function addIcon(slug: string) {
+    if (!free) return;
+    set({ [free]: slug, [`${free}_x`]: 0, [`${free}_y`]: 0, [`${free}_flip`]: false, [`${free}_rot`]: 0, [`${free}_size`]: 100, top: free } as Partial<TokenDesign>);
+    setSelected(free);
+    setPanel(null);
+  }
+
+  function sizeBy(step: number) {
+    if (!sel) return;
+    const at = SIZES.indexOf(d[`${sel}_size`]);
+    const next = SIZES[Math.max(0, Math.min(SIZES.length - 1, at + step))] as SizeKey;
+    set({ [`${sel}_size`]: next } as Partial<TokenDesign>);
+  }
+
+  const toolbar = { display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "center" } as const;
+  const stageOnly = normalizeToken({ ...d, a: NO_ITEM, b: NO_ITEM });
 
   return (
-    <form action={setToken} className="pad" style={{ gap: 14, padding: 0 }}>
+    <form action={setToken} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
       <input type="hidden" name="design" value={JSON.stringify(d)} />
 
-      {/* Sticks to the top so the token stays in view while you work down the options. */}
+      {/* The real render and the save, pinned while the stage is worked on. */}
       <div
         style={{
           position: "sticky",
@@ -226,57 +226,197 @@ export function TokenDesigner({ start, fresh }: { start: TokenDesign; fresh: boo
         }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={src} alt="Your token" width={128} height={128} style={{ imageRendering: "pixelated", flex: "none" }} />
-        <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 7 }}>
-          <div style={{ fontSize: 12, lineHeight: 1.5, color: "var(--muted)" }}>
-            {fresh ? "Nobody has seen this yet." : "Changing it changes what you give next; tokens already given keep their look."}
+        <img src={tokenSrc(d)} alt="Your token, as it will be" width={64} height={64} style={{ imageRendering: "pixelated", flex: "none" }} />
+        <div style={{ flex: 1, fontSize: 12, lineHeight: 1.5, color: "var(--muted)" }}>
+          {fresh ? "Nobody has seen this yet." : "Changing it changes what you give next; tokens already given keep their look."}
+        </div>
+        <button type="submit" className="btn btn-sm btn-purple" style={{ minHeight: 40, flex: "none" }}>
+          KEEP IT
+        </button>
+      </div>
+
+      {/* The stage: the badge, and the icons on it. Tapping the badge itself clears the pick. */}
+      <div
+        onPointerDown={(e) => {
+          if (e.target === e.currentTarget) setSelected(null);
+        }}
+        style={{
+          position: "relative",
+          width: STAGE,
+          height: STAGE,
+          maxWidth: "100%",
+          margin: "0 auto",
+          borderRadius: "var(--px-r)",
+          background: "var(--inset)",
+          boxShadow: "0 0 0 1px var(--edge)",
+          touchAction: "none",
+          overflow: "visible",
+        }}
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={tokenSrc(stageOnly)}
+          alt=""
+          width={STAGE}
+          height={STAGE}
+          draggable={false}
+          style={{ position: "absolute", inset: 0, imageRendering: "pixelated", pointerEvents: "none" }}
+        />
+        <Sticker which="a" d={d} selected={sel === "a"} onSelect={setSelected} onMove={(s, x, y) => set({ [`${s}_x`]: x, [`${s}_y`]: y } as Partial<TokenDesign>)} />
+        <Sticker which="b" d={d} selected={sel === "b"} onSelect={setSelected} onMove={(s, x, y) => set({ [`${s}_x`]: x, [`${s}_y`]: y } as Partial<TokenDesign>)} />
+      </div>
+
+      {sel && selItem ? (
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          <div className="px" style={{ fontSize: 11, color: "var(--pur-pale)", textAlign: "center" }}>
+            {selItem.label.toUpperCase()} · DRAG IT TO PLACE IT
           </div>
-          <button type="submit" className="btn btn-sm btn-purple">
-            KEEP THIS TOKEN
-          </button>
-        </div>
-      </div>
-
-      <div>
-        <div className="px" style={label}>
-          1 · BADGE SHAPE
-        </div>
-        <ShapeChoices design={d} onPick={(shape) => set({ shape })} />
-      </div>
-
-      <div>
-        <div className="px" style={label}>
-          BADGE COLOUR
-        </div>
-        <Swatches value={d.fill} onPick={(fill) => set({ fill })} name="Badge colour" />
-      </div>
-
-      {isFramed(d.shape) ? (
-        <div>
-          <div className="px" style={label}>
-            FRAME COLOUR
+          <div style={toolbar}>
+            <button type="button" className={`btn btn-sm${d[`${sel}_flip`] ? " btn-purple" : ""}`} aria-pressed={d[`${sel}_flip`]} onClick={() => set({ [`${sel}_flip`]: !d[`${sel}_flip`] } as Partial<TokenDesign>)} style={{ minHeight: 40 }}>
+              ⇄ FLIP
+            </button>
+            <button type="button" className="btn btn-sm" onClick={() => set({ [`${sel}_rot`]: ((d[`${sel}_rot`] + 1) % 4) as 0 | 1 | 2 | 3 } as Partial<TokenDesign>)} style={{ minHeight: 40 }}>
+              ↻ TURN
+            </button>
+            <span role="group" aria-label="Size" style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+              <button type="button" className="btn btn-sm" onClick={() => sizeBy(-1)} disabled={d[`${sel}_size`] === SIZES[0]} aria-label="Smaller" style={{ minHeight: 40, minWidth: 40 }}>
+                −
+              </button>
+              <span className="px" style={{ fontSize: 11, minWidth: 44, textAlign: "center" }}>
+                {d[`${sel}_size`]}%
+              </span>
+              <button type="button" className="btn btn-sm" onClick={() => sizeBy(1)} disabled={d[`${sel}_size`] === 100} aria-label="Bigger, up to as drawn" style={{ minHeight: 40, minWidth: 40 }}>
+                +
+              </button>
+            </span>
+            <button type="button" className={`btn btn-sm${d.top === sel ? " btn-purple" : ""}`} aria-pressed={d.top === sel} onClick={() => set({ top: sel })} style={{ minHeight: 40 }}>
+              {d.top === sel ? "ON TOP" : "PUT ON TOP"}
+            </button>
+            <button
+              type="button"
+              className="btn btn-sm btn-mag"
+              onClick={() => {
+                set({ [sel]: NO_ITEM } as Partial<TokenDesign>);
+                setSelected(null);
+              }}
+              style={{ minHeight: 40 }}
+            >
+              ✕ REMOVE
+            </button>
           </div>
-          <Swatches value={d.rim} onPick={(rim) => set({ rim })} name="Frame colour" />
         </div>
-      ) : null}
+      ) : (
+        <div style={{ fontSize: 12, lineHeight: 1.5, color: "var(--muted)", textAlign: "center" }}>
+          {placed.length ? "Tap an icon to flip, turn or shrink it. Drag it to place it." : "Add an icon or two, then drag them where you want them."}
+        </div>
+      )}
 
-      <div>
-        <div className="px" style={label}>
-          2 · FIRST ITEM
-        </div>
-        <ItemControl which="a" design={d} set={set} />
-      </div>
-
-      <div>
-        <div className="px" style={label}>
-          3 · SECOND ITEM
-        </div>
-        <ItemControl which="b" design={d} set={set} />
+      <div style={toolbar}>
+        <button type="button" className="btn btn-sm btn-purple" onClick={() => setPanel("icons")} disabled={!free} style={{ minHeight: 40 }}>
+          ✚ ADD ICON {placed.length}/2
+        </button>
+        <button type="button" className="btn btn-sm" onClick={() => setPanel("shape")} style={{ minHeight: 40 }}>
+          ◈ SHAPE
+        </button>
+        <button type="button" className="btn btn-sm" onClick={() => setPanel("colours")} style={{ minHeight: 40 }}>
+          ● COLOURS
+        </button>
       </div>
 
       <button type="submit" className="btn btn-lg btn-purple btn-block">
         KEEP THIS TOKEN
       </button>
+
+      {panel === "icons" ? (
+        <Sheet title={`ADD AN ICON · ${placed.length}/2`} onClose={() => setPanel(null)}>
+          <div role="listbox" aria-label="Icons" style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 6 }}>
+            {ITEMS.map((it) => (
+              <button
+                key={it.slug}
+                type="button"
+                role="option"
+                aria-selected={false}
+                aria-label={it.label}
+                title={it.label}
+                onClick={() => addIcon(it.slug)}
+                style={{
+                  minHeight: 48,
+                  padding: 0,
+                  cursor: "pointer",
+                  background: "var(--surface)",
+                  border: "1px solid var(--edge)",
+                  borderRadius: "var(--px-r)",
+                  display: "grid",
+                  placeItems: "center",
+                }}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={`/badges/items/${it.slug}.png`} alt="" width={it.w * 2} height={it.h * 2} style={{ imageRendering: "pixelated" }} />
+              </button>
+            ))}
+          </div>
+        </Sheet>
+      ) : null}
+
+      {panel === "shape" ? (
+        <Sheet title="BADGE SHAPE" onClose={() => setPanel(null)}>
+          <div role="radiogroup" aria-label="Badge shape" style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 6 }}>
+            {SHAPES.map((s) => {
+              const on = s.key === d.shape;
+              const preview = normalizeToken({ ...stageOnly, shape: s.key });
+              return (
+                <button
+                  key={s.key}
+                  type="button"
+                  role="radio"
+                  aria-checked={on}
+                  aria-label={s.label}
+                  title={s.label}
+                  onClick={() => set({ shape: s.key })}
+                  style={{
+                    padding: 4,
+                    cursor: "pointer",
+                    background: on ? "rgba(145,132,217,.18)" : "var(--surface)",
+                    border: `1px solid ${on ? "var(--pur)" : "var(--edge)"}`,
+                    borderRadius: "var(--px-r)",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    gap: 3,
+                    color: on ? "var(--text)" : "var(--muted)",
+                    fontSize: 9,
+                    lineHeight: 1.2,
+                    textAlign: "center",
+                  }}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={tokenSrc(preview)} alt="" width={64} height={64} style={{ imageRendering: "pixelated" }} />
+                  <span>{s.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </Sheet>
+      ) : null}
+
+      {panel === "colours" ? (
+        <Sheet title="COLOURS" onClose={() => setPanel(null)}>
+          <div className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
+            BADGE
+          </div>
+          <Swatches value={d.fill} onPick={(fill) => set({ fill })} name="Badge colour" />
+          {isFramed(d.shape) ? (
+            <>
+              <div className="px" style={{ fontSize: 11, color: "var(--muted)", marginTop: 6 }}>
+                FRAME
+              </div>
+              <Swatches value={d.rim} onPick={(rim) => set({ rim })} name="Frame colour" />
+            </>
+          ) : (
+            <div style={{ fontSize: 12, color: "var(--muted)" }}>A framed shape also takes a frame colour.</div>
+          )}
+        </Sheet>
+      ) : null}
     </form>
   );
 }

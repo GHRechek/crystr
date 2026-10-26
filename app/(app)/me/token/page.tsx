@@ -29,8 +29,9 @@ export default async function TokenPage() {
       <div>
         <h1 className="screen-title">{tokenTitle(profile.display_name, profile.handle).toUpperCase()}</h1>
         <div className="screen-intro">
-          A badge of your own: a shape in your colours, and two items on it. Whoever you give it to
-          holds {BADGE_MANA.token} more max mana. You can give it once every {TOKEN_GIFT_MONTHS} months.
+          A badge of your own: a shape in your colours, with up to two icons dragged into place.
+          Whoever you give it to holds {BADGE_MANA.token} more max mana. You can give it once every{" "}
+          {TOKEN_GIFT_MONTHS} months.
         </div>
       </div>
 

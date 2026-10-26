@@ -5,11 +5,11 @@ import { TOKEN_SIZE, colourHex, isFramed, normalizeToken, type SizeKey, type Tok
 
 // Drawing a token: one badge shape in three tones of its colour (the outline is the art's
 // own near-black), a band in the rim colour just inside the edge when the shape is framed,
-// then the two items from the uploaded set, flipped, turned or sized as asked, centred,
-// the chosen one on top. The shape takes the middle 22 of the 32 cells, small on purpose:
-// an item at its drawn size reaches the rim, a larger one hangs over it, a smaller one
-// sits inside like heraldry. The browser shows it two to four times larger with the
-// pixels kept square.
+// then the two items from the uploaded set, flipped, turned or shrunk as asked, each
+// centred where it was dragged to, the chosen one on top. The shape takes the middle 22 of
+// the 32 cells, small on purpose: an item at its drawn size reaches the rim, one dragged
+// outward hangs over it, a shrunk one sits inside like heraldry. The browser shows it two
+// to four times larger with the pixels kept square.
 
 const ITEMS_DIR = join(process.cwd(), "public", "badges", "items");
 type Sprite = { w: number; h: number; data: Uint8ClampedArray };
@@ -126,12 +126,13 @@ function paintShape(px: Uint8Array, inside: Inside, t: Tones) {
   }
 }
 
-function blendSprite(px: Uint8Array, sp: Sprite, flip: boolean, rot: number) {
-  // Flip, then turn in quarter steps, by remapping where each source pixel lands.
+function blendSprite(px: Uint8Array, sp: Sprite, flip: boolean, rot: number, cx: number, cy: number) {
+  // Flip, then turn in quarter steps, by remapping where each source pixel lands; the
+  // sprite's centre goes where it was dragged to (the designer places it the same way).
   const w = rot % 2 === 0 ? sp.w : sp.h;
   const h = rot % 2 === 0 ? sp.h : sp.w;
-  const ox = Math.floor((N - w) / 2);
-  const oy = Math.floor((N - h) / 2);
+  const ox = Math.floor(C + cx - w / 2);
+  const oy = Math.floor(C + cy - h / 2);
   for (let sy = 0; sy < sp.h; sy++) {
     for (let sx0 = 0; sx0 < sp.w; sx0++) {
       const s = (sy * sp.w + sx0) * 4;
@@ -186,6 +187,8 @@ export function composeToken(raw: TokenDesign): Buffer {
       resized(sp, which === "a" ? d.a_size : d.b_size),
       which === "a" ? d.a_flip : d.b_flip,
       which === "a" ? d.a_rot : d.b_rot,
+      which === "a" ? d.a_x : d.b_x,
+      which === "a" ? d.a_y : d.b_y,
     );
   }
 
