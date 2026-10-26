@@ -60,6 +60,7 @@ export default async function PlaintiffPage() {
                 <div className="px" style={{ fontSize: 11, color: "var(--muted)", marginTop: 4, lineHeight: 1.7 }}>
                   @{(f.who?.handle ?? "unknown").toUpperCase()} · {label(DISTRICTS, f.answers.district).toUpperCase()} · {label(SPECIES, f.answers.species).toUpperCase()}
                   {f.answers.birthday ? ` · BORN ${formatBirthday(f.answers.birthday).toUpperCase()}` : ""}
+                  {f.answers.spellcaster ? ` · CASTER${f.answers.arcn ? ` · ARCN ${f.answers.arcn}` : ""}` : ""}
                 </div>
               </div>
             ))

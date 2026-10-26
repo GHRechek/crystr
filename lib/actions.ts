@@ -349,6 +349,8 @@ export async function completeWelcome(fd: FormData): Promise<PlaintiffError | un
     p_district_code: str(fd, "district_code"),
     p_species: str(fd, "species"),
     p_species_code: str(fd, "species_code"),
+    p_spellcaster: fd.get("spellcaster") === "on",
+    p_arcn: str(fd, "arcn"),
     p_birthday: birthday,
     p_name: name,
   });

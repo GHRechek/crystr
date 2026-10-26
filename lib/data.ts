@@ -635,7 +635,17 @@ export async function getPlaintiffSince(userId: string): Promise<string | null> 
 export type PlaintiffRow = {
   user_id: string;
   submitted_at: string;
-  answers: { name?: string; alias?: string; character?: string; realm?: string; district?: string; species?: string; birthday?: string | null };
+  answers: {
+    name?: string;
+    alias?: string;
+    character?: string;
+    realm?: string;
+    district?: string;
+    species?: string;
+    birthday?: string | null;
+    spellcaster?: boolean;
+    arcn?: string | null;
+  };
   who: { handle: string } | null;
 };
 

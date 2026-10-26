@@ -2,7 +2,7 @@
 --
 -- NOT APPLIED YET. Apply it in one go with the Supabase SQL editor (Dashboard -> SQL
 -- Editor) or the migration tool, after the app that goes with it is deployed. Every
--- function it replaces keeps its old arguments (cr_register gains one with a default),
+-- function it replaces keeps its old arguments (cr_register gains two with defaults),
 -- so an app from before this file keeps working against a database that has it.
 --
 -- MAX MANA. Until now the well stopped at a flat 60 for everyone. Now each person has
@@ -398,21 +398,26 @@ $$;
 
 -- --------------------------------------------- registering, with a birthday
 
+-- The arguments of the earlier versions (20261026110000_elven_enclaves, 20261026120000_arcn)
+-- come first and keep their defaults, so an app from before this file still registers.
 drop function if exists public.cr_register(text, text, text, text);
+drop function if exists public.cr_register(text, text, text, text, boolean, text);
 create or replace function public.cr_register(
   p_district text, p_district_code text, p_species text, p_species_code text,
+  p_spellcaster boolean default false, p_arcn text default '',
   p_birthday date default null, p_name text default null)
 returns jsonb language plpgsql security definer set search_path = public as $$
 declare v_ok boolean;
         v_name text;
         v_character text;
+        v_arcn text := btrim(coalesce(p_arcn, ''));
 begin
   if auth.uid() is null then return jsonb_build_object('ok', false, 'code', 'forbidden'); end if;
   if exists (select 1 from public.profiles where id = auth.uid() and onboarded) then
     return jsonb_build_object('ok', true, 'already', true);
   end if;
 
-  if p_district not in ('city', 'outland', 'gate')
+  if p_district not in ('city', 'outland', 'gate', 'enclave')
      or p_species not in ('orc', 'elf', 'human', 'shifter', 'planar')
      or char_length(btrim(coalesce(p_district_code, ''))) = 0
      or char_length(btrim(coalesce(p_species_code, ''))) = 0
@@ -426,6 +431,11 @@ begin
     return jsonb_build_object('ok', false, 'code', 'incomplete');
   end if;
 
+  -- Only elves live in the Enclaves.
+  if p_district = 'enclave' and p_species <> 'elf' then
+    return jsonb_build_object('ok', false, 'code', 'enclave_elves');
+  end if;
+
   select exists (select 1 from public.plaintiff_codes
                   where kind = 'adc' and key = p_district
                     and position(lower(code) in lower(p_district_code)) > 0) into v_ok;
@@ -436,6 +446,12 @@ begin
                     and position(lower(code) in lower(p_species_code)) > 0) into v_ok;
   if not v_ok then return jsonb_build_object('ok', false, 'code', 'bad_sdc'); end if;
 
+  -- A registered spellcaster gives an ARCN (eight digits); a planar cannot be one.
+  if p_spellcaster then
+    if p_species = 'planar' then return jsonb_build_object('ok', false, 'code', 'planar_caster'); end if;
+    if v_arcn !~ '^[0-9]{8}$' then return jsonb_build_object('ok', false, 'code', 'bad_arcn'); end if;
+  end if;
+
   -- The character's name is public (display_name); the person's own name goes only here,
   -- where witches can read it.
   select coalesce(nullif(btrim(display_name), ''), handle) into v_character from public.profiles where id = auth.uid();
@@ -444,7 +460,9 @@ begin
   insert into public.plaintiffs (user_id) values (auth.uid()) on conflict do nothing;
   insert into public.plaintiff_forms (user_id, answers)
   values (auth.uid(), jsonb_build_object(
-    'name', v_name, 'character', v_character, 'district', p_district, 'species', p_species, 'birthday', p_birthday))
+    'name', v_name, 'character', v_character, 'district', p_district, 'species', p_species, 'birthday', p_birthday,
+    'spellcaster', coalesce(p_spellcaster, false),
+    'arcn', case when p_spellcaster then v_arcn else null end))
   on conflict (user_id) do nothing;
 
   perform set_config('crystr.economy', 'on', true);
@@ -456,8 +474,8 @@ begin
   return jsonb_build_object('ok', true);
 end;
 $$;
-revoke all on function public.cr_register(text, text, text, text, date, text) from public, anon;
-grant execute on function public.cr_register(text, text, text, text, date, text) to authenticated;
+revoke all on function public.cr_register(text, text, text, text, boolean, text, date, text) from public, anon;
+grant execute on function public.cr_register(text, text, text, text, boolean, text, date, text) to authenticated;
 
 -- ------------------------------------------- earning: achievements, then helps
 

@@ -7,12 +7,12 @@ import { BirthdayPicker } from "@/components/birthday-picker";
 
 const DRAFT_FIELDS = [
   "name", "handle", "display_name", "birth_day", "birth_month", "birth_year",
-  "district", "district_code", "species", "species_code",
+  "district", "district_code", "species", "species_code", "spellcaster", "arcn",
 ] as const;
 
 /** Your info and the registry in one go. Whatever was typed stays in the boxes if something is
  *  wrong, and survives a trip to the face maker: the draft is kept on this device until the
- *  form goes through. */
+ *  form goes through. The code questions carry no hints: the wiki is where to look. */
 export function WelcomeForm({
   userId,
   handle,
@@ -26,6 +26,9 @@ export function WelcomeForm({
   birthday: string | null;
   hasFace: boolean;
 }) {
+  const [district, setDistrict] = useState("");
+  const [species, setSpecies] = useState("");
+  const [caster, setCaster] = useState(false);
   const [error, setError] = useState<PlaintiffError | null>(null);
   const [pending, start] = useTransition();
   const form = useRef<HTMLFormElement>(null);
@@ -42,6 +45,9 @@ export function WelcomeForm({
         const field = el.elements.namedItem(name) as HTMLInputElement | HTMLSelectElement | null;
         if (field && saved[name] !== undefined && !field.value) field.value = saved[name];
       }
+      if (saved.district) setDistrict(saved.district);
+      if (saved.species) setSpecies(saved.species);
+      if (saved.spellcaster === "on") setCaster(true);
     } catch {
       // No storage: nothing to put back.
     }
@@ -142,7 +148,7 @@ export function WelcomeForm({
 
       <div className="field">
         <label htmlFor="district">WHICH PART OF THE CITY DO YOU LIVE IN? *</label>
-        <select id="district" name="district" className="input" required defaultValue="">
+        <select id="district" name="district" className="input" required value={district} onChange={(e) => setDistrict(e.target.value)}>
           <option value="" disabled>
             Choose
           </option>
@@ -162,7 +168,7 @@ export function WelcomeForm({
 
       <div className="field">
         <label htmlFor="species">WHAT IS YOUR SPECIES? *</label>
-        <select id="species" name="species" className="input" required defaultValue="">
+        <select id="species" name="species" className="input" required value={species} onChange={(e) => setSpecies(e.target.value)}>
           <option value="" disabled>
             Choose
           </option>
@@ -174,11 +180,45 @@ export function WelcomeForm({
         </select>
       </div>
 
+      {district === "enclave" && species && species !== "elf" ? (
+        <div className="banner-note banner-mag" role="alert">
+          Only elves live in the Elven Enclaves. Choose Elf, or a different part of the City.
+        </div>
+      ) : null}
+
       <div className="field">
         <label htmlFor="species_code">YOUR SPECIES DESIGNATION CODE (SDC) *</label>
         <input id="species_code" name="species_code" className="input" maxLength={24} required autoComplete="off" />
         {problem("species_code")}
+        {problem("species")}
       </div>
+
+      <div className="field">
+        <label style={{ display: "flex", alignItems: "center", gap: 10, minHeight: 44, cursor: "pointer" }}>
+          <input
+            type="checkbox"
+            name="spellcaster"
+            checked={caster}
+            onChange={(e) => setCaster(e.target.checked)}
+            style={{ width: 22, height: 22, accentColor: "var(--pur)" }}
+          />
+          ARE YOU A REGISTERED SPELLCASTER?
+        </label>
+        {caster && species === "planar" ? (
+          <div className="banner-note banner-mag" role="alert">
+            Contact arcane enforcement immediately.
+          </div>
+        ) : null}
+        {problem("spellcaster")}
+      </div>
+
+      {caster ? (
+        <div className="field">
+          <label htmlFor="arcn">YOUR ARCANE REGISTRY CODEX NUMBER (ARCN) *</label>
+          <input id="arcn" name="arcn" className="input" maxLength={24} required autoComplete="off" />
+          {problem("arcn")}
+        </div>
+      ) : null}
 
       {error?.field === "form" ? <div className="banner-note banner-mag">{error.message}</div> : null}
 
