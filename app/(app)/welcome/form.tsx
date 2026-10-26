@@ -2,8 +2,9 @@
 
 import { useEffect, useRef, useState, useTransition } from "react";
 import { completeWelcome } from "@/lib/actions";
-import { DISTRICTS, SPECIES, type PlaintiffError } from "@/lib/plaintiff";
+import { CODE_EXAMPLES, DISTRICTS, SPECIES, type PlaintiffError } from "@/lib/plaintiff";
 import { BirthdayPicker } from "@/components/birthday-picker";
+import { corrupt } from "@/lib/crystr";
 
 const DRAFT_FIELDS = [
   "name", "handle", "display_name", "birth_day", "birth_month", "birth_year",
@@ -74,10 +75,17 @@ export function WelcomeForm({
     ) : null;
 
   const hint = { fontSize: 12, lineHeight: 1.5, color: "var(--muted)" } as const;
+  const small = { fontSize: 11, lineHeight: 1.5, color: "var(--muted)" } as const;
+
+  // "Other" is not a species the City registers. While it is chosen the form goes haywire:
+  // red, shaking, its words eaten, and the way through is the administrator.
+  const haywire = species === "other";
+  const t = (text: string) => (haywire ? corrupt(text, 3) : text);
 
   return (
     <form
       ref={form}
+      className={haywire ? "haywire" : undefined}
       style={{ display: "flex", flexDirection: "column", gap: 14 }}
       onChange={keepDraft}
       onSubmit={(e) => {
@@ -109,8 +117,8 @@ export function WelcomeForm({
         2 · YOUR INFO
       </div>
       <div className="field">
-        <label htmlFor="name">YOUR NAME *</label>
-        <div style={hint}>Your real life real person name.</div>
+        <label htmlFor="name">{t("YOUR NAME")} *</label>
+        <div style={hint}>{t("Your real life real person name.")}</div>
         <input id="name" name="name" className="input" maxLength={120} required autoComplete="name" />
         {problem("name")}
       </div>
@@ -118,8 +126,8 @@ export function WelcomeForm({
       <hr style={{ border: 0, borderTop: "1px solid var(--rule)", margin: "2px 0" }} />
 
       <div className="field">
-        <label htmlFor="handle">USERNAME *</label>
-        <div style={hint}>What the City calls you on Crystr.</div>
+        <label htmlFor="handle">{t("USERNAME")} *</label>
+        <div style={hint}>{t("What the City calls you on Crystr.")}</div>
         <input
           id="handle"
           name="handle"
@@ -133,8 +141,8 @@ export function WelcomeForm({
         {problem("handle")}
       </div>
       <div className="field">
-        <label htmlFor="display_name">CHARACTER NAME *</label>
-        <div style={hint}>Your character&apos;s name.</div>
+        <label htmlFor="display_name">{t("CHARACTER NAME")} *</label>
+        <div style={hint}>{t("Your character's name.")}</div>
         <input id="display_name" name="display_name" className="input" defaultValue={displayName} maxLength={40} required autoComplete="off" />
         {problem("display_name")}
       </div>
@@ -147,7 +155,7 @@ export function WelcomeForm({
       {problem("birthday")}
 
       <div className="field">
-        <label htmlFor="district">WHICH PART OF THE CITY DO YOU LIVE IN? *</label>
+        <label htmlFor="district">{t("WHICH PART OF THE CITY DO YOU LIVE IN?")} *</label>
         <select id="district" name="district" className="input" required value={district} onChange={(e) => setDistrict(e.target.value)}>
           <option value="" disabled>
             Choose
@@ -161,13 +169,14 @@ export function WelcomeForm({
       </div>
 
       <div className="field">
-        <label htmlFor="district_code">YOUR AREA DESIGNATION CODE (ADC) *</label>
+        <label htmlFor="district_code">{t("YOUR AREA DESIGNATION CODE (ADC)")} *</label>
         <input id="district_code" name="district_code" className="input" maxLength={24} required autoComplete="off" />
+        {CODE_EXAMPLES[district] ? <div style={small}>{t(CODE_EXAMPLES[district])}</div> : null}
         {problem("district_code")}
       </div>
 
       <div className="field">
-        <label htmlFor="species">WHAT IS YOUR SPECIES? *</label>
+        <label htmlFor="species">{t("WHAT IS YOUR SPECIES?")} *</label>
         <select id="species" name="species" className="input" required value={species} onChange={(e) => setSpecies(e.target.value)}>
           <option value="" disabled>
             Choose
@@ -180,15 +189,22 @@ export function WelcomeForm({
         </select>
       </div>
 
-      {district === "enclave" && species && species !== "elf" ? (
+      {haywire ? (
+        <div className="banner-note banner-mag haywire-note" role="alert">
+          CONTACT YOUR LOCAL CRYSTR ADMINISTRATOR.
+        </div>
+      ) : null}
+
+      {district === "enclave" && species && species !== "elf" && !haywire ? (
         <div className="banner-note banner-mag" role="alert">
           Only elves live in the Elven Enclaves. Choose Elf, or a different part of the City.
         </div>
       ) : null}
 
       <div className="field">
-        <label htmlFor="species_code">YOUR SPECIES DESIGNATION CODE (SDC) *</label>
+        <label htmlFor="species_code">{t("YOUR SPECIES DESIGNATION CODE (SDC)")} *</label>
         <input id="species_code" name="species_code" className="input" maxLength={24} required autoComplete="off" />
+        {CODE_EXAMPLES[species] ? <div style={small}>{t(CODE_EXAMPLES[species])}</div> : null}
         {problem("species_code")}
         {problem("species")}
       </div>
@@ -202,7 +218,7 @@ export function WelcomeForm({
             onChange={(e) => setCaster(e.target.checked)}
             style={{ width: 22, height: 22, accentColor: "var(--pur)" }}
           />
-          ARE YOU A REGISTERED SPELLCASTER?
+          {t("ARE YOU A REGISTERED SPELLCASTER?")}
         </label>
         {caster && species === "planar" ? (
           <div className="banner-note banner-mag" role="alert">
@@ -214,7 +230,7 @@ export function WelcomeForm({
 
       {caster ? (
         <div className="field">
-          <label htmlFor="arcn">YOUR ARCANE REGISTRY CODEX NUMBER (ARCN) *</label>
+          <label htmlFor="arcn">{t("YOUR ARCANE REGISTRY CODEX NUMBER (ARCN)")} *</label>
           <input id="arcn" name="arcn" className="input" maxLength={24} required autoComplete="off" />
           {problem("arcn")}
         </div>
@@ -222,8 +238,8 @@ export function WelcomeForm({
 
       {error?.field === "form" ? <div className="banner-note banner-mag">{error.message}</div> : null}
 
-      <button type="submit" className="btn btn-lg btn-purple btn-block" disabled={pending}>
-        {pending ? "CHECKING…" : "REGISTER AND ENTER THE CITY"}
+      <button type="submit" className="btn btn-lg btn-purple btn-block" disabled={pending || haywire}>
+        {haywire ? t("NOT ON THE BOOKS") : pending ? "CHECKING…" : "REGISTER AND ENTER THE CITY"}
       </button>
     </form>
   );

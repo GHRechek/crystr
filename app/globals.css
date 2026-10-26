@@ -1167,3 +1167,38 @@ select {
 .tsmall .tcount {
   font-size: 12px;
 }
+
+/* The registry while "Other" is the species: red, shaking, and no way through. */
+.haywire {
+  filter: sepia(1) hue-rotate(-55deg) saturate(7) contrast(1.25);
+  animation: haywire 0.32s steps(3) infinite;
+}
+.haywire .input,
+.haywire .textarea,
+.haywire .btn {
+  border-color: var(--mag);
+  box-shadow: 0 0 0 1px rgba(224, 57, 138, 0.55), 0 0 18px rgba(224, 57, 138, 0.35);
+}
+.haywire-note {
+  font-family: var(--px-font);
+  letter-spacing: 0.06em;
+  text-align: center;
+  animation: haywire-note 0.5s steps(2) infinite;
+}
+@keyframes haywire {
+  0% { transform: translate(0, 0) skewX(0); opacity: 1; }
+  25% { transform: translate(-2px, 1px) skewX(-1.5deg); opacity: 0.92; }
+  50% { transform: translate(2px, -1px) skewX(1deg); opacity: 1; }
+  75% { transform: translate(-1px, 2px) skewX(0.5deg); opacity: 0.88; }
+  100% { transform: translate(1px, -2px) skewX(-1deg); opacity: 1; }
+}
+@keyframes haywire-note {
+  0% { background: rgba(224, 57, 138, 0.18); }
+  100% { background: rgba(224, 57, 138, 0.5); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .haywire,
+  .haywire-note {
+    animation: none;
+  }
+}

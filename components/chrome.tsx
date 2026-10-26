@@ -67,24 +67,37 @@ const WELCOME_TABS = [
   { href: "/wiki", glyph: "☰", label: "WIKI" },
 ];
 
-/** A small red "!" in pixels, on the registry tab until the form is done. */
-function AlertMark() {
-  const rows = ["01110", "01110", "01110", "01110", "01110", "00000", "01110", "01110"];
+/** A five-by-eight pixel glyph, drawn two screen pixels to the cell. */
+function PixelGlyph({ rows, fill, label }: { rows: string[]; fill: string; label?: string }) {
   const cells: React.ReactNode[] = [];
   rows.forEach((row, y) => [...row].forEach((c, x) => c === "1" && cells.push(<rect key={`${x}${y}`} x={x} y={y} width={1} height={1} />)));
   return (
     <svg
-      aria-label="Not yet registered"
-      role="img"
+      aria-label={label}
+      aria-hidden={label ? undefined : true}
+      role={label ? "img" : undefined}
       viewBox="0 0 5 8"
       width={10}
       height={16}
       shapeRendering="crispEdges"
-      fill="#f02828"
-      style={{ position: "absolute", top: 6, right: "calc(50% - 22px)", display: "block" }}
+      fill={fill}
+      style={{ display: "block" }}
     >
       {cells}
     </svg>
+  );
+}
+
+/** The registry tab's pen, and the red "!" beside it until the form is done: the same
+ *  size, side by side, centred over the label. */
+const PEN = ["00011", "00111", "01111", "01110", "11100", "11000", "10000", "10000"];
+const BANG = ["01110", "01110", "01110", "01110", "01110", "00000", "01110", "01110"];
+function RegistryMark() {
+  return (
+    <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 4, height: 16 }}>
+      <PixelGlyph rows={PEN} fill="currentColor" />
+      <PixelGlyph rows={BANG} fill="#f02828" label="Not yet registered" />
+    </span>
   );
 }
 
@@ -106,13 +119,17 @@ export function TabBar({ welcoming = false }: { welcoming?: boolean }) {
             className="tab"
             data-active={active}
             aria-current={active ? "page" : undefined}
-            style={{ position: "relative" }}
           >
-            <span className="glyph" aria-hidden>
-              {t.glyph}
-            </span>
+            {t.alert ? (
+              <span className="glyph">
+                <RegistryMark />
+              </span>
+            ) : (
+              <span className="glyph" aria-hidden>
+                {t.glyph}
+              </span>
+            )}
             <span className="label">{t.label}</span>
-            {t.alert ? <AlertMark /> : null}
           </Link>
         );
       })}

@@ -3,14 +3,15 @@
 import { useRef, useState } from "react";
 import { setToken } from "@/lib/actions";
 import {
+  BADGE_SIZES,
   ITEMS,
   NO_ITEM,
-  OFFSET_MAX,
   SHAPES,
   SIZES,
   TOKEN_COLOURS,
   TOKEN_SIZE,
   isFramed,
+  itemBounds,
   normalizeToken,
   tokenSrc,
   type SizeKey,
@@ -24,7 +25,7 @@ const STAGE = TOKEN_SIZE * CELL;
 type Slot = "a" | "b";
 type Panel = "icons" | "shape" | "colours" | null;
 
-const clamp = (n: number) => Math.max(-OFFSET_MAX, Math.min(OFFSET_MAX, n));
+const BADGE_SIZE_LABELS: Record<number, string> = { 50: "Small", 75: "Mid", 100: "Large" };
 
 /** A panel that slides up over the page, like a sticker drawer. Tapping outside closes it. */
 function Sheet({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
@@ -116,6 +117,10 @@ function Sticker({
   const flip = d[`${which}_flip`];
   const rot = d[`${which}_rot`];
   const size = d[`${which}_size`];
+  // It can go to the edge of the picture and no further.
+  const bounds = itemBounds(slug, rot, size);
+  const clampX = (n: number) => Math.max(-bounds.x, Math.min(bounds.x, n));
+  const clampY = (n: number) => Math.max(-bounds.y, Math.min(bounds.y, n));
 
   return (
     <div
@@ -132,8 +137,8 @@ function Sticker({
       onPointerMove={(e) => {
         const s = drag.current;
         if (!s) return;
-        const nx = clamp(s.x + Math.round((e.clientX - s.px) / CELL));
-        const ny = clamp(s.y + Math.round((e.clientY - s.py) / CELL));
+        const nx = clampX(s.x + Math.round((e.clientX - s.px) / CELL));
+        const ny = clampY(s.y + Math.round((e.clientY - s.py) / CELL));
         if (nx !== x || ny !== y) onMove(which, nx, ny);
       }}
       onPointerUp={() => (drag.current = null)}
@@ -143,7 +148,7 @@ function Sticker({
         if (!step) return;
         e.preventDefault();
         onSelect(which);
-        onMove(which, clamp(x + step[0]), clamp(y + step[1]));
+        onMove(which, clampX(x + step[0]), clampY(y + step[1]));
       }}
       style={{
         position: "absolute",
@@ -250,7 +255,7 @@ export function TokenDesigner({ start, fresh }: { start: TokenDesign; fresh: boo
           background: "var(--inset)",
           boxShadow: "0 0 0 1px var(--edge)",
           touchAction: "none",
-          overflow: "visible",
+          overflow: "hidden",
         }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -360,6 +365,22 @@ export function TokenDesigner({ start, fresh }: { start: TokenDesign; fresh: boo
 
       {panel === "shape" ? (
         <Sheet title="BADGE SHAPE" onClose={() => setPanel(null)}>
+          <div className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
+            SIZE
+          </div>
+          <div role="radiogroup" aria-label="Badge size" style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+            {BADGE_SIZES.map((n) => {
+              const on = d.badge_size === n;
+              return (
+                <button key={n} type="button" role="radio" aria-checked={on} onClick={() => set({ badge_size: n })} className={`btn btn-sm${on ? " btn-purple" : ""}`} style={{ minHeight: 40 }}>
+                  {BADGE_SIZE_LABELS[n].toUpperCase()} · {n}%
+                </button>
+              );
+            })}
+          </div>
+          <div className="px" style={{ fontSize: 11, color: "var(--muted)", marginTop: 6 }}>
+            SHAPE
+          </div>
           <div role="radiogroup" aria-label="Badge shape" style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 6 }}>
             {SHAPES.map((s) => {
               const on = s.key === d.shape;

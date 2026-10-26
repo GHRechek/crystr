@@ -52,8 +52,13 @@ export type ShapeKey = (typeof SHAPES)[number]["key"];
 export const SIZES = [55, 70, 85, 100] as const;
 export type SizeKey = (typeof SIZES)[number];
 
-/** How far an item's centre can sit from the middle, in cells, either way. */
-export const OFFSET_MAX = 12;
+/** The badge shape's size, in hundredths of the full one. */
+export const BADGE_SIZES = [50, 75, 100] as const;
+export type BadgeSize = (typeof BADGE_SIZES)[number];
+
+/** The furthest an item's centre can be packed from the middle, in cells, either way. The
+ *  real limit is per item (itemBounds): it must stay wholly inside the picture. */
+export const OFFSET_MAX = 16;
 
 /** The items, as files under /badges/items/ (public/badges/items). */
 export const ITEMS = [
@@ -133,6 +138,8 @@ export const NO_ITEM = "none";
 
 export type TokenDesign = {
   shape: ShapeKey;
+  /** 50, 75 or 100: how much of the picture the shape takes. */
+  badge_size: BadgeSize;
   /** The shape's own colour. */
   fill: TokenColour;
   /** The band inside the edge, on framed shapes. */
@@ -157,6 +164,7 @@ export type TokenDesign = {
 };
 
 const COLOUR_KEYS: readonly string[] = TOKEN_COLOURS.map((c) => c.key);
+const BADGE_SIZE_KEYS: readonly number[] = BADGE_SIZES;
 const SHAPE_KEYS: readonly string[] = SHAPES.map((f) => f.key);
 const SIZE_KEYS: readonly number[] = SIZES;
 const ITEM_KEYS: readonly string[] = [NO_ITEM, ...ITEMS.map((i) => i.slug)];
@@ -168,6 +176,7 @@ export const isFramed = (shape: ShapeKey): boolean => SHAPES.find((s) => s.key =
 export function defaultToken(): TokenDesign {
   return {
     shape: "circle-frame",
+    badge_size: 100,
     fill: "blu-dark",
     rim: "gold",
     a: "sword",
@@ -195,30 +204,55 @@ const size = (v: unknown): SizeKey => {
   if (typeof v === "number" && (SIZES as readonly number[]).includes(v)) return v as SizeKey;
   return v === "small" ? 70 : 100;
 };
-/** An offset in cells, whole and within reach. */
-const offset = (v: unknown): number =>
-  typeof v === "number" && Number.isFinite(v) ? Math.max(-OFFSET_MAX, Math.min(OFFSET_MAX, Math.round(v))) : 0;
+/** An offset in cells, whole and no further than `max` either way. */
+const offset = (v: unknown, max: number): number =>
+  typeof v === "number" && Number.isFinite(v) ? Math.max(-max, Math.min(max, Math.round(v))) : 0;
+const badgeSize = (v: unknown): BadgeSize =>
+  typeof v === "number" && (BADGE_SIZES as readonly number[]).includes(v) ? (v as BadgeSize) : 100;
+
+/** How far an item's centre may sit from the middle and still be wholly in the picture,
+ *  given its turn and size (the compositor scales and turns it the same way). */
+export function itemBounds(slug: string, rot: number, size: SizeKey): { x: number; y: number } {
+  const it = ITEMS.find((i) => i.slug === slug);
+  if (!it) return { x: 0, y: 0 };
+  const f = size / 100;
+  const sw = Math.max(1, Math.round(it.w * f));
+  const sh = Math.max(1, Math.round(it.h * f));
+  const w = rot % 2 === 0 ? sw : sh;
+  const h = rot % 2 === 0 ? sh : sw;
+  const C = TOKEN_SIZE / 2;
+  return { x: Math.floor(C - w / 2), y: Math.floor(C - h / 2) };
+}
 
 /** Whatever was saved, as a complete design. Anything unknown falls back to the default. */
 export function normalizeToken(raw: unknown): TokenDesign {
   const d = defaultToken();
   const c = (raw ?? {}) as Record<string, unknown>;
+  const a = pick(c.a, ITEM_KEYS, d.a);
+  const aRot = rot(c.a_rot, 0);
+  const aSize = size(c.a_size);
+  const ab = itemBounds(a, aRot, aSize);
+  const b = pick(c.b, ITEM_KEYS, d.b);
+  const bRot = rot(c.b_rot, 0);
+  const bSize = size(c.b_size);
+  const bb = itemBounds(b, bRot, bSize);
   return {
     shape: pick(c.shape, SHAPE_KEYS, d.shape),
+    badge_size: badgeSize(c.badge_size),
     fill: pick(c.fill, COLOUR_KEYS, d.fill),
     rim: pick(c.rim, COLOUR_KEYS, d.rim),
-    a: pick(c.a, ITEM_KEYS, d.a),
+    a,
     a_flip: c.a_flip === true,
-    a_rot: rot(c.a_rot, 0),
-    a_size: size(c.a_size),
-    a_x: offset(c.a_x),
-    a_y: offset(c.a_y),
-    b: pick(c.b, ITEM_KEYS, d.b),
+    a_rot: aRot,
+    a_size: aSize,
+    a_x: offset(c.a_x, ab.x),
+    a_y: offset(c.a_y, ab.y),
+    b,
     b_flip: c.b_flip === true,
-    b_rot: rot(c.b_rot, 0),
-    b_size: size(c.b_size),
-    b_x: offset(c.b_x),
-    b_y: offset(c.b_y),
+    b_rot: bRot,
+    b_size: bSize,
+    b_x: offset(c.b_x, bb.x),
+    b_y: offset(c.b_y, bb.y),
     top: c.top === "a" ? "a" : "b",
   };
 }
@@ -226,7 +260,7 @@ export function normalizeToken(raw: unknown): TokenDesign {
 // ------------------------------------------------------------ url packing
 
 /** Bump when the compositor changes: tokens are cached immutably by their packed spec. */
-export const TOKEN_RENDER = "5";
+export const TOKEN_RENDER = "6";
 
 /** flip, size and turn of one item in one number: flip × 16 + size step × 4 + turn, 0–31. */
 const flags = (flip: boolean, sz: SizeKey, r: number) => (flip ? 16 : 0) + SIZE_KEYS.indexOf(sz) * 4 + r;
@@ -237,6 +271,7 @@ export function packToken(design: TokenDesign): string {
   const d = normalizeToken(design);
   const parts = [
     SHAPE_KEYS.indexOf(d.shape),
+    BADGE_SIZE_KEYS.indexOf(d.badge_size),
     COLOUR_KEYS.indexOf(d.fill),
     COLOUR_KEYS.indexOf(d.rim),
     ITEM_KEYS.indexOf(d.a),
@@ -253,9 +288,9 @@ export function packToken(design: TokenDesign): string {
 }
 
 export function unpackToken(packed: string): TokenDesign | null {
-  if (packed.length > 48) return null;
+  if (packed.length > 52) return null;
   const parts = packed.split(".");
-  if (parts.length !== 13 || parts[0] !== TOKEN_RENDER) return null;
+  if (parts.length !== 14 || parts[0] !== TOKEN_RENDER) return null;
   const nums: number[] = [];
   for (const p of parts.slice(1)) {
     const n = parseInt(p, 36);
@@ -264,34 +299,38 @@ export function unpackToken(packed: string): TokenDesign | null {
     nums.push(n);
   }
   const at = (list: readonly string[], n: number) => (n < list.length ? list[n] : null);
-  const shape = at(SHAPE_KEYS, nums[0]);
-  const fill = at(COLOUR_KEYS, nums[1]);
-  const rim = at(COLOUR_KEYS, nums[2]);
-  const a = at(ITEM_KEYS, nums[3]);
-  const b = at(ITEM_KEYS, nums[7]);
+  const [nShape, nBadge, nFill, nRim, nA, fA, ax, ay, nB, fB, bx, by, nTop] = nums;
+  const shape = at(SHAPE_KEYS, nShape);
+  const fill = at(COLOUR_KEYS, nFill);
+  const rim = at(COLOUR_KEYS, nRim);
+  const a = at(ITEM_KEYS, nA);
+  const b = at(ITEM_KEYS, nB);
   if (!shape || !fill || !rim || !a || !b) return null;
-  if (nums[4] > 31 || nums[8] > 31 || nums[11] > 1) return null;
-  if ([nums[5], nums[6], nums[9], nums[10]].some((n) => n > 2 * OFFSET_MAX)) return null;
-  const fa = unflags(nums[4]);
-  const fb = unflags(nums[8]);
-  return normalizeToken({
+  if (nBadge >= BADGE_SIZE_KEYS.length || fA > 31 || fB > 31 || nTop > 1) return null;
+  if ([ax, ay, bx, by].some((n) => n > 2 * OFFSET_MAX)) return null;
+  const fa = unflags(fA);
+  const fb = unflags(fB);
+  const d = normalizeToken({
     shape,
+    badge_size: BADGE_SIZE_KEYS[nBadge],
     fill,
     rim,
     a,
     a_flip: fa.flip,
     a_rot: fa.rot,
     a_size: fa.size,
-    a_x: nums[5] - OFFSET_MAX,
-    a_y: nums[6] - OFFSET_MAX,
+    a_x: ax - OFFSET_MAX,
+    a_y: ay - OFFSET_MAX,
     b,
     b_flip: fb.flip,
     b_rot: fb.rot,
     b_size: fb.size,
-    b_x: nums[9] - OFFSET_MAX,
-    b_y: nums[10] - OFFSET_MAX,
-    top: nums[11] === 0 ? "a" : "b",
+    b_x: bx - OFFSET_MAX,
+    b_y: by - OFFSET_MAX,
+    top: nTop === 0 ? "a" : "b",
   });
+  // Only the one URL per token: a spec that normalises to something else is not one.
+  return packToken(d) === packed ? d : null;
 }
 
 export const tokenSrc = (design: TokenDesign): string => `/token/${packToken(design)}.png`;

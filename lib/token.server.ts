@@ -67,7 +67,8 @@ function tones(hex: string): Tones {
 
 const N = TOKEN_SIZE;
 const C = N / 2;
-/** The shape's reach from the centre: 22 cells across, leaving room to hang over. */
+/** The full shape's reach from the centre: 22 cells across, leaving room to hang over. A
+ *  badge at 75 or 50 is the same shape, smaller. */
 const R = 11;
 
 // Inside tests take the pixel's centre. Each shape is a family by size, so the framed
@@ -167,13 +168,16 @@ export function composeToken(raw: TokenDesign): Buffer {
   const px = png.data as unknown as Uint8Array;
   px.fill(0);
 
-  // The shape, and for a framed one the same shape again inside the rim band.
+  // The shape, and for a framed one the same shape again inside the rim band (thinner on
+  // the smallest badge, where three cells would be most of it).
   const family = SHAPE[d.shape.replace("-frame", "")] ?? SHAPE.circle;
+  const r = (R * d.badge_size) / 100;
+  const band = d.badge_size === 50 ? 2 : 3;
   if (isFramed(d.shape)) {
-    paintShape(px, family(R), tones(colourHex(d.rim)));
-    paintShape(px, family(R - 3), tones(colourHex(d.fill)));
+    paintShape(px, family(r), tones(colourHex(d.rim)));
+    paintShape(px, family(r - band), tones(colourHex(d.fill)));
   } else {
-    paintShape(px, family(R), tones(colourHex(d.fill)));
+    paintShape(px, family(r), tones(colourHex(d.fill)));
   }
 
   const first = d.top === "a" ? "b" : "a";
