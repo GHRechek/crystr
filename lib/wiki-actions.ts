@@ -115,6 +115,57 @@ export async function addFact(fd: FormData) {
   redirect(`/wiki/${slug}`);
 }
 
+/** Anyone: start a page under the one they were adding to, for 40 mana, their words its
+ *  first fact. It opens at once. */
+export async function addSubpage(fd: FormData) {
+  const page = Number(fd.get("page"));
+  const parentSlug = str(fd, "slug");
+  const title = str(fd, "title").slice(0, 120);
+  const slug = slugify(title);
+  const text = cleanFact(String(fd.get("text") ?? ""));
+  const form = `/wiki/${parentSlug}/add`;
+
+  if (!title) {
+    await setFlash("NO TITLE", "Give the new page a name first.", EDGE.mag);
+    redirect(form);
+  }
+  if (!SLUG.test(slug)) {
+    await setFlash("BAD ADDRESS", "A page name needs some letters or numbers in it.", EDGE.mag);
+    redirect(form);
+  }
+  const problem = factProblem(text);
+  if (problem === "empty") {
+    await setFlash("NOTHING YET", "Write a few words first: they are the page's first fact.", EDGE.mag);
+    redirect(form);
+  }
+  if (problem === "too_long") {
+    await setFlash("A HANDFUL, PLEASE", `Keep it to a few key words: up to ${FACT_MAX_WORDS_TEXT}, on one line.`, EDGE.mag);
+    redirect(form);
+  }
+
+  const r = await call("cr_wiki_add_subpage", { p_parent: page, p_title: title, p_slug: slug, p_body: text });
+  if (!r.ok) {
+    if (r.code === "insufficient") {
+      await setFlash("REST FIRST", `Starting a page takes ${r.need ?? COSTS.wikiSubpage}, and you have ${r.have ?? 0}. Recover at the Well and it will be here when you are back.`, EDGE.mag);
+    } else if (r.code === "taken") {
+      await setFlash("TAKEN", "A page already lives at that name. Pick another.", EDGE.mag);
+    } else if (r.code === "locked") {
+      await setFlash("PAUSED", "A witch has paused this page for now.", EDGE.purple);
+    } else if (r.code === "too_long") {
+      await setFlash("A HANDFUL, PLEASE", `Keep it to a few key words: up to ${FACT_MAX_WORDS_TEXT}, on one line.`, EDGE.mag);
+    } else if (r.code === "missing") {
+      await setFlash("GONE", "That page is no longer there.", EDGE.mag);
+      redirect("/wiki");
+    } else await wentWrong();
+    redirect(form);
+  }
+
+  await setFlash("A PAGE OF YOUR OWN", `That took ${r.cost ?? COSTS.wikiSubpage} out of you. It is on the shelf under ${parentSlug.replace(/-/g, " ")}, with your words on it.`, EDGE.blue);
+  revalidatePath(`/wiki/${parentSlug}`);
+  revalidatePath("/wiki");
+  redirect(`/wiki/${r.slug ?? slug}`);
+}
+
 /** Witches: keep a waiting fact (optionally in their own words), or send it back. */
 export async function reviewFact(fd: FormData) {
   const id = Number(fd.get("id"));
@@ -153,6 +204,37 @@ export async function removeFact(fd: FormData) {
   if (!r.ok) await setFlash("NOT YOURS", "Only witches take facts down.", EDGE.mag);
   else await setFlash("TAKEN DOWN", "The spot is open again.", EDGE.purple);
   const slug = str(fd, "slug");
+  revalidatePath(`/wiki/${slug}`);
+  revalidatePath("/wiki");
+}
+
+/** Witches: a kept fact one place up or down the page. */
+export async function moveFact(fd: FormData) {
+  const r = await call("cr_wiki_move_fact", { p_fact: Number(fd.get("id")), p_dir: str(fd, "dir") === "up" ? -1 : 1 });
+  if (!r.ok) await setFlash("NOT YOURS", "Only witches arrange the page.", EDGE.mag);
+  revalidatePath(`/wiki/${str(fd, "slug")}`);
+}
+
+/** Witches: a sub page one place up or down among its neighbours. */
+export async function movePage(fd: FormData) {
+  const r = await call("cr_wiki_move_page", { p_page: Number(fd.get("id")), p_dir: str(fd, "dir") === "up" ? -1 : 1 });
+  if (!r.ok) await setFlash("NOT YOURS", "Only witches arrange the shelf.", EDGE.mag);
+  revalidatePath(`/wiki/${str(fd, "slug")}`);
+  revalidatePath("/wiki");
+}
+
+/** Witches: put a page under another, or out on its own. */
+export async function setParent(fd: FormData) {
+  const slug = str(fd, "slug");
+  const parent = Number(fd.get("parent")) || null;
+  const r = await call("cr_wiki_set_parent", { p_page: Number(fd.get("id")), p_parent: parent });
+  if (!r.ok) {
+    if (r.code === "circular") await setFlash("IN A LOOP", "A page cannot sit under itself, or under a page that sits under it.", EDGE.mag);
+    else if (r.code === "forbidden") await setFlash("NOT YOURS", "Only witches arrange the shelf.", EDGE.mag);
+    else await wentWrong();
+  } else {
+    await setFlash("MOVED", parent ? "It sits under that page now." : "It stands on its own now.", EDGE.purple);
+  }
   revalidatePath(`/wiki/${slug}`);
   revalidatePath("/wiki");
 }

@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireMe } from "@/lib/data";
-import { getWikiChildren, getWikiFacts, getWikiPage, getWikiPageById, SLUG, touchWikiPage, type WikiFact } from "@/lib/wiki";
-import { moderateWikiPage, removeFact } from "@/lib/wiki-actions";
+import { getWikiChildren, getWikiFacts, getWikiPage, getWikiPageById, getWikiPages, SLUG, touchWikiPage, type WikiFact } from "@/lib/wiki";
+import { moderateWikiPage, moveFact, movePage, removeFact, setParent } from "@/lib/wiki-actions";
 import { layoutPage } from "@/lib/wiki-layout";
 import { wikiText } from "@/lib/wiki-mask";
 import { WellHint } from "@/components/well-hint";
@@ -61,11 +61,19 @@ export default async function WikiPageView(props: { params: Promise<{ slug: stri
 
   // Opening a page moves it to the top of this person's list.
   await touchWikiPage(page.id);
-  const [facts, parent, children] = await Promise.all([
+  const [facts, parent, children, shelf] = await Promise.all([
     getWikiFacts(page.id),
     page.parent_id ? getWikiPageById(page.parent_id) : Promise.resolve(null),
     getWikiChildren(page.id),
+    // For a witch's SITS UNDER list: every page but this one and those under it.
+    profile.is_witch ? getWikiPages(true) : Promise.resolve([]),
   ]);
+  const below = new Set<number>([page.id]);
+  for (let grew = true; grew; ) {
+    grew = false;
+    for (const p of shelf) if (p.parent_id !== null && below.has(p.parent_id) && !below.has(p.id)) { below.add(p.id); grew = true; }
+  }
+  const homes = shelf.filter((p) => !below.has(p.id) && !p.archived).sort((a, b) => a.title.localeCompare(b.title, undefined, { sensitivity: "base" }));
   const witch = profile.is_witch;
   const decay = decayLevel(profile.mana);
   const paused = page.locked && !witch;
@@ -228,19 +236,31 @@ export default async function WikiPageView(props: { params: Promise<{ slug: stri
         </div>
       ))}
 
-      {witch && kept.length ? (
+      {witch && (kept.length || children.length) ? (
         <div className="tile" style={{ padding: 12, display: "flex", flexDirection: "column", gap: 8 }}>
-          <div className="px" style={{ fontSize: 11, color: "var(--pur-pale)" }}>
-            THE FACTS ON THIS PAGE
-          </div>
-          {kept.map((f) => (
-            <div key={f.id} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          {kept.length ? (
+            <div className="px" style={{ fontSize: 11, color: "var(--pur-pale)" }}>
+              THE FACTS ON THIS PAGE · IN ORDER
+            </div>
+          ) : null}
+          {kept.map((f, i) => (
+            <div key={f.id} style={{ display: "flex", alignItems: "center", gap: 6 }}>
               <div style={{ flex: 1, minWidth: 0, fontSize: 12.5, color: "var(--text-2)" }}>
                 {f.body}
                 <span className="px" style={{ display: "block", fontSize: 11, color: "var(--muted)", marginTop: 2 }}>
                   {(f.author?.handle ?? "unknown").toUpperCase()} · {ago(f.created_at).toUpperCase()}
                 </span>
               </div>
+              <form action={moveFact} style={{ display: "flex", gap: 4 }}>
+                <input type="hidden" name="id" value={f.id} />
+                <input type="hidden" name="slug" value={page.slug} />
+                <button type="submit" name="dir" value="up" className="btn btn-sm" disabled={i === 0} aria-label="Move up" style={{ minHeight: 40, minWidth: 36, padding: 0 }}>
+                  <ArrowIcon dir="up" />
+                </button>
+                <button type="submit" name="dir" value="down" className="btn btn-sm" disabled={i === kept.length - 1} aria-label="Move down" style={{ minHeight: 40, minWidth: 36, padding: 0 }}>
+                  <ArrowIcon dir="down" />
+                </button>
+              </form>
               <form action={removeFact}>
                 <input type="hidden" name="id" value={f.id} />
                 <input type="hidden" name="slug" value={page.slug} />
@@ -250,7 +270,53 @@ export default async function WikiPageView(props: { params: Promise<{ slug: stri
               </form>
             </div>
           ))}
+
+          {children.length ? (
+            <div className="px" style={{ fontSize: 11, color: "var(--pur-pale)", marginTop: kept.length ? 6 : 0 }}>
+              THE PAGES UNDER THIS ONE · IN ORDER
+            </div>
+          ) : null}
+          {children.map((c, i) => (
+            <div key={c.id} style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <Link href={`/wiki/${c.slug}`} style={{ flex: 1, minWidth: 0, fontSize: 12.5, color: "var(--text-2)" }}>
+                {c.title}
+              </Link>
+              <form action={movePage} style={{ display: "flex", gap: 4 }}>
+                <input type="hidden" name="id" value={c.id} />
+                <input type="hidden" name="slug" value={page.slug} />
+                <button type="submit" name="dir" value="up" className="btn btn-sm" disabled={i === 0} aria-label="Move up" style={{ minHeight: 40, minWidth: 36, padding: 0 }}>
+                  <ArrowIcon dir="up" />
+                </button>
+                <button type="submit" name="dir" value="down" className="btn btn-sm" disabled={i === children.length - 1} aria-label="Move down" style={{ minHeight: 40, minWidth: 36, padding: 0 }}>
+                  <ArrowIcon dir="down" />
+                </button>
+              </form>
+            </div>
+          ))}
         </div>
+      ) : null}
+
+      {witch ? (
+        <form action={setParent} className="tile" style={{ padding: 12, display: "flex", flexDirection: "column", gap: 8 }}>
+          <input type="hidden" name="id" value={page.id} />
+          <input type="hidden" name="slug" value={page.slug} />
+          <label htmlFor="parent" className="px" style={{ fontSize: 11, color: "var(--pur-pale)" }}>
+            SITS UNDER
+          </label>
+          <div style={{ display: "flex", gap: 8 }}>
+            <select id="parent" name="parent" className="input" defaultValue={page.parent_id ?? ""} style={{ flex: 1, minWidth: 0 }}>
+              <option value="">On its own</option>
+              {homes.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.title}
+                </option>
+              ))}
+            </select>
+            <button type="submit" className="btn btn-purple" style={{ minHeight: 44 }}>
+              MOVE
+            </button>
+          </div>
+        </form>
       ) : null}
 
       {witch ? (
