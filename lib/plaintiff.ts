@@ -21,13 +21,14 @@ export const SPECIES = [
   { value: "other", label: "Other" },
 ] as const;
 
-/** The one example each of a district and a species code the City lets slip, shown under
- *  the box when that choice is made. Keyed by the choice's value. */
-export const CODE_EXAMPLES: Record<string, string> = {
+/** The one district code the City lets slip, shown under the ADC box once that part of the
+ *  City is chosen. Keyed by the district's value. */
+export const ADC_EXAMPLES: Record<string, string> = {
   enclave: "For example, the Elven Enclaves are 111.",
-  orc: "For example, Orcs are 33110.",
-  elf: "For example, Elves are 21876.",
 };
+
+/** The two species codes the City lets slip, always under the SDC box. */
+export const SDC_NOTE = "Elven SDC: 21876. Orc SDC: 33110. For others, seek public records.";
 
 /** Which question an error belongs under, and what the form said. */
 export const PLAINTIFF_ERRORS = {

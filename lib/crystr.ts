@@ -8,7 +8,7 @@ export const WELCOME_CAP = 10;
 export const OPENING_GRANT = 5;
 
 /** Max mana each kind of badge carries. The database adds these up (cr_recount_cap). */
-export const BADGE_MANA = { achievement: 1, tradable: 2, token: 10 } as const;
+export const BADGE_MANA = { achievement: 1, tradable: 2, token: 7 } as const;
 /** Confirmed "I helped them" vouches per tradable badge. */
 export const HELPS_PER_BADGE = 5;
 /** How often a token can be given. */

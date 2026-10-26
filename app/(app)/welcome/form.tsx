@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useTransition } from "react";
 import { completeWelcome } from "@/lib/actions";
-import { CODE_EXAMPLES, DISTRICTS, SPECIES, type PlaintiffError } from "@/lib/plaintiff";
+import { ADC_EXAMPLES, DISTRICTS, SDC_NOTE, SPECIES, type PlaintiffError } from "@/lib/plaintiff";
 import { BirthdayPicker } from "@/components/birthday-picker";
 import { corrupt } from "@/lib/crystr";
 
@@ -171,7 +171,7 @@ export function WelcomeForm({
       <div className="field">
         <label htmlFor="district_code">{t("YOUR AREA DESIGNATION CODE (ADC)")} *</label>
         <input id="district_code" name="district_code" className="input" maxLength={24} required autoComplete="off" />
-        {CODE_EXAMPLES[district] ? <div style={small}>{t(CODE_EXAMPLES[district])}</div> : null}
+        {ADC_EXAMPLES[district] ? <div style={small}>{t(ADC_EXAMPLES[district])}</div> : null}
         {problem("district_code")}
       </div>
 
@@ -204,7 +204,7 @@ export function WelcomeForm({
       <div className="field">
         <label htmlFor="species_code">{t("YOUR SPECIES DESIGNATION CODE (SDC)")} *</label>
         <input id="species_code" name="species_code" className="input" maxLength={24} required autoComplete="off" />
-        {CODE_EXAMPLES[species] ? <div style={small}>{t(CODE_EXAMPLES[species])}</div> : null}
+        <div style={small}>{t(SDC_NOTE)}</div>
         {problem("species_code")}
         {problem("species")}
       </div>

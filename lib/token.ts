@@ -1,5 +1,5 @@
 // A token: the badge a person designs for themselves and gives away, once every six
-// months, for 10 max mana. It is built from parts rather than drawn: a badge shape (a
+// months, for 7 max mana. It is built from parts rather than drawn: a badge shape (a
 // circle, a framed circle, a shield, a diamond...) in a colour of their choosing, with a
 // rim colour for the framed shapes, and up to two items from the uploaded set, placed by
 // dragging, each of which can be flipped, turned, shrunk in steps of fifteen in a hundred,
