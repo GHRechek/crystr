@@ -111,7 +111,7 @@ Nobody has a flat ceiling any more. `profiles.mana_cap` is each person's own:
 | --- | --- | --- |
 | Achievement (the eight under BADGES) | +1 max mana each | Doing things the app can see: a first post, five replies, ten votes... |
 | Tradable | +2 max mana each | Every five confirmed "I helped them" vouches, one is drawn at random from the 48 in `badge_kinds` (art under `public/badges/tradable/`). The heart on A HELPING HAND shows `x/5` towards the next, in white pixels. |
-| Token | +10 max mana each | Someone gives you theirs. |
+| Token | +7 max mana each | Someone gives you theirs. |
 
 A **token** is the badge a person designs for themselves on `/me/token`: a
 badge shape (circle, framed circle, shield, diamond, plate, hexagon, each with
@@ -139,7 +139,8 @@ the offer at the top of their screen and nothing moves until they say yes;
 worked out again on the spot (mana above the new ceiling comes down to it).
 Trading a tradable badge away does not earn you another: `badge_items.earned_by`
 remembers who it was minted for. The migration is
-`supabase/migrations/20261027000000_badges_max_mana_birthday.sql`; it also adds
+`supabase/migrations/20261027000000_badges_max_mana_birthday.sql` (tokens went
+from 10 to 7 in `20261028000000_token_mana_7.sql`); it also adds
 `profiles.birthday` (a date between the years 1026 and 2026, asked on the
 welcome page) and keeps the person's own name with the registry answers, where
 only witches read it.
