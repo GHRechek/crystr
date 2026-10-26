@@ -77,7 +77,7 @@ export default async function WikiPageView(props: { params: Promise<{ slug: stri
 
   return (
     <div className="pad" style={{ gap: 12 }}>
-      <WellHint userId={userId} mana={profile.mana} />
+      {profile.onboarded === false ? null : <WellHint userId={userId} mana={profile.mana} />}
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
         <Link href="/wiki" className="btn btn-sm">
           ← THE WIKI

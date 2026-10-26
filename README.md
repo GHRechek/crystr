@@ -18,7 +18,9 @@ Supabase and Vercel.
 | `/thread/[id]` | A post and the replies under it, oldest first, with the reply box. Five mana a reply, same as a post. |
 | `/well`, `/well/[slug]` | The five quests and their proof screens. |
 | `/whispers`, `/whispers/[id]`, `/whispers/new` | DMs at 2 mana a message. |
-| `/me`, `/me/edit`, `/me/avatar` | MySpace-shaped profile: mood, about, Top 6, the mana ledger, and the portrait builder. |
+| `/welcome` | The registry: a face, your info (your own name, username, character name), birthday, district and species codes. Until it is done the tab bar is REGISTRY and WIKI, nothing else. |
+| `/me`, `/me/edit`, `/me/avatar`, `/me/top-six` | MySpace-shaped profile: mood, about, Top 6 (picked on its own page), badges, max mana, the mana ledger, and the portrait builder. |
+| `/me/token`, `/me/trades`, `/u/[handle]/trade` | Badges: design your token, see offers waiting, offer someone a trade. |
 | `/vote`, `/vote/new` | The motion board (open / decided) and the witch-only two-step composer. |
 | `/ball`, `/ball/[id]`, `/ball/new`, `/ball/[id]/edit` | Crystr Ball: dispatches, the op-ed review queue, the editor. |
 
@@ -49,9 +51,9 @@ The `set_config` line is required — see below.
 The client never moves mana. Every charge and every credit happens inside a
 `SECURITY DEFINER` function (`cr_create_post`, `cr_like_post`,
 `cr_submit_quest`, `cr_send_whisper`, `cr_cast_vote`, `cr_submit_oped`,
-`cr_table_motion`, `cr_set_top_friends`), each of which locks the caller's
-profile row before reading the balance, so two tabs can't spend the same mana
-twice.
+`cr_table_motion`, `cr_set_top_friends`, `cr_offer_trade`, `cr_answer_trade`),
+each of which locks the caller's profile row before reading the balance, so two
+tabs can't spend the same mana twice.
 
 Three things hold the line:
 
@@ -96,7 +98,45 @@ Vercel and in `.env.local` for local work.
 
 There is no signup form. The `on_auth_user_created` trigger makes a profile
 the first time a Google account signs in here, with a starter handle and an
-opening grant of 20 mana that shows up on the ledger.
+opening grant of 5 mana that shows up on the ledger. Until they have registered
+on `/welcome` they can hold 10 at most, and only the registry and the wiki are
+open to them (the registry tab wears a red pixel `!` until the form is done).
+
+## Max mana and badges
+
+Nobody has a flat ceiling any more. `profiles.mana_cap` is each person's own:
+10 until they register, then **40**, plus what their badges carry:
+
+| Kind | Worth | How you get one |
+| --- | --- | --- |
+| Achievement (the eight under BADGES) | +1 max mana each | Doing things the app can see: a first post, five replies, ten votes... |
+| Tradable | +2 max mana each | Every five confirmed "I helped them" vouches, one is drawn at random from the 48 in `badge_kinds` (art under `public/badges/tradable/`). The heart on A HELPING HAND shows `x/5` towards the next, in white pixels. |
+| Token | +10 max mana each | Someone gives you theirs. |
+
+A **token** is the badge a person designs for themselves on `/me/token`: a
+badge shape (circle, framed circle, shield, diamond, plate, hexagon, each with
+or without a rim band) in their colours, and two items from the uploaded set
+(`public/badges/items/`), each of which can be flipped, turned in quarters,
+made big or small, and sit over or under the other. It is named
+"<Character's first name>'s Token". `/token/<packed>.png` draws one the way
+`/face` draws a face: the URL describes the whole picture, so it caches
+forever (`lib/token.ts` packs it, `lib/token.server.ts` paints it). Giving
+your token mints a copy for the other person, with the design as it was that
+day, and the next one is six months away; the trade form says so before you
+do it.
+
+**Trades** (`/u/[handle]/trade`, answered on `/me/trades`): one of your
+badges or your token, for one of theirs or for nothing. The other person sees
+the offer at the top of their screen and nothing moves until they say yes;
+`cr_answer_trade` moves the rows in one transaction, and the triggers on
+`badge_items` and `user_badges` call `cr_recount_cap` so both ceilings are
+worked out again on the spot (mana above the new ceiling comes down to it).
+Trading a tradable badge away does not earn you another: `badge_items.earned_by`
+remembers who it was minted for. The migration is
+`supabase/migrations/20261027000000_badges_max_mana_birthday.sql`; it also adds
+`profiles.birthday` (a date between the years 1026 and 2026, asked on the
+welcome page) and keeps the person's own name with the registry answers, where
+only witches read it.
 
 ## Local development
 

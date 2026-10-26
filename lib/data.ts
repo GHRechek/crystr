@@ -1,4 +1,4 @@
-import type { BadgeRow } from "@/lib/badges";
+import type { BadgeRow, BadgeItem, TokenRow, Trade } from "@/lib/badges";
 import { cache } from "react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
@@ -21,6 +21,11 @@ export type Profile = {
   is_witch: boolean;
   /** False until they have registered on the welcome page. Missing means a database from before the flag. */
   onboarded?: boolean;
+  /** What they can hold: 10 before registering, 40 after, more with badges. Missing means a
+   *  database from before badges carried mana. */
+  mana_cap?: number;
+  /** "YYYY-MM-DD", from the registry. */
+  birthday?: string | null;
   banner_pattern: string | null;
   banner_a: string | null;
   banner_b: string | null;
@@ -630,7 +635,7 @@ export async function getPlaintiffSince(userId: string): Promise<string | null> 
 export type PlaintiffRow = {
   user_id: string;
   submitted_at: string;
-  answers: { name?: string; alias?: string; realm?: string; district?: string; species?: string };
+  answers: { name?: string; alias?: string; character?: string; realm?: string; district?: string; species?: string; birthday?: string | null };
   who: { handle: string } | null;
 };
 
@@ -675,6 +680,87 @@ export async function getTopFriends(userId: string): Promise<Author[]> {
     .eq("user_id", userId)
     .order("position");
   return ((data ?? []) as unknown as { friend: Author }[]).map((r) => r.friend);
+}
+
+// ------------------------------------------------------------ badges held
+
+const ITEM_COLS =
+  "id, kind, kind_slug, earned_by, title, design, owner_id, minted_at, acquired_at, kindRow:badge_kinds(title, blurb, art), maker:profiles!badge_items_earned_by_fkey(handle)";
+
+/** The tradable badges and tokens this person holds, newest first. */
+export async function getBadgeItems(userId: string): Promise<BadgeItem[]> {
+  const supabase = createClient();
+  const { data } = await supabase
+    .from("badge_items")
+    .select(ITEM_COLS)
+    .eq("owner_id", userId)
+    .order("acquired_at", { ascending: false })
+    .limit(200);
+  return (data ?? []) as unknown as BadgeItem[];
+}
+
+/** This person's own token design, or null if they have not made one. */
+export async function getToken(userId: string): Promise<TokenRow | null> {
+  const supabase = createClient();
+  const { data } = await supabase.from("tokens").select("design, last_given_at").eq("user_id", userId).maybeSingle();
+  return (data as TokenRow | null) ?? null;
+}
+
+/** Confirmed "I helped them" vouches this person has given. The policy shows you only
+ *  your own, so for anyone else this is zero. */
+export async function countHelps(userId: string): Promise<number> {
+  const supabase = createClient();
+  const { count } = await supabase
+    .from("vouches")
+    .select("id", { count: "exact", head: true })
+    .eq("kind", "helped")
+    .eq("status", "confirmed")
+    .eq("claimant", userId);
+  return count ?? 0;
+}
+
+const TRADE_ITEM = "id, kind, kind_slug, title, design, kindRow:badge_kinds(title, blurb, art)";
+const TRADE_COLS =
+  "id, from_user, to_user, give_item, give_token, want_item, status, created_at, " +
+  "offerer:profiles!badge_trades_from_user_fkey(handle, display_name), " +
+  "receiver:profiles!badge_trades_to_user_fkey(handle, display_name), " +
+  `give:badge_items!badge_trades_give_item_fkey(${TRADE_ITEM}), want:badge_items!badge_trades_want_item_fkey(${TRADE_ITEM})`;
+
+/** Offers waiting on this person, and offers they have made that are waiting on others. */
+export async function getPendingTrades(userId: string): Promise<{ incoming: Trade[]; outgoing: Trade[] }> {
+  const supabase = createClient();
+  const { data } = await supabase
+    .from("badge_trades")
+    .select(TRADE_COLS)
+    .eq("status", "pending")
+    .or(`from_user.eq.${userId},to_user.eq.${userId}`)
+    .order("created_at", { ascending: false })
+    .limit(50);
+  const all = (data ?? []) as unknown as Trade[];
+  return { incoming: all.filter((t) => t.to_user === userId), outgoing: all.filter((t) => t.from_user === userId) };
+}
+
+/** The token designs of several people at once (for offers that give a token). */
+export async function getTokensOf(userIds: string[]): Promise<Map<string, unknown>> {
+  if (userIds.length === 0) return new Map();
+  const supabase = createClient();
+  const { data } = await supabase.from("tokens").select("user_id, design").in("user_id", userIds);
+  return new Map(((data ?? []) as { user_id: string; design: unknown }[]).map((r) => [r.user_id, r.design]));
+}
+
+/** Handles of the people with an offer waiting on this person, for the banner. */
+export async function getTradeNotices(userId: string): Promise<string[]> {
+  const supabase = createClient();
+  const { data } = await supabase
+    .from("badge_trades")
+    .select("offerer:profiles!badge_trades_from_user_fkey(handle)")
+    .eq("to_user", userId)
+    .eq("status", "pending")
+    .order("created_at")
+    .limit(10);
+  return ((data ?? []) as unknown as { offerer: { handle: string } | null }[])
+    .map((r) => r.offerer?.handle)
+    .filter((h): h is string => !!h);
 }
 
 

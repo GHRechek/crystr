@@ -22,7 +22,7 @@ export default async function WikiIndex(props: { searchParams: Promise<{ q?: str
 
   return (
     <div className="pad" style={{ gap: 12 }}>
-      <WellHint userId={userId} mana={profile.mana} />
+      {profile.onboarded === false ? null : <WellHint userId={userId} mana={profile.mana} />}
       <div>
         <h1 className="screen-title">THE WIKI</h1>
         <div className="screen-intro">

@@ -1,15 +1,14 @@
 import Link from "next/link";
-import { requireMe, getPeople, getTopFriends } from "@/lib/data";
+import { requireMe } from "@/lib/data";
 import { updateProfile } from "@/lib/actions";
 import { hasStarterHandle } from "@/lib/crystr";
-import { TopSixPicker } from "./top-six";
 import { BannerPicker } from "./banner-picker";
+import { BirthdayPicker } from "@/components/birthday-picker";
 import { bannerOf } from "@/lib/banner";
 
 export default async function EditProfilePage() {
-  const { userId, profile } = await requireMe();
+  const { profile } = await requireMe();
   const starter = hasStarterHandle(profile.handle);
-  const [people, top] = await Promise.all([getPeople(userId), getTopFriends(userId)]);
 
   return (
     <div className="pad">
@@ -28,11 +27,15 @@ export default async function EditProfilePage() {
         ☻ {profile.avatar_config ? "CHANGE YOUR FACE" : "MAKE A FACE"}
       </Link>
 
+      <Link href="/me/top-six" className="btn btn-block">
+        ☻☻ CHANGE YOUR TOP 6
+      </Link>
+
       <BannerPicker current={bannerOf(profile)} />
 
       <form action={updateProfile} style={{ display: "flex", flexDirection: "column", gap: 11 }}>
         <div className="field">
-          <label htmlFor="handle">HANDLE</label>
+          <label htmlFor="handle">USERNAME</label>
           <input
             id="handle"
             name="handle"
@@ -47,7 +50,7 @@ export default async function EditProfilePage() {
         </div>
 
         <div className="field">
-          <label htmlFor="display_name">DISPLAY NAME</label>
+          <label htmlFor="display_name">CHARACTER NAME</label>
           <input
             id="display_name"
             name="display_name"
@@ -56,6 +59,8 @@ export default async function EditProfilePage() {
             maxLength={40}
           />
         </div>
+
+        <BirthdayPicker value={profile.birthday ?? null} label="BIRTHDAY" />
 
         <div className="field">
           <label htmlFor="bio">ABOUT ME</label>
@@ -95,8 +100,6 @@ export default async function EditProfilePage() {
           SAVE
         </button>
       </form>
-
-      <TopSixPicker people={people} current={top.map((f) => f.id)} />
     </div>
   );
 }

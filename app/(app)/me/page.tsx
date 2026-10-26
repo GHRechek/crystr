@@ -1,22 +1,49 @@
 import Link from "next/link";
-import { requireMe, getLedger, getTopFriends, getBadges, getPlaintiffSince, countOpenReports, countOpenBugs } from "@/lib/data";
-import { BADGE_GLYPH } from "@/lib/badges";
+import {
+  requireMe,
+  getLedger,
+  getTopFriends,
+  getBadges,
+  getBadgeItems,
+  getToken,
+  countHelps,
+  getPendingTrades,
+  getPlaintiffSince,
+  countOpenReports,
+  countOpenBugs,
+} from "@/lib/data";
+import { tokenReadyAt } from "@/lib/badges";
 import { Avatar } from "@/components/bits";
+import { BadgeArt, ItemTile, TokenImage } from "@/components/badges";
 import { ProfileHead } from "./face-menu";
 import { bannerOf, bannerStyle } from "@/lib/banner";
 import { portraitFromId, normalizePortrait, packPortrait } from "@/lib/portrait/core";
-import { ago, corrupt, COSTS, decayLevel } from "@/lib/crystr";
+import { ago, corrupt, decayLevel, BADGE_MANA, BASE_CAP, HELPS_PER_BADGE, TOKEN_GIFT_MONTHS } from "@/lib/crystr";
+import { formatBirthday } from "@/lib/birthday";
+import { tokenTitle } from "@/lib/token";
+
+const longDate = (d: Date) => d.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
 
 export default async function ProfilePage() {
   const { userId, profile } = await requireMe();
-  const [ledger, top, badges, plaintiffSince] = await Promise.all([
+  const [ledger, top, badges, items, token, helps, trades, plaintiffSince] = await Promise.all([
     getLedger(userId),
     getTopFriends(userId),
     getBadges(userId),
+    getBadgeItems(userId),
+    getToken(userId),
+    countHelps(userId),
+    getPendingTrades(userId),
     getPlaintiffSince(userId),
   ]);
   const [openReports, openBugs] = profile.is_witch ? await Promise.all([countOpenReports(), countOpenBugs()]) : [0, 0];
   const earnedCount = badges.filter((b) => b.earned_at).length;
+  const tradable = items.filter((i) => i.kind === "tradable");
+  const tokens = items.filter((i) => i.kind === "token");
+  const cap = profile.mana_cap ?? BASE_CAP;
+  const fromBadges = earnedCount * BADGE_MANA.achievement + tradable.length * BADGE_MANA.tradable + tokens.length * BADGE_MANA.token;
+  const tokenReady = tokenReadyAt(token?.last_given_at);
+  const waiting = trades.incoming.length;
 
   const days = Math.max(
     1,
@@ -27,15 +54,26 @@ export default async function ProfilePage() {
   )}.png`;
   const details: [string, string][] = (
     [
+      ["BIRTHDAY", formatBirthday(profile.birthday)],
       ["LIKES", profile.likes],
       ["DISLIKES", profile.dislikes],
       ["FAVOURITE FOOD", profile.food],
       ["OBSESSED WITH", profile.obsession],
-    ] satisfies [string, string | null][]
+    ] satisfies [string, string | null | undefined][]
   ).flatMap(([label, value]) => (value?.trim() ? [[label, value.trim()] as [string, string]] : []));
 
   const decay = decayLevel(profile.mana);
   const slots = [...top, ...Array(Math.max(0, 6 - top.length)).fill(null)].slice(0, 6);
+
+  const heading = (text: string, colour: string, aside?: React.ReactNode) => (
+    <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 8 }}>
+      <div className="px" style={{ fontSize: 12, color: colour }}>
+        {text}
+      </div>
+      <span className="spacer" />
+      {aside}
+    </div>
+  );
 
   return (
     <div style={{ paddingBottom: 24 }}>
@@ -96,17 +134,19 @@ export default async function ProfilePage() {
         ) : null}
 
         <div>
-          <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 8 }}>
-            <div className="px" style={{ fontSize: 12, color: "var(--blu-soft)" }}>
-              TOP 6
-            </div>
-
-          </div>
+          {heading(
+            "TOP 6",
+            "var(--blu-soft)",
+            <Link href="/me/top-six" className="px" style={{ fontSize: 11, color: "var(--pur-pale)" }}>
+              {top.length ? "CHANGE →" : "PICK SOMEONE →"}
+            </Link>,
+          )}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 8 }}>
             {slots.map((f, i) => (
               <Link
                 key={f?.id ?? `empty-${i}`}
-                href={f ? `/u/${f.handle}` : "/me/edit"}
+                // A vacant slot asks for a person: the Top 6 page, not the profile editor.
+                href={f ? `/u/${f.handle}` : "/me/top-six"}
                 style={{ display: "flex", flexDirection: "column", gap: 5, alignItems: "center", color: "inherit", textDecoration: "none" }}
               >
                 {f ? (
@@ -130,7 +170,7 @@ export default async function ProfilePage() {
                     maxWidth: "100%",
                   }}
                 >
-                  {f ? f.handle : "vacant"}
+                  {f ? f.handle : "add someone"}
                 </div>
               </Link>
             ))}
@@ -149,17 +189,31 @@ export default async function ProfilePage() {
           </div>
         ) : null}
 
+        <div className="tile" style={{ padding: 12, display: "flex", alignItems: "center", gap: 10 }}>
+          <div>
+            <div className="px" style={{ fontSize: 11, color: "var(--pur-pale)" }}>
+              MAX MANA · {cap}
+            </div>
+            <div style={{ fontSize: 12, lineHeight: 1.45, color: "var(--muted)", marginTop: 4 }}>
+              {BASE_CAP} to start, {fromBadges} from badges. An achievement is worth {BADGE_MANA.achievement}, a tradable badge{" "}
+              {BADGE_MANA.tradable}, a token {BADGE_MANA.token}.
+            </div>
+          </div>
+          <span className="spacer" />
+          <Link href="/me/trades" className="btn btn-sm" style={{ minHeight: 40, flex: "none" }}>
+            TRADES{waiting ? ` · ${waiting}` : ""}
+          </Link>
+        </div>
+
         {badges.length ? (
           <div>
-            <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 8 }}>
-              <div className="px" style={{ fontSize: 12, color: "var(--mag-soft)" }}>
-                BADGES
-              </div>
-              <span className="spacer" />
+            {heading(
+              "BADGES",
+              "var(--mag-soft)",
               <div className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
                 {earnedCount} OF {badges.length}
-              </div>
-            </div>
+              </div>,
+            )}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 8 }}>
               {badges.map((b) => {
                 const got = !!b.earned_at;
@@ -169,50 +223,92 @@ export default async function ProfilePage() {
                     className="tile"
                     style={{ padding: 10, display: "flex", gap: 9, alignItems: "flex-start", opacity: got ? 1 : 0.5 }}
                   >
-                    {b.art ? (
-                      // The art brings its own frame, so it is shown as it is, a whole number of times
-                      // larger so the pixels stay sharp.
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={`/badges/${b.art}`}
-                        alt=""
-                        width={42}
-                        height={42}
-                        style={{
-                          flex: "none",
-                          imageRendering: "pixelated",
-                          filter: got ? "none" : "grayscale(1)",
-                        }}
-                      />
-                    ) : (
-                      <div
-                        aria-hidden
-                        style={{
-                          width: 42,
-                          height: 42,
-                          flex: "none",
-                          display: "grid",
-                          placeItems: "center",
-                          fontSize: 16,
-                          color: got ? "var(--mag-soft)" : "var(--dim)",
-                          border: `1px solid ${got ? "var(--mag-edge)" : "var(--edge)"}`,
-                          borderRadius: 6,
-                        }}
-                      >
-                        {BADGE_GLYPH}
-                      </div>
-                    )}
+                    <BadgeArt b={b} got={got} progress={b.slug === "a-helping-hand" ? helps % HELPS_PER_BADGE : undefined} />
                     <div style={{ minWidth: 0 }}>
                       <div className="px" style={{ fontSize: 11, color: got ? "var(--text)" : "var(--muted)", lineHeight: 1.5 }}>
                         {b.title}
                       </div>
                       <div style={{ fontSize: 11, lineHeight: 1.45, color: "var(--muted)", marginTop: 3 }}>
-                        {got ? b.blurb : b.how}
+                        {b.slug === "a-helping-hand"
+                          ? `${got ? b.blurb : b.how} Every ${HELPS_PER_BADGE} helps earn a tradable badge: ${helps % HELPS_PER_BADGE} of ${HELPS_PER_BADGE} towards the next.`
+                          : got
+                            ? b.blurb
+                            : b.how}
                       </div>
                     </div>
                   </div>
                 );
               })}
+            </div>
+          </div>
+        ) : null}
+
+        <div>
+          {heading(
+            "TRADABLE BADGES",
+            "var(--mag-soft)",
+            <div className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
+              {tradable.length} · +{BADGE_MANA.tradable} EACH
+            </div>,
+          )}
+          {tradable.length === 0 ? (
+            <div className="notice">
+              None yet. Help someone from the City with a problem and have them say yes, {HELPS_PER_BADGE} times, and
+              one is drawn for you. They can be traded from anybody&apos;s page, badge for badge or badge for nothing.
+            </div>
+          ) : (
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 8 }}>
+              {tradable.map((it) => (
+                <ItemTile key={it.id} item={it} />
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div>
+          {heading("YOUR TOKEN", "var(--pur-soft)")}
+          <div className="tile" style={{ padding: 12, display: "flex", gap: 12, alignItems: "center" }}>
+            {token ? (
+              <TokenImage design={token.design} size={64} />
+            ) : (
+              <div
+                aria-hidden
+                style={{ width: 64, height: 64, flex: "none", display: "grid", placeItems: "center", color: "var(--dim)", border: "1px dashed var(--edge)", borderRadius: "var(--px-r)" }}
+              >
+                ?
+              </div>
+            )}
+            <div style={{ minWidth: 0, flex: 1 }}>
+              <div className="px" style={{ fontSize: 11, color: "var(--text)", lineHeight: 1.5 }}>
+                {tokenTitle(profile.display_name, profile.handle).toUpperCase()}
+              </div>
+              <div style={{ fontSize: 11, lineHeight: 1.45, color: "var(--muted)", marginTop: 3 }}>
+                {!token
+                  ? `A badge of your own making. Give it and they hold ${BADGE_MANA.token} more max mana. Once every ${TOKEN_GIFT_MONTHS} months.`
+                  : tokenReady
+                    ? `Given. You can give it again on ${longDate(tokenReady)}.`
+                    : `Ready to give, from somebody's page. Worth ${BADGE_MANA.token} max mana to whoever holds it.`}
+              </div>
+              <Link href="/me/token" className="btn btn-sm" style={{ minHeight: 40, marginTop: 8, display: "inline-flex" }}>
+                {token ? "CHANGE OR GIVE IT" : "MAKE YOUR TOKEN"}
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {tokens.length ? (
+          <div>
+            {heading(
+              "TOKENS GIVEN TO YOU",
+              "var(--pur-soft)",
+              <div className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
+                {tokens.length} · +{BADGE_MANA.token} EACH
+              </div>,
+            )}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 8 }}>
+              {tokens.map((it) => (
+                <ItemTile key={it.id} item={it} />
+              ))}
             </div>
           </div>
         ) : null}
@@ -283,6 +379,9 @@ export default async function ProfilePage() {
             </Link>
             <Link href="/bugs" className="btn btn-sm" style={{ minHeight: 40 }}>
               BUGS · {openBugs}
+            </Link>
+            <Link href="/me/plaintiff" className="btn btn-sm" style={{ minHeight: 40 }}>
+              THE BOOKS
             </Link>
           </div>
         ) : null}

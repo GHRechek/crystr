@@ -2,13 +2,13 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { requireMe } from "@/lib/data";
 import { Avatar } from "@/components/bits";
-import { hasStarterHandle } from "@/lib/crystr";
+import { hasStarterHandle, WELCOME_CAP } from "@/lib/crystr";
 import { WelcomeForm } from "./form";
 
-/** The first stop for someone new, after the terms: a face, a name, and a place on the
- *  City's books. Everything else opens once they are registered. */
+/** The first stop for someone new, after the terms: a face, their info, and a place on the
+ *  City's books. Until they are registered the registry and the wiki are all there is. */
 export default async function WelcomePage() {
-  const { profile } = await requireMe();
+  const { userId, profile } = await requireMe();
   if (profile.onboarded !== false) redirect("/");
 
   const starter = hasStarterHandle(profile.handle);
@@ -18,13 +18,13 @@ export default async function WelcomePage() {
       <div>
         <h1 className="screen-title">WELCOME TO THE CITY</h1>
         <div className="screen-intro">
-          Three things and you are in: a face, a name, and your place on the City&apos;s books.
-          Until then you have 5 mana, and 10 is the most you can hold.
+          Three things and you are in: a face, your info, and your place on the City&apos;s books.
+          Until then you have {profile.mana} mana, and {WELCOME_CAP} is the most you can hold.
         </div>
       </div>
 
       <div className="px" style={{ fontSize: 11, color: "var(--pur-pale)" }}>
-        1 · YOUR FACE
+        1 · YOUR FACE {profile.avatar_config ? "✓" : ""}
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         <Avatar person={profile} size={56} />
@@ -34,20 +34,19 @@ export default async function WelcomePage() {
       </div>
 
       <WelcomeForm
+        userId={userId}
         handle={starter ? "" : profile.handle}
         displayName={profile.display_name ?? ""}
+        birthday={profile.birthday ?? null}
         hasFace={!!profile.avatar_config}
       />
 
       <div className="notice">
         Not sure what to write in the registry? The wiki may help. Look around, then come back to
-        this page. A visit to the Well first will make the City easier to read.
+        this page: what you have filled in stays filled in.
         <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
           <Link href="/wiki" className="btn btn-sm">
             OPEN THE WIKI
-          </Link>
-          <Link href="/well" className="btn btn-sm">
-            THE WELL
           </Link>
         </div>
       </div>

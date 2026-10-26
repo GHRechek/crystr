@@ -2,8 +2,17 @@
 // for disabling buttons — the database charges them for real (see the cr_*
 // functions), so nothing in this file is load-bearing for the economy.
 
-export const MANA_CAP = 60;
-export const OPENING_GRANT = 20;
+/** What a registered person can hold before badges. Until they register it is 10. */
+export const BASE_CAP = 40;
+export const WELCOME_CAP = 10;
+export const OPENING_GRANT = 5;
+
+/** Max mana each kind of badge carries. The database adds these up (cr_recount_cap). */
+export const BADGE_MANA = { achievement: 1, tradable: 2, token: 10 } as const;
+/** Confirmed "I helped them" vouches per tradable badge. */
+export const HELPS_PER_BADGE = 5;
+/** How often a token can be given. */
+export const TOKEN_GIFT_MONTHS = 6;
 
 export const COSTS = {
   post: 5,
