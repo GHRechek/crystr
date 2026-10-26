@@ -2,14 +2,15 @@
 // months, for 10 max mana. It is built from parts rather than drawn: a badge shape (a
 // circle, a framed circle, a shield, a diamond...) in a colour of their choosing, with a
 // rim colour for the framed shapes, and two items from the uploaded set, each of which can
-// be flipped, turned, made big (twice as drawn, hanging over the edges) or small (seven in
-// ten, like heraldry inside a shield), and sit over or under the other. Everything here
-// is shared by the designer (browser) and the compositor (server, lib/token.server.ts);
-// /token/<packed>.png draws one, and the packed spec fully describes it.
+// be flipped, turned, sized in steps of fifteen in a hundred, and sit over or under the
+// other. The shape is drawn small on purpose, so an item at its drawn size already reaches
+// the rim and a larger one hangs over it: crossed swords with hilts and points past the
+// edge. Everything here is shared by the designer (browser) and the compositor (server,
+// lib/token.server.ts); /token/<packed>.png draws one, and the packed spec fully
+// describes it.
 
-/** The picture is 40 cells; the badge shape takes the middle 27, so a big item can hang
- *  over its edges, hilts and points past the rim. */
-export const TOKEN_SIZE = 40;
+/** The picture is 32 cells; the badge shape takes the middle 22. */
+export const TOKEN_SIZE = 32;
 
 /** The colours a shape and its rim can be. Keys are what is saved. */
 export const TOKEN_COLOURS = [
@@ -47,12 +48,9 @@ export const SHAPES = [
 ] as const;
 export type ShapeKey = (typeof SHAPES)[number]["key"];
 
-export const SIZES = [
-  { key: "small", label: "Small" },
-  { key: "normal", label: "As drawn" },
-  { key: "big", label: "Big" },
-] as const;
-export type SizeKey = (typeof SIZES)[number]["key"];
+/** An item's size, in hundredths of how it was drawn, in steps of fifteen. */
+export const SIZES = [70, 85, 100, 115, 130] as const;
+export type SizeKey = (typeof SIZES)[number];
 
 /** The items, as files under /badges/items/ (public/badges/items). */
 export const ITEMS = [
@@ -140,7 +138,7 @@ export type TokenDesign = {
   a_flip: boolean;
   /** Quarter turns clockwise, 0–3. */
   a_rot: 0 | 1 | 2 | 3;
-  /** Twice as drawn (over the edges), seven in ten (inside the shape), or as drawn. */
+  /** Hundredths of the drawn size: 70, 85, 100, 115 or 130. */
   a_size: SizeKey;
   b: ItemSlug | typeof NO_ITEM;
   b_flip: boolean;
@@ -152,7 +150,7 @@ export type TokenDesign = {
 
 const COLOUR_KEYS: readonly string[] = TOKEN_COLOURS.map((c) => c.key);
 const SHAPE_KEYS: readonly string[] = SHAPES.map((f) => f.key);
-const SIZE_KEYS: readonly string[] = SIZES.map((f) => f.key);
+const SIZE_KEYS: readonly number[] = SIZES;
 const ITEM_KEYS: readonly string[] = [NO_ITEM, ...ITEMS.map((i) => i.slug)];
 
 export const colourHex = (key: string): string =>
@@ -167,11 +165,11 @@ export function defaultToken(): TokenDesign {
     a: "sword",
     a_flip: false,
     a_rot: 0,
-    a_size: "normal",
+    a_size: 100,
     b: "sword",
     b_flip: true,
     b_rot: 0,
-    b_size: "normal",
+    b_size: 100,
     top: "b",
   };
 }
@@ -180,6 +178,11 @@ const pick = <T extends string>(v: unknown, list: readonly string[], fallback: T
   typeof v === "string" && list.includes(v) ? (v as T) : fallback;
 const rot = (v: unknown, fallback: 0 | 1 | 2 | 3): 0 | 1 | 2 | 3 =>
   v === 0 || v === 1 || v === 2 || v === 3 ? v : fallback;
+/** A size from the list; the first designs said "big", "small" or "normal". */
+const size = (v: unknown): SizeKey => {
+  if (typeof v === "number" && (SIZES as readonly number[]).includes(v)) return v as SizeKey;
+  return v === "big" ? 130 : v === "small" ? 70 : 100;
+};
 
 /** Whatever was saved, as a complete design. Anything unknown falls back to the default. */
 export function normalizeToken(raw: unknown): TokenDesign {
@@ -192,11 +195,11 @@ export function normalizeToken(raw: unknown): TokenDesign {
     a: pick(c.a, ITEM_KEYS, d.a),
     a_flip: c.a_flip === true,
     a_rot: rot(c.a_rot, 0),
-    a_size: pick(c.a_size, SIZE_KEYS, "normal"),
+    a_size: size(c.a_size),
     b: pick(c.b, ITEM_KEYS, d.b),
     b_flip: c.b_flip === true,
     b_rot: rot(c.b_rot, 0),
-    b_size: pick(c.b_size, SIZE_KEYS, "normal"),
+    b_size: size(c.b_size),
     top: c.top === "a" ? "a" : "b",
   };
 }
@@ -204,11 +207,11 @@ export function normalizeToken(raw: unknown): TokenDesign {
 // ------------------------------------------------------------ url packing
 
 /** Bump when the compositor changes: tokens are cached immutably by their packed spec. */
-export const TOKEN_RENDER = "3";
+export const TOKEN_RENDER = "4";
 
-/** flip, size and turn of one item in one number: flip × 12 + size × 4 + turn, 0–23. */
-const flags = (flip: boolean, size: SizeKey, r: number) => (flip ? 12 : 0) + SIZE_KEYS.indexOf(size) * 4 + r;
-const unflags = (n: number) => ({ flip: n >= 12, size: SIZE_KEYS[Math.floor((n % 12) / 4)] as SizeKey, rot: (n % 4) as 0 | 1 | 2 | 3 });
+/** flip, size and turn of one item in one number: flip × 20 + size step × 4 + turn, 0–39. */
+const flags = (flip: boolean, sz: SizeKey, r: number) => (flip ? 20 : 0) + SIZE_KEYS.indexOf(sz) * 4 + r;
+const unflags = (n: number) => ({ flip: n >= 20, size: SIZE_KEYS[Math.floor((n % 20) / 4)] as SizeKey, rot: (n % 4) as 0 | 1 | 2 | 3 });
 
 /** `/token/<this>.png` draws the design. Each part is an index into its list, base 36. */
 export function packToken(design: TokenDesign): string {
@@ -244,7 +247,7 @@ export function unpackToken(packed: string): TokenDesign | null {
   const a = at(ITEM_KEYS, nums[3]);
   const b = at(ITEM_KEYS, nums[5]);
   if (!shape || !fill || !rim || !a || !b) return null;
-  if (nums[4] > 23 || nums[6] > 23 || nums[7] > 1) return null;
+  if (nums[4] > 39 || nums[6] > 39 || nums[7] > 1) return null;
   const fa = unflags(nums[4]);
   const fb = unflags(nums[6]);
   return normalizeToken({

@@ -6,6 +6,7 @@ import {
   ITEMS,
   NO_ITEM,
   SHAPES,
+  SIZES,
   TOKEN_COLOURS,
   isFramed,
   normalizeToken,
@@ -83,7 +84,7 @@ function ShapeChoices({ design, onPick }: { design: TokenDesign; onPick: (k: Tok
             }}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={tokenSrc(preview)} alt="" width={40} height={40} style={{ imageRendering: "pixelated" }} />
+            <img src={tokenSrc(preview)} alt="" width={64} height={64} style={{ imageRendering: "pixelated" }} />
             <span>{s.label}</span>
           </button>
         );
@@ -92,7 +93,7 @@ function ShapeChoices({ design, onPick }: { design: TokenDesign; onPick: (k: Tok
   );
 }
 
-/** One of the two items: which, flipped or not, turned how far, big or small, on top. */
+/** One of the two items: which, flipped or not, turned how far, how big, on top. */
 function ItemControl({
   which,
   design,
@@ -107,7 +108,11 @@ function ItemControl({
   const rot = design[`${which}_rot`];
   const size = design[`${which}_size`];
   const onTop = design.top === which;
-  const sizeTo = (k: SizeKey) => set({ [`${which}_size`]: size === k ? "normal" : k } as Partial<TokenDesign>);
+  const at = SIZES.indexOf(size);
+  const sizeBy = (step: number) => {
+    const next = SIZES[Math.max(0, Math.min(SIZES.length - 1, at + step))] as SizeKey;
+    set({ [`${which}_size`]: next } as Partial<TokenDesign>);
+  };
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
       <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
@@ -128,24 +133,17 @@ function ItemControl({
         >
           ↻ TURN · {rot * 90}°
         </button>
-        <button
-          type="button"
-          className={`btn btn-sm${size === "big" ? " btn-purple" : ""}`}
-          aria-pressed={size === "big"}
-          onClick={() => sizeTo("big")}
-          style={{ minHeight: 40 }}
-        >
-          BIG
-        </button>
-        <button
-          type="button"
-          className={`btn btn-sm${size === "small" ? " btn-purple" : ""}`}
-          aria-pressed={size === "small"}
-          onClick={() => sizeTo("small")}
-          style={{ minHeight: 40 }}
-        >
-          SMALL
-        </button>
+        <span role="group" aria-label="Size" style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+          <button type="button" className="btn btn-sm" onClick={() => sizeBy(-1)} disabled={at <= 0} aria-label="Smaller" style={{ minHeight: 40, minWidth: 40 }}>
+            −
+          </button>
+          <span className="px" style={{ fontSize: 11, minWidth: 44, textAlign: "center" }}>
+            {size}%
+          </span>
+          <button type="button" className="btn btn-sm" onClick={() => sizeBy(1)} disabled={at >= SIZES.length - 1} aria-label="Bigger" style={{ minHeight: 40, minWidth: 40 }}>
+            +
+          </button>
+        </span>
         <button
           type="button"
           className={`btn btn-sm${onTop ? " btn-purple" : ""}`}
@@ -228,7 +226,7 @@ export function TokenDesigner({ start, fresh }: { start: TokenDesign; fresh: boo
         }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={src} alt="Your token" width={120} height={120} style={{ imageRendering: "pixelated", flex: "none" }} />
+        <img src={src} alt="Your token" width={128} height={128} style={{ imageRendering: "pixelated", flex: "none" }} />
         <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 7 }}>
           <div style={{ fontSize: 12, lineHeight: 1.5, color: "var(--muted)" }}>
             {fresh ? "Nobody has seen this yet." : "Changing it changes what you give next; tokens already given keep their look."}

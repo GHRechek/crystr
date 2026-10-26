@@ -269,11 +269,11 @@ export default async function ProfilePage() {
           {heading("YOUR TOKEN", "var(--pur-soft)")}
           <div className="tile" style={{ padding: 12, display: "flex", gap: 12, alignItems: "center" }}>
             {token ? (
-              <TokenImage design={token.design} size={80} />
+              <TokenImage design={token.design} size={96} />
             ) : (
               <div
                 aria-hidden
-                style={{ width: 80, height: 80, flex: "none", display: "grid", placeItems: "center", color: "var(--dim)", border: "1px dashed var(--edge)", borderRadius: "var(--px-r)" }}
+                style={{ width: 96, height: 96, flex: "none", display: "grid", placeItems: "center", color: "var(--dim)", border: "1px dashed var(--edge)", borderRadius: "var(--px-r)" }}
               >
                 ?
               </div>
