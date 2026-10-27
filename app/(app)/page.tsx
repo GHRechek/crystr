@@ -22,8 +22,8 @@ export default async function FeedPage() {
       <h1 className="sr-only">The feed</h1>
       <div style={{ display: "flex", flexDirection: "column", paddingBottom: 24 }}>
         {/* Saying something starts here, at the top of the feed, where it used to be a tab. */}
-        <div style={{ padding: "12px 16px 4px" }}>
-          <Link href="/post" className="btn btn-lg btn-block btn-purple" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+        <div style={{ padding: "8px 16px 2px" }}>
+          <Link href="/post" className="btn btn-block btn-purple" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, minHeight: 42 }}>
             ✚ NEW POST <Cost n={COSTS.post} />
           </Link>
         </div>
