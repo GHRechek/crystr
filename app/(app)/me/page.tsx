@@ -150,11 +150,13 @@ export default async function ProfilePage() {
                 style={{ display: "flex", flexDirection: "column", gap: 5, alignItems: "center", color: "inherit", textDecoration: "none" }}
               >
                 {f ? (
-                  <Avatar person={f} size={72} fill />
+                  <div style={{ width: "60%" }}>
+                    <Avatar person={f} size={72} fill />
+                  </div>
                 ) : (
                   <div
                     className="avatar"
-                    style={{ width: "100%", height: "auto", aspectRatio: "1", fontSize: 14, background: "var(--edge)" }}
+                    style={{ width: "60%", height: "auto", aspectRatio: "1", fontSize: 14, background: "var(--edge)" }}
                   >
                     ?
                   </div>

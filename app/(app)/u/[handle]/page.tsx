@@ -127,7 +127,9 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
                   href={`/u/${f.handle}`}
                   style={{ display: "flex", flexDirection: "column", gap: 5, alignItems: "center", color: "inherit", textDecoration: "none" }}
                 >
-                  <Avatar person={f} size={72} fill />
+                  <div style={{ width: "60%" }}>
+                    <Avatar person={f} size={72} fill />
+                  </div>
                   <div style={{ fontSize: 11, color: "var(--muted)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: "100%" }}>
                     {f.handle}
                   </div>
