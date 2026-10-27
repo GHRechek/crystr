@@ -14,7 +14,7 @@ Supabase and Vercel.
 | Route | What it is |
 | --- | --- |
 | `/` | The timeline. Posts, plus published Ball dispatches interleaved at positions 2, 5 and 8 with a `◉ BALL` tag. Decays with your balance. |
-| `/post` | Compose, with a live cost preview and an image toggle. |
+| `/post` | Compose, with a live cost preview and an image toggle. Reached from the NEW POST button at the top of the feed, not a tab. |
 | `/thread/[id]` | A post and the replies under it, oldest first, with the reply box. Five mana a reply, same as a post. |
 | `/well`, `/well/[slug]` | The five quests and their proof screens. |
 | `/whispers`, `/whispers/[id]`, `/whispers/new` | DMs at 2 mana a message. |

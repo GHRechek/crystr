@@ -51,12 +51,13 @@ export function WellButton({ low }: { low: boolean }) {
   );
 }
 
+// Posting is not a place to go, so it is not a tab: the NEW POST button sits at the top of
+// the feed instead, and the bar has room to breathe.
 const TABS = [
   { href: "/", glyph: "▤", label: "FEED" },
   { href: "/ball", glyph: "◉", label: "BALL" },
   { href: "/vote", glyph: "▥", label: "VOTE" },
   { href: "/wiki", glyph: "☰", label: "WIKI" },
-  { href: "/post", glyph: "✚", label: "POST" },
   { href: "/whispers", glyph: "✉", label: "WHISPER" },
   { href: "/me", glyph: "☻", label: "ME" },
 ];

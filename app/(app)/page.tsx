@@ -2,9 +2,11 @@ import Link from "next/link";
 import { requireMe, getFeed, type FeedItem } from "@/lib/data";
 import { Avatar, Placeholder } from "@/components/bits";
 import { PostCard } from "@/components/post-card";
+import { Cost } from "@/components/mana";
 import {
   ago,
   corrupt,
+  COSTS,
   decayLevel,
 } from "@/lib/crystr";
 
@@ -19,6 +21,13 @@ export default async function FeedPage() {
     <>
       <h1 className="sr-only">The feed</h1>
       <div style={{ display: "flex", flexDirection: "column", paddingBottom: 24 }}>
+        {/* Saying something starts here, at the top of the feed, where it used to be a tab. */}
+        <div style={{ padding: "12px 16px 4px" }}>
+          <Link href="/post" className="btn btn-lg btn-block btn-purple" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+            ✚ NEW POST <Cost n={COSTS.post} />
+          </Link>
+        </div>
+
         {items.map((item) => (
           <Card key={`${item.kind}-${item.id}`} item={item} decay={decay} me={userId} />
         ))}
@@ -27,7 +36,9 @@ export default async function FeedPage() {
           <div className="empty" style={{ margin: 16 }}>
             NOBODY HAS SAID ANYTHING YET
             <br />
-            <span style={{ color: "var(--muted)" }}>BE THE FIRST TO SAY SOMETHING.</span>
+            <Link href="/post" style={{ color: "var(--pur-pale)" }}>
+              BE THE FIRST TO SAY SOMETHING.
+            </Link>
           </div>
         ) : (
           <div className="empty" style={{ margin: 16 }}>
