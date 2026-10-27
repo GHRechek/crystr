@@ -19,8 +19,10 @@ export function Avatar({
   bg?: string;
   glyph?: string;
 }) {
+  // .avatar pins a height of its own; "auto" hands it back to the aspect ratio, or the
+  // square in a grid cell comes out as a wide, short strip with the face cropped.
   const box = fill
-    ? ({ width: "100%", aspectRatio: "1" } as const)
+    ? ({ width: "100%", height: "auto", aspectRatio: "1" } as const)
     : ({ width: size, height: size } as const);
 
   if (glyph) {

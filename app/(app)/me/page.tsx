@@ -154,7 +154,7 @@ export default async function ProfilePage() {
                 ) : (
                   <div
                     className="avatar"
-                    style={{ width: "100%", aspectRatio: "1", fontSize: 14, background: "var(--edge)" }}
+                    style={{ width: "100%", height: "auto", aspectRatio: "1", fontSize: 14, background: "var(--edge)" }}
                   >
                     ?
                   </div>
