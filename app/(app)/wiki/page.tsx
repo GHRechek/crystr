@@ -123,7 +123,7 @@ export default async function WikiIndex(props: { searchParams: Promise<{ q?: str
 function Branch({ node, decay, witch }: { node: PageTree<WikiListing>; decay: number; witch: boolean }) {
   const { page, under } = node;
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
       <Row page={page} decay={decay} witch={witch} />
       {under.length ? (
         // Folded until clicked, and clicked again to fold: the stack stays a stack.
@@ -134,7 +134,7 @@ function Branch({ node, decay, witch }: { node: PageTree<WikiListing>; decay: nu
             </span>
             {under.length} {under.length === 1 ? "SUBPAGE" : "SUBPAGES"}
           </summary>
-          <div style={{ display: "flex", flexDirection: "column", gap: 8, marginLeft: 18, borderLeft: "2px solid var(--edge)", paddingLeft: 10, marginTop: 8 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8, marginLeft: 26, borderLeft: "2px solid var(--edge)", paddingLeft: 10, marginTop: 4, marginBottom: 6 }}>
             {under.map((child) => (
               <Branch key={child.page.id} node={child} decay={decay} witch={witch} />
             ))}
