@@ -1,8 +1,10 @@
-// Badges: the eight achievements (recognition the database awards), the tradable ones
-// (earned five helps at a time, passed from hand to hand) and tokens (a badge of your own
-// design, given away). Each kind is worth max mana — see BADGE_MANA in lib/crystr.ts. The
-// rules live in the database (supabase/migrations/20261027000000_badges_max_mana_birthday.sql);
-// this is what the screens need.
+// Badges: the eight achievements (recognition the database awards; three of them come in
+// tiers, stepping up at five, ten, twenty-five and fifty), the tradable ones (earned five
+// helps at a time, passed from hand to hand) and tokens (a badge of your own design, given
+// away). Each kind is worth max mana — see BADGE_MANA in lib/crystr.ts; a tier is a mark of
+// honour, not more mana. The rules live in the database
+// (supabase/migrations/20261027000000_badges_max_mana_birthday.sql and
+// 20261028070000_badge_tiers.sql); this is what the screens need.
 
 export type BadgeRow = {
   slug: string;
@@ -10,8 +12,42 @@ export type BadgeRow = {
   how: string;
   blurb: string;
   art: string | null;
+  /** How many tiers this badge has: 1 for most, 4 for the three counting badges. */
+  tiers: number;
   earned_at: string | null;
+  /** The tier held, 1 to 4 (1 on a badge with one tier). 0 until earned. */
+  tier: number;
 };
+
+/** The counts behind the tiered badges: replies on different posts, people whispered to,
+ *  votes cast. Only the person's own are ever told (cr_badge_counts). */
+export type BadgeCounts = { replies: number; whispers: number; votes: number };
+
+/** Which count a tiered badge watches. */
+export const TIER_COUNT_OF: Record<string, keyof BadgeCounts> = {
+  "joined-in": "replies",
+  "whisper-web": "whispers",
+  "a-voice-in-council": "votes",
+};
+
+/** The counts that earn tier I, II, III and IV. Kept in step with badge_tier_for in the
+ *  database (supabase/migrations/20261028070000_badge_tiers.sql). */
+export const TIER_STEPS = [5, 10, 25, 50] as const;
+
+/** A tier as it is written on the badge: I, II, III, IV. */
+export const ROMAN = ["", "I", "II", "III", "IV"] as const;
+
+/** The tier a count has earned, 0 to 4. */
+export function tierFor(count: number): number {
+  let t = 0;
+  for (const step of TIER_STEPS) if (count >= step) t += 1;
+  return t;
+}
+
+/** The count that earns the next tier, or null at the top. */
+export function nextStep(count: number): number | null {
+  return TIER_STEPS.find((step) => count < step) ?? null;
+}
 
 /** A tradable badge or a token somebody holds. */
 export type BadgeItem = {

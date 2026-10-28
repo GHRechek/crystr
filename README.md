@@ -109,9 +109,21 @@ Nobody has a flat ceiling any more. `profiles.mana_cap` is each person's own:
 
 | Kind | Worth | How you get one |
 | --- | --- | --- |
-| Achievement (the eight under BADGES) | +1 max mana each | Doing things the app can see: a first post, five replies, ten votes... |
+| Achievement (the eight under BADGES) | +1 max mana each | Doing things the app can see: a first post, five replies, five votes... |
 | Tradable | +2 max mana each | Every five confirmed "I helped them" vouches, one is drawn at random from the 48 in `badge_kinds` (art under `public/badges/tradable/`). The heart on A HELPING HAND shows `x/5` towards the next, in white pixels. |
 | Token | +7 max mana each | Someone gives you theirs. |
+
+Three of the achievements **step up** with use. JOINED IN (replies on
+different people's posts), WHISPER WEB (people whispered to) and A VOICE IN
+COUNCIL (votes cast) are earned at five and go to tier II at ten, III at
+twenty-five and IV at fifty (`badge_tier_for` and `user_badges.tier`, from
+`supabase/migrations/20261028070000_badge_tiers.sql`). A step up is announced
+once like a new badge ("A badge stepped up: JOINED IN II") and shows on the
+badge: the numeral after its name, one pip lit per tier along the bottom of
+the frame, and from II a ring round it (blue, purple, magenta). Your own
+profile says how far you are to the next step; `cr_badge_counts` tells only
+you your counts. A tier is a mark, not mana: the badge is worth one max mana
+at any tier.
 
 A **token** is the badge a person designs for themselves on `/me/token`: a
 badge shape (circle, framed circle, shield, diamond, plate, hexagon, each with
