@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { setFlash, EDGE } from "@/lib/flash";
 import { TERMS_VERSION } from "@/lib/terms";
@@ -14,6 +14,7 @@ import { normalizeToken } from "@/lib/token";
 import { composeBirthday } from "@/lib/birthday";
 import { listBadges, ROMAN } from "@/lib/badges";
 import { PLAINTIFF_ERRORS, type PlaintiffError } from "@/lib/plaintiff";
+import { BREACH_COOKIE, KEY_PATTERN } from "@/lib/breach";
 
 type Rpc = {
   ok: boolean;
@@ -423,6 +424,40 @@ export async function acceptTerms(fd: FormData) {
     redirect("/terms");
   }
   redirect("/");
+}
+
+// ---------------------------------------------------------------- the override
+
+/** The break-in: the key waiting in the cookie (put there by /override/<code>) lets this
+ *  person into the City with no form filled. On a live key they go straight in; on a dead
+ *  one the page says so. */
+export async function breachRegistry(): Promise<{ ok: boolean; message?: string }> {
+  const jar = await cookies();
+  const code = jar.get(BREACH_COOKIE)?.value ?? "";
+  if (!KEY_PATTERN.test(code)) return { ok: false, message: "No key here. Scan it again." };
+  const r = await call("cr_override_onboard", { p_code: code });
+  if (!r.ok) {
+    return {
+      ok: false,
+      message:
+        r.code === "dead"
+          ? "This key opens nothing now. Contact your local CRYSTR administrator for a live one."
+          : "The records would not give. Try again.",
+    };
+  }
+  jar.delete(BREACH_COOKIE);
+  await setFlash("ACCESS GRANTED", "The registry never saw you. You are in the City.", EDGE.mag);
+  revalidatePath("/", "layout");
+  redirect("/");
+}
+
+/** A witch's new override key. Every old one of theirs dies now. */
+export async function rotateOverrideKey() {
+  const r = await call("cr_override_rotate", {});
+  if (r.ok) await setFlash("NEW KEY", "The old code opens nothing now. Hold up this one.", EDGE.purple);
+  else await wentWrong();
+  revalidatePath("/me/override");
+  redirect("/me/override");
 }
 
 /** Send a report on a post or a whisper conversation to the witches. */

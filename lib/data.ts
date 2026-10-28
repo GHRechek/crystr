@@ -661,6 +661,56 @@ export async function getPlaintiffForms(): Promise<PlaintiffRow[]> {
   return (data ?? []) as unknown as PlaintiffRow[];
 }
 
+// ------------------------------------------------------------ the override
+
+export type OverrideKey = { code: string; created_at: string };
+
+/** The signed-in witch's live key, made if they have none. Null for anyone else. */
+export async function getOverrideKey(): Promise<OverrideKey | null> {
+  const supabase = createClient();
+  const { data } = await supabase.rpc("cr_override_key");
+  const d = data as { ok?: boolean; code?: string; created_at?: string } | null;
+  return d?.ok && d.code && d.created_at ? { code: d.code, created_at: d.created_at } : null;
+}
+
+export type OverrideUse = {
+  user_id: string;
+  witch_id: string | null;
+  at: string;
+  who: { handle: string } | null;
+  witch: { handle: string } | null;
+};
+
+/** Everyone who came in through an override, newest first. Witches see all of it. */
+export async function getOverrideUses(): Promise<OverrideUse[]> {
+  const supabase = createClient();
+  const { data } = await supabase
+    .from("registry_overrides")
+    .select("user_id, witch_id, at, who:profiles!registry_overrides_user_id_fkey(handle), witch:profiles!registry_overrides_witch_id_fkey(handle)")
+    .order("at", { ascending: false })
+    .limit(200);
+  return (data ?? []) as unknown as OverrideUse[];
+}
+
+/** How this person got in, if it was through the override: when, and through whose key. */
+export async function getOverride(userId: string): Promise<{ at: string; witch: { handle: string } | null } | null> {
+  const supabase = createClient();
+  const { data } = await supabase
+    .from("registry_overrides")
+    .select("at, witch:profiles!registry_overrides_witch_id_fkey(handle)")
+    .eq("user_id", userId)
+    .maybeSingle();
+  return (data as unknown as { at: string; witch: { handle: string } | null } | null) ?? null;
+}
+
+/** Whether a scanned key is alive, and whose it is. */
+export async function peekOverride(code: string): Promise<{ ok: true; witch: string } | { ok: false }> {
+  const supabase = createClient();
+  const { data } = await supabase.rpc("cr_override_peek", { p_code: code });
+  const d = data as { ok?: boolean; witch?: string } | null;
+  return d?.ok && d.witch ? { ok: true, witch: d.witch } : { ok: false };
+}
+
 /** Every badge there is, and when this person earned each one (null if not yet) and at
  *  what tier. */
 export async function getBadges(userId: string): Promise<BadgeRow[]> {
