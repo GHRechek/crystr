@@ -1,4 +1,4 @@
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { requireMe, getPendingVouches, getTopSixNotices, getTradeNotices, hasAcceptedTerms } from "@/lib/data";
 import { TERMS_VERSION } from "@/lib/terms";
@@ -11,6 +11,7 @@ import { VouchBanner } from "@/components/vouch-banner";
 import { TopSixBanner } from "@/components/top-six-banner";
 import { TradeBanner } from "@/components/trade-banner";
 import { BASE_CAP, WELCOME_CAP, hasStarterHandle, manaColor, wellLine } from "@/lib/crystr";
+import { BREACH_COOKIE } from "@/lib/breach";
 
 export const dynamic = "force-dynamic";
 
@@ -24,14 +25,19 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   ]);
   if (!agreed) redirect("/terms");
 
-  // Until they have registered, the registry, the wiki (to look up codes) and the face maker
-  // (registering needs a face) are all there is. A missing flag means a database from before
-  // it: let them in.
+  // Until they have registered, the registry, the wiki (to look up codes), the face maker
+  // (registering needs a face) and the breach (a witch's key, scanned) are all there is. A
+  // scanned key waits in a cookie through the sign-in and the terms, so someone holding one
+  // lands on the breach and not the form. A missing flag means a database from before it:
+  // let them in.
   const welcoming = profile.onboarded === false;
   if (welcoming) {
     const path = (await headers()).get("x-pathname") ?? "";
-    const open = ["/welcome", "/wiki", "/me/avatar"].some((p) => path === p || path.startsWith(`${p}/`));
-    if (!open) redirect("/welcome");
+    const open = ["/welcome", "/wiki", "/me/avatar", "/breach"].some((p) => path === p || path.startsWith(`${p}/`));
+    if (!open) {
+      const key = (await cookies()).get(BREACH_COOKIE)?.value;
+      redirect(key ? "/breach" : "/welcome");
+    }
   }
   // Each person's own ceiling, from the database; a database from before badges carried mana
   // gets the flat numbers.

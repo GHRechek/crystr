@@ -102,6 +102,22 @@ opening grant of 5 mana that shows up on the ledger. Until they have registered
 on `/welcome` they can hold 10 at most, and only the registry and the wiki are
 open to them (the registry tab wears a red pixel `!` until the form is done).
 
+### The override
+
+Some of the City's people cannot fill in the registry: the form has no line
+for what they are (choosing "Other" on it tells them to contact their local
+CRYSTR administrator). A witch holds a **key** against it: `/me/override`
+shows theirs as a QR code pointing at `/override/<code>`. Scanning it puts
+the code in a cookie and sends the person to `/breach`, by way of the sign-in
+and the terms if they are new (the cookie waits half an hour, and the welcome
+gate sends anyone holding one to the breach instead of the form). There the
+break-in plays out line by line and `cr_override_onboard` lets them in with
+no form filled: on the books as "let in by <witch>" (`registry_overrides`),
+not as a registered plaintiff, so that badge stays out of reach. A witch can
+press NEW KEY at any time and the old code dies. Keys are 32 hex characters
+from `gen_random_uuid()` (`override_keys`); the migration is
+`supabase/migrations/20261028080000_registry_override.sql`.
+
 ## Max mana and badges
 
 Nobody has a flat ceiling any more. `profiles.mana_cap` is each person's own:

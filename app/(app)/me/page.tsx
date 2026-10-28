@@ -12,6 +12,7 @@ import {
   getPlaintiffSince,
   countOpenReports,
   countOpenBugs,
+  getOverride,
 } from "@/lib/data";
 import { nextStep, ROMAN, TIER_COUNT_OF, tokenReadyAt } from "@/lib/badges";
 import { Avatar } from "@/components/bits";
@@ -27,7 +28,7 @@ const longDate = (d: Date) => d.toLocaleDateString("en-GB", { day: "numeric", mo
 
 export default async function ProfilePage() {
   const { userId, profile } = await requireMe();
-  const [ledger, top, badges, items, token, helps, trades, plaintiffSince, counts] = await Promise.all([
+  const [ledger, top, badges, items, token, helps, trades, plaintiffSince, counts, override] = await Promise.all([
     getLedger(userId),
     getTopFriends(userId),
     getBadges(userId),
@@ -37,6 +38,7 @@ export default async function ProfilePage() {
     getPendingTrades(userId),
     getPlaintiffSince(userId),
     getBadgeCounts(),
+    getOverride(userId),
   ]);
   const [openReports, openBugs] = profile.is_witch ? await Promise.all([countOpenReports(), countOpenBugs()]) : [0, 0];
   const earnedCount = badges.filter((b) => b.earned_at).length;
@@ -189,6 +191,16 @@ export default async function ProfilePage() {
             <span className="spacer" />
             <div className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
               SINCE {ago(plaintiffSince).toUpperCase()}
+            </div>
+          </div>
+        ) : override ? (
+          <div className="tile" style={{ padding: 12, display: "flex", alignItems: "center", gap: 10 }}>
+            <div className="px" style={{ fontSize: 11, color: "var(--mag-soft)" }}>
+              ✗ OFF THE BOOKS
+            </div>
+            <span className="spacer" />
+            <div className="px" style={{ fontSize: 11, color: "var(--muted)", textAlign: "right" }}>
+              LET IN BY {(override.witch?.handle ?? "A WITCH").toUpperCase()} · {ago(override.at).toUpperCase()}
             </div>
           </div>
         ) : null}
@@ -396,6 +408,9 @@ export default async function ProfilePage() {
             </Link>
             <Link href="/me/plaintiff" className="btn btn-sm" style={{ minHeight: 40 }}>
               THE BOOKS
+            </Link>
+            <Link href="/me/override" className="btn btn-sm" style={{ minHeight: 40 }}>
+              THE OVERRIDE
             </Link>
           </div>
         ) : null}
