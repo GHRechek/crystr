@@ -15,21 +15,24 @@ const DISMISSED = "crystr.signal-dismissed";
  *
  *  The text itself is eaten separately, by corrupt(), on screens that show
  *  someone's words — never in a field you can edit, or the damage would be
- *  saved. Level 0 renders the children untouched. */
-export function DecayFrame({ mana, children }: { mana: number; children: ReactNode }) {
+ *  saved. Level 0 renders the children untouched. With `card` off the wash and
+ *  the scanlines still come, but not the card: before registering the Well is
+ *  closed, so RECOVER would lead nowhere, and a new arrival's 5 of 10 would
+ *  otherwise put the card over the registry and over the breach. */
+export function DecayFrame({ mana, card = true, children }: { mana: number; card?: boolean; children: ReactNode }) {
   const level = decayLevel(mana);
   // Hidden until we know it was not already put away, so it never flashes on.
   const [shown, setShown] = useState(false);
 
   useEffect(() => {
-    if (level === 0) return;
+    if (level === 0 || !card) return;
     try {
       const put = Number(sessionStorage.getItem(DISMISSED) ?? "0");
       setShown(level > put);
     } catch {
       setShown(true);
     }
-  }, [level]);
+  }, [level, card]);
 
   function dismiss() {
     setShown(false);

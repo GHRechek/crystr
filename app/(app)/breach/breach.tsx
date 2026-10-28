@@ -21,7 +21,7 @@ function script(witch: string): string[] {
 
 const STEP_MS = 520;
 
-/** The break-in. The lines come up one at a time with the screen going haywire, and when
+/** The break-in. The lines come up one at a time with the tile shaking and glowing, and when
  *  the last one lands the key in the cookie is spent for real (breachRegistry), which
  *  sends them into the City. SKIP spends it now. If the key died in between, it says so. */
 export function Breach({ witch }: { witch: string }) {
@@ -60,7 +60,7 @@ export function Breach({ witch }: { witch: string }) {
   return (
     <div className="pad" style={{ gap: 12 }}>
       <div
-        className={`tile${done || error ? "" : " haywire"}`}
+        className={`tile${done || error ? "" : " breaching"}`}
         style={{ padding: 14, display: "flex", flexDirection: "column", gap: 10, minHeight: 300 }}
         aria-live="polite"
       >
