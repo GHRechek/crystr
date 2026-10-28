@@ -12,7 +12,7 @@ import { COSTS, hasStarterHandle, untilReady } from "@/lib/crystr";
 import { normalizePortrait } from "@/lib/portrait/core";
 import { normalizeToken } from "@/lib/token";
 import { composeBirthday } from "@/lib/birthday";
-import { listBadges } from "@/lib/badges";
+import { listBadges, ROMAN } from "@/lib/badges";
 import { PLAINTIFF_ERRORS, type PlaintiffError } from "@/lib/plaintiff";
 
 type Rpc = {
@@ -43,14 +43,20 @@ async function call(fn: string, args: Record<string, unknown>): Promise<Rpc> {
   return (data ?? { ok: false, code: "error" }) as Rpc;
 }
 
-/** Badges earned since the person last heard, as a sentence to add to a message
- *  ("" when there are none). Asking marks them as told, so each is announced once. */
+/** Badges earned, or stepped up a tier, since the person last heard, as a sentence or two
+ *  to add to a message ("" when there is nothing). Asking marks them as told, so each is
+ *  announced once. */
 async function newBadges(): Promise<string> {
   const supabase = createClient();
   const { data, error } = await supabase.rpc("cr_claim_new_badges");
   if (error || !Array.isArray(data) || data.length === 0) return "";
-  const titles = (data as { title: string }[]).map((b) => b.title);
-  return ` You earned a badge: ${listBadges(titles)}.`;
+  const rows = data as { title: string; tier?: number | null }[];
+  const fresh = rows.filter((b) => !b.tier || b.tier <= 1).map((b) => b.title);
+  const up = rows.filter((b) => (b.tier ?? 1) > 1).map((b) => `${b.title} ${ROMAN[b.tier ?? 1] ?? ""}`.trim());
+  let out = "";
+  if (fresh.length) out += ` You earned a badge: ${listBadges(fresh)}.`;
+  if (up.length) out += ` A badge stepped up: ${listBadges(up)}.`;
+  return out;
 }
 
 function str(fd: FormData, key: string): string {

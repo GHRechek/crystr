@@ -47,9 +47,50 @@ export function HeartProgress({ done, of = HELPS_PER_BADGE }: { done: number; of
   );
 }
 
+/** What a tier wears: nothing at I, then a ring round the frame in blue, purple, magenta. */
+const TIER_RING: Record<number, string | undefined> = {
+  2: "var(--blu-soft)",
+  3: "var(--pur-soft)",
+  4: "var(--mag-soft)",
+};
+
+/** Four pips along the bottom of the frame, one lit per tier held: the art is 20 or 21
+ *  cells with a dark frame line three cells up from the bottom edge, so the pips sit in
+ *  it, two cells wide each with a cell between, centred. */
+function TierPips({ tier, cells }: { tier: number; cells: number }) {
+  const y = cells - 3;
+  const x0 = Math.floor((cells - 11) / 2);
+  return (
+    <svg
+      aria-hidden
+      viewBox={`0 0 ${cells} ${cells}`}
+      shapeRendering="crispEdges"
+      style={{ position: "absolute", inset: 0, width: "100%", height: "100%", display: "block" }}
+    >
+      {[0, 1, 2, 3].map((i) => (
+        <rect key={i} x={x0 + i * 3} y={y} width={2} height={1} fill={i < tier ? "#fff" : "#575a66"} />
+      ))}
+    </svg>
+  );
+}
+
 /** The art of an achievement badge at twice its size, greyed until earned. With `progress`
- *  (the helping-hand badge only), the count to the next tradable badge sits in the heart. */
-export function BadgeArt({ b, got, progress }: { b: Pick<BadgeRow, "art" | "slug">; got: boolean; progress?: number }) {
+ *  (the helping-hand badge only), the count to the next tradable badge sits in the heart.
+ *  With `tier` (a badge that steps up), the pips in the frame show the tier held and from
+ *  II a ring in the tier's colour goes round it. */
+export function BadgeArt({
+  b,
+  got,
+  progress,
+  tier,
+}: {
+  b: Pick<BadgeRow, "art" | "slug"> & Partial<Pick<BadgeRow, "tiers">>;
+  got: boolean;
+  progress?: number;
+  tier?: number;
+}) {
+  const tiered = (b.tiers ?? 1) > 1 && got && tier !== undefined && tier > 0;
+  const ring = tiered ? TIER_RING[tier] : undefined;
   if (!b.art) {
     return (
       <div
@@ -63,6 +104,8 @@ export function BadgeArt({ b, got, progress }: { b: Pick<BadgeRow, "art" | "slug
           fontSize: 16,
           color: got ? "var(--mag-soft)" : "var(--dim)",
           border: `1px solid ${got ? "var(--mag-edge)" : "var(--edge)"}`,
+          outline: ring ? `2px solid ${ring}` : undefined,
+          outlineOffset: 1,
           borderRadius: 6,
         }}
       >
@@ -70,8 +113,20 @@ export function BadgeArt({ b, got, progress }: { b: Pick<BadgeRow, "art" | "slug
       </div>
     );
   }
+  // JOINED IN is drawn on 20 cells, the rest on 21.
+  const cells = b.slug === "joined-in" ? 20 : 21;
   return (
-    <span style={{ position: "relative", width: 42, height: 42, flex: "none", display: "block" }}>
+    <span
+      style={{
+        position: "relative",
+        width: 42,
+        height: 42,
+        flex: "none",
+        display: "block",
+        outline: ring ? `2px solid ${ring}` : undefined,
+        outlineOffset: 1,
+      }}
+    >
       {/* The art brings its own frame, so it is shown as it is, a whole number of times
           larger so the pixels stay sharp. */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -83,6 +138,7 @@ export function BadgeArt({ b, got, progress }: { b: Pick<BadgeRow, "art" | "slug
         style={{ display: "block", imageRendering: "pixelated", filter: got ? "none" : "grayscale(1)" }}
       />
       {progress !== undefined && b.slug === "a-helping-hand" ? <HeartProgress done={progress} /> : null}
+      {tiered ? <TierPips tier={tier} cells={cells} /> : null}
     </span>
   );
 }

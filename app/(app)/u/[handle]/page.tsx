@@ -4,6 +4,7 @@ import { requireMe, getTopFriends, getBadges, getBadgeItems, getToken, getPlaint
 import { openThread } from "@/lib/actions";
 import { Avatar } from "@/components/bits";
 import { BadgeArt, ItemTile, TokenImage } from "@/components/badges";
+import { ROMAN } from "@/lib/badges";
 import { ago, corrupt, decayLevel, BADGE_MANA } from "@/lib/crystr";
 import { bannerOf, bannerStyle } from "@/lib/banner";
 import { tokenTitle } from "@/lib/token";
@@ -179,10 +180,11 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
             <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 8 }}>
               {earned.map((b) => (
                 <div key={b.slug} className="tile" style={{ padding: 10, display: "flex", gap: 9, alignItems: "flex-start" }}>
-                  <BadgeArt b={b} got />
+                  <BadgeArt b={b} got tier={b.tier} />
                   <div style={{ minWidth: 0 }}>
                     <div className="px" style={{ fontSize: 11, color: "var(--text)", lineHeight: 1.5 }}>
                       {b.title.toUpperCase()}
+                      {b.tiers > 1 ? ` ${ROMAN[b.tier]}` : ""}
                     </div>
                     <div style={{ fontSize: 11, lineHeight: 1.4, color: "var(--muted)", marginTop: 3 }}>{b.how}</div>
                   </div>
