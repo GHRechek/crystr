@@ -429,8 +429,8 @@ export async function acceptTerms(fd: FormData) {
 // ---------------------------------------------------------------- the override
 
 /** The break-in: the key waiting in the cookie (put there by /override/<code>) lets this
- *  person into the City with no form filled. On a live key they go straight in; on a dead
- *  one the page says so. */
+ *  person into the City with no form filled. On a witch's key they go straight in; on a
+ *  code the City does not know, the page says so. */
 export async function breachRegistry(): Promise<{ ok: boolean; message?: string }> {
   const jar = await cookies();
   const code = jar.get(BREACH_COOKIE)?.value ?? "";
@@ -440,8 +440,8 @@ export async function breachRegistry(): Promise<{ ok: boolean; message?: string 
     return {
       ok: false,
       message:
-        r.code === "dead"
-          ? "This key opens nothing now. Contact your local CRYSTR administrator for a live one."
+        r.code === "unknown"
+          ? "This code opens nothing. Contact your local CRYSTR administrator for their key."
           : "The records would not give. Try again.",
     };
   }
@@ -449,15 +449,6 @@ export async function breachRegistry(): Promise<{ ok: boolean; message?: string 
   await setFlash("ACCESS GRANTED", "The registry never saw you. You are in the City.", EDGE.mag);
   revalidatePath("/", "layout");
   redirect("/");
-}
-
-/** A witch's new override key. Every old one of theirs dies now. */
-export async function rotateOverrideKey() {
-  const r = await call("cr_override_rotate", {});
-  if (r.ok) await setFlash("NEW KEY", "The old code opens nothing now. Hold up this one.", EDGE.purple);
-  else await wentWrong();
-  revalidatePath("/me/override");
-  redirect("/me/override");
 }
 
 /** Send a report on a post or a whisper conversation to the witches. */

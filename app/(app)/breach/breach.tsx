@@ -23,7 +23,8 @@ const STEP_MS = 520;
 
 /** The break-in. The lines come up one at a time with the tile shaking and glowing, and when
  *  the last one lands the key in the cookie is spent for real (breachRegistry), which
- *  sends them into the City. SKIP spends it now. If the key died in between, it says so. */
+ *  sends them into the City. SKIP spends it now. If the code turns out not to be a witch's
+ *  key, it says so. */
 export function Breach({ witch }: { witch: string }) {
   const lines = script(witch);
   const [shown, setShown] = useState(0);

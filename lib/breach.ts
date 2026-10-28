@@ -1,4 +1,5 @@
 // The override: a witch's key against the registry, for the people the form cannot take.
+// Every witch has one, for good.
 // The key travels as a QR code pointing at /override/<code>; that route puts the code in a
 // cookie and sends the person to /breach, where (signed in) it is spent. The cookie is what
 // carries the key through the sign-in and the terms, so the page they come back to is the
