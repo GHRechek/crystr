@@ -21,6 +21,7 @@ Supabase and Vercel.
 | `/welcome` | The registry: a face, your info (your own name, username, character name), birthday, district and species codes. Until it is done the tab bar is REGISTRY and WIKI, nothing else. |
 | `/me`, `/me/edit`, `/me/avatar`, `/me/top-six` | MySpace-shaped profile: mood, about, Top 6 (picked on its own page), badges, max mana, the mana ledger, and the portrait builder. |
 | `/me/token`, `/me/trades`, `/u/[handle]/trade` | Badges: design your token, see offers waiting, offer someone a trade. |
+| `/me/override`, `/override/[code]`, `/breach` | The override (witches only on the first): a witch's key as a QR code, the address it points at, and the break-in that lets someone past the registry. See below. |
 | `/vote`, `/vote/new` | The motion board (open / decided) and the witch-only two-step composer. |
 | `/ball`, `/ball/[id]`, `/ball/new`, `/ball/[id]/edit` | Crystr Ball: dispatches, the op-ed review queue, the editor. |
 
@@ -34,6 +35,9 @@ Supabase and Vercel.
   they can see what a player sees; a player has no switch.
 - **Players** file op-eds for 6 mana, which queue as `pending` and reach the
   City only when a witch approves them.
+- Every witch also holds an **override key** (`/me/override`) that lets
+  someone the registry cannot take into the City, and sees who came in that
+  way. See "The override" below.
 
 To make someone a witch:
 
@@ -101,8 +105,11 @@ the first time a Google account signs in here, with a starter handle and an
 opening grant of 5 mana that shows up on the ledger. Until they have registered
 on `/welcome` they can hold 10 at most, and only the registry and the wiki are
 open to them (the registry tab wears a red pixel `!` until the form is done).
+The low-mana wash and scanlines still come for them (5 of 10 is low), but
+not the SIGNAL DEGRADING card: its RECOVER button leads to the Well, which is
+closed until they are in.
 
-### The override
+## The override
 
 Some of the City's people cannot fill in the registry: the form has no line
 for what they are (choosing "Other" on it tells them to contact their local
@@ -117,7 +124,11 @@ not as a registered plaintiff, so that badge stays out of reach. A key does
 not change, and it opens the City for as long as its holder is a witch. Keys
 are 32 hex characters from `gen_random_uuid()` (`override_keys`, one row per
 witch); the migration is
-`supabase/migrations/20261028080000_registry_override.sql`.
+`supabase/migrations/20261028080000_registry_override.sql`. The QR code is
+drawn on the server by `components/qr.tsx` from the module grid the `qrcode`
+package works out, as pixel runs on white with the quiet zone readers expect.
+A code the City does not know lands on a NOT A KEY notice; someone already
+in lands on NOTHING TO BREAK INTO.
 
 ## Max mana and badges
 
