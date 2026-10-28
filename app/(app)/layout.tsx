@@ -84,7 +84,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         )}
 
         <main className="screen">
-          <DecayFrame mana={mana}>{children}</DecayFrame>
+          <DecayFrame mana={mana} card={!welcoming}>{children}</DecayFrame>
         </main>
 
         {flash ? <Toast flash={flash} /> : null}

@@ -47,7 +47,7 @@ function Shell({ kicker, children }: { kicker: string; children: React.ReactNode
         <div className="px" style={{ fontSize: 11, color: "var(--mag-soft)", letterSpacing: ".07em" }}>
           {kicker}
         </div>
-        <div style={{ fontSize: 13, lineHeight: 1.6, color: "var(--text-3)", display: "contents" }}>{children}</div>
+        <div style={{ fontSize: 13, lineHeight: 1.6, color: "var(--text-3)", display: "flex", flexDirection: "column", gap: 12 }}>{children}</div>
       </div>
     </div>
   );

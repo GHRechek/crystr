@@ -1189,6 +1189,13 @@ select {
   text-align: center;
   animation: haywire-note 0.5s steps(2) infinite;
 }
+/* The break-in: the registry's shake and magenta glow, without the red wash, so the lines
+   coming up stay readable. */
+.breaching {
+  animation: haywire 0.32s steps(3) infinite;
+  border-color: var(--mag);
+  box-shadow: 0 0 0 1px rgba(224, 57, 138, 0.55), 0 0 18px rgba(224, 57, 138, 0.35);
+}
 @keyframes haywire {
   0% { transform: translate(0, 0) skewX(0); opacity: 1; }
   25% { transform: translate(-2px, 1px) skewX(-1.5deg); opacity: 0.92; }
@@ -1203,6 +1210,7 @@ select {
 @media (prefers-reduced-motion: reduce) {
   .haywire,
   .haywire-note,
+  .breaching,
   .signal-card {
     animation: none;
   }
