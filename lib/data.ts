@@ -665,7 +665,8 @@ export async function getPlaintiffForms(): Promise<PlaintiffRow[]> {
 
 export type OverrideKey = { code: string; created_at: string };
 
-/** The signed-in witch's live key, made if they have none. Null for anyone else. */
+/** The signed-in witch's key, made the first time they ask and the same ever after. Null
+ *  for anyone else. */
 export async function getOverrideKey(): Promise<OverrideKey | null> {
   const supabase = createClient();
   const { data } = await supabase.rpc("cr_override_key");
@@ -703,7 +704,7 @@ export async function getOverride(userId: string): Promise<{ at: string; witch: 
   return (data as unknown as { at: string; witch: { handle: string } | null } | null) ?? null;
 }
 
-/** Whether a scanned key is alive, and whose it is. */
+/** Whether a scanned code is a witch's key, and whose. */
 export async function peekOverride(code: string): Promise<{ ok: true; witch: string } | { ok: false }> {
   const supabase = createClient();
   const { data } = await supabase.rpc("cr_override_peek", { p_code: code });

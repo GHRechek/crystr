@@ -5,9 +5,9 @@ import { requireMe, peekOverride } from "@/lib/data";
 import { BREACH_COOKIE, KEY_PATTERN } from "@/lib/breach";
 import { Breach } from "./breach";
 
-/** Where a scanned override key ends up, once the person is signed in. A live key plays
- *  the break-in and lets them past the registry; a dead one says so; no key at all sends
- *  them to the form. */
+/** Where a scanned override key ends up, once the person is signed in. A witch's key plays
+ *  the break-in and lets them past the registry; a code the City does not know says so; no
+ *  key at all sends them to the form. */
 export default async function BreachPage() {
   const { profile } = await requireMe();
   const code = (await cookies()).get(BREACH_COOKIE)?.value ?? "";
@@ -28,8 +28,8 @@ export default async function BreachPage() {
   const peek = await peekOverride(code);
   if (!peek.ok) {
     return (
-      <Shell kicker="DEAD KEY">
-        <p>This key opens nothing now. Contact your local CRYSTR administrator for a live one.</p>
+      <Shell kicker="NOT A KEY">
+        <p>This code opens nothing. Contact your local CRYSTR administrator for their key.</p>
         <Link href="/welcome" className="btn btn-block" style={{ minHeight: 42 }}>
           THE REGISTRY
         </Link>

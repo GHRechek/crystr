@@ -2,13 +2,12 @@ import Link from "next/link";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { requireMe, getOverrideKey, getOverrideUses } from "@/lib/data";
-import { rotateOverrideKey } from "@/lib/actions";
 import { QrCode } from "@/components/qr";
 import { overrideUrl } from "@/lib/breach";
 import { ago } from "@/lib/crystr";
 
 /** A witch's key against the registry, as a QR code to hold up, and who has come in
- *  through the override. Only witches get here. */
+ *  through the override. The key is theirs for good. Only witches get here. */
 export default async function OverridePage() {
   const { userId, profile } = await requireMe();
   if (!profile.is_witch) redirect("/me");
@@ -31,8 +30,8 @@ export default async function OverridePage() {
         <h1 className="screen-title">THE OVERRIDE</h1>
         <div className="screen-intro">
           Some of the City&apos;s people cannot fill in the registry: the form has no line for what they are. Show them
-          this. Scanning it breaks them into the records with no form at all. It is your key: anyone who scans it gets
-          in, so hold it up, never post it.
+          this. Scanning it breaks them into the records with no form at all. It is your key and it does not change:
+          anyone who scans it gets in, so hold it up, never post it.
         </div>
       </div>
 
@@ -51,15 +50,6 @@ export default async function OverridePage() {
       ) : (
         <div className="banner-note banner-mag">The City would not hand over a key just now. Try again in a moment.</div>
       )}
-
-      <form action={rotateOverrideKey}>
-        <button type="submit" className="btn btn-block" style={{ minHeight: 42 }}>
-          NEW KEY
-        </button>
-        <div style={{ fontSize: 11, color: "var(--muted)", marginTop: 6, lineHeight: 1.5 }}>
-          The old one stops working the moment you press it. Do this if the code has got out.
-        </div>
-      </form>
 
       <div className="tile" style={{ padding: 12, display: "flex", flexDirection: "column", gap: 10 }}>
         <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
