@@ -4,7 +4,6 @@ import {
   getLedger,
   getTopFriends,
   getBadges,
-  getBadgeCounts,
   getBadgeItems,
   getToken,
   countHelps,
@@ -14,7 +13,7 @@ import {
   countOpenBugs,
   getOverride,
 } from "@/lib/data";
-import { nextStep, ROMAN, TIER_COUNT_OF, tokenReadyAt } from "@/lib/badges";
+import { ROMAN, tokenReadyAt } from "@/lib/badges";
 import { Avatar } from "@/components/bits";
 import { BadgeArt, ItemTile, TokenImage } from "@/components/badges";
 import { ProfileHead } from "./face-menu";
@@ -28,7 +27,7 @@ const longDate = (d: Date) => d.toLocaleDateString("en-GB", { day: "numeric", mo
 
 export default async function ProfilePage() {
   const { userId, profile } = await requireMe();
-  const [ledger, top, badges, items, token, helps, trades, plaintiffSince, counts, override] = await Promise.all([
+  const [ledger, top, badges, items, token, helps, trades, plaintiffSince, override] = await Promise.all([
     getLedger(userId),
     getTopFriends(userId),
     getBadges(userId),
@@ -37,7 +36,6 @@ export default async function ProfilePage() {
     countHelps(userId),
     getPendingTrades(userId),
     getPlaintiffSince(userId),
-    getBadgeCounts(),
     getOverride(userId),
   ]);
   const [openReports, openBugs] = profile.is_witch ? await Promise.all([countOpenReports(), countOpenBugs()]) : [0, 0];
@@ -233,9 +231,6 @@ export default async function ProfilePage() {
             <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 8 }}>
               {badges.map((b) => {
                 const got = !!b.earned_at;
-                const countKey = TIER_COUNT_OF[b.slug];
-                const count = b.tiers > 1 && countKey ? counts[countKey] : null;
-                const next = count === null ? null : nextStep(count);
                 return (
                   <div
                     key={b.slug}
@@ -251,15 +246,9 @@ export default async function ProfilePage() {
                       <div style={{ fontSize: 11, lineHeight: 1.45, color: "var(--muted)", marginTop: 3 }}>
                         {b.slug === "a-helping-hand"
                           ? `${got ? b.blurb : b.how} Every ${HELPS_PER_BADGE} helps earn a tradable badge: ${helps % HELPS_PER_BADGE} of ${HELPS_PER_BADGE} towards the next.`
-                          : count !== null
-                            ? `${got ? b.blurb : b.how} ${
-                                next === null
-                                  ? `Tier ${ROMAN[b.tier]}, the top: ${count} and counting.`
-                                  : `${count} of ${next} towards ${got ? `tier ${ROMAN[b.tier + 1]}` : "the badge"}.`
-                              }`
-                            : got
-                              ? b.blurb
-                              : b.how}
+                          : got
+                            ? b.blurb
+                            : b.how}
                       </div>
                     </div>
                   </div>
