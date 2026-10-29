@@ -1,4 +1,4 @@
-import type { BadgeCounts, BadgeRow, BadgeItem, TokenRow, Trade } from "@/lib/badges";
+import type { BadgeRow, BadgeItem, TokenRow, Trade } from "@/lib/badges";
 import { cache } from "react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
@@ -727,14 +727,6 @@ export async function getBadges(userId: string): Promise<BadgeRow[]> {
     const got = earned.get(b.slug);
     return { ...b, tiers: Number(b.tiers ?? 1), earned_at: got?.at ?? null, tier: got?.tier ?? 0 };
   });
-}
-
-/** The signed-in person's own counts behind the tiered badges. */
-export async function getBadgeCounts(): Promise<BadgeCounts> {
-  const supabase = createClient();
-  const { data } = await supabase.rpc("cr_badge_counts");
-  const d = (data ?? {}) as Partial<BadgeCounts>;
-  return { replies: Number(d.replies ?? 0), whispers: Number(d.whispers ?? 0), votes: Number(d.votes ?? 0) };
 }
 
 /** Someone's profile by their (lower-case) handle, or null. */
