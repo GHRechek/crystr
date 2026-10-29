@@ -4,6 +4,7 @@ import { requireMe, getTopFriends, getBadges, getBadgeItems, getToken, getPlaint
 import { openThread } from "@/lib/actions";
 import { Avatar } from "@/components/bits";
 import { BadgeArt, ItemTile, TokenImage } from "@/components/badges";
+import { TilePager } from "@/components/pager";
 import { ROMAN } from "@/lib/badges";
 import { ago, corrupt, decayLevel, BADGE_MANA } from "@/lib/crystr";
 import { bannerOf, bannerStyle } from "@/lib/banner";
@@ -177,8 +178,9 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
                 {earned.length} OF {badges.length}
               </div>
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 8 }}>
-              {earned.map((b) => (
+            <TilePager
+              label="Badges"
+              tiles={earned.map((b) => (
                 <div key={b.slug} className="tile" style={{ padding: 10, display: "flex", gap: 9, alignItems: "flex-start" }}>
                   <BadgeArt b={b} got tier={b.tier} />
                   <div style={{ minWidth: 0 }}>
@@ -190,7 +192,7 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
                   </div>
                 </div>
               ))}
-            </div>
+            />
           </div>
         ) : null}
 
@@ -205,11 +207,7 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
                 OFFER A TRADE →
               </Link>
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 8 }}>
-              {items.map((it) => (
-                <ItemTile key={it.id} item={it} />
-              ))}
-            </div>
+            <TilePager label="What they hold" tiles={items.map((it) => <ItemTile key={it.id} item={it} />)} />
           </div>
         ) : null}
       </div>

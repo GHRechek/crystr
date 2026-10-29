@@ -1189,6 +1189,53 @@ select {
   text-align: center;
   animation: haywire-note 0.5s steps(2) infinite;
 }
+/* Pages of tiles, swiped on a phone or clicked through below: each page is the full
+   width and snaps into place; the dots say which one is up. */
+.pager-track {
+  display: flex;
+  align-items: flex-start;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  margin: 0 -2px;
+  transition: height 0.25s ease;
+}
+.pager-track::-webkit-scrollbar {
+  display: none;
+}
+.pager-page {
+  flex: 0 0 100%;
+  scroll-snap-align: start;
+  padding: 0 2px;
+  box-sizing: border-box;
+}
+.pager-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+.pager-btn {
+  min-width: 44px;
+  min-height: 34px;
+  padding: 0;
+}
+.pager-dots {
+  display: flex;
+  gap: 5px;
+}
+.pager-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--edge);
+}
+.pager-dot.on {
+  background: var(--mag-soft);
+}
+
 /* The break-in: the registry's shake and magenta glow, without the red wash, so the lines
    coming up stay readable. */
 .breaching {
