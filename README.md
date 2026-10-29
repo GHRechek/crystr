@@ -162,7 +162,9 @@ checks again itself. `badge_items.occasion` says whether a tradable badge
 was for helping or for a birthday, and only the helping ones count against
 the five-helps rule, so a birthday badge never costs anyone a helping-hand
 badge. A 29th of February falls on the 28th. Birthdays that had already gone
-by when the feature shipped do not count; the migration is
+by when the feature shipped do not count. Anyone registered before the form
+asked for a birthday has none on record, and gets nothing until they set one
+on `/me/edit`; the migration is
 `supabase/migrations/20261029020000_birthday_badges.sql`.
 
 A **token** is the badge a person designs for themselves on `/me/token`: a
