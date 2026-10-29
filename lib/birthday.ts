@@ -36,3 +36,18 @@ export function formatBirthday(iso: string | null | undefined): string {
   if (!day) return "";
   return `${day} ${MONTHS[Number(month) - 1]} ${year}`;
 }
+
+/** Whether a birthday badge is due: the birthday's anniversary this year is today or has
+ *  gone by, and none was given this year. Mirrors cr_birthday_badge in the database, which
+ *  decides for real; this only says whether to ask. A 29th of February falls on the 28th.
+ *  Dates are taken in UTC, as the database takes them. */
+export function birthdayBadgeDue(birthday: string | null | undefined, lastYear: number | null | undefined, now = new Date()): boolean {
+  const { day, month } = splitBirthday(birthday);
+  if (!day) return false;
+  const year = now.getUTCFullYear();
+  if (lastYear != null && lastYear >= year) return false;
+  const d = Math.min(Number(day), daysIn(year, Number(month)));
+  const anniversary = Date.UTC(year, Number(month) - 1, d);
+  const today = Date.UTC(year, now.getUTCMonth(), now.getUTCDate());
+  return anniversary <= today;
+}

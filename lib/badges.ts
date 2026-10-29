@@ -1,7 +1,7 @@
 // Badges: the eight achievements (recognition the database awards; three of them come in
 // tiers, stepping up at five, ten, twenty-five and fifty), the tradable ones (earned five
-// helps at a time, passed from hand to hand) and tokens (a badge of your own design, given
-// away). Each kind is worth max mana — see BADGE_MANA in lib/crystr.ts; a tier is a mark of
+// helps at a time, or one a year on your birthday, passed from hand to hand) and tokens (a
+// badge of your own design, given away). Each kind is worth max mana — see BADGE_MANA in lib/crystr.ts; a tier is a mark of
 // honour, not more mana. The rules live in the database
 // (supabase/migrations/20261027000000_badges_max_mana_birthday.sql and
 // 20261028070000_badge_tiers.sql); this is what the screens need.
@@ -36,6 +36,8 @@ export type BadgeItem = {
   owner_id: string;
   minted_at: string;
   acquired_at: string;
+  /** Why a tradable badge was minted: for helping, or for a birthday. Null on tokens. */
+  occasion: "helped" | "birthday" | null;
   kindRow: { title: string; blurb: string; art: string } | null;
   maker: { handle: string } | null;
 };
