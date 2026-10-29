@@ -1,6 +1,8 @@
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { requireMe, getPendingVouches, getTopSixNotices, getTradeNotices, hasAcceptedTerms } from "@/lib/data";
+import { requireMe, getPendingVouches, getTopSixNotices, getTradeNotices, hasAcceptedTerms, claimBirthdayBadge } from "@/lib/data";
+import { birthdayBadgeDue } from "@/lib/birthday";
+import { EDGE } from "@/lib/toast";
 import { TERMS_VERSION } from "@/lib/terms";
 import { readFlash } from "@/lib/flash";
 import { Clock, SetupBanner, TabBar, Toast, WellButton } from "@/components/chrome";
@@ -10,7 +12,7 @@ import { ManaButton } from "@/components/mana";
 import { VouchBanner } from "@/components/vouch-banner";
 import { TopSixBanner } from "@/components/top-six-banner";
 import { TradeBanner } from "@/components/trade-banner";
-import { BASE_CAP, WELCOME_CAP, hasStarterHandle, manaColor, wellLine } from "@/lib/crystr";
+import { BADGE_MANA, BASE_CAP, WELCOME_CAP, hasStarterHandle, manaColor, wellLine } from "@/lib/crystr";
 import { BREACH_COOKIE } from "@/lib/breach";
 
 export const dynamic = "force-dynamic";
@@ -39,10 +41,18 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       redirect(key ? "/breach" : "/welcome");
     }
   }
+  // A birthday badge, on the day or the first time they are here after it. The profile
+  // already says whether one could be due, so most days this costs nothing; the database
+  // decides for real. Given now, it is told now, and the ceiling shown counts it.
+  const gift = !welcoming && birthdayBadgeDue(profile.birthday, profile.birthday_badge_year) ? await claimBirthdayBadge() : null;
   // Each person's own ceiling, from the database; a database from before badges carried mana
   // gets the flat numbers.
-  const cap = profile.mana_cap ?? (welcoming ? WELCOME_CAP : BASE_CAP);
-  const flash = await readFlash();
+  const cap = (profile.mana_cap ?? (welcoming ? WELCOME_CAP : BASE_CAP)) + (gift ? BADGE_MANA.tradable : 0);
+  const flash =
+    (await readFlash()) ??
+    (gift
+      ? { k: "HAPPY BIRTHDAY", t: `The City gives you a badge for the day: ${gift.title}. Yours to keep or trade.`, e: EDGE.mag }
+      : null);
   const mana = profile.mana;
 
   return (

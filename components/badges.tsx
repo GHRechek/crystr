@@ -183,6 +183,7 @@ export function ItemArt({ item, size }: { item: Pick<BadgeItem, "kind" | "design
 export function ItemTile({ item, note }: { item: BadgeItem | TradeItem; note?: string }) {
   const worth = item.kind === "token" ? BADGE_MANA.token : BADGE_MANA.tradable;
   const maker = "maker" in item ? item.maker?.handle : undefined;
+  const birthday = "occasion" in item && item.occasion === "birthday" ? "A birthday badge. " : "";
   return (
     <div className="tile" style={{ padding: 10, display: "flex", gap: 9, alignItems: "flex-start" }}>
       <ItemArt item={item} />
@@ -191,7 +192,7 @@ export function ItemTile({ item, note }: { item: BadgeItem | TradeItem; note?: s
           {itemTitle(item).toUpperCase()}
         </div>
         <div style={{ fontSize: 11, lineHeight: 1.45, color: "var(--muted)", marginTop: 3 }}>
-          {note ?? (item.kind === "token" ? `${maker ? `From ${maker}. ` : ""}Worth ${worth} max mana.` : `${item.kindRow?.blurb ?? ""} Worth ${worth} max mana.`)}
+          {note ?? (item.kind === "token" ? `${maker ? `From ${maker}. ` : ""}Worth ${worth} max mana.` : `${birthday}${item.kindRow?.blurb ?? ""} Worth ${worth} max mana.`)}
         </div>
       </div>
     </div>

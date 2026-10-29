@@ -138,7 +138,7 @@ Nobody has a flat ceiling any more. `profiles.mana_cap` is each person's own:
 | Kind | Worth | How you get one |
 | --- | --- | --- |
 | Achievement (the eight under BADGES) | +1 max mana each | Doing things the app can see: a first post, five replies, five votes... |
-| Tradable | +2 max mana each | Every five confirmed "I helped them" vouches, one is drawn at random from the 48 in `badge_kinds` (art under `public/badges/tradable/`). The heart on A HELPING HAND shows `x/5` towards the next, in white pixels. |
+| Tradable | +2 max mana each | Every five confirmed "I helped them" vouches, one is drawn at random from the 48 in `badge_kinds` (art under `public/badges/tradable/`). The heart on A HELPING HAND shows `x/5` towards the next, in white pixels. One more a year on your birthday, drawn the same way. |
 | Token | +7 max mana each | Someone gives you theirs. |
 
 Three of the achievements **step up** with use. JOINED IN (replies on
@@ -151,6 +151,19 @@ announced once like a new badge ("A badge stepped up: JOINED IN II") and
 shows on the badge: the numeral after its name, one pip lit per tier along
 the bottom of the frame, and from II a ring round it (blue, purple, magenta).
 A tier is a mark, not mana: the badge is worth one max mana at any tier.
+
+**Birthday badges.** On their birthday, or the first time they open the app
+after it has gone by, everyone with a birthday on the registry gets one
+tradable badge drawn at random from the same pool, worth the same two max
+mana, with a HAPPY BIRTHDAY toast. Once a year, never twice. The app layout
+asks `cr_birthday_badge` only when the profile says one could be due
+(`profiles.birthday_badge_year` is the last year given), and the function
+checks again itself. `badge_items.occasion` says whether a tradable badge
+was for helping or for a birthday, and only the helping ones count against
+the five-helps rule, so a birthday badge never costs anyone a helping-hand
+badge. A 29th of February falls on the 28th. Birthdays that had already gone
+by when the feature shipped do not count; the migration is
+`supabase/migrations/20261029020000_birthday_badges.sql`.
 
 A **token** is the badge a person designs for themselves on `/me/token`: a
 badge shape (circle, framed circle, shield, diamond, plate, hexagon, each with

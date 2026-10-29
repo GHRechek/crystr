@@ -26,6 +26,8 @@ export type Profile = {
   mana_cap?: number;
   /** "YYYY-MM-DD", from the registry. */
   birthday?: string | null;
+  /** The last year a birthday badge was given, or null. */
+  birthday_badge_year?: number | null;
   banner_pattern: string | null;
   banner_a: string | null;
   banner_b: string | null;
@@ -661,6 +663,15 @@ export async function getPlaintiffForms(): Promise<PlaintiffRow[]> {
   return (data ?? []) as unknown as PlaintiffRow[];
 }
 
+/** Give the signed-in person their birthday badge if one is due (the database decides;
+ *  asking early or twice gives nothing). The badge's name when one was given. */
+export async function claimBirthdayBadge(): Promise<{ title: string } | null> {
+  const supabase = createClient();
+  const { data } = await supabase.rpc("cr_birthday_badge");
+  const d = data as { ok?: boolean; given?: boolean; title?: string } | null;
+  return d?.ok && d.given && d.title ? { title: d.title } : null;
+}
+
 // ------------------------------------------------------------ the override
 
 export type OverrideKey = { code: string; created_at: string };
@@ -749,7 +760,7 @@ export async function getTopFriends(userId: string): Promise<Author[]> {
 // ------------------------------------------------------------ badges held
 
 const ITEM_COLS =
-  "id, kind, kind_slug, earned_by, title, design, owner_id, minted_at, acquired_at, kindRow:badge_kinds(title, blurb, art), maker:profiles!badge_items_earned_by_fkey(handle)";
+  "id, kind, kind_slug, earned_by, title, design, owner_id, minted_at, acquired_at, occasion, kindRow:badge_kinds(title, blurb, art), maker:profiles!badge_items_earned_by_fkey(handle)";
 
 /** The tradable badges and tokens this person holds, newest first. */
 export async function getBadgeItems(userId: string): Promise<BadgeItem[]> {
