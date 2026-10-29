@@ -197,6 +197,22 @@ npm run dev
 The repo is linked to the `crystr` Vercel project on the VLVT team. Pushing to
 `main` deploys it.
 
+**Database changes** are the files under `supabase/migrations/`, in name order,
+and the repo is the record of what has been applied: most were run by hand in
+the Supabase SQL editor, so the project's own migration history is incomplete
+and, where it has entries, names them by the time they were run rather than by
+file. Do not `supabase db push` against the live project, which would try to
+replay the hand-run files; apply a new migration by pasting it into the SQL
+editor (or through the Supabase MCP tool) and leave the older ones alone. They
+are written to be safe to run twice (`if not exists`, `or replace`), but there
+is no reason to.
+
+**Source art** that is not served lives under `assets/`: the Portrait Maker
+sheets in `assets/portrait/`, the achievement-badge set the eight badges were
+chosen from in `assets/badges/achievement/`, the rune sheets in
+`assets/runes/`, and `assets/mana.jpg`. What the app serves is under
+`public/`.
+
 ## Portraits
 
 `/me/avatar` builds a face from the Portrait Maker sprite sheets, in a UI that
