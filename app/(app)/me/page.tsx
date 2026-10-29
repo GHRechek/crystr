@@ -16,6 +16,7 @@ import {
 import { ROMAN, tokenReadyAt } from "@/lib/badges";
 import { Avatar } from "@/components/bits";
 import { BadgeArt, ItemTile, TokenImage } from "@/components/badges";
+import { TilePager } from "@/components/pager";
 import { ProfileHead } from "./face-menu";
 import { bannerOf, bannerStyle } from "@/lib/banner";
 import { portraitFromId, normalizePortrait, packPortrait } from "@/lib/portrait/core";
@@ -228,33 +229,37 @@ export default async function ProfilePage() {
                 {earnedCount} OF {badges.length}
               </div>,
             )}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 8 }}>
-              {badges.map((b) => {
-                const got = !!b.earned_at;
-                return (
-                  <div
-                    key={b.slug}
-                    className="tile"
-                    style={{ padding: 10, display: "flex", gap: 9, alignItems: "flex-start", opacity: got ? 1 : 0.5 }}
-                  >
-                    <BadgeArt b={b} got={got} tier={b.tier} progress={b.slug === "a-helping-hand" ? helps % HELPS_PER_BADGE : undefined} />
-                    <div style={{ minWidth: 0 }}>
-                      <div className="px" style={{ fontSize: 11, color: got ? "var(--text)" : "var(--muted)", lineHeight: 1.5 }}>
-                        {b.title}
-                        {got && b.tiers > 1 ? ` ${ROMAN[b.tier]}` : ""}
-                      </div>
-                      <div style={{ fontSize: 11, lineHeight: 1.45, color: "var(--muted)", marginTop: 3 }}>
-                        {b.slug === "a-helping-hand"
-                          ? `${got ? b.blurb : b.how} Every ${HELPS_PER_BADGE} helps earn a tradable badge: ${helps % HELPS_PER_BADGE} of ${HELPS_PER_BADGE} towards the next.`
-                          : got
-                            ? b.blurb
-                            : b.how}
+            {/* Earned ones first, six to a page. */}
+            <TilePager
+              label="Badges"
+              tiles={[...badges]
+                .sort((a, b) => Number(!!b.earned_at) - Number(!!a.earned_at))
+                .map((b) => {
+                  const got = !!b.earned_at;
+                  return (
+                    <div
+                      key={b.slug}
+                      className="tile"
+                      style={{ padding: 10, display: "flex", gap: 9, alignItems: "flex-start", opacity: got ? 1 : 0.5 }}
+                    >
+                      <BadgeArt b={b} got={got} tier={b.tier} progress={b.slug === "a-helping-hand" ? helps % HELPS_PER_BADGE : undefined} />
+                      <div style={{ minWidth: 0 }}>
+                        <div className="px" style={{ fontSize: 11, color: got ? "var(--text)" : "var(--muted)", lineHeight: 1.5 }}>
+                          {b.title}
+                          {got && b.tiers > 1 ? ` ${ROMAN[b.tier]}` : ""}
+                        </div>
+                        <div style={{ fontSize: 11, lineHeight: 1.45, color: "var(--muted)", marginTop: 3 }}>
+                          {b.slug === "a-helping-hand"
+                            ? `${got ? b.blurb : b.how} Every ${HELPS_PER_BADGE} helps earn a tradable badge: ${helps % HELPS_PER_BADGE} of ${HELPS_PER_BADGE} towards the next.`
+                            : got
+                              ? b.blurb
+                              : b.how}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
+                  );
+                })}
+            />
           </div>
         ) : null}
 
@@ -272,11 +277,7 @@ export default async function ProfilePage() {
               one is drawn for you. They can be traded from anybody&apos;s page, badge for badge or badge for nothing.
             </div>
           ) : (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 8 }}>
-              {tradable.map((it) => (
-                <ItemTile key={it.id} item={it} />
-              ))}
-            </div>
+            <TilePager label="Tradable badges" tiles={tradable.map((it) => <ItemTile key={it.id} item={it} />)} />
           )}
         </div>
 

@@ -19,7 +19,7 @@ Supabase and Vercel.
 | `/well`, `/well/[slug]` | The five quests and their proof screens. |
 | `/whispers`, `/whispers/[id]`, `/whispers/new` | DMs at 2 mana a message. |
 | `/welcome` | The registry: a face, your info (your own name, username, character name), birthday, district and species codes. Until it is done the tab bar is REGISTRY and WIKI, nothing else. |
-| `/me`, `/me/edit`, `/me/avatar`, `/me/top-six` | MySpace-shaped profile: mood, about, Top 6 (picked on its own page), badges, max mana, the mana ledger, and the portrait builder. |
+| `/me`, `/me/edit`, `/me/avatar`, `/me/top-six` | MySpace-shaped profile: mood, about, Top 6 (picked on its own page), badges six to a page (earned first, swiped or clicked through), max mana, the mana ledger, and the portrait builder. |
 | `/me/token`, `/me/trades`, `/u/[handle]/trade` | Badges: design your token, see offers waiting, offer someone a trade. |
 | `/me/override`, `/override/[code]`, `/breach` | The override (witches only on the first): a witch's key as a QR code, the address it points at, and the break-in that lets someone past the registry. See below. |
 | `/vote`, `/vote/new` | The motion board (open / decided) and the witch-only two-step composer. |
