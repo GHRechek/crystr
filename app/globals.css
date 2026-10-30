@@ -1190,17 +1190,16 @@ select {
   animation: haywire-note 0.5s steps(2) infinite;
 }
 /* Pages of tiles, swiped on a phone or clicked through below: each page is the full
-   width and snaps into place; the dots say which one is up. */
+   width and snaps into place; the dots say which one is up. Every page stretches to the
+   track's height and lays its tiles on the same equal-row grid, so the pages line up. */
 .pager-track {
   display: flex;
-  align-items: flex-start;
+  align-items: stretch;
   overflow-x: auto;
-  overflow-y: hidden;
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
   margin: 0 -2px;
-  transition: height 0.25s ease;
 }
 .pager-track::-webkit-scrollbar {
   display: none;
@@ -1210,6 +1209,11 @@ select {
   scroll-snap-align: start;
   padding: 0 2px;
   box-sizing: border-box;
+}
+.pager-grid {
+  display: grid;
+  gap: 8px;
+  height: 100%;
 }
 .pager-nav {
   display: flex;
