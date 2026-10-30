@@ -1,34 +1,24 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import { ArrowIcon } from "@/components/icons";
 
-/** Tiles two across and six to a page, swiped or clicked through, carousel style. With a
- *  page or less it is just the grid. The tiles come ready-made from the server; this only
- *  lays them out and turns the pages. */
+/** Tiles two across and six to a page, swiped or clicked through, carousel style. Every
+ *  page is laid out on the same three-row grid, so a last page with two tiles keeps them
+ *  where the top row sits on every other page and nothing below moves. With a page or
+ *  less it is just the grid, as tall as its tiles. The tiles come ready-made from the
+ *  server; this only lays them out and turns the pages. */
 export function TilePager({ tiles, perPage = 6, label }: { tiles: ReactNode[]; perPage?: number; label: string }) {
   const pages: ReactNode[][] = [];
   for (let i = 0; i < tiles.length; i += perPage) pages.push(tiles.slice(i, i + perPage));
   const track = useRef<HTMLDivElement>(null);
   const [page, setPage] = useState(0);
-  // The track is as tall as the page it is showing, not the tallest page, so a short last
-  // page does not leave a gap above the arrows.
-  const [height, setHeight] = useState<number | undefined>(undefined);
-  useEffect(() => {
-    const fit = () => {
-      const el = track.current?.children[page] as HTMLElement | undefined;
-      if (el) setHeight(el.offsetHeight);
-    };
-    fit();
-    window.addEventListener("resize", fit);
-    return () => window.removeEventListener("resize", fit);
-  }, [page]);
 
-  const grid = (items: ReactNode[]) => (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 8, alignContent: "start" }}>{items}</div>
-  );
-  if (pages.length <= 1) return grid(tiles);
+  if (pages.length <= 1) {
+    return <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 8, alignContent: "start" }}>{tiles}</div>;
+  }
 
+  const rows = Math.ceil(perPage / 2);
   const go = (n: number) => {
     const el = track.current;
     if (!el) return;
@@ -43,10 +33,15 @@ export function TilePager({ tiles, perPage = 6, label }: { tiles: ReactNode[]; p
 
   return (
     <div>
-      <div ref={track} className="pager-track" style={{ height }} onScroll={onScroll} role="group" aria-label={label}>
+      <div ref={track} className="pager-track" onScroll={onScroll} role="group" aria-label={label}>
         {pages.map((p, i) => (
           <div key={i} className="pager-page">
-            {grid(p)}
+            <div
+              className="pager-grid"
+              style={{ gridTemplateColumns: "repeat(2,1fr)", gridTemplateRows: `repeat(${rows},1fr)` }}
+            >
+              {p}
+            </div>
           </div>
         ))}
       </div>

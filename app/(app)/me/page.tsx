@@ -250,7 +250,7 @@ export default async function ProfilePage() {
                         </div>
                         <div style={{ fontSize: 11, lineHeight: 1.45, color: "var(--muted)", marginTop: 3 }}>
                           {b.slug === "a-helping-hand"
-                            ? `${got ? b.blurb : b.how} Every ${HELPS_PER_BADGE} helps earn a tradable badge: ${helps % HELPS_PER_BADGE} of ${HELPS_PER_BADGE} towards the next.`
+                            ? `${got ? b.blurb : b.how} ${helps % HELPS_PER_BADGE} of ${HELPS_PER_BADGE} towards a tradable badge.`
                             : got
                               ? b.blurb
                               : b.how}
