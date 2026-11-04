@@ -22,7 +22,7 @@ export default async function AddFact(props: { params: Promise<{ slug: string; s
   if (facts.some((f) => f.slot === slot && f.status === "kept")) redirect(`/wiki/${page.slug}`);
   const own = facts.find((f) => f.slot === slot && f.author?.id === userId && f.status === "pending");
 
-  const affordable = profile.mana >= COSTS.wikiEdit;
+  const affordable = profile.is_witch || profile.mana >= COSTS.wikiEdit;
 
   return (
     <form action={addFact} className="pad" style={{ gap: 11 }}>
@@ -69,11 +69,13 @@ export default async function AddFact(props: { params: Promise<{ slug: string; s
             ? "PUT IT ON THE PAGE · FREE"
             : "UPDATE YOUR WORDS · FREE"
           : affordable
-            ? (
-              <>
-                ADD TO THE PAGE <Cost n={COSTS.wikiEdit} />
-              </>
-            )
+            ? profile.is_witch
+              ? "PUT IT ON THE PAGE · FREE"
+              : (
+                <>
+                  ADD TO THE PAGE <Cost n={COSTS.wikiEdit} />
+                </>
+              )
             : "REST FIRST"}
       </button>
 
