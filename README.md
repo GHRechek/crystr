@@ -210,7 +210,10 @@ npm run dev
 ## Deploying
 
 The repo is linked to the `crystr` Vercel project on the VLVT team. Pushing to
-`main` deploys it.
+`main` deploys it. The build runs with webpack (`next build --webpack`) and the
+three fonts (Inter, Silkscreen, Pixelify Sans) ship in `app/fonts/` rather than
+being fetched from Google, so a deploy never depends on a font host being
+reachable.
 
 **Database changes** are the files under `supabase/migrations/`, in name order,
 and the repo is the record of what has been applied: most were run by hand in
@@ -377,7 +380,8 @@ folded under a count and open with a click; on the page itself they are listed a
 the bottom and also turn up inside the rune text as links, each at a spot of its
 own. Anyone adding a few words to a page can instead start a new page under it
 for 40 mana (`cr_wiki_add_subpage`), with those words as its first fact, on the
-shelf at once. Witches start pages under others from the new-page form, move a
+shelf at once. Witches pay nothing, for that or for adding a fact, and their
+facts are kept at once. Witches start pages under others from the new-page form, move a
 page under another or out on its own (`cr_wiki_set_parent`, which refuses a
 loop), and put a page's facts and sub pages in order with the arrows on the
 moderation tile (`cr_wiki_move_fact`, `cr_wiki_move_page`; `wiki_pages.sort`).
