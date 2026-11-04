@@ -82,7 +82,8 @@ export default async function WikiPageView(props: { params: Promise<{ slug: stri
 
   // The facts this person sees, in the order they were added: every kept one, plus their
   // own waiting one(s). Returned ones are mentioned below the article instead.
-  const kept = facts.filter((f) => f.status === "kept");
+  // In page order (by slot), so a fact that is moved up or down shows up in its new place.
+  const kept = facts.filter((f) => f.status === "kept").sort((x, y) => x.slot - y.slot);
   const mine = facts.filter((f) => f.status !== "kept" && f.author?.id === userId);
   const shown = [...kept, ...mine.filter((m) => m.status === "pending")].sort((x, y) => x.slot - y.slot);
   const filled = kept.length;
