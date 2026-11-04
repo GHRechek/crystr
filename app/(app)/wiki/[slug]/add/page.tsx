@@ -18,7 +18,9 @@ export default async function AddSomething(props: { params: Promise<{ slug: stri
   if (!page || page.archived) notFound();
   if (page.locked && !profile.is_witch) redirect(`/wiki/${page.slug}`);
 
-  const affordable = profile.mana >= COSTS.wikiEdit;
+  // Witches alter the wiki for free.
+  const free = profile.is_witch;
+  const affordable = free || profile.mana >= COSTS.wikiEdit;
 
   return (
     <form action={addFact} className="pad" style={{ gap: 11 }}>
@@ -54,7 +56,7 @@ export default async function AddSomething(props: { params: Promise<{ slug: stri
         </span>
       </div>
 
-      <SubpageOption parentTitle={page.title} canAddFact={affordable} canStartPage={profile.mana >= COSTS.wikiSubpage} />
+      <SubpageOption parentTitle={page.title} canAddFact={affordable} canStartPage={free || profile.mana >= COSTS.wikiSubpage} free={free} />
 
       <div style={{ fontSize: 12, lineHeight: 1.5, color: "var(--muted)" }}>
         {profile.is_witch

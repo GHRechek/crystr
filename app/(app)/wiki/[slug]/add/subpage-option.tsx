@@ -13,10 +13,13 @@ export function SubpageOption({
   parentTitle,
   canAddFact,
   canStartPage,
+  free,
 }: {
   parentTitle: string;
   canAddFact: boolean;
   canStartPage: boolean;
+  /** Witches pay nothing for either. */
+  free?: boolean;
 }) {
   const [on, setOn] = useState(false);
   const [title, setTitle] = useState("");
@@ -30,7 +33,7 @@ export function SubpageOption({
           MAKE IT A NEW PAGE UNDER “{parentTitle.toUpperCase()}”
         </label>
         <span className="flabel" style={{ color: "var(--muted)" }}>
-          YOUR WORDS BECOME ITS FIRST FACT, ON THE SHELF AT ONCE. IT COSTS {COSTS.wikiSubpage}.
+          YOUR WORDS BECOME ITS FIRST FACT, ON THE SHELF AT ONCE. {free ? "FREE FOR A WITCH." : `IT COSTS ${COSTS.wikiSubpage}.`}
         </span>
       </div>
 
@@ -64,7 +67,7 @@ export function SubpageOption({
         >
           {canStartPage ? (
             <>
-              START THE PAGE <Cost n={COSTS.wikiSubpage} />
+              START THE PAGE {free ? "· FREE" : <Cost n={COSTS.wikiSubpage} />}
             </>
           ) : (
             `REST FIRST · A PAGE TAKES ${COSTS.wikiSubpage}`
@@ -74,7 +77,7 @@ export function SubpageOption({
         <button type="submit" className={`btn btn-lg btn-block${canAddFact ? " btn-purple" : ""}`} aria-disabled={!canAddFact}>
           {canAddFact ? (
             <>
-              ADD TO THE PAGE <Cost n={COSTS.wikiEdit} />
+              ADD TO THE PAGE {free ? "· FREE" : <Cost n={COSTS.wikiEdit} />}
             </>
           ) : (
             "REST FIRST"

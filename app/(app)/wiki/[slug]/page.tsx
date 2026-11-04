@@ -203,10 +203,12 @@ export default async function WikiPageView(props: { params: Promise<{ slug: stri
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             <Link href={`/wiki/${page.slug}/add`} className="btn btn-lg btn-block btn-purple">
-              ＋ ADD SOMETHING <Cost n={COSTS.wikiEdit} />
+              ＋ ADD SOMETHING {witch ? "· FREE" : <Cost n={COSTS.wikiEdit} />}
             </Link>
             <div style={{ fontSize: 12.5, lineHeight: 1.5, color: "var(--muted)" }}>
-              A few key words about {page.title}. It joins the page once a witch has read it.
+              {witch
+                ? `A few key words about ${page.title}. As a witch, it goes straight onto the page, at no cost.`
+                : `A few key words about ${page.title}. It joins the page once a witch has read it.`}
             </div>
           </div>
         )}
