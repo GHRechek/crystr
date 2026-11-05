@@ -267,8 +267,17 @@ export type ThreadRow = {
   unread: boolean;
 };
 
+/** The ids of the whispers with something new for the signed-in person: the other side has
+ *  said something since they last opened it. */
+export async function getUnreadThreadIds(): Promise<number[]> {
+  const supabase = createClient();
+  const { data } = await supabase.rpc("cr_unread_whispers");
+  return Array.isArray(data) ? (data as (number | string)[]).map(Number) : [];
+}
+
 export async function getThreads(userId: string): Promise<ThreadRow[]> {
   const supabase = createClient();
+  const unread = new Set(await getUnreadThreadIds());
   const { data } = await supabase
     .from("dm_threads")
     .select(
@@ -299,7 +308,7 @@ export async function getThreads(userId: string): Promise<ThreadRow[]> {
         : last.deleted_at
           ? "Message unsent."
           : last.body || (last.image_path ? "Sent a picture." : last.post_id ? "Sent a post." : ""),
-      unread: !!last && last.sender_id !== userId,
+      unread: unread.has(t.id),
     };
   });
 }
@@ -340,6 +349,9 @@ export async function getThread(
 
   if (!data) return null;
   const t = data as unknown as { a: Author; b: Author };
+  // Opening a conversation reads it. (The tab bar leaves this one out of its count on this
+  // very load, since it is counted before this lands.)
+  await supabase.rpc("cr_mark_thread_read", { p_thread: id });
 
   const { data: rows } = await supabase
     .from("dm_messages")

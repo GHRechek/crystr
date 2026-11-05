@@ -102,7 +102,7 @@ function RegistryMark() {
   );
 }
 
-export function TabBar({ welcoming = false }: { welcoming?: boolean }) {
+export function TabBar({ welcoming = false, unreadWhispers = 0 }: { welcoming?: boolean; unreadWhispers?: number }) {
   const path = usePathname();
   const tabs: { href: string; glyph: string; label: string; alert?: boolean }[] = welcoming ? WELCOME_TABS : TABS;
 
@@ -130,6 +130,11 @@ export function TabBar({ welcoming = false }: { welcoming?: boolean }) {
                 {t.glyph}
               </span>
             )}
+            {t.href === "/whispers" && unreadWhispers > 0 ? (
+              <span className="tab-badge" role="status" aria-label={`${unreadWhispers} unread ${unreadWhispers === 1 ? "whisper" : "whispers"}`}>
+                {unreadWhispers > 9 ? "9+" : unreadWhispers}
+              </span>
+            ) : null}
             <span className="label">{t.label}</span>
           </Link>
         );

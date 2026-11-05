@@ -17,7 +17,7 @@ Supabase and Vercel.
 | `/post` | Compose, with a live cost preview and an image toggle. Reached from the NEW POST button at the top of the feed, not a tab. |
 | `/thread/[id]` | A post and the replies under it, oldest first, with the reply box. Five mana a reply, same as a post. |
 | `/well`, `/well/[slug]` | The five quests and their proof screens. |
-| `/whispers`, `/whispers/[id]`, `/whispers/new` | DMs at 2 mana a message. |
+| `/whispers`, `/whispers/[id]`, `/whispers/new` | DMs at 2 mana a message. A conversation with something new in it shows as unread, and the WHISPER tab wears a small bubble with how many such conversations there are; opening one reads it (`dm_reads`, `cr_mark_thread_read`, `cr_unread_whispers`; migration `20261105010000_whisper_reads.sql`). |
 | `/thread/[id]/send` | Send a post to someone in a whisper, with a note if you like, for the price of a whisper (2 mana). Reached from SEND IN A WHISPER in the three-dot menu on a post, beside REPORT (which opens the detailed form in place). The post arrives in the whisper as a quoted card (`dm_messages.post_id`, `cr_send_post`; the migration is `20261105000000_send_post_in_whisper.sql`). Unsending drops the post from the message. |
 | `/welcome` | The registry: a face, your info (your own name, username, character name), birthday, district and species codes. Until it is done the tab bar is REGISTRY and WIKI, nothing else. |
 | `/me`, `/me/edit`, `/me/avatar`, `/me/top-six` | MySpace-shaped profile: mood, about, Top 6 (picked on its own page), badges six to a page (earned first, swiped or clicked through), max mana, the mana ledger, and the portrait builder. |
