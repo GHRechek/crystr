@@ -316,9 +316,31 @@ select {
 .tab[data-active="true"]:hover {
   color: var(--mag);
 }
+.tab { position: relative; }
 .tab .glyph {
   font-size: 16px;
   line-height: 1;
+}
+/* A small bubble on the tab's icon: something new. Square-cornered like the rest. */
+.tab-badge {
+  position: absolute;
+  top: 2px;
+  left: calc(50% + 9px);
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--mag);
+  color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 0 2px var(--device);
+  font-family: var(--px-font);
+  font-size: 11px;
+  line-height: 1;
+  pointer-events: none;
 }
 .tab .label {
   font-family: var(--px-font);

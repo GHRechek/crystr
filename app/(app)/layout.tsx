@@ -1,6 +1,6 @@
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { requireMe, getPendingVouches, getTopSixNotices, getTradeNotices, hasAcceptedTerms, claimBirthdayBadge } from "@/lib/data";
+import { requireMe, getPendingVouches, getTopSixNotices, getTradeNotices, hasAcceptedTerms, claimBirthdayBadge, getUnreadThreadIds } from "@/lib/data";
 import { birthdayBadgeDue } from "@/lib/birthday";
 import { EDGE } from "@/lib/toast";
 import { TERMS_VERSION } from "@/lib/terms";
@@ -33,8 +33,13 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   // lands on the breach and not the form. A missing flag means a database from before it:
   // let them in.
   const welcoming = profile.onboarded === false;
+  const here = (await headers()).get("x-pathname") ?? "";
+  // Whispers with something new, for the bubble on the tab. The one open right now is
+  // being read, so it is not counted.
+  const openWhisper = /^\/whispers\/(\d+)/.exec(here)?.[1];
+  const unreadWhispers = welcoming ? 0 : (await getUnreadThreadIds()).filter((n) => String(n) !== openWhisper).length;
   if (welcoming) {
-    const path = (await headers()).get("x-pathname") ?? "";
+    const path = here;
     const open = ["/welcome", "/wiki", "/me/avatar", "/breach"].some((p) => path === p || path.startsWith(`${p}/`));
     if (!open) {
       const key = (await cookies()).get(BREACH_COOKIE)?.value;
@@ -99,7 +104,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
         {flash ? <Toast flash={flash} /> : null}
 
-        <TabBar welcoming={welcoming} />
+        <TabBar welcoming={welcoming} unreadWhispers={unreadWhispers} />
       </div>
     </div>
   );
