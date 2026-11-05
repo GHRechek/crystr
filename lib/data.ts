@@ -275,7 +275,7 @@ export async function getThreads(userId: string): Promise<ThreadRow[]> {
       `id, last_message_at,
        a:profiles!dm_threads_user_a_fkey(${AUTHOR_COLS}),
        b:profiles!dm_threads_user_b_fkey(${AUTHOR_COLS}),
-       messages:dm_messages(body, created_at, sender_id, image_path, deleted_at)`,
+       messages:dm_messages(body, created_at, sender_id, image_path, deleted_at, post_id)`,
     )
     .order("last_message_at", { ascending: false });
 
@@ -284,7 +284,7 @@ export async function getThreads(userId: string): Promise<ThreadRow[]> {
     last_message_at: string;
     a: Author;
     b: Author;
-    messages: { body: string; created_at: string; sender_id: string; image_path: string | null; deleted_at: string | null }[];
+    messages: { body: string; created_at: string; sender_id: string; image_path: string | null; deleted_at: string | null; post_id: number | null }[];
   }>;
 
   return rows.map((t) => {
@@ -298,7 +298,7 @@ export async function getThreads(userId: string): Promise<ThreadRow[]> {
         ? "No one has said anything yet."
         : last.deleted_at
           ? "Message unsent."
-          : last.body || (last.image_path ? "Sent a picture." : ""),
+          : last.body || (last.image_path ? "Sent a picture." : last.post_id ? "Sent a post." : ""),
       unread: !!last && last.sender_id !== userId,
     };
   });
@@ -317,6 +317,10 @@ export type Message = {
   /** True once its sender has unsent it: the words and picture are gone. */
   unsent: boolean;
   reactions: Reaction[];
+  /** A post sent in this message: who wrote it, what it says, whether it has a picture.
+   *  Null when no post was sent. `gone` is true when one was sent and has since been deleted. */
+  post: { id: number; handle: string | null; body: string; has_image: boolean } | null;
+  post_gone: boolean;
 };
 
 export async function getThread(
@@ -339,7 +343,7 @@ export async function getThread(
 
   const { data: rows } = await supabase
     .from("dm_messages")
-    .select("id, sender_id, body, created_at, image_path, reply_to, deleted_at")
+    .select("id, sender_id, body, created_at, image_path, reply_to, deleted_at, post_id")
     .eq("thread_id", id)
     .order("created_at");
   const msgs = (rows ?? []) as {
@@ -350,9 +354,22 @@ export async function getThread(
     image_path: string | null;
     reply_to: number | null;
     deleted_at: string | null;
+    post_id: number | null;
   }[];
 
   const ids = msgs.map((m) => m.id);
+  const postIds = [...new Set(msgs.map((m) => m.post_id).filter((x): x is number => x !== null))];
+  const { data: postRows } = postIds.length
+    ? await supabase
+        .from("posts")
+        .select("id, body, has_image, author:profiles!posts_author_id_fkey(handle)")
+        .in("id", postIds)
+    : { data: [] };
+  const postOf = new Map(
+    ((postRows ?? []) as unknown as { id: number; body: string; has_image: boolean; author: { handle: string } | null }[]).map(
+      (r) => [r.id, { id: r.id, handle: r.author?.handle ?? null, body: r.body, has_image: r.has_image }],
+    ),
+  );
   const paths = msgs.map((m) => m.image_path).filter((p): p is string => !!p);
   const [{ data: reacts }, signed] = await Promise.all([
     ids.length
@@ -389,6 +406,9 @@ export async function getThread(
         reply_to: m.reply_to,
         unsent: !!m.deleted_at,
         reactions: [...counts.values()],
+        post: m.post_id !== null ? (postOf.get(m.post_id) ?? null) : null,
+        // A message that was only a post, whose post has since been deleted.
+        post_gone: m.post_id === null && !m.deleted_at && !m.body && !m.image_path,
       };
     }),
   };
@@ -963,4 +983,16 @@ export async function getShareable(userId: string, slug: string): Promise<Sharea
     note: row.note,
     image_url: row.proof_url ? (signed.get(row.proof_url) ?? null) : null,
   };
+}
+
+/** A post's author and words, for the page where you choose who to send it to. */
+export async function getPostForSend(id: number): Promise<{ id: number; handle: string | null; body: string; has_image: boolean } | null> {
+  const supabase = createClient();
+  const { data } = await supabase
+    .from("posts")
+    .select("id, body, has_image, author:profiles!posts_author_id_fkey(handle)")
+    .eq("id", id)
+    .maybeSingle();
+  const r = data as unknown as { id: number; body: string; has_image: boolean; author: { handle: string } | null } | null;
+  return r ? { id: r.id, handle: r.author?.handle ?? null, body: r.body, has_image: r.has_image } : null;
 }

@@ -287,6 +287,32 @@ export async function sendWhisper(fd: FormData) {
   redirect(`/whispers/${threadId}`);
 }
 
+/** Send a post to someone in a whisper, with a note if you like. Costs what a whisper costs. */
+export async function sendPost(fd: FormData) {
+  const post = Number(fd.get("post_id"));
+  const back = `/thread/${post}/send`;
+  const r = await call("cr_send_post", {
+    p_post: post,
+    p_other: str(fd, "other_id"),
+    p_note: str(fd, "note"),
+  });
+  if (!r.ok) {
+    if (r.code === "insufficient") {
+      await broke(r, `Sending a post takes ${COSTS.whisper}, and you have {have}. Recover at the Well and it will be here when you are back.`);
+    } else if (r.code === "no_post") {
+      await setFlash("POST GONE", "That post is not there any more.", EDGE.purple);
+    } else {
+      await wentWrong();
+    }
+    revalidatePath(back);
+    return;
+  }
+  const note = await newBadges();
+  await setFlash("SENT", `The post is in your whisper.${note}`, EDGE.blue);
+  revalidatePath("/whispers");
+  redirect(`/whispers/${r.thread_id}`);
+}
+
 /** React to a message, or take the reaction back by choosing the same one again. */
 export async function reactToMessage(fd: FormData) {
   const threadId = Number(fd.get("thread_id"));
