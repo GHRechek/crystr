@@ -1,3 +1,4 @@
+import { MoreIcon } from "@/components/icons";
 import { submitReport } from "@/lib/actions";
 import { REPORT_REASONS } from "@/lib/terms";
 
@@ -57,7 +58,7 @@ export function PostMenu(props: ReportProps) {
   return (
     <details className="post-menu">
       <summary aria-label="More options" className="btn btn-sm post-menu-btn">
-        ☰
+        <MoreIcon />
       </summary>
       <div className="post-menu-panel">
         <div className="px" style={{ fontSize: 11, color: "var(--muted)", marginBottom: 8 }}>

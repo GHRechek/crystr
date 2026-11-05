@@ -877,7 +877,7 @@ select {
 .post-menu { position: relative; }
 .post-menu > summary { list-style: none; cursor: pointer; }
 .post-menu > summary::-webkit-details-marker { display: none; }
-.post-menu-btn { min-height: 40px; min-width: 40px; padding: 0 8px; }
+.post-menu-btn { min-height: 40px; min-width: 40px; padding: 0 8px; display: inline-flex; align-items: center; justify-content: center; }
 .post-menu-panel {
   position: absolute;
   right: 0;

@@ -50,3 +50,23 @@ export function ArrowIcon({ dir = "right" }: { dir?: "right" | "up" | "down" | "
     </svg>
   );
 }
+
+/** Three pixel dots in a row, for "more": each dot is one cell of a five-by-one grid, three
+ *  screen pixels to the cell. It takes the surrounding text colour. */
+export function MoreIcon() {
+  return (
+    <svg
+      aria-hidden
+      viewBox="0 0 5 1"
+      width={20}
+      height={4}
+      shapeRendering="crispEdges"
+      fill="currentColor"
+      style={{ display: "block" }}
+    >
+      <rect x={0} y={0} width={1} height={1} />
+      <rect x={2} y={0} width={1} height={1} />
+      <rect x={4} y={0} width={1} height={1} />
+    </svg>
+  );
+}
