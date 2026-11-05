@@ -18,6 +18,7 @@ Supabase and Vercel.
 | `/thread/[id]` | A post and the replies under it, oldest first, with the reply box. Five mana a reply, same as a post. |
 | `/well`, `/well/[slug]` | The five quests and their proof screens. |
 | `/whispers`, `/whispers/[id]`, `/whispers/new` | DMs at 2 mana a message. |
+| `/thread/[id]/send` | Send a post to someone in a whisper, with a note if you like, for the price of a whisper (2 mana). Reached from SEND IN A WHISPER in the three-dot menu on a post, beside REPORT (which opens the detailed form in place). The post arrives in the whisper as a quoted card (`dm_messages.post_id`, `cr_send_post`; the migration is `20261105000000_send_post_in_whisper.sql`). Unsending drops the post from the message. |
 | `/welcome` | The registry: a face, your info (your own name, username, character name), birthday, district and species codes. Until it is done the tab bar is REGISTRY and WIKI, nothing else. |
 | `/me`, `/me/edit`, `/me/avatar`, `/me/top-six` | MySpace-shaped profile: mood, about, Top 6 (picked on its own page), badges six to a page (earned first, swiped or clicked through), max mana, the mana ledger, and the portrait builder. |
 | `/me/token`, `/me/trades`, `/u/[handle]/trade` | Badges: design your token, see offers waiting, offer someone a trade. |

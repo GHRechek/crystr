@@ -95,6 +95,35 @@ export function Bubble({
               />
             </a>
           ) : null}
+          {m.post ? (
+            <Link
+              href={`/thread/${m.post.id}`}
+              style={{
+                display: "block",
+                padding: "8px 10px",
+                background: "var(--inset)",
+                boxShadow: "0 0 0 1px var(--edge)",
+                color: "var(--text-2)",
+                textDecoration: "none",
+                fontSize: 12.5,
+                lineHeight: 1.45,
+              }}
+            >
+              <span className="px" style={{ display: "block", fontSize: 11, color: "var(--muted)", marginBottom: 3 }}>
+                A POST BY {(m.post.handle ?? "SOMEONE").toUpperCase()}
+              </span>
+              {corrupt(m.post.body.length > 200 ? `${m.post.body.slice(0, 200)}…` : m.post.body, decay)}
+              {m.post.has_image ? (
+                <span className="px" style={{ display: "block", fontSize: 11, color: "var(--dim)", marginTop: 3 }}>
+                  WITH A PICTURE
+                </span>
+              ) : null}
+            </Link>
+          ) : m.post_gone ? (
+            <div className="px" style={{ fontSize: 11, color: "var(--dim)" }}>
+              A POST WAS SENT HERE. IT HAS BEEN DELETED.
+            </div>
+          ) : null}
           {m.body ? <div>{corrupt(m.body, decay)}</div> : null}
         </div>
 

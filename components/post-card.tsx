@@ -68,9 +68,7 @@ export function PostCard({
             </span>
           </Link>
           <div className="spacer" />
-          {mine ? null : (
-            <PostMenu kind="post" target={post.id} back={inThread && thread ? `/thread/${thread}` : "/"} />
-          )}
+          <PostMenu kind="post" target={post.id} mine={mine} back={inThread && thread ? `/thread/${thread}` : "/"} />
         </div>
 
         {post.quest_title ? (

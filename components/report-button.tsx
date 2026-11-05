@@ -1,4 +1,7 @@
+import Link from "next/link";
 import { MoreIcon } from "@/components/icons";
+import { Cost } from "@/components/mana";
+import { COSTS } from "@/lib/crystr";
 import { submitReport } from "@/lib/actions";
 import { REPORT_REASONS } from "@/lib/terms";
 
@@ -53,18 +56,30 @@ export function ReportButton({ label = "REPORT", ...props }: ReportProps & { lab
   );
 }
 
-/** The little menu at the top right of a post. For now it holds one thing: report. */
-export function PostMenu(props: ReportProps) {
+/** The little menu at the top right of a post: send it to someone in a whisper, or report it.
+ *  SEND goes to a page where you pick who; REPORT opens the detailed form in place. */
+export function PostMenu({ mine, ...props }: ReportProps & { mine?: boolean }) {
   return (
     <details className="post-menu">
       <summary aria-label="More options" className="btn btn-sm post-menu-btn dots-btn">
         <MoreIcon />
       </summary>
       <div className="post-menu-panel">
-        <div className="px" style={{ fontSize: 11, color: "var(--muted)", marginBottom: 8 }}>
-          REPORT THIS POST
-        </div>
-        <ReportForm {...props} />
+        <Link href={`/thread/${props.target}/send`} className="post-menu-item">
+          <span>SEND IN A WHISPER</span>
+          <Cost n={COSTS.whisper} />
+        </Link>
+        {mine ? null : (
+        <details className="post-menu-report">
+          <summary className="post-menu-item">REPORT</summary>
+          <div style={{ marginTop: 8 }}>
+            <div className="px" style={{ fontSize: 11, color: "var(--muted)", marginBottom: 8 }}>
+              REPORT THIS POST
+            </div>
+            <ReportForm {...props} />
+          </div>
+        </details>
+        )}
       </div>
     </details>
   );
