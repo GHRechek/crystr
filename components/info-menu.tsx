@@ -29,7 +29,7 @@ export function InfoMenu() {
     <>
       <button
         type="button"
-        className="btn btn-sm"
+        className="btn btn-sm dots-btn"
         aria-label="About the game"
         aria-expanded={open}
         onClick={() => setOpen((o) => !o)}
