@@ -952,6 +952,13 @@ select {
   text-shadow: none;
 }
 
+/* Page names, wherever they are listed: a pixel more between the letters, so the shapes
+   do not run together. Not for the facts or the boxes you type in. */
+.wiki-name,
+.wiki-title {
+  letter-spacing: 1px;
+}
+
 
 /* The mana potion */
 .mana-icon {
