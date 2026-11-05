@@ -47,7 +47,7 @@
 
   /* 16-bit corner radius — the prototype's "Subtle" pixel intensity */
   --px-r: 6px;
-  --px-font: var(--font-silkscreen), ui-monospace, monospace;
+  --px-font: var(--font-label), ui-monospace, monospace;
 
   --stripe: repeating-linear-gradient(45deg, #22243a 0 6px, #1b1d29 6px 12px);
 }
