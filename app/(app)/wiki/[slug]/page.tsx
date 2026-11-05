@@ -222,7 +222,7 @@ export default async function WikiPageView(props: { params: Promise<{ slug: stri
             <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
               {children.map((c) => (
                 <Link key={c.id} href={`/wiki/${c.slug}`} className="btn btn-sm" style={{ minHeight: 40, gap: 6 }}>
-                  <span className="wiki-px" style={{ fontSize: 14 }}>{mask(c.title)}</span>
+                  <span className="wiki-px wiki-name" style={{ fontSize: 14 }}>{mask(c.title)}</span>
                   <ArrowIcon />
                 </Link>
               ))}
