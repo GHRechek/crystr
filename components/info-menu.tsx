@@ -4,8 +4,9 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { GAME_BLURB, LOCATION } from "@/lib/info";
+import { MoreIcon } from "@/components/icons";
 
-/** The ☰ at the top right of the header. Opens a sheet over the app with the things
+/** The three dots at the top right of the header. Opens a sheet over the app with the things
  *  that are about the game rather than about you: what it is, where it is, and the
  *  terms people agreed to. */
 export function InfoMenu() {
@@ -32,9 +33,9 @@ export function InfoMenu() {
         aria-label="About the game"
         aria-expanded={open}
         onClick={() => setOpen((o) => !o)}
-        style={{ minHeight: 40, minWidth: 40, padding: "0 9px" }}
+        style={{ minHeight: 40, minWidth: 40, padding: "0 9px", display: "inline-flex", alignItems: "center", justifyContent: "center" }}
       >
-        ☰
+        <MoreIcon />
       </button>
 
       {open ? (
