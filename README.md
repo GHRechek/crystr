@@ -215,7 +215,8 @@ three fonts (Inter, Pixelify Sans, and the label face) ship in `app/fonts/` rath
 being fetched from Google, so a deploy never depends on a font host being
 reachable. The label face is Jersey 10 with its lower case folded onto the capitals
 and renamed Crystr Label (`app/fonts/crystr-label.woff2`, built from the Fontsource
-file with fontTools); it replaced Silkscreen, whose C, O and G are nearly one shape.
+file with fontTools, with its C and G redrawn with a wider opening so they never read
+as O); it replaced Silkscreen, whose C, O and G are nearly one shape.
 
 **Database changes** are the files under `supabase/migrations/`, in name order,
 and the repo is the record of what has been applied: most were run by hand in
