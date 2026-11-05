@@ -57,7 +57,7 @@ export function ReportButton({ label = "REPORT", ...props }: ReportProps & { lab
 export function PostMenu(props: ReportProps) {
   return (
     <details className="post-menu">
-      <summary aria-label="More options" className="btn btn-sm post-menu-btn">
+      <summary aria-label="More options" className="btn btn-sm post-menu-btn dots-btn">
         <MoreIcon />
       </summary>
       <div className="post-menu-panel">

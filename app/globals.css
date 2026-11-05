@@ -877,6 +877,18 @@ select {
 .post-menu { position: relative; }
 .post-menu > summary { list-style: none; cursor: pointer; }
 .post-menu > summary::-webkit-details-marker { display: none; }
+/* The three-dot menu buttons: no frame, just the dots, with the full tap target kept. */
+.btn.dots-btn {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  color: var(--muted);
+}
+.btn.dots-btn:hover,
+.btn.dots-btn:focus-visible,
+.post-menu[open] > .btn.dots-btn {
+  color: var(--text);
+}
 .post-menu-btn { min-height: 40px; min-width: 40px; padding: 0 8px; display: inline-flex; align-items: center; justify-content: center; }
 .post-menu-panel {
   position: absolute;
