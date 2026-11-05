@@ -214,7 +214,9 @@ The repo is linked to the `crystr` Vercel project on the VLVT team. Pushing to
 `main` deploys it. The build runs with webpack (`next build --webpack`) and the
 three fonts (Inter, Pixelify Sans, and the label face) ship in `app/fonts/` rather than
 being fetched from Google, so a deploy never depends on a font host being
-reachable. The label face is Jersey 10 with its lower case folded onto the capitals
+reachable. The City's address is `crystr.app`; `cryster.app`, `www.cryster.app` and
+`www.crystr.app` redirect there (308, path kept) from `proxy.ts`, and `crystr.vercel.app`
+is redirected by a Vercel domain setting. The label face is Jersey 10 with its lower case folded onto the capitals
 and renamed Crystr Label (`app/fonts/crystr-label.woff2`, built from the Fontsource
 file with fontTools, with its C and G redrawn with a wider opening so they never read
 as O); it replaced Silkscreen, whose C, O and G are nearly one shape.

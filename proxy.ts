@@ -3,7 +3,18 @@ import { NextResponse, type NextRequest } from "next/server";
 
 // Keeps the Supabase auth session fresh on every request so a signed-in
 // user's cookies don't silently expire mid-visit.
+/** The names the City used to answer to. Anyone arriving on one is sent, path and all, to the
+ *  real address: crystr.app. (crystr.vercel.app is redirected by Vercel itself.) */
+const OLD_HOSTS = new Set(["cryster.app", "www.cryster.app", "www.crystr.app"]);
+const HOME = "https://crystr.app";
+
 export async function proxy(request: NextRequest) {
+  const host = (request.headers.get("host") ?? "").toLowerCase().split(":")[0];
+  if (OLD_HOSTS.has(host)) {
+    const { pathname, search } = request.nextUrl;
+    return NextResponse.redirect(`${HOME}${pathname}${search}`, 308);
+  }
+
   // Next prefetches <Link> targets aggressively — six routes can arrive in
   // the same second. Supabase rotates refresh tokens, so when several of
   // those requests try to refresh at once the losers present a token that
