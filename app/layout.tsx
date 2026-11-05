@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 
-// The three faces ship with the app (app/fonts, from the Fontsource packages, all under the
+// The faces ship with the app (app/fonts, from the Fontsource packages, all under the
 // SIL Open Font License) instead of being fetched from Google at build time: a build with no
 // route to fonts.googleapis.com used to fail the deploy.
 const inter = localFont({
@@ -15,12 +15,16 @@ const inter = localFont({
   display: "swap",
 });
 
-const silkscreen = localFont({
-  src: [
-    { path: "./fonts/silkscreen-latin-400-normal.woff2", weight: "400" },
-    { path: "./fonts/silkscreen-latin-700-normal.woff2", weight: "700" },
-  ],
-  variable: "--font-silkscreen",
+// The label face (the small capitals on buttons, tabs and headings). It was Silkscreen, whose
+// C, O and G are nearly one shape at small sizes; this is Jersey 10, a crisper pixel face where
+// they are three, with its lower case folded onto the capitals (as Silkscreen did, so text
+// reads exactly as before) and renamed Crystr Label because the file is changed. size-adjust
+// scales it to the size Silkscreen sat at, so nothing else on the page moves. A weight range
+// is declared so a bold request is not smeared into a fake bold.
+const label = localFont({
+  src: [{ path: "./fonts/crystr-label.woff2", weight: "400 700" }],
+  declarations: [{ prop: "size-adjust", value: "125%" }],
+  variable: "--font-label",
   display: "swap",
 });
 
@@ -52,7 +56,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${silkscreen.variable} ${pixelBody.variable}`}>
+    <html lang="en" className={`${inter.variable} ${label.variable} ${pixelBody.variable}`}>
       <body>{children}</body>
     </html>
   );
