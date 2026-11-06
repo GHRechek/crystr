@@ -460,3 +460,5 @@ The badge picture set (`public/badges/set/`) is the whole 1,015-picture achievem
 **Quests someone else confirms** (`badges.peer_approved`, `20261108060000_peer_quests.sql`): Goblin Friend, Elf Friend, Forsaken Friend, Orcish Philosophy, and so on. From the quest you tap ASK SOMEONE and pick who it was; `cr_badge_claim` sends them a whisper (`dm_messages.claim_id`, `badge_claims`) with YES and NO, and `cr_badge_claim_answer` awards the badge on yes. Witches choose between "a witch likes a post" and "someone says yes" when they make a badge.
 
 The large framed pictures (about 37 pixels, a rounded square with a thick frame: 417 to 443 and 817 to 848) were taken out of the badge set. `SET_REMOVED` and `SET_NUMBERS` in `lib/badges.ts` say which numbers are left; the token maker hides them too (their slots stay so tokens already made keep their indexes).
+
+The Well's rewards (`quests.reward`) and a daily sunrise gift of 4 mana (in `cr_dawn_snapshot`, 6 am US Eastern standard time, before the Brimming snapshot) are in `20261108110000_well_rewards_scaled.sql`.
