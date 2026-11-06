@@ -6,7 +6,7 @@ import { ArrowIcon } from "@/components/icons";
 import { setWorkingOn } from "@/lib/actions";
 import { WORKING_MAX, type ShownBadge } from "@/lib/badges";
 
-const PER_PAGE = 8; // rows to a page
+const PER_PAGE = 20; // rows to a page, scrolling
 
 /** "Working on": the badges a person is going after, as a plain list, one to a row, each with
  *  what it takes. On your own profile a button opens every badge there is, to pick up to five
