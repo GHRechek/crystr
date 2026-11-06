@@ -69,7 +69,7 @@ export function AboutBadges({
   const tipBadge = tip ? shown.find((b) => b.key === tip.key) : undefined;
 
   return (
-    <div ref={box} style={{ position: "relative", display: "flex", flexWrap: compact ? "nowrap" : "wrap", alignItems: "center", gap: compact ? 4 : 6 }}>
+    <div ref={box} style={{ position: "relative", display: "flex", flexWrap: compact ? "nowrap" : "wrap", alignItems: compact ? "flex-end" : "center", gap: compact ? 4 : 6 }}>
       {children}
       {shown.slice(0, SHOW_MAX).map((b) => (
         <button
@@ -117,7 +117,7 @@ export function AboutBadges({
           type="button"
           aria-label="See all their badges"
           onClick={() => setChoosing(true)}
-          style={{ flex: "none", width: 28, height: 28, display: "grid", placeItems: "center", background: "none", border: "1px dashed var(--edge)", borderRadius: "var(--px-r)", color: "var(--muted)", cursor: "pointer" }}
+          style={{ flex: "none", width: compact ? 36 : 42, height: compact ? 36 : 42, display: "grid", placeItems: "center", background: "none", border: "1px dashed var(--edge)", borderRadius: "var(--px-r)", color: "var(--muted)", cursor: "pointer" }}
         >
           <EyeIcon />
         </button>
@@ -128,7 +128,7 @@ export function AboutBadges({
           aria-label="See all your badges and choose which to show"
           title="Choose your shown badges"
           onClick={() => setChoosing(true)}
-          style={{ flex: "none", width: 28, height: 28, display: "grid", placeItems: "center", background: "none", border: "1px dashed var(--edge)", borderRadius: "var(--px-r)", color: "var(--muted)", cursor: "pointer" }}
+          style={{ flex: "none", width: compact ? 36 : 42, height: compact ? 36 : 42, display: "grid", placeItems: "center", background: "none", border: "1px dashed var(--edge)", borderRadius: "var(--px-r)", color: "var(--muted)", cursor: "pointer" }}
         >
           <CogIcon />
         </button>
@@ -164,7 +164,7 @@ function TradeIcon({ small }: { small?: boolean }) {
 function CogIcon() {
   const rows = ["...###...", ".#.###.#.", "..#####..", "###...###", "###...###", "###...###", "..#####..", ".#.###.#.", "...###..."];
   return (
-    <svg width={14} height={14} viewBox="0 0 9 9" shapeRendering="crispEdges" aria-hidden>
+    <svg width={20} height={20} viewBox="0 0 9 9" shapeRendering="crispEdges" aria-hidden>
       {rows.flatMap((r, y) => [...r].map((c, x) => (c === "#" ? <rect key={`${x}${y}`} x={x} y={y} width={1} height={1} fill="currentColor" /> : null)))}
     </svg>
   );
