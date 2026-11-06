@@ -4,7 +4,7 @@ import { requireMe, getTopFriends, getBadges, getBadgeItems, getToken, getPlaint
 import { openThread } from "@/lib/actions";
 import { Avatar } from "@/components/bits";
 import { TokenImage } from "@/components/badges";
-import { BadgeGrid } from "@/components/badge-grid";
+import { BadgeTabs } from "@/components/badge-tabs";
 import { WorkingOn } from "@/components/working-on";
 import { achievementGrid, resolveShown, resolveWorking } from "@/lib/badges";
 import { ago, corrupt, decayLevel, BADGE_MANA } from "@/lib/crystr";
@@ -165,23 +165,23 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
           </div>
         ) : null}
 
-        {earned.length ? <BadgeGrid title="BADGES" count={`${earned.length} OF ${badges.length}`} items={achievementGrid(earned)} /> : null}
-
         <WorkingOn items={resolveWorking(person.working_on, badges)} />
 
-        {items.length ? (
-          <BadgeGrid
-            title="WHAT THEY HOLD"
-            tone="var(--pur-soft)"
-            count={String(items.length)}
-            aside={
-              <Link href={`/u/${person.handle}/trade`} className="px" style={{ fontSize: 11, color: "var(--pur-pale)", whiteSpace: "nowrap" }}>
-                OFFER A TRADE →
-              </Link>
-            }
-            items={resolveShown(items.filter((i) => i.kind === "tradable").map((i) => `i:${i.id}`), badges, items, person.handle, 10000)}
-          />
-        ) : null}
+        <BadgeTabs
+          tabs={[
+            { label: "BADGES", count: `${earned.length} OF ${badges.length}`, items: achievementGrid(earned) },
+            {
+              label: "TRADABLE",
+              count: String(items.filter((i) => i.kind === "tradable").length),
+              items: resolveShown(items.filter((i) => i.kind === "tradable").map((i) => `i:${i.id}`), badges, items, person.handle, 10000),
+              aside: (
+                <Link href={`/u/${person.handle}/trade`} className="px" style={{ fontSize: 11, color: "var(--pur-pale)", whiteSpace: "nowrap" }}>
+                  OFFER A TRADE →
+                </Link>
+              ),
+            },
+          ]}
+        />
       </div>
     </div>
   );

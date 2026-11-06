@@ -16,7 +16,7 @@ import {
 import { ROMAN, tokenReadyAt, resolveShown, resolveWorking, achievementGrid } from "@/lib/badges";
 import { Avatar } from "@/components/bits";
 import { BadgeArt, ItemTile, TokenImage } from "@/components/badges";
-import { BadgeGrid } from "@/components/badge-grid";
+import { BadgeTabs } from "@/components/badge-tabs";
 import { WorkingOn } from "@/components/working-on";
 import { ProfileHead } from "./face-menu";
 import { bannerOf, bannerStyle } from "@/lib/banner";
@@ -215,21 +215,21 @@ export default async function ProfilePage() {
         ) : null}
 
         {/* The badges you have, just the pictures, packed tight; tap one for its tooltip. */}
-        {badges.length || tradable.length ? (
-          <BadgeGrid
-            title="BADGES"
-            count={`${earnedCount + tradable.length} OF ${badges.length + tradable.length}`}
-            aside={
-              <Link href="/me/trades" className="px" style={{ fontSize: 11, color: "var(--pur-pale)", whiteSpace: "nowrap" }}>
-                TRADES{waiting ? ` · ${waiting}` : ""} →
-              </Link>
-            }
-            items={[
-              ...achievementGrid(badges.filter((b) => b.earned_at)),
-              ...resolveShown(tradable.map((i) => `i:${i.id}`), badges, items, profile.handle, 10000),
-            ]}
-          />
-        ) : null}
+        <BadgeTabs
+          tabs={[
+            { label: "BADGES", count: `${earnedCount} OF ${badges.length}`, items: achievementGrid(badges.filter((b) => b.earned_at)) },
+            {
+              label: "TRADABLE",
+              count: `+${BADGE_MANA.tradable} EACH`,
+              items: resolveShown(tradable.map((i) => `i:${i.id}`), badges, items, profile.handle, 10000),
+              aside: (
+                <Link href="/me/trades" className="px" style={{ fontSize: 11, color: "var(--pur-pale)", whiteSpace: "nowrap" }}>
+                  TRADES{waiting ? ` · ${waiting}` : ""} →
+                </Link>
+              ),
+            },
+          ]}
+        />
 
         {/* What you are going after, as a list, with a button to see every badge and choose. */}
         <WorkingOn editable items={resolveWorking(profile.working_on, badges)} all={achievementGrid(badges)} />
