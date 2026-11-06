@@ -2,7 +2,6 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import {
   requireMe,
-  getLedger,
   getTopFriends,
   getBadges,
   getBadgeItems,
@@ -37,8 +36,9 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
   const { userId, profile } = await requireMe();
   // Count anything that has come due since you were last here (a day more in the City, a Top 5).
   await createClient().rpc("cr_check_badges");
-  const [ledger, top, badges, items, token, helps, trades, plaintiffSince, override] = await Promise.all([
-    getLedger(userId),
+  const { data: progressData } = await createClient().rpc("cr_goal_progress");
+  const progress = (progressData ?? {}) as Record<string, number>;
+  const [top, badges, items, token, helps, trades, plaintiffSince, override] = await Promise.all([
     getTopFriends(userId),
     getBadges(userId),
     getBadgeItems(userId),
@@ -234,7 +234,7 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
 
         {/* The badges you have, just the pictures, packed tight; tap one for its tooltip. */}
         {/* What you are going after, as a list, with a button to see every badge and choose. */}
-        <WorkingOn key={goals ? "pick" : "view"} openAtStart={goals} isWitch={profile.is_witch} editable finished={finishedWorking(profile.working_on, badges)} items={resolveWorking(profile.working_on, badges)} all={goalGrid(badges)} />
+        <WorkingOn key={goals ? "pick" : "view"} openAtStart={goals} isWitch={profile.is_witch} editable finished={finishedWorking(profile.working_on, badges)} items={resolveWorking(profile.working_on, badges, [], progress)} all={goalGrid(badges, progress)} />
 
         <Quests key={quests ? "open" : "shut"} openAtStart={quests} items={questGrid(badges)} />
 
@@ -255,64 +255,6 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
           </div>
         ) : null}
 
-        <div>
-          <div
-            style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 8 }}
-          >
-            <div className="px" style={{ fontSize: 12, color: "var(--pur-soft)" }}>
-              LEDGER
-            </div>
-            <span className="spacer" />
-            <div className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
-              SPENT TOTAL
-            </div>
-            <div className="px" style={{ fontSize: 12, color: "var(--pur-soft)" }}>
-              {profile.spent_total}
-            </div>
-          </div>
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            {ledger.map((l) => (
-              <div
-                key={l.id}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 10,
-                  padding: "9px 2px",
-                  borderBottom: "1px solid var(--rule-soft)",
-                }}
-              >
-                <div
-                  className="px"
-                  style={{
-                    fontSize: 12,
-                    width: 40,
-                    flex: "none",
-                    color: l.amount > 0 ? "var(--blu-soft)" : "var(--mag-soft)",
-                  }}
-                >
-                  {l.amount > 0 ? `+${l.amount}` : l.amount}
-                </div>
-                <div
-                  style={{
-                    flex: 1,
-                    minWidth: 0,
-                    fontSize: 12,
-                    color: "var(--text-2)",
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  }}
-                >
-                  {l.reason}
-                </div>
-                <div className="px" style={{ fontSize: 11, color: "var(--dim)", flex: "none" }}>
-                  {ago(l.created_at)}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
 
         {profile.is_witch ? (
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>

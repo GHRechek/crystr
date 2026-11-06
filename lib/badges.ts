@@ -20,6 +20,9 @@ export type BadgeRow = {
   witch_approved?: boolean;
   /** A long-term goal (only counts while on Working On) or a quest (everything else). */
   kind?: "goal" | "quest";
+  /** The counts that earn each step, and the single count of a one-step badge. */
+  steps?: number[] | null;
+  threshold?: number | null;
   earned_at: string | null;
   /** The tier held, 1 to 4 (1 on a badge with one tier). 0 until earned. */
   tier: number;
@@ -110,6 +113,8 @@ export type ShownBadge = {
   locked?: boolean;
   /** A badge to ask a witch for: make a post, and a witch's like earns it. */
   request?: boolean;
+  /** How far along a goal is: the count so far, and the count that finishes the next step. */
+  progress?: { n: number; of: number };
   /** Handed out by the system itself, not by a witch's like: marked with a star. */
   auto?: boolean;
   /** A witch-approved badge's own fields, for a witch to edit. */
@@ -219,7 +224,13 @@ export function finishedWorking(list: string[] | null | undefined, badges: Badge
     });
 }
 
-export function resolveWorking(list: string[] | null | undefined, badges: BadgeRow[], tokens: TokenRef[] = []): ShownBadge[] {
+/** The count that finishes a goal's next step: its next step up, or its last when it is done. */
+export function goalTarget(b: BadgeRow, n: number): number {
+  const steps = b.steps?.length ? b.steps : b.tiers > 1 ? [5, 10, 25, 50].slice(0, b.tiers) : [b.threshold ?? 1];
+  return steps.find((s) => s > n) ?? steps[steps.length - 1];
+}
+
+export function resolveWorking(list: string[] | null | undefined, badges: BadgeRow[], tokens: TokenRef[] = [], progress?: Record<string, number>): ShownBadge[] {
   const out: ShownBadge[] = [];
   for (const key of list ?? []) {
     if (key.startsWith("t:")) {
@@ -236,14 +247,18 @@ export function resolveWorking(list: string[] | null | undefined, badges: BadgeR
       line: b.how,
       locked: !b.earned_at,
       request: !!b.witch_approved && !b.earned_at,
+      progress: progress ? { n: progress[b.slug] ?? 0, of: goalTarget(b, progress[b.slug] ?? 0) } : undefined,
     });
   }
   return out.slice(0, WORKING_MAX);
 }
 
 /** The long-term goals still to go for, to choose from for Working On. */
-export const goalGrid = (badges: BadgeRow[]): ShownBadge[] =>
-  achievementGrid(badges.filter((b) => b.kind === "goal" && stillWorking(b)));
+export const goalGrid = (badges: BadgeRow[], progress?: Record<string, number>): ShownBadge[] =>
+  achievementGrid(badges.filter((b) => b.kind === "goal" && stillWorking(b))).map((c) => {
+    const b = badges.find((x) => `a:${x.slug}` === c.key)!;
+    return progress ? { ...c, progress: { n: progress[b.slug] ?? 0, of: goalTarget(b, progress[b.slug] ?? 0) } } : c;
+  });
 
 /** Every other badge, as the quests list shows them: what is still to do first. */
 export const questGrid = (badges: BadgeRow[]): ShownBadge[] => {

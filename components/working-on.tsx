@@ -31,8 +31,25 @@ export function WorkingOn({ items, all, editable, person, finished, isWitch, ope
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-      <div className="px" style={{ fontSize: 12, color: "var(--blu-soft)", minHeight: 24, display: "flex", alignItems: "center" }}>
-        WORKING ON <span style={{ fontSize: 11, color: "var(--muted)", marginLeft: 6 }}>· {items.length}/{WORKING_MAX}</span>
+      <div className="px" style={{ fontSize: 12, color: "var(--blu-soft)", minHeight: 24, display: "flex", alignItems: "center", gap: 8 }}>
+        <span>
+          WORKING ON <span style={{ fontSize: 11, color: "var(--muted)", marginLeft: 6 }}>· {items.length}/{WORKING_MAX}</span>
+        </span>
+        <span className="spacer" />
+        {editable ? (
+          <button
+            type="button"
+            className="px"
+            onClick={() => {
+              setPick(items.map((b) => b.key));
+              setPage(0);
+              setOpen(true);
+            }}
+            style={{ background: "none", border: 0, padding: 0, cursor: "pointer", fontSize: 11, color: "var(--pur-pale)" }}
+          >
+            {items.length ? "CHANGE →" : "PICK GOALS →"}
+          </button>
+        ) : null}
       </div>
 
       {items.length ? (
@@ -49,6 +66,11 @@ export function WorkingOn({ items, all, editable, person, finished, isWitch, ope
                   </span>
                   <span style={{ display: "block", fontSize: 12, lineHeight: 1.4, color: "var(--muted)" }}>{b.line}</span>
                 </span>
+                {b.progress ? (
+                  <span className="px" style={{ marginLeft: "auto", flex: "none", fontSize: 12, color: "var(--pur-pale)" }}>
+                    {b.progress.n}/{b.progress.of}
+                  </span>
+                ) : null}
               </>
             );
             // On someone else's page a badge they are working on can be tapped to say
@@ -127,21 +149,6 @@ export function WorkingOn({ items, all, editable, person, finished, isWitch, ope
         </div>
       ) : null}
 
-      {editable ? (
-        <button
-          type="button"
-          className="btn btn-block"
-          onClick={() => {
-            setPick(items.map((b) => b.key));
-            setPage(0);
-            setOpen(true);
-          }}
-          style={{ minHeight: 44 }}
-        >
-          CHOOSE YOUR GOALS
-        </button>
-      ) : null}
-
       {open && editable ? (
         <div role="dialog" aria-label="Choose what you are working on" style={{ position: "fixed", inset: 0, zIndex: 80, display: "flex", flexDirection: "column", maxWidth: 480, margin: "0 auto" }}>
           <form action={setWorkingOn} style={{ flex: 1, minHeight: 0, overflowY: "auto", background: "var(--device)", padding: "16px 16px 24px", display: "flex", flexDirection: "column", gap: 10 }}>
@@ -197,6 +204,7 @@ export function WorkingOn({ items, all, editable, person, finished, isWitch, ope
                       </span>
                       <span style={{ display: "block", fontSize: 12, lineHeight: 1.4, color: "var(--muted)" }}>{b.line}</span>
                     </span>
+                    {b.progress ? <span className="px" style={{ flex: "none", fontSize: 11, color: "var(--pur-pale)" }}>{b.progress.n}/{b.progress.of}</span> : null}
                     {isWitch && b.edit ? (
                       <button
                         type="button"
