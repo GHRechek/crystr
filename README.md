@@ -485,3 +485,4 @@ Finishing a Well quest, or earning any badge (a quest or an epic quest), fills y
 
 ### Your code
 Everyone has a QR code at the bottom of the profile-picture menu (it points at `/u/<handle>`). The exchange icon on your own profile opens the camera (`components/qr-scanner.tsx`, jsQR); scanning someone's code opens a trade with them. "MY TRADES" is in the scanner's top bar. The menu is three quarters of the row wide.
+After a scan: TRADE, PROFILE or QUEST. QUEST lists only the with-quests that person can actually be part of (`cr_scan_quests`: species/spellcaster/witch fit, not earned, not already asked, epic ones you picked and they have not counted yet), one tap asks one quest.

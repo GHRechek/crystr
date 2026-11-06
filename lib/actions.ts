@@ -9,7 +9,7 @@ import { TERMS_VERSION } from "@/lib/terms";
 import { INVISIBLE } from "@/lib/wiki-fact";
 import { isPattern, isSwatch } from "@/lib/banner";
 import { COSTS, hasStarterHandle, untilReady } from "@/lib/crystr";
-import { normalizePortrait } from "@/lib/portrait/core";
+import { normalizePortrait, portraitFromId, packPortrait } from "@/lib/portrait/core";
 import { normalizeToken, unpackToken } from "@/lib/token";
 import { SPECIES } from "@/lib/species";
 import { pictureFor } from "@/lib/article-icons";
@@ -1161,4 +1161,26 @@ export async function answerBadgeClaim(fd: FormData) {
   else await setFlash(yes ? "THANK YOU" : "NO WORRIES", yes ? "Confirmed. The badge is theirs." : "Left as it was.", yes ? EDGE.blue : EDGE.purple);
   revalidatePath(`/whispers/${Number(fd.get("thread"))}`);
   revalidatePath("/", "layout");
+}
+
+
+export type ScanQuest = { slug: string; title: string; how: string; art: string; tiers: number; tier: number; epic: boolean };
+export type Scanned = { id: string; handle: string; name: string | null; species: string | null; spellcaster: boolean; face: string; quests: ScanQuest[] };
+
+/** Someone's code was scanned: who they are, and the quests you can ask them about (the ones they can actually be part of). */
+export async function scanPerson(handle: string): Promise<Scanned | null> {
+  if (!/^[a-z0-9_.-]{1,40}$/.test(handle)) return null;
+  const supabase = createClient();
+  const { data: p } = await supabase.from("profiles").select("id, handle, display_name, species, spellcaster, avatar_config").eq("handle", handle).maybeSingle();
+  if (!p) return null;
+  const { data: slugs } = await supabase.rpc("cr_scan_quests", { p_other: p.id });
+  const list = (slugs ?? []) as string[];
+  const { data: rows } = list.length ? await supabase.from("badges").select("slug, title, how, art, tiers, kind").in("slug", list) : { data: [] };
+  const by = new Map((rows ?? []).map((r) => [r.slug as string, r]));
+  const quests: ScanQuest[] = list.flatMap((slug) => {
+    const r = by.get(slug);
+    return r ? [{ slug, title: String(r.title), how: String(r.how), art: String(r.art), tiers: Number(r.tiers ?? 1), tier: 0, epic: r.kind === "goal" }] : [];
+  });
+  const face = `/face/${packPortrait(p.avatar_config ? normalizePortrait(p.avatar_config) : portraitFromId(String(p.id)))}.png`;
+  return { id: String(p.id), handle: String(p.handle), name: p.display_name ?? null, species: p.species ?? null, spellcaster: !!p.spellcaster, face, quests };
 }
