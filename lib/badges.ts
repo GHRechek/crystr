@@ -339,17 +339,20 @@ export function helpingRow(badges: BadgeRow[], helps: number): ShownBadge | null
   };
 }
 
-/** The picture picker's five groups. The set came in families that look alike, so these follow them:
- *  blue sci-fi rounds, the gold-framed everyday icons, round medallions, plain loot, and everything
- *  fantasy that is left (creatures, armour, crests). */
-export const PICTURE_CATEGORIES: { label: string; ranges: [number, number][] }[] = [
-  { label: "SPACE", ranges: [[1, 77], [393, 396], [742, 773]] },
-  { label: "ICONS", ranges: [[78, 140], [493, 494], [500, 509]] },
-  { label: "MEDALS", ranges: [[141, 177], [281, 308], [382, 392], [444, 451], [637, 672], [707, 741], [849, 892]] },
-  { label: "LOOT", ranges: [[178, 280], [309, 381], [397, 412], [774, 816], [893, 899]] },
-  { label: "FANTASY", ranges: [] },
-];
-export const pictureCategory = (n: number): number => {
-  const hit = PICTURE_CATEGORIES.findIndex((c) => c.ranges.some(([a, b]) => n >= a && n <= b));
-  return hit >= 0 ? hit : PICTURE_CATEGORIES.length - 1;
-};
+/** The picture picker's five groups, checked picture by picture. SPACE is the blue sci-fi rounds, ICONS
+ *  the gold-framed everyday icons, CRESTS the round medallions, crests, medals and trophies, CREATURES
+ *  the monsters, skulls and people; LOOT is everything else (weapons, potions, gems, keys, maps...). */
+const R = (a: number, b: number) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
+const SPACE = new Set([...R(1, 77), ...R(382, 386), ...R(747, 778), 920, 925]);
+const ICONS = new Set([...R(78, 140), 493, 494, ...R(500, 509), 621, 928, 946, 983, 989, 996, 999, 1004, 1007, 1009, 1014]);
+const CRESTS = new Set([
+  ...R(141, 191), 254, 255, 260, 261, ...R(266, 308), 318, 319, 370, ...R(372, 381), ...R(444, 459), 464, 474, 487, 495, 497, 512, 513, 515, 518, 520,
+  ...R(532, 563), 565, ...R(568, 577), 584, 586, 601, 617, 618, 620, ...R(637, 685), 690, 696, ...R(707, 746), ...R(849, 892), 897, 926, 927, 936, 938, 966,
+  982, 984, 1000, 1002, 1005, 1006, 1013,
+]);
+const CREATURES = new Set([
+  203, 211, 213, 216, 229, 245, 257, 258, 259, 323, 324, 333, 336, 352, 353, 354, 358, 368, 390, 475, 476, 477, 479, 509, 522, 581, 583, 591, 602, 603, 608,
+  612, 614, 616, 629, 633, 686, 697, 702, 787, 792, 794, 912, 913, 914, 915, 916, 917, 918, 922, 923, 924, 933, 937, 971, 972, 975, 986, 987, 993, 1011, 1012,
+]);
+export const PICTURE_CATEGORIES: { label: string }[] = [{ label: "SPACE" }, { label: "ICONS" }, { label: "CRESTS" }, { label: "LOOT" }, { label: "CREATURES" }];
+export const pictureCategory = (n: number): number => (SPACE.has(n) ? 0 : ICONS.has(n) ? 1 : CRESTS.has(n) ? 2 : CREATURES.has(n) ? 4 : 3);

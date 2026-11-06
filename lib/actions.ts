@@ -1166,6 +1166,21 @@ export async function answerBadgeClaim(fd: FormData) {
 }
 
 
+/** A witch says a quest is done for someone, from their profile. */
+export async function witchGrant(fd: FormData) {
+  const handle = str(fd, "handle");
+  const r = await call("cr_witch_grant", { p_user: str(fd, "user_id"), p_slug: str(fd, "slug") });
+  if (!r.ok) {
+    if (r.code === "have_it") await setFlash("ALREADY THEIRS", "They have that one already.", EDGE.purple);
+    else if (r.code === "forbidden") await setFlash("WITCHES ONLY", "Only a witch can do that.", EDGE.mag);
+    else await wentWrong();
+  } else {
+    await setFlash("DONE", "Marked as done. The badge is theirs.", EDGE.blue);
+  }
+  revalidatePath(`/u/${handle}`);
+  revalidatePath("/", "layout");
+}
+
 /** Help Someone Else, from a scan: ask the person you helped to say yes. */
 export async function claimHelp(fd: FormData) {
   const r = await call("cr_scan_help", { p_other: str(fd, "other_id") });

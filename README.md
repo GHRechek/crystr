@@ -507,3 +507,6 @@ Icons only (no words), from `public/tabs/*.png` used as CSS masks so they take t
 
 ### Zoom lock and picture groups
 Pinch and double-tap zoom are off (viewport `maximumScale=1`, `userScalable=false`, plus `components/zoom-lock.tsx` for iOS, which ignores the viewport setting). The badge picture picker and the token maker's ADD AN ICON sheet each have five tabs (SPACE, ICONS, MEDALS, LOOT, FANTASY), defined by number ranges in `PICTURE_CATEGORIES` (`lib/badges.ts`); it opens on the group of the badge's current picture.
+
+### Witches mark quests done
+On someone else's profile a witch taps their picture for MARK A QUEST DONE: a searchable list of the side quests and first steps that person has not earned; one tap and a confirm grants it (`cr_witch_grant`, recorded as a confirmed claim with the witch as the other party). Main quests are not included: they count on their own.

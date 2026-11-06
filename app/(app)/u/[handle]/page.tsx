@@ -7,7 +7,8 @@ import { TokenImage } from "@/components/badges";
 import { AboutBadges } from "@/components/about-badges";
 import { ProfileDetails, type DetailKind } from "@/components/profile-details";
 import { WorkingOn } from "@/components/working-on";
-import { achievementGrid, resolveShown, resolveWorking, helpingRow } from "@/lib/badges";
+import { achievementGrid, resolveShown, resolveWorking, helpingRow, questGrid } from "@/lib/badges";
+import { WitchFace } from "@/components/witch-face";
 import { ago, corrupt, decayLevel, BADGE_MANA } from "@/lib/crystr";
 import { bannerOf, bannerStyle } from "@/lib/banner";
 import { formatBirthday } from "@/lib/birthday";
@@ -62,9 +63,13 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
 
       <div style={{ padding: "0 16px", marginTop: -44, position: "relative", display: "flex", flexDirection: "column", gap: 12 }}>
         <div style={{ display: "flex", alignItems: "flex-end", gap: 12 }}>
-          <div style={{ width: 104, height: 104, flex: "none" }}>
-            <Avatar person={person} size={104} />
-          </div>
+          {me.is_witch ? (
+            <WitchFace person={person} quests={questGrid(badges).filter((b) => b.locked)} />
+          ) : (
+            <div style={{ width: 104, height: 104, flex: "none" }}>
+              <Avatar person={person} size={104} />
+            </div>
+          )}
           <div style={{ minWidth: 0, flex: 1, paddingBottom: 6 }}>
             <AboutBadges
                 compact
