@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Cost } from "@/components/mana";
+import { MotionBoard } from "@/components/motion-board";
 import { ArticleIcon } from "@/components/article-icon";
 import { requireMe, getArticles, type Article } from "@/lib/data";
 import { setArticleStatus } from "@/lib/actions";
@@ -7,7 +8,7 @@ import { byline, corrupt, COSTS, decayLevel } from "@/lib/crystr";
 
 export default async function BallPage(
   props: {
-    searchParams: Promise<{ as?: string; tab?: string }>;
+    searchParams: Promise<{ as?: string; tab?: string; show?: string }>;
   }
 ) {
   const searchParams = await props.searchParams;
@@ -20,12 +21,12 @@ export default async function BallPage(
   const asWitch = profile.is_witch && searchParams.as !== "player";
 
   // Two tabs: what the witches tell the City, and what the citizens say back.
-  const tab = searchParams.tab === "oped" ? "oped" : "news";
+  const tab = searchParams.tab === "oped" ? "oped" : searchParams.tab === "motions" ? "motions" : "news";
   const keep = asWitch ? all : all.filter((a) => a.status === "published" || a.author_id === userId);
-  const visible = keep.filter((a) => (tab === "oped" ? a.kind === "oped" : a.kind !== "oped"));
+  const visible = tab === "motions" ? [] : keep.filter((a) => (tab === "oped" ? a.kind === "oped" : a.kind !== "oped"));
   const queue = asWitch && tab === "oped" ? all.filter((a) => a.status === "pending") : [];
   const asQuery = searchParams.as === "player" ? "&as=player" : "";
-  const tabHref = (t: "news" | "oped") => `/ball?tab=${t}${asQuery}`;
+  const tabHref = (t: "news" | "oped" | "motions") => `/ball?tab=${t}${asQuery}`;
 
   return (
     <div className="pad">
@@ -67,7 +68,7 @@ export default async function BallPage(
           </span>
           <span className="spacer" />
           <Link
-            href="/ball"
+            href={`/ball?tab=${tab}`}
             className="px"
             style={{
               minHeight: 40,
@@ -83,7 +84,7 @@ export default async function BallPage(
             WITCH
           </Link>
           <Link
-            href="/ball?as=player"
+            href={`/ball?tab=${tab}&as=player`}
             className="px"
             style={{
               minHeight: 40,
@@ -102,7 +103,7 @@ export default async function BallPage(
       ) : null}
 
       <div className="ball-tabs" role="tablist" aria-label="The Ball">
-        {([["news", "CITY NEWS"], ["oped", "OP-EDS"]] as const).map(([t, label]) => (
+        {([["news", "CITY NEWS"], ["oped", "OP-EDS"], ["motions", "MOTIONS"]] as const).map(([t, label]) => (
           <Link
             key={t}
             href={tabHref(t)}
@@ -115,6 +116,16 @@ export default async function BallPage(
           </Link>
         ))}
       </div>
+
+      {tab === "motions" ? (
+        <MotionBoard
+          showPast={searchParams.show === "past"}
+          isWitch={profile.is_witch}
+          mana={profile.mana}
+          decay={decay}
+          base={tabHref("motions")}
+        />
+      ) : null}
 
       {tab === "news" && asWitch ? (
         <div className="witchbar">
@@ -202,7 +213,7 @@ export default async function BallPage(
         </Link>
       ))}
 
-      {visible.length === 0 ? (
+      {tab !== "motions" && visible.length === 0 ? (
         <div className="empty">
           {tab === "oped" ? "NO ONE HAS SPOKEN UP YET" : "THE CITY HAS NOT BEEN TOLD ANYTHING YET"}
           <br />

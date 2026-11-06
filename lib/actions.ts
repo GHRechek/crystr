@@ -582,7 +582,7 @@ export async function castVote(fd: FormData) {
       str(fd, "side") === "for" ? EDGE.mag : EDGE.blue,
     );
   }
-  revalidatePath("/vote");
+  revalidatePath("/ball");
 }
 
 export async function createMotion(fd: FormData) {
@@ -629,7 +629,7 @@ export async function createMotion(fd: FormData) {
   revalidatePath("/vote");
   revalidatePath("/ball");
   revalidatePath("/");
-  redirect("/vote");
+  redirect("/ball?tab=motions");
 }
 
 // ------------------------------------------------------------------- ball
