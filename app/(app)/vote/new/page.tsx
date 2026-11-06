@@ -4,7 +4,7 @@ import { MotionComposer } from "./composer";
 
 export default async function NewMotionPage() {
   const { profile } = await requireMe();
-  if (!profile.is_witch) redirect("/vote");
+  if (!profile.is_witch) redirect("/ball?tab=motions");
   return (
     <>
       <h1 className="sr-only">Create a motion</h1>

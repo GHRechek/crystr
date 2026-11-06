@@ -30,7 +30,7 @@ export function MotionComposer() {
 
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
         {step === 1 ? (
-          <Link href="/vote" className="btn btn-sm">
+          <Link href="/ball?tab=motions" className="btn btn-sm">
             ✕ DISCARD
           </Link>
         ) : (

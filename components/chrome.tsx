@@ -32,7 +32,6 @@ export function Clock() {
 const TABS = [
   { href: "/", glyph: "▤", label: "FEED" },
   { href: "/ball", glyph: "◉", label: "BALL" },
-  { href: "/vote", glyph: "▥", label: "VOTE" },
   { href: "/wiki", glyph: "☰", label: "WIKI" },
   { href: "/whispers", glyph: "✉", label: "WHISPER" },
   { href: "/me", glyph: "☻", label: "ME" },
@@ -85,7 +84,8 @@ export function TabBar({ welcoming = false, unreadWhispers = 0 }: { welcoming?: 
   return (
     <nav className="tabbar">
       {tabs.map((t) => {
-        const active = t.href === "/" ? path === "/" : path.startsWith(t.href);
+        // The motion board lives in the Ball now, so the composer under /vote counts as the Ball.
+        const active = t.href === "/" ? path === "/" : path.startsWith(t.href) || (t.href === "/ball" && path.startsWith("/vote"));
         return (
           // Not prefetched: every tab is a dynamic, auth'd route, and six of
           // them warming at once is what races the session refresh.
