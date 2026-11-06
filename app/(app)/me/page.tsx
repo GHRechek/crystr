@@ -146,11 +146,10 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
             </div>
           ) : null}
         </div>
-        <ProfileDetails rows={details.map((d) => ({ kind: d.kind, value: corrupt(d.value, decay) }))} />
-
         <div style={{ fontSize: 12.5, lineHeight: 1.6, color: "var(--text-3)", textWrap: "pretty" }}>
           {corrupt(profile.bio || "Nothing written here yet. The City will assume the worst.", decay)}
         </div>
+        <ProfileDetails rows={details.map((d) => ({ kind: d.kind, value: corrupt(d.value, decay) }))} />
 
         <div>
           {heading(
