@@ -185,7 +185,7 @@ fifteen, and layered. The editor is the badge on a stage with a + on its left an
 icon's tools down its right: take it off, up and down the layers, turn right and turn left
 by 45 degrees, and flip, all small buttons with no words on them. The + offers ADD ICON (the
 icon picker) and SHAPE (the shape, the badge's size, and the badge and frame colours).
-Icons cannot be resized (older designs that were keep the size they had). The badge shape is
+Icons can be made bigger in steps of a quarter, up to double or as far as the picture has room for (a diagonal turn needs more room, so a turn can cut the size back), and smaller again, but never below as drawn. Older designs that were shrunk keep the size they had. The badge shape is
 itself a layer, so moving an icon down past it puts it behind the badge (only what hangs out
 past its edge shows), and a token can have no shape at all. In the data this is `order` (the
 draw order of the five slots) and `under` (how many of the first ones sit under the shape).

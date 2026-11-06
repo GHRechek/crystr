@@ -8,16 +8,20 @@ import {
   ITEMS,
   NO_ITEM,
   SHAPES,
+  SIZES,
+  NORMAL_SIZE,
   SLOTS,
   TOKEN_COLOURS,
   TOKEN_SIZE,
   isFramed,
   itemBounds,
+  maxSizeFor,
   moveLayer,
   normalizeToken,
   placeOnTop,
   stackOf,
   tokenSrc,
+  type SizeKey,
   type Slot,
   type TokenColour,
   type TokenDesign,
@@ -29,7 +33,7 @@ import {
 const MAX_CELL = 8;
 const MIN_CELL = 5;
 /** Width of a side button, the gap beside it, and the gap between buttons. */
-const SIDE = 38;
+const SIDE = 34;
 const GAP = 8;
 type Panel = "icons" | "shape" | null;
 
@@ -192,10 +196,10 @@ function Sticker({
 }
 
 /** Design your token: the badge on a stage, with a + on its left and, once an icon is picked,
- *  that icon's tools down its right. The + offers ADD ICON (the icon picker) and SHAPE (the
+ *  that icon's tools down its right. The + on the left offers ADD ICON (the icon picker) and SHAPE (the
  *  shape, its size and its colours). The tools are small buttons with no words: take it off, up
  *  and down the layers (the badge shape is a layer, so down far enough is behind it), turn
- *  either way by 45 degrees, flip. Icons are not resizable. The small picture by the save
+ *  either way by 45 degrees, flip, bigger and smaller (never below as drawn). The small picture by the save
  *  button is the real thing, drawn by /token. */
 export function TokenDesigner({ start, fresh }: { start: TokenDesign; fresh: boolean }) {
   const [d, setD] = useState<TokenDesign>(() => normalizeToken(start));
@@ -242,6 +246,11 @@ export function TokenDesigner({ start, fresh }: { start: TokenDesign; fresh: boo
     setPanel(null);
   }
 
+  // Bigger in steps, as far as the picture has room for it; smaller back down to as drawn, no further.
+  const sizeNow = sel ? d[`${sel}_size`] : NORMAL_SIZE;
+  const biggerTo = sel ? SIZES.find((n) => n > sizeNow && n <= maxSizeFor(d[sel], d[`${sel}_turn`])) : undefined;
+  const smallerTo = sel && sizeNow > NORMAL_SIZE ? [...SIZES].reverse().find((n) => n < sizeNow && n >= NORMAL_SIZE) : undefined;
+  const sizeTo = (n: SizeKey | undefined) => sel && n && set({ [`${sel}_size`]: n } as Partial<TokenDesign>);
   const turnBy = (n: number) => sel && set({ [`${sel}_turn`]: ((d[`${sel}_turn`] + n + 8) % 8) as Turn } as Partial<TokenDesign>);
   const flip = () => sel && set({ [`${sel}_flip`]: !d[`${sel}_flip`] } as Partial<TokenDesign>);
   const remove = () => {
@@ -365,6 +374,8 @@ export function TokenDesigner({ start, fresh }: { start: TokenDesign; fresh: boo
               {tool("Turn right 45 degrees", () => turnBy(1), "↻")}
               {tool("Turn left 45 degrees", () => turnBy(-1), "↺")}
               {tool("Flip", flip, "⇄", { pressed: d[`${sel}_flip`] })}
+              {tool("Bigger", () => sizeTo(biggerTo), "+", { disabled: !biggerTo })}
+              {tool("Smaller, down to as drawn", () => sizeTo(smallerTo), "−", { disabled: !smallerTo })}
             </>
           ) : null}
         </div>
