@@ -62,7 +62,7 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
           <div style={{ width: 104, height: 104, flex: "none" }}>
             <Avatar person={person} size={104} />
           </div>
-          <div style={{ minWidth: 0, flex: 1 }}>
+          <div style={{ minWidth: 0, flex: 1, paddingBottom: 14 }}>
             <AboutBadges
                 compact
                 shown={shown}

@@ -87,7 +87,7 @@ export function AboutBadges({
           }}
           style={{ flex: "none", padding: 0, background: "none", border: 0, cursor: "pointer", lineHeight: 0 }}
         >
-          <BadgeFace b={b} size={42} />
+          <BadgeFace b={b} size={compact ? 36 : 42} />
         </button>
       ))}
       {!noPen && !compact && (earned.length || tradable.length || editable) ? (
@@ -105,7 +105,7 @@ export function AboutBadges({
           href={tradeHref}
           aria-label={tradeCount ? `Trades, ${tradeCount} waiting` : "Trades"}
           title="Trades"
-          style={{ position: "relative", flex: "none", width: compact ? 36 : 42, height: compact ? 36 : 42, display: "grid", placeItems: "center", border: "1px dashed var(--edge)", borderRadius: "var(--px-r)", color: "var(--muted)", textDecoration: "none" }}
+          style={{ position: "relative", flex: "none", width: compact ? 32 : 42, height: compact ? 32 : 42, display: "grid", placeItems: "center", border: "1px dashed var(--edge)", borderRadius: "var(--px-r)", color: "var(--muted)", textDecoration: "none" }}
         >
           <TradeIcon />
           {tradeCount ? (
@@ -120,7 +120,7 @@ export function AboutBadges({
           type="button"
           aria-label="See all their badges"
           onClick={() => setChoosing(true)}
-          style={{ flex: "none", width: compact ? 36 : 42, height: compact ? 36 : 42, display: "grid", placeItems: "center", background: "none", border: "1px dashed var(--edge)", borderRadius: "var(--px-r)", color: "var(--muted)", cursor: "pointer" }}
+          style={{ flex: "none", width: compact ? 32 : 42, height: compact ? 32 : 42, display: "grid", placeItems: "center", background: "none", border: "1px dashed var(--edge)", borderRadius: "var(--px-r)", color: "var(--muted)", cursor: "pointer" }}
         >
           <EyeIcon />
         </button>
