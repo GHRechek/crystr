@@ -8,11 +8,12 @@ import type { Author } from "@/lib/data";
 
 type Row = { person: Author; species: string | null; spellcaster: boolean; witch: boolean };
 
+/** The toggles: a picture under /kinds where there is one, an emoji until then. */
 const KINDS: [string, string][] = [
-  ["elf", "🧝"],
-  ["forsaken", "💀"],
-  ["shifter", "🐺"],
-  ["human", "🧑"],
+  ["elf", "img:elf"],
+  ["forsaken", "img:forsaken"],
+  ["shifter", "img:shifter"],
+  ["human", "img:human"],
   ["orc", "👹"],
   ["goblin", "👺"],
   ["planar", "🌀"],
@@ -47,9 +48,13 @@ export function PeopleSearch({ rows }: { rows: Row[] }) {
               title={targetLabel(k)}
               onClick={() => setOn((x) => (active ? x.filter((y) => y !== k) : [...x, k]))}
               className={`btn btn-sm${active ? " btn-purple" : ""}`}
-              style={{ minHeight: 44, minWidth: 44, padding: 0, fontSize: 20, lineHeight: 1 }}
+              style={{ minHeight: 44, minWidth: 44, padding: 0, fontSize: 20, lineHeight: 1, display: "grid", placeItems: "center" }}
             >
-              <span aria-hidden>{icon}</span>
+              {icon.startsWith("img:") ? (
+                <span aria-hidden style={{ display: "block", width: 24, height: 24, background: "currentColor", WebkitMaskImage: `url(/kinds/${icon.slice(4)}.png)`, maskImage: `url(/kinds/${icon.slice(4)}.png)`, WebkitMaskSize: "contain", maskSize: "contain", WebkitMaskRepeat: "no-repeat", maskRepeat: "no-repeat", WebkitMaskPosition: "center", maskPosition: "center" }} />
+              ) : (
+                <span aria-hidden>{icon}</span>
+              )}
             </button>
           );
         })}
