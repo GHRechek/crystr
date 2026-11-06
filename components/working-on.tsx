@@ -115,7 +115,7 @@ export function WorkingOn({ items, all, editable, person, finished, isWitch, ope
           })}
         </ul>
       ) : (
-        <div style={{ fontSize: 12, lineHeight: 1.5, color: "var(--muted)" }}>Nothing picked yet. See all the badges and choose up to five to go after.</div>
+        <div style={{ fontSize: 12, lineHeight: 1.5, color: "var(--muted)" }}>Nothing picked yet. Choose up to three long-term goals to work on.</div>
       )}
 
       {editable && (finished?.length || items.length < WORKING_MAX) ? (
@@ -138,7 +138,7 @@ export function WorkingOn({ items, all, editable, person, finished, isWitch, ope
           }}
           style={{ minHeight: 44 }}
         >
-          SEE ALL BADGES · CHOOSE WHAT YOU ARE WORKING ON
+          CHOOSE YOUR GOALS
         </button>
       ) : null}
 
@@ -148,7 +148,7 @@ export function WorkingOn({ items, all, editable, person, finished, isWitch, ope
             <input type="hidden" name="list" value={JSON.stringify(pick)} />
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <div className="px" style={{ fontSize: 12, color: "var(--pur-soft)" }}>
-                ALL BADGES · {pick.length}/{WORKING_MAX}
+                GOALS · {pick.length}/{WORKING_MAX}
               </div>
               <span className="spacer" />
               {isWitch ? (

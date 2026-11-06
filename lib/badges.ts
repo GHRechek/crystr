@@ -18,6 +18,8 @@ export type BadgeRow = {
   tiers: number;
   /** Earned by posting it and having a witch like the post. */
   witch_approved?: boolean;
+  /** A long-term goal (only counts while on Working On) or a quest (everything else). */
+  kind?: "goal" | "quest";
   earned_at: string | null;
   /** The tier held, 1 to 4 (1 on a badge with one tier). 0 until earned. */
   tier: number;
@@ -182,8 +184,8 @@ export function achievementGrid(badges: BadgeRow[]): ShownBadge[] {
   return [...badges.filter((b) => b.earned_at), ...badges.filter((b) => !b.earned_at)].map(cell);
 }
 
-/** How many badges a person can say they are working on. */
-export const WORKING_MAX = 5;
+/** How many long-term goals a person can work on at once. */
+export const WORKING_MAX = 3;
 
 /** The badges a person says they are working on, in order, ready to list: each with what to do to
  *  earn it. They need not be earned yet. */
@@ -238,3 +240,21 @@ export function resolveWorking(list: string[] | null | undefined, badges: BadgeR
   }
   return out.slice(0, WORKING_MAX);
 }
+
+/** The long-term goals still to go for, to choose from for Working On. */
+export const goalGrid = (badges: BadgeRow[]): ShownBadge[] =>
+  achievementGrid(badges.filter((b) => b.kind === "goal" && stillWorking(b)));
+
+/** Every other badge, as the quests list shows them: what is still to do first. */
+export const questGrid = (badges: BadgeRow[]): ShownBadge[] => {
+  const q = badges.filter((b) => b.kind !== "goal");
+  return [...q.filter((b) => !b.earned_at), ...q.filter((b) => b.earned_at)].map((b) => ({
+    key: `a:${b.slug}`,
+    badge: { slug: b.slug, art: b.art, tiers: b.tiers, tier: b.tier },
+    title: b.earned_at ? `${b.title}${b.tiers > 1 ? ` ${ROMAN[b.tier]}` : ""}` : b.title,
+    line: b.earned_at ? b.blurb || b.how : b.how,
+    locked: !b.earned_at,
+    auto: !b.witch_approved,
+    request: !!b.witch_approved && !b.earned_at,
+  }));
+};

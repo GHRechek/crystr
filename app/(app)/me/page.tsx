@@ -13,13 +13,13 @@ import {
   countOpenReports,
   countOpenBugs,
   getOverride,
-  getAllTokens,
 } from "@/lib/data";
-import { ROMAN, tokenReadyAt, resolveShown, resolveWorking, finishedWorking, stillWorking, tokenAsWorking, achievementGrid } from "@/lib/badges";
+import { ROMAN, tokenReadyAt, resolveShown, resolveWorking, finishedWorking, goalGrid, questGrid, achievementGrid } from "@/lib/badges";
 import { Avatar } from "@/components/bits";
 import { BadgeArt, ItemTile, TokenImage } from "@/components/badges";
 import { AboutBadges } from "@/components/about-badges";
 import { WorkingOn } from "@/components/working-on";
+import { Quests } from "@/components/quests";
 import { ProfileHead } from "./face-menu";
 import { bannerOf, bannerStyle } from "@/lib/banner";
 import { portraitFromId, normalizePortrait, packPortrait } from "@/lib/portrait/core";
@@ -30,8 +30,10 @@ import { tokenTitle } from "@/lib/token";
 const longDate = (d: Date) => d.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
 
 
-export default async function ProfilePage(props: { searchParams: Promise<{ quests?: string }> }) {
-  const quests = (await props.searchParams).quests === "1";
+export default async function ProfilePage(props: { searchParams: Promise<{ quests?: string; goals?: string }> }) {
+  const sp = await props.searchParams;
+  const quests = sp.quests === "1";
+  const goals = sp.goals === "1";
   const { userId, profile } = await requireMe();
   // Count anything that has come due since you were last here (a day more in the City, a Top 5).
   await createClient().rpc("cr_check_badges");
@@ -46,7 +48,6 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
     getPlaintiffSince(userId),
     getOverride(userId),
   ]);
-  const allTokens = await getAllTokens(profile.id);
   const [openReports, openBugs] = profile.is_witch ? await Promise.all([countOpenReports(), countOpenBugs()]) : [0, 0];
   const earnedCount = badges.filter((b) => b.earned_at).length;
   const tradable = items.filter((i) => i.kind === "tradable");
@@ -233,7 +234,9 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
 
         {/* The badges you have, just the pictures, packed tight; tap one for its tooltip. */}
         {/* What you are going after, as a list, with a button to see every badge and choose. */}
-        <WorkingOn key={quests ? "pick" : "view"} openAtStart={quests} isWitch={profile.is_witch} editable finished={finishedWorking(profile.working_on, badges)} items={resolveWorking(profile.working_on, badges, allTokens)} all={[...achievementGrid(badges.filter(stillWorking)), ...allTokens.map(tokenAsWorking)]} />
+        <WorkingOn key={goals ? "pick" : "view"} openAtStart={goals} isWitch={profile.is_witch} editable finished={finishedWorking(profile.working_on, badges)} items={resolveWorking(profile.working_on, badges)} all={goalGrid(badges)} />
+
+        <Quests key={quests ? "open" : "shut"} openAtStart={quests} items={questGrid(badges)} />
 
         {tokens.length ? (
           <div>
