@@ -137,6 +137,8 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
             </div>
           ) : null}
         </div>
+        <ProfileDetails rows={details.map((d) => ({ kind: d.kind, value: corrupt(d.value, decay) }))} />
+
         <div style={{ display: "flow-root" }}>
           <Link
             href="/me/token"
@@ -149,8 +151,6 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
             {corrupt(profile.bio || "Nothing written here yet. The City will assume the worst.", decay)}
           </div>
         </div>
-
-        <ProfileDetails rows={details.map((d) => ({ kind: d.kind, value: corrupt(d.value, decay) }))} />
 
         <div>
           {heading(

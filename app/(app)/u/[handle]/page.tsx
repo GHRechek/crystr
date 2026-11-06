@@ -108,6 +108,8 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
             </div>
           ) : null}
         </div>
+        <ProfileDetails rows={details.map((d) => ({ kind: d.kind, value: corrupt(d.value, decay) }))} />
+
         <div style={{ display: "flow-root" }}>
           {token ? (
             <span title={tokenTitle(person.display_name, person.handle)} style={{ float: "left", lineHeight: 0, margin: "0 12px 4px 0" }}>
@@ -118,8 +120,6 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
             {corrupt(person.bio || "Nothing written here yet.", decay)}
           </div>
         </div>
-
-        <ProfileDetails rows={details.map((d) => ({ kind: d.kind, value: corrupt(d.value, decay) }))} />
 
         {top.length ? (
           <div>
