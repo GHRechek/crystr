@@ -20,24 +20,14 @@ export default async function TokenPage() {
         <Link href="/me" className="btn btn-sm">
           ← ME
         </Link>
-        <div className="spacer" />
-        <div className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
-          MAKING ONE IS FREE
-        </div>
+        <h1 className="px" style={{ fontSize: 13, color: "var(--pur-soft)", fontWeight: 400, lineHeight: 1.4 }}>
+          {tokenTitle(profile.display_name, profile.handle).toUpperCase()} <span style={{ color: "var(--pur-pale)" }}>+{BADGE_MANA.token}</span>
+        </h1>
       </div>
 
-      <div>
-        <h1 className="screen-title">{tokenTitle(profile.display_name, profile.handle).toUpperCase()}</h1>
-        <div className="screen-intro">
-          A badge of your own: a shape in your colours, with up to two icons dragged into place.
-          Whoever you give it to holds {BADGE_MANA.token} more max mana. You can give it once every{" "}
-          {TOKEN_GIFT_MONTHS} months.
-        </div>
-      </div>
+      <TokenDesigner start={token ? normalizeToken(token.design) : defaultToken()} fresh={!token} how={token?.how ?? ""} canGive={!!token && !ready} />
 
-      <TokenDesigner start={token ? normalizeToken(token.design) : defaultToken()} fresh={!token} how={token?.how ?? ""} />
-
-      <div className="tile" style={{ padding: 12, display: "flex", flexDirection: "column", gap: 10 }}>
+      <div id="give" className="tile" style={{ padding: 12, display: "flex", flexDirection: "column", gap: 10, scrollMarginTop: 96 }}>
         <div className="px" style={{ fontSize: 11, color: "var(--blu-soft)" }}>
           GIVE IT
         </div>
