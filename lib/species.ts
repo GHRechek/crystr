@@ -20,4 +20,4 @@ export type Kind = { species?: string | null; spellcaster?: boolean | null; is_w
 
 /** Whether this person is the kind a quest asks for (anyone, when it names no kind). */
 export const isKind = (p: Kind, target: string | null | undefined): boolean =>
-  !target ? true : target === "witch" ? !!p.is_witch : target === "spellcaster" ? !!p.spellcaster : target === "leylines" ? !!p.leylines || !!p.is_witch : p.species === target;
+  !target ? true : target === "witch" ? !!p.is_witch : target === "spellcaster" ? !!p.spellcaster || !!p.is_witch : target === "leylines" ? !!p.leylines || !!p.is_witch : p.species === target;

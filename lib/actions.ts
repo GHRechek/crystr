@@ -830,8 +830,6 @@ export async function updateProfile(fd: FormData) {
       likes: field(fd, "likes"),
       food: field(fd, "food"),
       obsession: field(fd, "obsession"),
-      species: SPECIES.some((x) => x.value === str(fd, "species")) ? str(fd, "species") : null,
-      spellcaster: fd.get("spellcaster") === "on",
       updated_at: new Date().toISOString(),
     })
     .eq("id", user.id);
