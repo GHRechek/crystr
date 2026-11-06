@@ -25,7 +25,7 @@ export function BadgeEditor({ draft, setDraft, used = [] }: { draft: BadgeDraft;
       </div>
       {draft.fixed ? (
         <div style={{ fontSize: 12, lineHeight: 1.5, color: "var(--muted)" }}>
-          This is an epic quest, so how it is earned is fixed. You can change its name and picture.
+          This is a main quest, so how it is earned is fixed. You can change its name and picture.
         </div>
       ) : null}
       <form

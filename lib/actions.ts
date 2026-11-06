@@ -316,7 +316,8 @@ export async function setWorkingOn(fd: FormData) {
     list = [];
   }
   const r = await call("cr_set_working_on", { p_list: Array.isArray(list) ? list.filter((x) => typeof x === "string").slice(0, 5) : [] });
-  if (!r.ok) await wentWrong();
+  if (!r.ok && r.code === "first_steps") await setFlash("FINISH YOUR FIRST STEPS", "Do all five first steps, and then you can pick your main quests.", EDGE.purple);
+  else if (!r.ok) await wentWrong();
   else await setFlash("SAVED", `Your list of what you are working on is updated.${await newBadges()}`, EDGE.blue);
   revalidatePath("/me");
   redirect("/me");
@@ -454,7 +455,7 @@ export async function claimVouch(fd: FormData) {
       "ASKED",
       kind === "meetup"
         ? "They will see a note asking whether you met up. If they say yes, you both earn a badge."
-        : "They will see a note asking whether you helped. If they say yes, it counts: every five helps earn a tradable badge.",
+        : "They will see a note asking whether you helped. If they say yes, it counts: every ten helps earn a tradable badge.",
       EDGE.blue,
     );
   }
@@ -1091,7 +1092,7 @@ export async function vouchFromProfile(fd: FormData) {
     if (r.code === "already") await setFlash("ALREADY SAID", "That one is already counted, or already waiting.", EDGE.purple);
     else await wentWrong();
   } else if (kind === "helped") {
-    await setFlash("THANK YOU", `Counted. Every five helps earn them a tradable badge.${await newBadges()}`, EDGE.blue);
+    await setFlash("THANK YOU", `Counted. Every ten helps earn them a tradable badge.${await newBadges()}`, EDGE.blue);
   } else {
     await setFlash("ASKED", "They will see a note asking whether you met up. If they say yes, you both earn a badge.", EDGE.blue);
   }
@@ -1141,7 +1142,7 @@ export async function claimBadge(fd: FormData) {
   const r = await call("cr_badge_claim", { p_slug: str(fd, "slug"), p_other: str(fd, "other_id") });
   if (!r.ok) {
     if (r.code === "already") await setFlash("ALREADY ASKED", "They already have that question waiting.", EDGE.purple);
-    else if (r.code === "not_picked") await setFlash("PICK IT FIRST", "Pick this epic quest first. Only people who say yes after you pick it count.", EDGE.purple);
+    else if (r.code === "not_picked") await setFlash("PICK IT FIRST", "Pick this main quest first. Only people who say yes after you pick it count.", EDGE.purple);
     else if (r.code === "have_it") await setFlash("ALREADY YOURS", "You have that badge already.", EDGE.purple);
     else if (r.code === "wrong_kind") await setFlash("NOT THE RIGHT KIND", "That quest is for a different kind of person. Pick someone who fits.", EDGE.purple);
     else if (r.code === "too_many") await setFlash("TOO MANY WAITING", "Wait for some of your questions to be answered first.", EDGE.mag);

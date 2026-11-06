@@ -9,12 +9,12 @@ import { setWorkingOn, vouchFromProfile, claimBadge } from "@/lib/actions";
 import { WORKING_MAX, type ShownBadge } from "@/lib/badges";
 import { isKind, targetLabel, type Kind } from "@/lib/species";
 
-const PER_PAGE = 1000; // every epic quest on one scrolling page
+const PER_PAGE = 1000; // every main quest on one scrolling page
 
 /** "Working on": the badges a person is going after, as a plain list, one to a row, each with
  *  what it takes. On your own profile a button opens every badge there is, to pick up to five
  *  (tap to pick, tap again to put back; the order you pick them is the order they are listed in). */
-export function WorkingOn({ items, all, editable, person, finished, isWitch, openAtStart, bare, people }: { people?: (Kind & { id: string; handle: string })[]; items: ShownBadge[]; all?: ShownBadge[]; editable?: boolean; person?: { id: string; handle: string }; finished?: string[]; isWitch?: boolean; openAtStart?: boolean; /** Just the rows: no heading, no change link. */ bare?: boolean }) {
+export function WorkingOn({ items, all, editable, person, finished, isWitch, openAtStart, bare, people, heading, total }: { /** A different title for the row list (First Steps): no picker, and `total` is how many there are. */ heading?: string; total?: number; people?: (Kind & { id: string; handle: string })[]; items: ShownBadge[]; all?: ShownBadge[]; editable?: boolean; person?: { id: string; handle: string }; finished?: string[]; isWitch?: boolean; openAtStart?: boolean; /** Just the rows: no heading, no change link. */ bare?: boolean }) {
   const [draft, setDraft] = useState<Draft | null>(null);
   const [say, setSay] = useState<string | null>(null);
   const [who, setWho] = useState("");
@@ -37,10 +37,10 @@ export function WorkingOn({ items, all, editable, person, finished, isWitch, ope
       {bare ? null : (
       <div className="px" style={{ fontSize: 12, color: "var(--blu-soft)", minHeight: 24, display: "flex", alignItems: "center", gap: 8 }}>
         <span>
-          EPIC QUESTS <span style={{ fontSize: 11, color: "var(--muted)", marginLeft: 6 }}>· {items.length}/{WORKING_MAX}</span>
+          {heading ?? "MAIN QUESTS"} <span style={{ fontSize: 11, color: "var(--muted)", marginLeft: 6 }}>· {heading ? items.filter((b) => !b.locked).length : items.length}/{total ?? WORKING_MAX}</span>
         </span>
         <span className="spacer" />
-        {editable ? (
+        {editable && !heading ? (
           <button
             type="button"
             className="px"
@@ -51,7 +51,7 @@ export function WorkingOn({ items, all, editable, person, finished, isWitch, ope
             }}
             style={{ background: "none", border: 0, padding: 0, cursor: "pointer", fontSize: 11, color: "var(--pur-pale)" }}
           >
-            {items.length ? "CHANGE FOCUS →" : "PICK EPIC QUESTS →"}
+            {items.length ? "CHANGE FOCUS →" : "PICK MAIN QUESTS →"}
           </button>
         ) : null}
       </div>
@@ -75,6 +75,8 @@ export function WorkingOn({ items, all, editable, person, finished, isWitch, ope
                   <span className="px" style={{ marginLeft: "auto", flex: "none", fontSize: 12, color: "var(--pur-pale)" }}>
                     {b.progress.n}/{b.progress.of}
                   </span>
+                ) : heading && !b.locked ? (
+                  <span aria-label="Done" className="px" style={{ marginLeft: "auto", flex: "none", fontSize: 13, color: "var(--blu-soft)" }}>✓</span>
                 ) : null}
               </>
             );
@@ -99,7 +101,7 @@ export function WorkingOn({ items, all, editable, person, finished, isWitch, ope
                 </li>
               );
             }
-            // An epic quest that people have to confirm: ask someone, five different yeses finish it.
+            // A quest that people have to confirm: ask someone, five different yeses finish it.
             if (editable && b.peer && people) {
               const open = say === b.key;
               const pool = people.filter((p) => isKind(p, b.target));
@@ -184,25 +186,25 @@ export function WorkingOn({ items, all, editable, person, finished, isWitch, ope
           })}
         </ul>
       ) : (
-        <div style={{ fontSize: 12, lineHeight: 1.5, color: "var(--muted)" }}>Nothing picked yet. Choose up to three epic quests to work on.</div>
+        <div style={{ fontSize: 12, lineHeight: 1.5, color: "var(--muted)" }}>Nothing picked yet. Choose up to three main quests to work on.</div>
       )}
 
-      {editable && (finished?.length || items.length < WORKING_MAX) ? (
+      {editable && !heading && (finished?.length || items.length < WORKING_MAX) ? (
         <div className="notice" style={{ fontSize: 12, lineHeight: 1.5 }}>
           {finished?.length
             ? `You earned ${finished.join(" and ")}. `
             : ""}
-          {items.length < WORKING_MAX ? "Pick a new epic quest." : ""}
+          {items.length < WORKING_MAX ? "Pick a new main quest." : ""}
         </div>
       ) : null}
 
       {open && editable ? (
-        <div role="dialog" aria-label="Choose your epic quests" style={{ position: "fixed", inset: 0, zIndex: 80, display: "flex", flexDirection: "column", maxWidth: 480, margin: "0 auto" }}>
+        <div role="dialog" aria-label="Choose your main quests" style={{ position: "fixed", inset: 0, zIndex: 80, display: "flex", flexDirection: "column", maxWidth: 480, margin: "0 auto" }}>
           <form action={setWorkingOn} style={{ flex: 1, minHeight: 0, overflowY: "auto", background: "var(--device)", padding: "16px 16px 24px", display: "flex", flexDirection: "column", gap: 10 }}>
             <input type="hidden" name="list" value={JSON.stringify(pick)} />
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <div className="px" style={{ fontSize: 12, color: "var(--pur-soft)" }}>
-                EPIC QUESTS · {pick.length}/{WORKING_MAX}
+                MAIN QUESTS · {pick.length}/{WORKING_MAX}
               </div>
               <span className="spacer" />
               {isWitch ? (

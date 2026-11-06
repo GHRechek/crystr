@@ -1,9 +1,9 @@
 import Link from "next/link";
-import { requireMe, getBadges, getPeopleKinds, getQuestWaiting } from "@/lib/data";
+import { requireMe, getBadges, getPeopleKinds, getQuestWaiting, countHelps } from "@/lib/data";
 import { createClient } from "@/lib/supabase/server";
 import { answerBadgeClaim } from "@/lib/actions";
 import { ago } from "@/lib/crystr";
-import { resolveWorking, finishedWorking, goalGrid, questGrid } from "@/lib/badges";
+import { resolveWorking, finishedWorking, goalGrid, questGrid, firstStepGrid, firstStepsDone, helpingRow } from "@/lib/badges";
 import { WorkingOn } from "@/components/working-on";
 import { QuestBrowser } from "@/components/quest-browser";
 import { HubTabs } from "@/components/hub-tabs";
@@ -27,7 +27,10 @@ export default async function QuestsPage(props: { searchParams: Promise<{ pick?:
   await createClient().rpc("cr_check_badges");
   const { data: progressData } = await createClient().rpc("cr_goal_progress");
   const progress = (progressData ?? {}) as Record<string, number>;
-  const [badges, people, items] = await Promise.all([getBadges(userId), getPeopleKinds(userId), getBadgeItems(userId)]);
+  const [badges, people, items, helps] = await Promise.all([getBadges(userId), getPeopleKinds(userId), getBadgeItems(userId), countHelps(userId)]);
+  const stepsDone = firstStepsDone(badges);
+  const steps = firstStepGrid(badges);
+  const help = helpingRow(badges, helps);
   const tradable = items.filter((i) => i.kind === "tradable");
   const shown = resolveShown(profile.shown_badges, badges, items, profile.handle);
   const heldCount = badges.filter((b) => b.earned_at).length + tradable.length;
@@ -65,16 +68,22 @@ export default async function QuestsPage(props: { searchParams: Promise<{ pick?:
         }
         quests={
           <>
-      <WorkingOn
-        key={sp.pick === "1" ? "pick" : "view"}
-        openAtStart={sp.pick === "1"}
-        isWitch={profile.is_witch}
-        editable
-        people={people}
-        finished={finishedWorking(profile.working_on, badges)}
-        items={resolveWorking(profile.working_on, badges, [], progress)}
-        all={goalGrid(badges, progress)}
-      />
+      {help ? <WorkingOn bare items={[help]} /> : null}
+
+      {stepsDone ? (
+        <WorkingOn
+          key={sp.pick === "1" ? "pick" : "view"}
+          openAtStart={sp.pick === "1"}
+          isWitch={profile.is_witch}
+          editable
+          people={people}
+          finished={finishedWorking(profile.working_on, badges)}
+          items={resolveWorking(profile.working_on, badges, [], progress)}
+          all={goalGrid(badges, progress)}
+        />
+      ) : (
+        <WorkingOn editable heading="FIRST STEPS" total={steps.length} people={people} items={steps} />
+      )}
 
       {waitingCount ? (
         <div>
@@ -134,7 +143,7 @@ export default async function QuestsPage(props: { searchParams: Promise<{ pick?:
 
 
       <div>
-        {head("ALL QUESTS", "var(--mag-soft)", <span className="px" style={{ fontSize: 11, color: "var(--muted)" }}>{quests.filter((b) => !b.locked).length} / {quests.length}</span>)}
+        {head("SIDE QUESTS", "var(--mag-soft)", <span className="px" style={{ fontSize: 11, color: "var(--muted)" }}>{quests.filter((b) => !b.locked).length} / {quests.length}</span>)}
         <QuestBrowser items={quests} people={people} pending={pending} />
       </div>
 

@@ -12,12 +12,12 @@ export const SPECIES = [
 ] as const;
 
 /** What a "with someone" quest can ask for: a species, or a witch, or a spellcaster. */
-export const TARGETS = [...SPECIES, { value: "witch", label: "Witch" }, { value: "spellcaster", label: "Spellcaster" }] as const;
+export const TARGETS = [...SPECIES, { value: "witch", label: "Witch" }, { value: "spellcaster", label: "Spellcaster" }, { value: "leylines", label: "Knows Leylines" }] as const;
 
 export const targetLabel = (v: string | null | undefined) => TARGETS.find((t) => t.value === v)?.label ?? "";
 
-export type Kind = { species?: string | null; spellcaster?: boolean | null; is_witch?: boolean | null };
+export type Kind = { species?: string | null; spellcaster?: boolean | null; is_witch?: boolean | null; leylines?: boolean | null };
 
 /** Whether this person is the kind a quest asks for (anyone, when it names no kind). */
 export const isKind = (p: Kind, target: string | null | undefined): boolean =>
-  !target ? true : target === "witch" ? !!p.is_witch : target === "spellcaster" ? !!p.spellcaster : p.species === target;
+  !target ? true : target === "witch" ? !!p.is_witch : target === "spellcaster" ? !!p.spellcaster : target === "leylines" ? !!p.leylines || !!p.is_witch : p.species === target;

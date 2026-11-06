@@ -791,7 +791,7 @@ export async function peekOverride(code: string): Promise<{ ok: true; witch: str
 export async function getBadges(userId: string): Promise<BadgeRow[]> {
   const supabase = createClient();
   const [all, mine] = await Promise.all([
-    supabase.from("badges").select("slug, title, how, blurb, art, tiers, sort, witch_approved, peer_approved, peer_target, kind, steps, threshold").order("sort"),
+    supabase.from("badges").select("slug, title, how, blurb, art, tiers, sort, witch_approved, peer_approved, peer_target, kind, steps, threshold, first_step").order("sort"),
     supabase.from("user_badges").select("badge_slug, earned_at, tier").eq("user_id", userId),
   ]);
   const earned = new Map(
@@ -1131,8 +1131,12 @@ export async function getQuestWaiting(userId: string, isWitch: boolean, earned: 
 }
 
 /** Everyone else in the City with the kind of person they are, for asking someone to confirm a quest. */
-export async function getPeopleKinds(userId: string): Promise<{ id: string; handle: string; species: string | null; spellcaster: boolean; is_witch: boolean }[]> {
+export async function getPeopleKinds(userId: string): Promise<{ id: string; handle: string; species: string | null; spellcaster: boolean; is_witch: boolean; leylines: boolean }[]> {
   const supabase = createClient();
-  const { data } = await supabase.from("profiles").select("id, handle, species, spellcaster, is_witch").neq("id", userId).order("handle");
-  return (data ?? []) as { id: string; handle: string; species: string | null; spellcaster: boolean; is_witch: boolean }[];
+  const [{ data }, { data: ley }] = await Promise.all([
+    supabase.from("profiles").select("id, handle, species, spellcaster, is_witch").neq("id", userId).order("handle"),
+    supabase.from("user_badges").select("user_id").eq("badge_slug", "learn-leylines"),
+  ]);
+  const has = new Set((ley ?? []).map((r) => String(r.user_id)));
+  return ((data ?? []) as { id: string; handle: string; species: string | null; spellcaster: boolean; is_witch: boolean }[]).map((p) => ({ ...p, leylines: has.has(p.id) || p.is_witch }));
 }

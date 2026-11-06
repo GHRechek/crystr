@@ -486,3 +486,8 @@ Earning any badge (a quest or an epic quest from the Quests page) fills your man
 ### Your code
 Everyone has a QR code at the bottom of the profile-picture menu (it points at `/u/<handle>`). The exchange icon on your own profile opens the camera (`components/qr-scanner.tsx`, jsQR); scanning someone's code opens a trade with them. "MY TRADES" is in the scanner's top bar. The menu is three quarters of the row wide.
 After a scan: TRADE, PROFILE or QUEST. QUEST lists only the with-quests that person can actually be part of (`cr_scan_quests`: species/spellcaster/witch fit, not earned, not already asked, epic ones you picked and they have not counted yet), one tap asks one quest.
+
+### First steps, Main Quests, Side Quests
+- **Main Quests** (the three you pick, `kind='goal'`) and **Side Quests** (everything else). Help Someone Else is always a Main Quest, pinned at the top: every 10 confirmed helps brings a tradable badge, and the count starts again.
+- **First steps** (`badges.first_step`): Vote on a Motion, Make a Friend (any Friend quest counts), Support Group and Bring a First Timer (a witch confirms from a scan), Learn About Leylines (anyone who holds it confirms; every witch holds it). Until all five are earned there are no Main Quests to pick (`cr_set_working_on` returns `first_steps`); then the first-steps list turns into the three Main Quest slots.
+- Also new: Bring a Friend (a witch confirms). `peer_target='leylines'` means "holds Learn About Leylines". The picture numbers for the new badges are placeholders; a witch can change them from the badge editor.

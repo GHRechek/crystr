@@ -15,7 +15,7 @@ import {
   getOverride,
   getPeople,
 } from "@/lib/data";
-import { ROMAN, tokenReadyAt, resolveShown, resolveWorking, finishedWorking, goalGrid, questGrid, achievementGrid } from "@/lib/badges";
+import { ROMAN, tokenReadyAt, resolveShown, resolveWorking, finishedWorking, goalGrid, questGrid, achievementGrid, firstStepGrid, firstStepsDone, helpingRow } from "@/lib/badges";
 import { Avatar } from "@/components/bits";
 import { BadgeArt, ItemTile, TokenImage } from "@/components/badges";
 import { AboutBadges } from "@/components/about-badges";
@@ -198,16 +198,24 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
           </div>
         </div>
 
-        {/* Quests live on their own page; this is the way in. */}
+        {/* Help Someone Else is always a main quest. Until the five first steps are done there are no
+            others to pick; then the three you chose. */}
+        {helpingRow(badges, helps) ? <WorkingOn bare items={[helpingRow(badges, helps)!]} /> : null}
+        {firstStepsDone(badges) ? (
+          <WorkingOn items={resolveWorking(profile.working_on, badges, [], progress)} />
+        ) : (
+          <WorkingOn heading="FIRST STEPS" total={firstStepGrid(badges).length} items={firstStepGrid(badges)} />
+        )}
+
+        {/* Side quests live on their own page; this is the way in. */}
         <div className="px" style={{ fontSize: 12, color: "var(--mag-soft)", minHeight: 24, display: "flex", alignItems: "center", gap: 8 }}>
           <span>
-            QUESTS <span style={{ fontSize: 11, color: "var(--muted)", marginLeft: 6 }}>· {questGrid(badges).filter((b) => !b.locked).length} / {questGrid(badges).length}</span>
+            SIDE QUESTS <span style={{ fontSize: 11, color: "var(--muted)", marginLeft: 6 }}>· {questGrid(badges).filter((b) => !b.locked).length} / {questGrid(badges).length}</span>
           </span>
           <Link href="/quests" className="px" style={{ fontSize: 11, color: "var(--pur-pale)", marginLeft: 6 }}>
             SEE ALL QUESTS →
           </Link>
         </div>
-        <WorkingOn bare items={resolveWorking(profile.working_on, badges, [], progress)} />
 
         {plaintiffSince ? (
           <div className="tile" style={{ padding: 12, display: "flex", alignItems: "center", gap: 10 }}>

@@ -27,6 +27,8 @@ export type BadgeRow = {
   /** The counts that earn each step, and the single count of a one-step badge. */
   steps?: number[] | null;
   threshold?: number | null;
+  /** One of the quests everyone does first, before they can pick Main Quests. */
+  first_step?: boolean;
   earned_at: string | null;
   /** The tier held, 1 to 4 (1 on a badge with one tier). 0 until earned. */
   tier: number;
@@ -295,3 +297,33 @@ export const SET_COUNT = 1015;
 /** The pictures of the badge set that are in the app: 1 to SET_COUNT, less the large framed ones that were taken out. */
 export const SET_REMOVED: readonly number[] = [417,418,419,420,421,422,423,424,425,426,427,428,429,430,431,432,433,434,435,436,437,438,439,440,441,442,443,817,818,819,820,821,822,823,824,825,826,827,828,829,830,831,832,833,834,835,836,837,838,839,840,841,842,843,844,845,846,847,848];
 export const SET_NUMBERS: number[] = Array.from({ length: SET_COUNT }, (_, i) => i + 1).filter((n) => !SET_REMOVED.includes(n));
+
+/** The quests everyone does first: five, and until they are all earned there are no Main Quests to pick. */
+export const firstStepBadges = (badges: BadgeRow[]) => badges.filter((b) => b.first_step);
+export const firstStepsDone = (badges: BadgeRow[]) => firstStepBadges(badges).every((b) => !!b.earned_at);
+export const firstStepGrid = (badges: BadgeRow[]): ShownBadge[] =>
+  firstStepBadges(badges).map((b) => ({
+    key: `a:${b.slug}`,
+    badge: { slug: b.slug, art: b.art, tiers: b.tiers, tier: b.tier },
+    title: b.title,
+    line: b.earned_at ? b.blurb || b.how : b.how,
+    locked: !b.earned_at,
+    auto: !b.witch_approved && !b.peer_approved,
+    peer: !!b.peer_approved && !b.earned_at,
+    mode: b.peer_approved ? "with" : "do",
+    target: b.peer_target ?? undefined,
+  }));
+
+/** Help Someone Else: always a Main Quest, pinned at the top. Every ten confirmed helps brings a tradable badge, and the count starts again. */
+export function helpingRow(badges: BadgeRow[], helps: number): ShownBadge | null {
+  const b = badges.find((x) => x.slug === "a-helping-hand");
+  if (!b) return null;
+  return {
+    key: "a:a-helping-hand",
+    badge: { slug: b.slug, art: b.art, tiers: b.tiers, tier: Math.max(1, b.tier) },
+    title: "Help Someone Else",
+    line: "Help someone with a problem and have them say yes. Every 10 brings a tradable badge, again and again.",
+    locked: false,
+    progress: { n: helps % 10, of: 10 },
+  };
+}

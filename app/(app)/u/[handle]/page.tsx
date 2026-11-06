@@ -1,13 +1,13 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { requireMe, getTopFriends, getBadges, getBadgeItems, getToken, getPlaintiffSince, getProfileByHandle, getAllTokens } from "@/lib/data";
+import { requireMe, getTopFriends, getBadges, getBadgeItems, getToken, getPlaintiffSince, getProfileByHandle, getAllTokens, countHelps } from "@/lib/data";
 import { openThread } from "@/lib/actions";
 import { Avatar } from "@/components/bits";
 import { TokenImage } from "@/components/badges";
 import { AboutBadges } from "@/components/about-badges";
 import { ProfileDetails, type DetailKind } from "@/components/profile-details";
 import { WorkingOn } from "@/components/working-on";
-import { achievementGrid, resolveShown, resolveWorking } from "@/lib/badges";
+import { achievementGrid, resolveShown, resolveWorking, helpingRow } from "@/lib/badges";
 import { ago, corrupt, decayLevel, BADGE_MANA } from "@/lib/crystr";
 import { bannerOf, bannerStyle } from "@/lib/banner";
 import { formatBirthday } from "@/lib/birthday";
@@ -34,12 +34,13 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
   if (!person) notFound();
   if (person.id === userId) redirect("/me");
 
-  const [top, badges, items, token, plaintiffSince] = await Promise.all([
+  const [top, badges, items, token, plaintiffSince, helps] = await Promise.all([
     getTopFriends(person.id),
     getBadges(person.id),
     getBadgeItems(person.id),
     getToken(person.id),
     getPlaintiffSince(person.id),
+    countHelps(person.id),
   ]);
   const earned = badges.filter((b) => b.earned_at);
   const shown = resolveShown(person.shown_badges, badges, items, person.handle);
@@ -150,6 +151,7 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
           </div>
         ) : null}
 
+        {helpingRow(badges, helps) ? <WorkingOn bare person={{ id: person.id, handle: person.handle }} items={[helpingRow(badges, helps)!]} /> : null}
         <WorkingOn person={{ id: person.id, handle: person.handle }} items={resolveWorking(person.working_on, badges, person.working_on?.some((k) => k.startsWith("t:")) ? await getAllTokens(person.id) : [])} />
 
       </div>
