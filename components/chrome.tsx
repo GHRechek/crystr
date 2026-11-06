@@ -27,30 +27,6 @@ export function Clock() {
   return <span suppressHydrationWarning>{now}</span>;
 }
 
-/** Seven tabs wouldn't fit, so the Well lives next to the mana meter. It
- *  turns magenta when you drop below eleven. */
-export function WellButton({ low }: { low: boolean }) {
-  const path = usePathname();
-  const here = path.startsWith("/well");
-
-  return (
-    <Link
-      href="/well"
-      className="btn btn-sm"
-      style={{
-        fontSize: "8.5px",
-        minHeight: 40,
-        padding: "0 9px",
-        borderColor: here ? "var(--pur)" : low ? "var(--mag)" : "var(--edge)",
-        background: low ? "rgba(224,57,138,.16)" : "transparent",
-        color: low ? "var(--mag-pale)" : "var(--pur-pale)",
-      }}
-    >
-      ◈ THE WELL ＋
-    </Link>
-  );
-}
-
 // Posting is not a place to go, so it is not a tab: the NEW POST button sits at the top of
 // the feed instead, and the bar has room to breathe.
 const TABS = [

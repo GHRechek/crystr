@@ -145,7 +145,7 @@ export function MotionComposer() {
         </div>
 
         <div className="field">
-          <label htmlFor="b_standfirst">STANDFIRST</label>
+          <label htmlFor="b_standfirst">HIGHLIGHT</label>
           <textarea
             id="b_standfirst"
             name="b_standfirst"

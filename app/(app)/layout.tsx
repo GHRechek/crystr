@@ -5,7 +5,7 @@ import { birthdayBadgeDue } from "@/lib/birthday";
 import { EDGE } from "@/lib/toast";
 import { TERMS_VERSION } from "@/lib/terms";
 import { readFlash } from "@/lib/flash";
-import { Clock, SetupBanner, TabBar, Toast, WellButton } from "@/components/chrome";
+import { Clock, SetupBanner, TabBar, Toast } from "@/components/chrome";
 import { DecayFrame } from "@/components/decay";
 import { InfoMenu } from "@/components/info-menu";
 import { ManaButton } from "@/components/mana";
@@ -73,7 +73,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           <div className="head-row">
             <div className="wordmark">CRYSTR</div>
             <div className="spacer" />
-            <ManaButton />
+            <ManaButton mana={mana} cap={cap} closed={welcoming} />
             <div className="mana-count" style={{ color: manaColor(mana) }}>
               {String(mana).padStart(2, "0")}/{cap}
             </div>
@@ -84,7 +84,6 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           </div>
           <div className="head-foot">
             <span>{welcoming ? "Register to enter the City." : wellLine(mana)}</span>
-            {welcoming ? null : <WellButton low={mana < 11} />}
           </div>
         </header>
 
