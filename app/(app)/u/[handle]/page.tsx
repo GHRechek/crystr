@@ -6,6 +6,7 @@ import { Avatar } from "@/components/bits";
 import { TokenImage } from "@/components/badges";
 import { BadgeTabs } from "@/components/badge-tabs";
 import { PixelGlyph, type GlyphKind } from "@/components/pixel-glyph";
+import { AboutBadges } from "@/components/about-badges";
 import { WorkingOn } from "@/components/working-on";
 import { achievementGrid, resolveShown, resolveWorking } from "@/lib/badges";
 import { ago, corrupt, decayLevel, BADGE_MANA } from "@/lib/crystr";
@@ -42,6 +43,7 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
     getPlaintiffSince(person.id),
   ]);
   const earned = badges.filter((b) => b.earned_at);
+  const shown = resolveShown(person.shown_badges, badges, items, person.handle);
   const decay = decayLevel(me.mana);
 
   const days = Math.max(1, Math.round((Date.now() - new Date(person.created_at).getTime()) / 86_400_000));
@@ -96,6 +98,17 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
           <div style={{ fontSize: 12.5, lineHeight: 1.6, color: "var(--text-3)", textWrap: "pretty" }}>
             {corrupt(person.bio || "Nothing written here yet.", decay)}
           </div>
+          {token || shown.length ? (
+            <div style={{ marginTop: 10 }}>
+              <AboutBadges shown={shown}>
+                {token ? (
+                  <span title={tokenTitle(person.display_name, person.handle)} style={{ lineHeight: 0, flex: "none" }}>
+                    <TokenImage design={token.design} size={64} />
+                  </span>
+                ) : null}
+              </AboutBadges>
+            </div>
+          ) : null}
         </div>
 
         {details.length ? (
@@ -150,20 +163,6 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
             <span className="spacer" />
             <div className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
               SINCE {ago(plaintiffSince).toUpperCase()}
-            </div>
-          </div>
-        ) : null}
-
-        {token ? (
-          <div className="tile" style={{ padding: 12, display: "flex", gap: 12, alignItems: "center" }}>
-            <TokenImage design={token.design} size={96} />
-            <div style={{ minWidth: 0 }}>
-              <div className="px" style={{ fontSize: 11, color: "var(--text)", lineHeight: 1.5 }}>
-                {tokenTitle(person.display_name, person.handle).toUpperCase()}
-              </div>
-              <div style={{ fontSize: 11, lineHeight: 1.45, color: "var(--muted)", marginTop: 3 }}>
-                Their own token. Worth {BADGE_MANA.token} max mana to whoever they give it to.
-              </div>
             </div>
           </div>
         ) : null}

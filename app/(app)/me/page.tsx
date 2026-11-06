@@ -19,6 +19,7 @@ import { Avatar } from "@/components/bits";
 import { BadgeArt, ItemTile, TokenImage } from "@/components/badges";
 import { BadgeTabs } from "@/components/badge-tabs";
 import { PixelGlyph, type GlyphKind } from "@/components/pixel-glyph";
+import { AboutBadges } from "@/components/about-badges";
 import { WorkingOn } from "@/components/working-on";
 import { ProfileHead } from "./face-menu";
 import { bannerOf, bannerStyle } from "@/lib/banner";
@@ -71,6 +72,7 @@ export default async function ProfilePage() {
     ] satisfies [string, string | null | undefined][]
   ).flatMap(([label, value]) => (value?.trim() ? [[label, value.trim()] as [string, string]] : []));
 
+  const shown = resolveShown(profile.shown_badges, badges, items, profile.handle);
   const decay = decayLevel(profile.mana);
   const slots = [...top, ...Array(Math.max(0, 5 - top.length)).fill(null)].slice(0, 5);
 
@@ -101,16 +103,7 @@ export default async function ProfilePage() {
           gap: 12,
         }}
       >
-        <div className="tile" style={{ padding: 12, display: "flex", gap: 12, alignItems: "flex-start" }}>
-        {/* Your own token: a blank with a ? until you make one, then the token itself. Tap to open. */}
-        <Link
-          href="/me/token"
-          aria-label="Your token"
-          style={{ width: 64, height: 64, flex: "none", display: "grid", placeItems: "center", color: "var(--dim)", border: token ? 0 : "1px dashed var(--edge)", borderRadius: "var(--px-r)", textDecoration: "none", lineHeight: 0 }}
-        >
-          {token ? <TokenImage design={token.design} size={64} /> : <span className="px" style={{ fontSize: 16 }}>?</span>}
-        </Link>
-        <div style={{ flex: 1, minWidth: 0 }}>
+        <div className="tile" style={{ padding: 12 }}>
           <div
             className="px"
             style={{ fontSize: 11, color: "var(--mag)", letterSpacing: ".07em", marginBottom: 7 }}
@@ -122,7 +115,28 @@ export default async function ProfilePage() {
           >
             {corrupt(profile.bio || "Nothing written here yet. The City will assume the worst.", decay)}
           </div>
-        </div>
+          {/* Your token, then up to five badges you choose, smaller. */}
+          <div style={{ marginTop: 10 }}>
+            <AboutBadges
+              editable
+              shown={shown}
+              options={resolveShown(
+                [...badges.filter((b) => b.earned_at).map((b) => `a:${b.slug}`), ...items.filter((i) => i.kind === "tradable").map((i) => `i:${i.id}`)],
+                badges,
+                items,
+                profile.handle,
+                100,
+              )}
+            >
+              <Link
+                href="/me/token"
+                aria-label="Your token"
+                style={{ width: 64, height: 64, flex: "none", display: "grid", placeItems: "center", color: "var(--dim)", border: token ? 0 : "1px dashed var(--edge)", borderRadius: "var(--px-r)", textDecoration: "none", lineHeight: 0 }}
+              >
+                {token ? <TokenImage design={token.design} size={64} /> : <span className="px" style={{ fontSize: 16 }}>?</span>}
+              </Link>
+            </AboutBadges>
+          </div>
         </div>
 
         {details.length ? (

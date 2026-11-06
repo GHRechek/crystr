@@ -143,7 +143,7 @@ on the column (`profiles_shown_badges_guard`) drops anything the person has not 
 not hold, so a badge traded away disappears from the display; migration
 `20261106010000_shown_badges.sql` (four, not five, from `20261106020000_shown_badges_four.sql`).
 
-Shown badges are no longer displayed on profiles (the column and RPC remain). The
+Shown badges (up to five, `20261106050000_shown_badges_five.sql`) sit in the About Me card after the token, smaller; a dashed ✎ on your own page picks them. The
 collections (BADGES, TRADABLE BADGES, WHAT THEY HOLD) are icons only, packed tight, three rows to
 a page with the count and the page arrows on the header line; tapping one gives its tooltip. It
 is built to hold hundreds. WORKING ON lists up to five badges a person is going after, one to a
