@@ -11,7 +11,7 @@ export default async function WellPage() {
       <div>
         <h1 className="screen-title">THE WELL</h1>
         <Link href="/quests" className="px" style={{ fontSize: 11, color: "var(--pur-pale)", display: "inline-block", margin: "2px 0 6px" }}>
-          ALL QUESTS →
+          SIDE QUESTS →
         </Link>
         <div className="screen-intro">
           Your mana is your strength, and this is where you recover it. Show us something
