@@ -48,6 +48,7 @@ export type BadgeItem = {
 export type TokenRow = {
   design: unknown;
   last_given_at: string | null;
+  how?: string | null;
 };
 
 export type Trade = {
@@ -176,7 +177,7 @@ export const WORKING_MAX = 5;
 
 /** The badges a person says they are working on, in order, ready to list: each with what to do to
  *  earn it. They need not be earned yet. */
-export type TokenRef = { user_id: string; design: unknown; handle: string; display_name: string | null };
+export type TokenRef = { user_id: string; design: unknown; how?: string | null; handle: string; display_name: string | null };
 
 /** A token as a badge to go after: you earn it by being given it. */
 export function tokenAsWorking(t: TokenRef): ShownBadge {
@@ -184,7 +185,7 @@ export function tokenAsWorking(t: TokenRef): ShownBadge {
     key: `t:${t.user_id}`,
     src: tokenSrc(normalizeToken(t.design)),
     title: tokenTitle(t.display_name, t.handle).toUpperCase(),
-    line: `Be given it by ${t.handle}. They choose who gets it.`,
+    line: t.how?.trim() || `Ask ${t.handle} how to earn it.`,
     locked: true,
   };
 }

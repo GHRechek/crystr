@@ -4,7 +4,6 @@ import { requireMe, getTopFriends, getBadges, getBadgeItems, getToken, getPlaint
 import { openThread } from "@/lib/actions";
 import { Avatar } from "@/components/bits";
 import { TokenImage } from "@/components/badges";
-import { BadgeTabs } from "@/components/badge-tabs";
 import { PixelGlyph, type GlyphKind } from "@/components/pixel-glyph";
 import { AboutBadges } from "@/components/about-badges";
 import { WorkingOn } from "@/components/working-on";
@@ -98,9 +97,18 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
           <div style={{ fontSize: 12.5, lineHeight: 1.6, color: "var(--text-3)", textWrap: "pretty" }}>
             {corrupt(person.bio || "Nothing written here yet.", decay)}
           </div>
-          {token || shown.length ? (
+          {(
             <div style={{ marginTop: 10 }}>
-              <AboutBadges shown={shown}>
+              <AboutBadges
+                shown={shown}
+                earned={achievementGrid(earned)}
+                tradable={resolveShown(items.filter((i) => i.kind === "tradable").map((i) => `i:${i.id}`), badges, items, person.handle, 10000)}
+                aside={
+                  <Link href={`/u/${person.handle}/trade`} className="px" style={{ fontSize: 11, color: "var(--pur-pale)", whiteSpace: "nowrap" }}>
+                    OFFER A TRADE →
+                  </Link>
+                }
+              >
                 {token ? (
                   <span title={tokenTitle(person.display_name, person.handle)} style={{ lineHeight: 0, flex: "none" }}>
                     <TokenImage design={token.design} size={64} />
@@ -108,7 +116,7 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
                 ) : null}
               </AboutBadges>
             </div>
-          ) : null}
+          )}
         </div>
 
         {details.length ? (
@@ -169,21 +177,6 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
 
         <WorkingOn items={resolveWorking(person.working_on, badges, person.working_on?.some((k) => k.startsWith("t:")) ? await getAllTokens(person.id) : [])} />
 
-        <BadgeTabs
-          tabs={[
-            { label: "BADGES", count: `${earned.length} OF ${badges.length}`, items: achievementGrid(earned) },
-            {
-              label: "TRADABLE",
-              count: String(items.filter((i) => i.kind === "tradable").length),
-              items: resolveShown(items.filter((i) => i.kind === "tradable").map((i) => `i:${i.id}`), badges, items, person.handle, 10000),
-              aside: (
-                <Link href={`/u/${person.handle}/trade`} className="px" style={{ fontSize: 11, color: "var(--pur-pale)", whiteSpace: "nowrap" }}>
-                  OFFER A TRADE →
-                </Link>
-              ),
-            },
-          ]}
-        />
       </div>
     </div>
   );

@@ -816,22 +816,22 @@ export async function getBadgeItems(userId: string): Promise<BadgeItem[]> {
 /** This person's own token design, or null if they have not made one. */
 export async function getToken(userId: string): Promise<TokenRow | null> {
   const supabase = createClient();
-  const { data } = await supabase.from("tokens").select("design, last_given_at").eq("user_id", userId).maybeSingle();
+  const { data } = await supabase.from("tokens").select("design, last_given_at, how").eq("user_id", userId).maybeSingle();
   return (data as TokenRow | null) ?? null;
 }
 
 /** Everyone's token (bar the one asking), for the list of badges to work towards. */
-export async function getAllTokens(exceptUserId: string): Promise<{ user_id: string; design: unknown; handle: string; display_name: string | null }[]> {
+export async function getAllTokens(exceptUserId: string): Promise<{ user_id: string; design: unknown; how: string | null; handle: string; display_name: string | null }[]> {
   const supabase = createClient();
   const { data } = await supabase
     .from("tokens")
-    .select("user_id, design, owner:profiles!tokens_user_id_fkey(handle, display_name)")
+    .select("user_id, design, how, owner:profiles!tokens_user_id_fkey(handle, display_name)")
     .neq("user_id", exceptUserId)
     .limit(300);
-  type Row = { user_id: string; design: unknown; owner: { handle: string; display_name: string | null } | { handle: string; display_name: string | null }[] | null };
+  type Row = { user_id: string; design: unknown; how: string | null; owner: { handle: string; display_name: string | null } | { handle: string; display_name: string | null }[] | null };
   return ((data ?? []) as unknown as Row[]).flatMap((r) => {
     const o = Array.isArray(r.owner) ? r.owner[0] : r.owner;
-    return o ? [{ user_id: r.user_id, design: r.design, handle: o.handle, display_name: o.display_name }] : [];
+    return o ? [{ user_id: r.user_id, design: r.design, how: r.how, handle: o.handle, display_name: o.display_name }] : [];
   });
 }
 

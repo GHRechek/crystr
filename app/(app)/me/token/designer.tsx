@@ -201,7 +201,7 @@ function Sticker({
  *  and down the layers (the badge shape is a layer, so down far enough is behind it), turn
  *  either way by 45 degrees, flip, bigger and smaller (never below as drawn). The small picture by the save
  *  button is the real thing, drawn by /token. */
-export function TokenDesigner({ start, fresh }: { start: TokenDesign; fresh: boolean }) {
+export function TokenDesigner({ start, fresh, how = "" }: { start: TokenDesign; fresh: boolean; how?: string }) {
   const [d, setD] = useState<TokenDesign>(() => normalizeToken(start));
   const [selected, setSelected] = useState<Slot | null>(null);
   const [panel, setPanel] = useState<Panel>(null);
@@ -386,6 +386,19 @@ export function TokenDesigner({ start, fresh }: { start: TokenDesign; fresh: boo
           Tap + to add an icon, then drag it where you want it.
         </div>
       ) : null}
+
+      {/* Written by you: what someone must do to be given it. Shown when they list it under Working On. */}
+      <label className="field">
+        <span className="px" style={{ fontSize: 11, color: "var(--blu-soft)" }}>HOW DO PEOPLE EARN IT?</span>
+        <input
+          name="how"
+          className="input"
+          defaultValue={how}
+          maxLength={140}
+          placeholder="Make me a good cup of tea, or tell me a better ghost story"
+          style={{ fontSize: 12.5 }}
+        />
+      </label>
 
       <button type="submit" className="btn btn-lg btn-purple btn-block">
         KEEP THIS TOKEN

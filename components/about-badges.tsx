@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { BadgeChooser, BadgeFace } from "@/components/badge-chooser";
+import { BadgeFace } from "@/components/badge-chooser";
+import { BadgeViewer } from "@/components/badge-viewer";
 import { BadgeTip } from "@/components/badge-tip";
 import { SHOW_MAX, type ShownBadge } from "@/lib/badges";
 
@@ -11,12 +12,17 @@ import { SHOW_MAX, type ShownBadge } from "@/lib/badges";
 export function AboutBadges({
   children,
   shown,
-  options,
+  earned,
+  tradable,
+  aside,
   editable,
 }: {
   children?: React.ReactNode;
   shown: ShownBadge[];
-  options?: ShownBadge[];
+  /** Everything they have, for the full-screen look: earned, and tradable. */
+  earned: ShownBadge[];
+  tradable: ShownBadge[];
+  aside?: React.ReactNode;
   editable?: boolean;
 }) {
   const [tip, setTip] = useState<{ key: string; x: number; top: number } | null>(null);
@@ -69,19 +75,28 @@ export function AboutBadges({
           <BadgeFace b={b} size={42} />
         </button>
       ))}
-      {editable ? (
+      {earned.length || tradable.length || editable ? (
         <button
           type="button"
-          aria-label="Choose the badges you show"
+          aria-label={editable ? "See all your badges and choose which to show" : "See all their badges"}
           onClick={() => setChoosing(true)}
-          className="px"
-          style={{ flex: "none", width: 42, height: 42, display: "grid", placeItems: "center", background: "none", border: "1px dashed var(--edge)", borderRadius: "var(--px-r)", color: "var(--dim)", fontSize: 14, cursor: "pointer" }}
+          style={{ flex: "none", width: 42, height: 42, display: "grid", placeItems: "center", background: "none", border: "1px dashed var(--edge)", borderRadius: "var(--px-r)", color: "var(--muted)", cursor: "pointer", fontSize: 15 }}
         >
-          {shown.length ? "✎" : "+"}
+          {editable ? "✎" : <EyeIcon />}
         </button>
       ) : null}
       {tipBadge && tip ? <BadgeTip x={tip.x} top={tip.top} width={width} title={tipBadge.title} line={tipBadge.line} /> : null}
-      {choosing && editable ? <BadgeChooser options={options ?? []} current={shown.map((b) => b.key)} onClose={() => setChoosing(false)} /> : null}
+      {choosing ? <BadgeViewer earned={earned} tradable={tradable} current={shown.map((b) => b.key)} editable={editable} aside={aside} onClose={() => setChoosing(false)} /> : null}
     </div>
+  );
+}
+
+/** A pixel eye, for looking at someone else's badges. */
+function EyeIcon() {
+  const rows = ["..#####..", ".#.....#.", "#..###..#", "#.#####.#", "#..###..#", ".#.....#.", "..#####.."];
+  return (
+    <svg width={18} height={14} viewBox="0 0 9 7" shapeRendering="crispEdges" aria-hidden>
+      {rows.flatMap((r, y) => [...r].map((c, x) => (c === "#" ? <rect key={`${x}${y}`} x={x} y={y} width={1} height={1} fill="currentColor" /> : null)))}
+    </svg>
   );
 }

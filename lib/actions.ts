@@ -982,7 +982,7 @@ export async function setToken(fd: FormData) {
     await setFlash("UNREADABLE", "That token did not survive the journey. Try again.", EDGE.mag);
     return;
   }
-  const r = await call("cr_set_token", { p_design: normalizeToken(parsed) });
+  const r = await call("cr_set_token", { p_design: normalizeToken(parsed), p_how: String(fd.get("how") ?? "").slice(0, 140) });
   if (!r.ok) {
     await wentWrong();
     return;

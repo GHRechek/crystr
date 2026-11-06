@@ -17,7 +17,6 @@ import {
 import { ROMAN, tokenReadyAt, resolveShown, resolveWorking, tokenAsWorking, achievementGrid } from "@/lib/badges";
 import { Avatar } from "@/components/bits";
 import { BadgeArt, ItemTile, TokenImage } from "@/components/badges";
-import { BadgeTabs } from "@/components/badge-tabs";
 import { PixelGlyph, type GlyphKind } from "@/components/pixel-glyph";
 import { AboutBadges } from "@/components/about-badges";
 import { WorkingOn } from "@/components/working-on";
@@ -120,13 +119,13 @@ export default async function ProfilePage() {
             <AboutBadges
               editable
               shown={shown}
-              options={resolveShown(
-                [...badges.filter((b) => b.earned_at).map((b) => `a:${b.slug}`), ...items.filter((i) => i.kind === "tradable").map((i) => `i:${i.id}`)],
-                badges,
-                items,
-                profile.handle,
-                100,
-              )}
+              earned={achievementGrid(badges.filter((b) => b.earned_at))}
+              tradable={resolveShown(tradable.map((i) => `i:${i.id}`), badges, items, profile.handle, 10000)}
+              aside={
+                <Link href="/me/trades" className="px" style={{ fontSize: 11, color: "var(--pur-pale)", whiteSpace: "nowrap" }}>
+                  TRADES{waiting ? ` · ${waiting}` : ""} →
+                </Link>
+              }
             >
               <Link
                 href="/me/token"
@@ -231,22 +230,6 @@ export default async function ProfilePage() {
         ) : null}
 
         {/* The badges you have, just the pictures, packed tight; tap one for its tooltip. */}
-        <BadgeTabs
-          tabs={[
-            { label: "BADGES", count: `${earnedCount} OF ${badges.length}`, items: achievementGrid(badges.filter((b) => b.earned_at)) },
-            {
-              label: "TRADABLE",
-              count: `+${BADGE_MANA.tradable} EACH`,
-              items: resolveShown(tradable.map((i) => `i:${i.id}`), badges, items, profile.handle, 10000),
-              aside: (
-                <Link href="/me/trades" className="px" style={{ fontSize: 11, color: "var(--pur-pale)", whiteSpace: "nowrap" }}>
-                  TRADES{waiting ? ` · ${waiting}` : ""} →
-                </Link>
-              ),
-            },
-          ]}
-        />
-
         {/* What you are going after, as a list, with a button to see every badge and choose. */}
         <WorkingOn editable items={resolveWorking(profile.working_on, badges, allTokens)} all={[...achievementGrid(badges), ...allTokens.map(tokenAsWorking)]} />
 
