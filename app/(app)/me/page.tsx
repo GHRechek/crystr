@@ -17,7 +17,6 @@ import {
 import { ROMAN, tokenReadyAt, resolveShown, resolveWorking, tokenAsWorking, achievementGrid } from "@/lib/badges";
 import { Avatar } from "@/components/bits";
 import { BadgeArt, ItemTile, TokenImage } from "@/components/badges";
-import { PixelGlyph, type GlyphKind } from "@/components/pixel-glyph";
 import { AboutBadges } from "@/components/about-badges";
 import { WorkingOn } from "@/components/working-on";
 import { ProfileHead } from "./face-menu";
@@ -29,7 +28,6 @@ import { tokenTitle } from "@/lib/token";
 
 const longDate = (d: Date) => d.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
 
-const GLYPH: Record<string, GlyphKind> = { BIRTHDAY: "birthday", LIKES: "likes", DISLIKES: "dislikes", "FAVOURITE FOOD": "food", "OBSESSED WITH": "obsession" };
 
 export default async function ProfilePage() {
   const { userId, profile } = await requireMe();
@@ -139,18 +137,18 @@ export default async function ProfilePage() {
         </div>
 
         {details.length ? (
-          <div className="tile" style={{ padding: 12 }}>
+          <div>
             <div
               className="px"
               style={{ fontSize: 11, color: "var(--blu-soft)", letterSpacing: ".07em", marginBottom: 8 }}
             >
               THE DETAILS
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: "8px 12px" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
               {details.map(([label, value]) => (
-                <div key={label} style={{ display: "flex", gap: 8, minWidth: 0, alignItems: "flex-start" }}>
-                  <div style={{ width: 20, flex: "none", display: "flex", justifyContent: "center" }}>
-                    <PixelGlyph kind={GLYPH[label]} label={label} />
+                <div key={label} style={{ display: "flex", gap: 10, alignItems: "baseline" }}>
+                  <div className="px" style={{ fontSize: 11, color: "var(--muted)", width: 120, flex: "none" }}>
+                    {label}
                   </div>
                   <div style={{ fontSize: 12.5, lineHeight: 1.5, color: "var(--text-2)", minWidth: 0 }}>
                     {corrupt(value, decay)}
