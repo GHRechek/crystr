@@ -1301,6 +1301,60 @@ select {
   background: var(--mag-soft);
 }
 
+/* Pages of the Ball: City news and Op-Eds. */
+.ball-tabs {
+  display: flex;
+  gap: 6px;
+}
+.ball-tab {
+  flex: 1;
+  min-height: 44px;
+  display: grid;
+  place-items: center;
+  font-family: var(--px-font);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  text-decoration: none;
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--edge);
+  border-radius: var(--px-r);
+}
+.ball-tab[data-on="true"] {
+  color: var(--pur-bright);
+  background: rgba(145, 132, 217, 0.22);
+  box-shadow: inset 0 0 0 1px var(--pur-edge);
+}
+
+/* The potion is the way to the Well, and it shakes harder the lower the meter gets: a slow
+   pulse below half, faster below a quarter, a constant rattle near empty, and at nothing the
+   fastest. The two gentle levels rest between shakes. */
+.mana-well { color: inherit; border-radius: var(--px-r); }
+.mana-well[data-here="true"] { box-shadow: inset 0 0 0 1px var(--pur); }
+.mana-well .mana-icon { transform-origin: 50% 70%; }
+.mana-well[data-shake="1"] .mana-icon { --amp: 1px; --rot: 3deg; animation: mana-pulse 2.6s ease-in-out infinite; }
+.mana-well[data-shake="2"] .mana-icon { --amp: 1.5px; --rot: 6deg; animation: mana-pulse 1.5s ease-in-out infinite; }
+.mana-well[data-shake="3"] .mana-icon { --amp: 2px; --rot: 9deg; animation: mana-rattle 0.5s linear infinite; }
+.mana-well[data-shake="4"] .mana-icon { --amp: 3px; --rot: 14deg; animation: mana-rattle 0.28s linear infinite; }
+@keyframes mana-pulse {
+  0%, 38%, 100% { transform: none; }
+  6%  { transform: translate(calc(var(--amp) * -1), 0) rotate(calc(var(--rot) * -1)); }
+  12% { transform: translate(var(--amp), calc(var(--amp) * -0.5)) rotate(var(--rot)); }
+  18% { transform: translate(calc(var(--amp) * -0.7), var(--amp)) rotate(calc(var(--rot) * -0.8)); }
+  24% { transform: translate(var(--amp), 0) rotate(calc(var(--rot) * 0.8)); }
+  30% { transform: translate(calc(var(--amp) * -0.5), calc(var(--amp) * -0.5)) rotate(calc(var(--rot) * -0.5)); }
+}
+@keyframes mana-rattle {
+  0%, 100% { transform: translate(0, 0) rotate(0); }
+  20% { transform: translate(calc(var(--amp) * -1), calc(var(--amp) * 0.5)) rotate(calc(var(--rot) * -1)); }
+  40% { transform: translate(var(--amp), calc(var(--amp) * -0.7)) rotate(var(--rot)); }
+  60% { transform: translate(calc(var(--amp) * -0.8), calc(var(--amp) * -0.4)) rotate(calc(var(--rot) * 0.7)); }
+  80% { transform: translate(calc(var(--amp) * 0.7), var(--amp)) rotate(calc(var(--rot) * -0.7)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mana-well .mana-icon { animation: none !important; }
+}
+
 /* The break-in: the registry's shake and magenta glow, without the red wash, so the lines
    coming up stay readable. */
 .breaching {

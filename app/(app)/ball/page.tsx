@@ -6,7 +6,7 @@ import { byline, corrupt, COSTS, decayLevel } from "@/lib/crystr";
 
 export default async function BallPage(
   props: {
-    searchParams: Promise<{ as?: string }>;
+    searchParams: Promise<{ as?: string; tab?: string }>;
   }
 ) {
   const searchParams = await props.searchParams;
@@ -18,10 +18,13 @@ export default async function BallPage(
   // VIEWING AS switch, kept honest: a player cannot switch the other way.
   const asWitch = profile.is_witch && searchParams.as !== "player";
 
-  const visible = asWitch
-    ? all
-    : all.filter((a) => a.status === "published" || a.author_id === userId);
-  const queue = asWitch ? all.filter((a) => a.status === "pending") : [];
+  // Two tabs: what the witches tell the City, and what the citizens say back.
+  const tab = searchParams.tab === "oped" ? "oped" : "news";
+  const keep = asWitch ? all : all.filter((a) => a.status === "published" || a.author_id === userId);
+  const visible = keep.filter((a) => (tab === "oped" ? a.kind === "oped" : a.kind !== "oped"));
+  const queue = asWitch && tab === "oped" ? all.filter((a) => a.status === "pending") : [];
+  const asQuery = searchParams.as === "player" ? "&as=player" : "";
+  const tabHref = (t: "news" | "oped") => `/ball?tab=${t}${asQuery}`;
 
   return (
     <div className="pad">
@@ -42,8 +45,7 @@ export default async function BallPage(
           CRYSTR BALL
         </div>
         <div style={{ fontSize: 12, lineHeight: 1.5, color: "var(--dim)" }}>
-          What the City is told, and when. Free to read; the well makes its money
-          elsewhere.
+          City news, citizens&apos; op-eds; come ponder the orb.
         </div>
       </div>
 
@@ -98,7 +100,22 @@ export default async function BallPage(
         </div>
       ) : null}
 
-      {asWitch ? (
+      <div className="ball-tabs" role="tablist" aria-label="The Ball">
+        {([["news", "CITY NEWS"], ["oped", "OP-EDS"]] as const).map(([t, label]) => (
+          <Link
+            key={t}
+            href={tabHref(t)}
+            role="tab"
+            aria-selected={tab === t}
+            className="ball-tab"
+            data-on={tab === t}
+          >
+            {label}
+          </Link>
+        ))}
+      </div>
+
+      {tab === "news" && asWitch ? (
         <div className="witchbar">
           <span className="px" style={{ fontSize: 11, color: "var(--pur-pale)" }}>
             WITCH ACCESS
@@ -108,11 +125,12 @@ export default async function BallPage(
             ＋ NEW DISPATCH
           </Link>
         </div>
-      ) : (
+      ) : null}
+      {tab === "oped" && !asWitch ? (
         <Link href="/ball/new?kind=oped" className="btn btn-mag btn-block" style={{ minHeight: 44 }}>
           ✎ SUBMIT AN OP-ED <Cost n={COSTS.oped} />
         </Link>
-      )}
+      ) : null}
 
       {queue.length ? (
         <div
@@ -188,10 +206,14 @@ export default async function BallPage(
 
       {visible.length === 0 ? (
         <div className="empty">
-          THE CITY HAS NOT BEEN TOLD ANYTHING YET
+          {tab === "oped" ? "NO ONE HAS SPOKEN UP YET" : "THE CITY HAS NOT BEEN TOLD ANYTHING YET"}
           <br />
           <span style={{ color: "var(--muted)" }}>
-            {asWitch ? "THAT IS YOUR JOB." : "A WITCH WILL GET TO IT."}
+            {tab === "oped"
+              ? "THE ORB IS LISTENING."
+              : asWitch
+                ? "THAT IS YOUR JOB."
+                : "A WITCH WILL GET TO IT."}
           </span>
         </div>
       ) : null}

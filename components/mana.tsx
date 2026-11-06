@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 /** The mana potion, in the app's colours. It sits inline with text; a screen reader says "mana". */
 export function ManaIcon({ big }: { big?: boolean }) {
@@ -47,50 +48,45 @@ export function Gain({ n }: { n: number }) {
   );
 }
 
-/** The potion beside the mana count in the header. Tap it and it says what it is. */
-export function ManaButton() {
-  const [shown, setShown] = useState(false);
-  const timer = useRef<number | undefined>(undefined);
+/** How hard the potion shakes, 0 to 4, from how full the meter is: still above half, a
+ *  gentle pulse below, and a constant rattle when it is nearly empty. */
+export function shakeLevel(mana: number, cap: number): 0 | 1 | 2 | 3 | 4 {
+  if (mana <= 0) return 4;
+  const f = mana / Math.max(1, cap);
+  if (f <= 0.12) return 3;
+  if (f <= 0.25) return 2;
+  if (f <= 0.5) return 1;
+  return 0;
+}
 
-  useEffect(() => () => window.clearTimeout(timer.current), []);
-
-  function tap() {
-    setShown(true);
-    window.clearTimeout(timer.current);
-    timer.current = window.setTimeout(() => setShown(false), 1800);
-  }
-
-  return (
-    <span style={{ position: "relative", display: "inline-flex" }}>
-      <button
-        type="button"
-        onClick={tap}
-        aria-label="Mana"
-        style={{ background: "none", border: 0, padding: 4, minHeight: 40, minWidth: 40, cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center" }}
-      >
+/** The potion beside the mana count in the header, and the way to the Well: tap it to go and
+ *  refill. It shakes harder the lower the meter gets. */
+export function ManaButton({ mana, cap, closed }: { mana: number; cap: number; closed?: boolean }) {
+  const path = usePathname();
+  const here = path.startsWith("/well");
+  const level = shakeLevel(mana, cap);
+  // Before registering the Well is shut: the potion is just a potion.
+  if (closed) {
+    return (
+      <span aria-label={`${mana} of ${cap} mana`} className="mana-well" data-shake={level} style={{ minHeight: 40, minWidth: 40, display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/mana.png" alt="" width={26} height={26} className="mana-icon mana-icon-lg" />
-      </button>
-      {shown ? (
-        <span
-          role="status"
-          className="px"
-          style={{
-            position: "absolute",
-            top: "100%",
-            right: 0,
-            zIndex: 20,
-            padding: "6px 9px",
-            fontSize: 11,
-            background: "var(--raised)",
-            boxShadow: "0 0 0 1px var(--edge)",
-            color: "var(--text)",
-            whiteSpace: "nowrap",
-          }}
-        >
-          MANA
-        </span>
-      ) : null}
-    </span>
+      </span>
+    );
+  }
+  return (
+    <Link
+      href="/well"
+      prefetch={false}
+      aria-label={`The Well. You have ${mana} of ${cap} mana.`}
+      title="The Well"
+      className="mana-well"
+      data-shake={level}
+      data-here={here}
+      style={{ minHeight: 40, minWidth: 40, display: "inline-flex", alignItems: "center", justifyContent: "center" }}
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src="/mana.png" alt="" width={26} height={26} className="mana-icon mana-icon-lg" />
+    </Link>
   );
 }

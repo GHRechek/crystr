@@ -24,7 +24,7 @@ Supabase and Vercel.
 | `/me/token`, `/me/trades`, `/u/[handle]/trade` | Badges: design your token, see offers waiting, offer someone a trade. |
 | `/me/override`, `/override/[code]`, `/breach` | The override (witches only on the first): a witch's key as a QR code, the address it points at, and the break-in that lets someone past the registry. See below. |
 | `/vote`, `/vote/new` | The motion board (open / decided) and the witch-only two-step composer. |
-| `/ball`, `/ball/[id]`, `/ball/new`, `/ball/[id]/edit` | Crystr Ball: dispatches, the op-ed review queue, the editor. |
+| `/ball`, `/ball/[id]`, `/ball/new`, `/ball/[id]/edit` | Crystr Ball, in two tabs: CITY NEWS (dispatches, with NEW DISPATCH for witches) and OP-EDS (citizens' pieces, with SUBMIT AN OP-ED for players and the review queue for witches). The editor's "Published by" and "Highlight" fields are the byline and the one-line summary. |
 
 ## Witches and players
 
@@ -130,6 +130,12 @@ drawn on the server by `components/qr.tsx` from the module grid the `qrcode`
 package works out, as pixel runs on white with the quiet zone readers expect.
 A code the City does not know lands on a NOT A KEY notice; someone already
 in lands on NOTHING TO BREAK INTO.
+
+The potion beside the mana count in the header is the way to the Well (there is no separate
+Well button). It shakes harder the lower the meter gets: still above half, a slow pulse below
+half, faster below a quarter, a constant rattle below an eighth, the fastest at nothing, and
+still for anyone who asks the browser for reduced motion. Before registering the Well is shut,
+so there it is only a potion.
 
 ## Max mana and badges
 

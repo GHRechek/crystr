@@ -53,7 +53,7 @@ export function Editor({
 
       {!oped ? (
         <div className="field">
-          <label htmlFor="byline">PUBLISHED AS — BLANK RUNS IT UNDER YOUR OWN NAME</label>
+          <label htmlFor="byline">PUBLISHED BY — BLANK RUNS IT UNDER YOUR OWN NAME</label>
           <input
             id="byline"
             name="byline"
@@ -79,7 +79,7 @@ export function Editor({
       </div>
 
       <div className="field">
-        <label htmlFor="standfirst">STANDFIRST</label>
+        <label htmlFor="standfirst">HIGHLIGHT</label>
         <textarea
           id="standfirst"
           name="standfirst"
