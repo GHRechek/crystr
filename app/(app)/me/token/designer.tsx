@@ -2,7 +2,16 @@
 
 import { useEffect, useRef, useState } from "react";
 import { setToken } from "@/lib/actions";
-import { SET_REMOVED } from "@/lib/badges";
+import { PICTURE_CATEGORIES, pictureCategory, SET_REMOVED } from "@/lib/badges";
+
+/** Which of the five groups an icon belongs to: set pictures by their number, the rest by what they are called. */
+function iconGroup(slug: string, label: string): number {
+  if (slug.startsWith("s-")) return pictureCategory(Number(slug.slice(2)));
+  const l = label.toLowerCase();
+  if (/crest|banner|medal|trophy|ribbon|badge|emblem/.test(l)) return 2;
+  if (/dragon|beast|demon|ghost|bat |goblin|orc|troll|wolf|bull|spider|skull|claw|monster|imp|devil|horned/.test(l)) return 4;
+  return 3;
+}
 import { ArrowIcon } from "@/components/icons";
 import {
   BADGE_SIZES,
@@ -208,6 +217,7 @@ export function TokenDesigner({ start, fresh, how = "", canGive = false, onUse }
   const [d, setD] = useState<TokenDesign>(() => normalizeToken(start));
   const [selected, setSelected] = useState<Slot | null>(null);
   const [panel, setPanel] = useState<Panel>(null);
+  const [group, setGroup] = useState(3);
   const [menu, setMenu] = useState(false);
   const [cell, setCell] = useState(MAX_CELL);
   const row = useRef<HTMLDivElement>(null);
@@ -418,8 +428,15 @@ export function TokenDesigner({ start, fresh, how = "", canGive = false, onUse }
 
       {panel === "icons" ? (
         <Sheet title={`ADD AN ICON · ${placed.length}/${SLOTS.length}`} onClose={() => setPanel(null)}>
+          <div style={{ display: "flex", gap: 6, overflowX: "auto", paddingBottom: 6 }}>
+            {PICTURE_CATEGORIES.map((c, i) => (
+              <button key={c.label} type="button" aria-pressed={group === i} onClick={() => setGroup(i)} className={`btn btn-sm${group === i ? " btn-purple" : ""}`} style={{ flex: "none", minHeight: 36, fontSize: 10 }}>
+                {c.label}
+              </button>
+            ))}
+          </div>
           <div role="listbox" aria-label="Icons" style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 6 }}>
-            {ITEMS.filter((it) => !(it.slug.startsWith("s-") && SET_REMOVED.includes(Number(it.slug.slice(2))))).map((it) => (
+            {ITEMS.filter((it) => !(it.slug.startsWith("s-") && SET_REMOVED.includes(Number(it.slug.slice(2)))) && iconGroup(it.slug, it.label) === group).map((it) => (
               <button
                 key={it.slug}
                 type="button"
