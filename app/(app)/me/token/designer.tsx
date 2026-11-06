@@ -18,6 +18,7 @@ import {
   maxSizeFor,
   moveLayer,
   normalizeToken,
+  packToken,
   placeOnTop,
   stackOf,
   tokenSrc,
@@ -201,7 +202,7 @@ function Sticker({
  *  and down the layers (the badge shape is a layer, so down far enough is behind it), turn
  *  either way by 45 degrees, flip, bigger and smaller (never below as drawn). The small picture by the save
  *  button is the real thing, drawn by /token. */
-export function TokenDesigner({ start, fresh, how = "", canGive = false }: { start: TokenDesign; fresh: boolean; how?: string; canGive?: boolean }) {
+export function TokenDesigner({ start, fresh, how = "", canGive = false, onUse }: { start: TokenDesign; fresh: boolean; how?: string; canGive?: boolean; onUse?: (packed: string) => void }) {
   const [d, setD] = useState<TokenDesign>(() => normalizeToken(start));
   const [selected, setSelected] = useState<Slot | null>(null);
   const [panel, setPanel] = useState<Panel>(null);
@@ -277,10 +278,15 @@ export function TokenDesigner({ start, fresh, how = "", canGive = false }: { sta
   );
 
   return (
-    <form action={setToken} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+    <form
+      action={onUse ? undefined : setToken}
+      onSubmit={onUse ? (e) => { e.preventDefault(); onUse(packToken(d)); } : undefined}
+      style={{ display: "flex", flexDirection: "column", gap: 12 }}
+    >
       <input type="hidden" name="design" value={JSON.stringify(d)} />
 
       {/* Written by you: what someone must do to be given it. Shown when they list it under Working On. */}
+      {onUse ? null : (
       <label className="field">
         <span className="px" style={{ fontSize: 11, color: "var(--blu-soft)" }}>HOW DO PEOPLE EARN IT?</span>
         <input
@@ -292,6 +298,7 @@ export function TokenDesigner({ start, fresh, how = "", canGive = false }: { sta
           style={{ fontSize: 12.5 }}
         />
       </label>
+      )}
 
 
       {/* The real render and the save, pinned while the stage is worked on. */}
@@ -315,7 +322,7 @@ export function TokenDesigner({ start, fresh, how = "", canGive = false }: { sta
         <div style={{ flex: 1, fontSize: 12, lineHeight: 1.5, color: "var(--muted)" }}>
           {fresh ? "Nobody has seen this yet." : "Changing it changes what you give next; tokens already given keep their look."}
         </div>
-        {canGive ? (
+        {canGive && !onUse ? (
           <a href="#give" className="btn btn-sm btn-purple" style={{ minHeight: 40, flex: "none", display: "inline-flex", alignItems: "center", textAlign: "center" }}>
             GIVE IT TO SOMEONE
           </a>
@@ -404,7 +411,7 @@ export function TokenDesigner({ start, fresh, how = "", canGive = false }: { sta
       ) : null}
 
       <button type="submit" className="btn btn-lg btn-purple btn-block">
-        KEEP THIS TOKEN
+        {onUse ? "USE THIS PICTURE" : "KEEP THIS TOKEN"}
       </button>
 
       {panel === "icons" ? (

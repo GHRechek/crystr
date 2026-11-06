@@ -224,7 +224,7 @@ export function WorkingOn({ items, all, editable, person, finished, isWitch, ope
             </button>
           </form>
 
-          {draft ? <BadgeEditor draft={draft} setDraft={setDraft} /> : null}
+          {draft ? <BadgeEditor draft={draft} setDraft={setDraft} used={(all ?? []).flatMap((x) => (x.edit && !x.edit.custom && x.edit.slug !== draft.slug ? [x.edit.art] : []))} /> : null}
         </div>
       ) : null}
     </div>

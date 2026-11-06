@@ -10,7 +10,7 @@ import { INVISIBLE } from "@/lib/wiki-fact";
 import { isPattern, isSwatch } from "@/lib/banner";
 import { COSTS, hasStarterHandle, untilReady } from "@/lib/crystr";
 import { normalizePortrait } from "@/lib/portrait/core";
-import { normalizeToken } from "@/lib/token";
+import { normalizeToken, unpackToken } from "@/lib/token";
 import { pictureFor } from "@/lib/article-icons";
 import { composeBirthday } from "@/lib/birthday";
 import { listBadges, ROMAN } from "@/lib/badges";
@@ -1105,6 +1105,10 @@ export async function saveBadge(fd: FormData) {
     p_how: str(fd, "how"),
     p_blurb: str(fd, "blurb"),
     p_art: Number(fd.get("art")),
+    p_art_custom: (() => {
+      const c = str(fd, "art_custom");
+      return c && unpackToken(c) ? c : null;
+    })(),
   });
   if (!r.ok) {
     if (r.code === "forbidden") await setFlash("WITCHES ONLY", "Only witches make and edit badges.", EDGE.mag);

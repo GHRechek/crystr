@@ -43,7 +43,7 @@ export function BadgeAdmin({ items }: { items: ShownBadge[] }) {
       </ul>
       {draft ? (
         <div style={{ position: "fixed", inset: 0, zIndex: 80, maxWidth: 480, margin: "0 auto", background: "var(--device)" }}>
-          <BadgeEditor draft={draft} setDraft={setDraft} />
+          <BadgeEditor draft={draft} setDraft={setDraft} used={items.flatMap((x) => (x.edit && !x.edit.custom && x.edit.slug !== draft.slug ? [x.edit.art] : []))} />
         </div>
       ) : null}
     </div>

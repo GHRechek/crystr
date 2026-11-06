@@ -134,7 +134,7 @@ export function BadgeArt({
           larger so the pixels stay sharp. */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src={`/badges/${b.art}`}
+        src={b.art.startsWith("token:") ? `/token/${b.art.slice(6)}.png` : `/badges/${b.art}`}
         alt=""
         width={size}
         height={size}

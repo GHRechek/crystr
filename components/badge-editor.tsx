@@ -1,14 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { TokenDesigner } from "@/app/(app)/me/token/designer";
+import { defaultToken } from "@/lib/token";
 import { deleteBadge, saveBadge } from "@/lib/actions";
 
-export type BadgeDraft = { slug?: string; title: string; how: string; blurb: string; art: number };
+export type BadgeDraft = { slug?: string; title: string; how: string; blurb: string; art: number; /** A picture made in the token maker, as its packed design. */ custom?: string };
 
 /** The form a witch edits a badge in: its title, how to earn it, the line once earned, and its
  *  picture. It covers whatever it sits in. A new badge has no slug. Delete asks first. */
-export function BadgeEditor({ draft, setDraft }: { draft: BadgeDraft; setDraft: (d: BadgeDraft | null) => void }) {
+export function BadgeEditor({ draft, setDraft, used = [] }: { draft: BadgeDraft; setDraft: (d: BadgeDraft | null) => void; /** Picture numbers other badges already wear. */ used?: number[] }) {
   const [picking, setPicking] = useState(false);
+  const [making, setMaking] = useState(false);
+  const own = useRef(draft.custom ? 0 : draft.art).current;
+  const taken = new Set(used);
   return (
     <div role="dialog" aria-label={draft.slug ? "Edit badge" : "New badge"} style={{ position: "absolute", inset: 0, zIndex: 2, background: "var(--device)", padding: "16px 16px 24px", overflowY: "auto", display: "flex", flexDirection: "column", gap: 10 }}>
       <div style={{ display: "flex", alignItems: "center" }}>
@@ -33,9 +38,10 @@ export function BadgeEditor({ draft, setDraft }: { draft: BadgeDraft; setDraft: 
         <div className="field">
           <span className="px" style={{ fontSize: 11, color: "var(--blu-soft)" }}>PICTURE</span>
           <input type="hidden" name="art" value={draft.art} />
+          {draft.custom ? <input type="hidden" name="art_custom" value={draft.custom} /> : null}
           <button type="button" className="btn" onClick={() => setPicking(true)} style={{ minHeight: 64, justifyContent: "flex-start", gap: 12 }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={`/badges/set/${draft.art}.png`} alt="" width={46} height={46} style={{ imageRendering: "pixelated", display: "block" }} />
+            <img src={draft.custom ? `/token/${draft.custom}.png` : `/badges/set/${draft.art}.png`} alt="" width={46} height={46} style={{ imageRendering: "pixelated", display: "block" }} />
             <span className="px" style={{ fontSize: 11 }}>PICK A PICTURE</span>
           </button>
         </div>
@@ -52,26 +58,46 @@ export function BadgeEditor({ draft, setDraft }: { draft: BadgeDraft; setDraft: 
           <div style={{ display: "flex", alignItems: "center", padding: "14px 16px 8px" }}>
             <div className="px" style={{ fontSize: 12, color: "var(--pur-soft)" }}>PICK A PICTURE</div>
             <span className="spacer" />
-            <button type="button" className="btn btn-sm" onClick={() => setPicking(false)} aria-label="Close" style={{ minHeight: 40, padding: "0 9px" }}>✕</button>
+            <button type="button" className="btn btn-sm btn-purple" onClick={() => setMaking(true)} style={{ minHeight: 40 }}>+ MAKE A NEW ONE</button>
+            <button type="button" className="btn btn-sm" onClick={() => setPicking(false)} aria-label="Close" style={{ minHeight: 40, padding: "0 9px", marginLeft: 6 }}>✕</button>
           </div>
           <div style={{ flex: 1, minHeight: 0, overflowY: "auto", padding: "4px 16px 20px", display: "flex", flexWrap: "wrap", gap: 8, alignContent: "flex-start" }}>
             {Array.from({ length: 299 }, (_, i) => i + 1).map((n) => (
               <button
                 key={n}
                 type="button"
-                aria-label={`Picture ${n}`}
-                aria-pressed={n === draft.art}
+                aria-label={taken.has(n) && n !== own ? `Picture ${n}, already used` : `Picture ${n}`}
+                aria-pressed={!draft.custom && n === draft.art}
+                disabled={taken.has(n) && n !== own}
                 onClick={() => {
-                  setDraft({ ...draft, art: n });
+                  setDraft({ ...draft, art: n, custom: undefined });
                   setPicking(false);
                 }}
-                style={{ flex: "none", width: 52, height: 52, padding: 0, display: "grid", placeItems: "center", background: n === draft.art ? "rgba(145,132,217,.25)" : "none", border: `1px solid ${n === draft.art ? "var(--pur)" : "transparent"}`, borderRadius: "var(--px-r)", cursor: "pointer" }}
+                style={{ flex: "none", width: 52, height: 52, padding: 0, display: "grid", placeItems: "center", background: !draft.custom && n === draft.art ? "rgba(145,132,217,.25)" : "none", border: `1px solid ${!draft.custom && n === draft.art ? "var(--pur)" : "transparent"}`, borderRadius: "var(--px-r)", cursor: taken.has(n) && n !== own ? "not-allowed" : "pointer", opacity: taken.has(n) && n !== own ? 0.25 : 1, filter: taken.has(n) && n !== own ? "grayscale(1)" : "none" }}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={`/badges/set/${n}.png`} alt="" loading="lazy" style={{ height: 46, width: "auto", maxWidth: 50, objectFit: "contain", imageRendering: "pixelated", display: "block" }} />
               </button>
             ))}
           </div>
+        </div>
+      ) : null}
+      {making ? (
+        <div role="dialog" aria-label="Make a picture" style={{ position: "absolute", inset: 0, zIndex: 4, background: "var(--device)", overflowY: "auto", padding: "14px 16px 24px" }}>
+          <div style={{ display: "flex", alignItems: "center", marginBottom: 10 }}>
+            <div className="px" style={{ fontSize: 12, color: "var(--pur-soft)" }}>MAKE A PICTURE</div>
+            <span className="spacer" />
+            <button type="button" className="btn btn-sm" onClick={() => setMaking(false)} aria-label="Close" style={{ minHeight: 40, padding: "0 9px" }}>✕</button>
+          </div>
+          <TokenDesigner
+            start={defaultToken()}
+            fresh
+            onUse={(packed) => {
+              setDraft({ ...draft, custom: packed });
+              setMaking(false);
+              setPicking(false);
+            }}
+          />
         </div>
       ) : null}
     </div>
