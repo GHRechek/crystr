@@ -117,28 +117,6 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
           >
             {corrupt(profile.bio || "Nothing written here yet. The City will assume the worst.", decay)}
           </div>
-          {/* Your token, then up to five badges you choose, smaller. */}
-          <div style={{ marginTop: 10 }}>
-            <AboutBadges
-              editable
-              shown={shown}
-              earned={achievementGrid(badges.filter((b) => b.earned_at))}
-              tradable={resolveShown(tradable.map((i) => `i:${i.id}`), badges, items, profile.handle, 10000)}
-              aside={
-                <Link href="/me/trades" className="px" style={{ fontSize: 11, color: "var(--pur-pale)", whiteSpace: "nowrap" }}>
-                  TRADES{waiting ? ` · ${waiting}` : ""} →
-                </Link>
-              }
-            >
-              <Link
-                href="/me/token"
-                aria-label="Your token"
-                style={{ width: 64, height: 64, flex: "none", display: "grid", placeItems: "center", color: "var(--dim)", border: token ? 0 : "1px dashed var(--edge)", borderRadius: "var(--px-r)", textDecoration: "none", lineHeight: 0 }}
-              >
-                {token ? <TokenImage design={token.design} size={64} /> : <span className="px" style={{ fontSize: 16 }}>?</span>}
-              </Link>
-            </AboutBadges>
-          </div>
         </div>
 
         {details.length ? (
@@ -210,6 +188,33 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
           </div>
         </div>
 
+        {/* Quests: the token, up to four badges you show, and the list of every quest. */}
+        <Quests
+          key={quests ? "open" : "shut"}
+          openAtStart={quests}
+          items={questGrid(badges)}
+          viewer={{
+            earned: achievementGrid(badges.filter((b) => b.earned_at)),
+            tradable: resolveShown(tradable.map((i) => `i:${i.id}`), badges, items, profile.handle, 10000),
+            current: shown.map((b) => b.key),
+            aside: (
+              <Link href="/me/trades" className="px" style={{ fontSize: 11, color: "var(--pur-pale)", whiteSpace: "nowrap" }}>
+                TRADES{waiting ? ` · ${waiting}` : ""} →
+              </Link>
+            ),
+          }}
+        >
+          <AboutBadges noPen earned={[]} tradable={[]} shown={shown}>
+            <Link
+              href="/me/token"
+              aria-label="Your token"
+              style={{ width: 64, height: 64, flex: "none", display: "grid", placeItems: "center", color: "var(--dim)", border: token ? 0 : "1px dashed var(--edge)", borderRadius: "var(--px-r)", textDecoration: "none", lineHeight: 0 }}
+            >
+              {token ? <TokenImage design={token.design} size={64} /> : <span className="px" style={{ fontSize: 16 }}>?</span>}
+            </Link>
+          </AboutBadges>
+        </Quests>
+
         {plaintiffSince ? (
           <div className="tile" style={{ padding: 12, display: "flex", alignItems: "center", gap: 10 }}>
             <div className="px" style={{ fontSize: 11, color: "var(--blu-soft)" }}>
@@ -235,8 +240,6 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
         {/* The badges you have, just the pictures, packed tight; tap one for its tooltip. */}
         {/* What you are going after, as a list, with a button to see every badge and choose. */}
         <WorkingOn key={goals ? "pick" : "view"} openAtStart={goals} isWitch={profile.is_witch} editable finished={finishedWorking(profile.working_on, badges)} items={resolveWorking(profile.working_on, badges, [], progress)} all={goalGrid(badges, progress)} />
-
-        <Quests key={quests ? "open" : "shut"} openAtStart={quests} items={questGrid(badges)} />
 
         {tokens.length ? (
           <div>

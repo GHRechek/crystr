@@ -16,6 +16,7 @@ export function AboutBadges({
   tradable,
   aside,
   editable,
+  noPen,
 }: {
   children?: React.ReactNode;
   shown: ShownBadge[];
@@ -23,6 +24,8 @@ export function AboutBadges({
   earned: ShownBadge[];
   tradable: ShownBadge[];
   aside?: React.ReactNode;
+  /** No pen or eye: the page puts its own way to the full list beside this row. */
+  noPen?: boolean;
   editable?: boolean;
 }) {
   const [tip, setTip] = useState<{ key: string; x: number; top: number } | null>(null);
@@ -75,7 +78,7 @@ export function AboutBadges({
           <BadgeFace b={b} size={42} />
         </button>
       ))}
-      {earned.length || tradable.length || editable ? (
+      {!noPen && (earned.length || tradable.length || editable) ? (
         <button
           type="button"
           aria-label={editable ? "See all your badges and choose which to show" : "See all their badges"}

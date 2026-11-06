@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { BadgeFace } from "@/components/badge-chooser";
+import { BadgeViewer } from "@/components/badge-viewer";
 import type { ShownBadge } from "@/lib/badges";
 
 /** Where each system badge is done, for the ones that have a place to go. */
@@ -18,7 +19,20 @@ const WHERE: Record<string, [string, string]> = {
 
 /** The quests: every badge that is not a long-term goal. Some the system gives out the moment they
  *  are true; the ones a witch approves are done by making a post (tap one, then MAKE THE POST). */
-export function Quests({ items, openAtStart }: { items: ShownBadge[]; openAtStart?: boolean }) {
+export function Quests({
+  items,
+  openAtStart,
+  viewer,
+  children,
+}: {
+  items: ShownBadge[];
+  openAtStart?: boolean;
+  /** Your own badges, for choosing which four to show. */
+  viewer?: { earned: ShownBadge[]; tradable: ShownBadge[]; current: string[]; aside?: React.ReactNode };
+  /** The row that sits under the heading: the token and the badges you show. */
+  children?: React.ReactNode;
+}) {
+  const [choosing, setChoosing] = useState(false);
   const [open, setOpen] = useState(!!openAtStart);
   const [tab, setTab] = useState(0);
   const [q, setQ] = useState("");
@@ -29,18 +43,27 @@ export function Quests({ items, openAtStart }: { items: ShownBadge[]; openAtStar
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-      <div className="px" style={{ fontSize: 12, color: "var(--mag-soft)", minHeight: 24, display: "flex", alignItems: "center" }}>
-        QUESTS <span style={{ fontSize: 11, color: "var(--muted)", marginLeft: 6 }}>· {done.length} OF {items.length}</span>
+      <div className="px" style={{ fontSize: 12, color: "var(--mag-soft)", minHeight: 24, display: "flex", alignItems: "center", gap: 8 }}>
+        <span>
+          QUESTS <span style={{ fontSize: 11, color: "var(--muted)", marginLeft: 6 }}>· {done.length} / {items.length}</span>
+        </span>
+        <span className="spacer" />
+        <button type="button" className="px" onClick={() => setOpen(true)} style={{ background: "none", border: 0, padding: 0, cursor: "pointer", fontSize: 11, color: "var(--pur-pale)" }}>
+          SEE ALL QUESTS →
+        </button>
       </div>
-      <button type="button" className="btn btn-block" onClick={() => setOpen(true)} style={{ minHeight: 44 }}>
-        SEE ALL QUESTS
-      </button>
+      {children}
 
       {open ? (
         <div role="dialog" aria-label="Quests" style={{ position: "fixed", inset: 0, zIndex: 80, maxWidth: 480, margin: "0 auto", background: "var(--device)", display: "flex", flexDirection: "column" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "14px 16px 8px" }}>
-            <div className="px" style={{ fontSize: 12, color: "var(--mag-soft)" }}>QUESTS · {done.length} OF {items.length}</div>
+            <div className="px" style={{ fontSize: 12, color: "var(--mag-soft)" }}>QUESTS · {done.length} / {items.length}</div>
             <span className="spacer" />
+            {viewer ? (
+              <button type="button" className="btn btn-sm" onClick={() => setChoosing(true)} style={{ minHeight: 40 }}>
+                CHOOSE SHOWN BADGES
+              </button>
+            ) : null}
             <button type="button" className="btn btn-sm" onClick={() => setOpen(false)} aria-label="Close" style={{ minHeight: 40, padding: "0 10px" }}>✕</button>
           </div>
           <div className="seg" style={{ margin: "0 16px" }}>
@@ -99,6 +122,7 @@ export function Quests({ items, openAtStart }: { items: ShownBadge[]; openAtStar
           </ul>
         </div>
       ) : null}
+      {choosing && viewer ? <BadgeViewer earned={viewer.earned} tradable={viewer.tradable} current={viewer.current} editable aside={viewer.aside} onClose={() => setChoosing(false)} /> : null}
     </div>
   );
 }

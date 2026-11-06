@@ -20,7 +20,8 @@ export const COSTS = {
   like: 1,
   /** A reply (3 more with a picture). */
   reply: 5,
-  whisper: 2,
+  whisper: 1,
+  report: 2,
   vote: 3,
   oped: 6,
   topSix: 4,

@@ -67,7 +67,7 @@ export function PostMenu({ mine, ...props }: ReportProps & { mine?: boolean }) {
       <div className="post-menu-panel">
         <Link href={`/thread/${props.target}/send`} className="post-menu-item">
           <span>SEND IN A WHISPER</span>
-          <Cost n={COSTS.whisper} />
+          <Cost n={COSTS.report} />
         </Link>
         {mine ? null : (
         <details className="post-menu-report">
