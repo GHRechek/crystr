@@ -24,7 +24,7 @@ Supabase and Vercel.
 | `/me/token`, `/me/trades`, `/u/[handle]/trade` | Badges: design your token, see offers waiting, offer someone a trade. |
 | `/me/override`, `/override/[code]`, `/breach` | The override (witches only on the first): a witch's key as a QR code, the address it points at, and the break-in that lets someone past the registry. See below. |
 | `/ball?tab=motions`, `/vote/new` | The motion board (open / decided) is the MOTIONS tab of the Ball, beside CITY NEWS and OP-EDS; `/vote` redirects there. `/vote/new` is the witch-only two-step composer. |
-| `/ball`, `/ball/[id]`, `/ball/new`, `/ball/[id]/edit` | Crystr Ball, in two tabs: CITY NEWS (dispatches, with NEW DISPATCH for witches) and OP-EDS (citizens' pieces, with SUBMIT AN OP-ED for players and the review queue for witches). Witches get a VIEWING THE BALL AS switch (witch or player) in the three-dot menu at the top right; it keeps the tab they were on. The editor's "Published by" and "Highlight" fields are the byline and the one-line summary. ATTACH IMAGE picks an icon from the token designer's set as the article's picture (`articles.banner_icon`, set by `cr_set_article_icon`; migration `20261106000000_article_icon.sql`): on the article it comes first, below the highlight, half the width and on the left, with the body starting level with its top and wrapping round it; on the Ball list and the feed it shows as a small tile. The header no longer carries a line about how much mana you have; the number and the potion say it. |
+| `/ball`, `/ball/[id]`, `/ball/new`, `/ball/[id]/edit` | Crystr Ball, in two tabs: CITY NEWS (dispatches, with NEW DISPATCH for witches) and OP-EDS (citizens' pieces, with SUBMIT AN OP-ED for players and the review queue for witches). Witches get a VIEWING THE BALL AS switch (witch or player) in the three-dot menu at the top right; it keeps the tab they were on. The editor's "Published by" and "Highlight" fields are the byline and the one-line summary. ATTACH IMAGE picks a picture for the article from everything we have (the 69 token icons, the 8 achievement and 48 tradable badges, and the 299 badges of the uploaded set, now served from `public/badges/set/`; `lib/article-icons.ts` lists them with their sizes and what a saved name such as `set-120` or `tradable-bat-banner` means) (`articles.banner_icon`, set by `cr_set_article_icon`; migration `20261106000000_article_icon.sql`): on the article it comes first, below the highlight, half the width and on the left, with the body starting level with its top and wrapping round it; on the Ball list and the feed it shows as a small tile. The header no longer carries a line about how much mana you have; the number and the potion say it. |
 
 ## Witches and players
 
@@ -251,10 +251,10 @@ are written to be safe to run twice (`if not exists`, `or replace`), but there
 is no reason to.
 
 **Source art** that is not served lives under `assets/`: the Portrait Maker
-sheets in `assets/portrait/`, the achievement-badge set the eight badges were
-chosen from in `assets/badges/achievement/`, the rune sheets in
-`assets/runes/`, and `assets/mana.jpg`. What the app serves is under
-`public/`.
+sheets in `assets/portrait/`, the archive of the achievement-badge set in
+`assets/badges/achievement/` (its 299 pictures are served now, from
+`public/badges/set/`), the rune sheets in `assets/runes/`, and `assets/mana.jpg`.
+What the app serves is under `public/`.
 
 ## Portraits
 

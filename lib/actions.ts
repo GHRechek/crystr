@@ -10,7 +10,8 @@ import { INVISIBLE } from "@/lib/wiki-fact";
 import { isPattern, isSwatch } from "@/lib/banner";
 import { COSTS, hasStarterHandle, untilReady } from "@/lib/crystr";
 import { normalizePortrait } from "@/lib/portrait/core";
-import { ITEMS, normalizeToken } from "@/lib/token";
+import { normalizeToken } from "@/lib/token";
+import { pictureFor } from "@/lib/article-icons";
 import { composeBirthday } from "@/lib/birthday";
 import { listBadges, ROMAN } from "@/lib/badges";
 import { PLAINTIFF_ERRORS, type PlaintiffError } from "@/lib/plaintiff";
@@ -637,7 +638,7 @@ export async function createMotion(fd: FormData) {
 /** The icon chosen as an article's picture, if it is one of the icons we have. */
 function chosenIcon(fd: FormData, key: string): string | null {
   const slug = str(fd, key);
-  return ITEMS.some((i) => i.slug === slug) ? slug : null;
+  return pictureFor(slug) ? slug : null;
 }
 
 /** Attach (or clear) the picture on an article just saved. Failure is not fatal: the
