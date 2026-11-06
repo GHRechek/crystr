@@ -69,7 +69,7 @@ export function ProfileHead({
               setEditing(false);
             }}
             aria-expanded={open}
-            aria-label="Change your face or your status"
+            aria-label="Change your face or ask for help"
             style={{
               width: FACE,
               height: FACE,
@@ -107,7 +107,7 @@ export function ProfileHead({
                 role="menuitem"
                 onClick={() => setEditing(true)}
               >
-                <span aria-hidden="true">◔</span> CHANGE YOUR STATUS
+                <span aria-hidden="true">◔</span> ASK FOR HELP
               </button>
               <Link href="/me/edit" className="face-menu-item" role="menuitem">
                 <span aria-hidden="true">▤</span> EDIT PROFILE
