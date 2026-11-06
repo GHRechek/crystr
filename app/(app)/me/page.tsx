@@ -147,7 +147,7 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
             </div>
           ) : null}
           {profile.pronouns ? (
-            <div style={{ fontSize: 11.5, color: "var(--dim)", lineHeight: 1.5, overflowWrap: "anywhere" }}>{profile.pronouns}</div>
+            <div className="px" style={{ fontSize: 11, color: "var(--muted)", lineHeight: 1.5, overflowWrap: "anywhere" }}>{profile.pronouns}</div>
           ) : null}
         </div>
         <div style={{ fontSize: 12.5, lineHeight: 1.6, color: "var(--text-3)", textWrap: "pretty" }}>

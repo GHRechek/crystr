@@ -110,7 +110,7 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
             </div>
           ) : null}
           {person.pronouns ? (
-            <div style={{ fontSize: 11.5, color: "var(--dim)", lineHeight: 1.5, overflowWrap: "anywhere" }}>{person.pronouns}</div>
+            <div className="px" style={{ fontSize: 11, color: "var(--muted)", lineHeight: 1.5, overflowWrap: "anywhere" }}>{person.pronouns}</div>
           ) : null}
         </div>
         <div style={{ fontSize: 12.5, lineHeight: 1.6, color: "var(--text-3)", textWrap: "pretty" }}>
