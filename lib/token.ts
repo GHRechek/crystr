@@ -52,9 +52,13 @@ export const SHAPES = [
 ] as const;
 export type ShapeKey = (typeof SHAPES)[number]["key"];
 
-/** An item's size, in hundredths of how it was drawn: never larger, smaller in steps of fifteen. */
-export const SIZES = [55, 70, 85, 100] as const;
+/** An item's size, in hundredths of how it was drawn. The editor offers 100 (as drawn) and
+ *  larger, in steps of twenty-five; the smaller sizes are only there for designs made when
+ *  icons could shrink, which are drawn as they were. */
+export const SIZES = [55, 70, 85, 100, 125, 150, 175, 200] as const;
 export type SizeKey = (typeof SIZES)[number];
+/** The smallest size the editor will go down to. */
+export const NORMAL_SIZE: SizeKey = 100;
 
 /** The badge shape's size, in hundredths of the full one. */
 export const BADGE_SIZES = [50, 75, 100] as const;
@@ -258,7 +262,18 @@ export function itemBounds(slug: string, t: number, sz: SizeKey): { x: number; y
   if (!ITEMS.some((i) => i.slug === slug)) return { x: 0, y: 0 };
   const box = itemBox(slug, t, sz);
   const C = TOKEN_SIZE / 2;
-  return { x: Math.floor(C - box.w / 2), y: Math.floor(C - box.h / 2) };
+  return { x: Math.max(0, Math.floor(C - box.w / 2)), y: Math.max(0, Math.floor(C - box.h / 2)) };
+}
+
+/** The largest size an icon can be at this turn and still fit inside the picture (a bigger
+ *  icon, or one turned on a diagonal, takes more room). */
+export function maxSizeFor(slug: string, t: number): SizeKey {
+  let best: SizeKey = SIZES[0];
+  for (const sz of SIZES) {
+    const box = itemBox(slug, t, sz);
+    if (box.w <= TOKEN_SIZE && box.h <= TOKEN_SIZE) best = sz;
+  }
+  return best;
 }
 
 /** The draw order and how many icons sit under the shape, from whatever was saved: this
@@ -295,7 +310,8 @@ export function normalizeToken(raw: unknown): TokenDesign {
     // than the default's.
     const slug = pick(c[k], ITEM_KEYS, k === "a" || k === "b" ? d[k] : NO_ITEM);
     const t = turn(c[`${k}_turn`], c[`${k}_rot`]);
-    const sz = size(c[`${k}_size`]);
+    // Never bigger than fits in the picture: growing, or turning on a diagonal, can run out of room.
+    const sz = Math.min(size(c[`${k}_size`]), maxSizeFor(slug, t)) as SizeKey;
     const bounds = itemBounds(slug, t, sz);
     out[k] = slug;
     out[`${k}_flip`] = c[`${k}_flip`] === true;
@@ -341,13 +357,13 @@ export function moveLayer(d: TokenDesign, slot: Slot, dir: 1 | -1): { order: str
 // ------------------------------------------------------------ url packing
 
 /** Bump when the compositor changes: tokens are cached immutably by their packed spec. */
-export const TOKEN_RENDER = "8";
+export const TOKEN_RENDER = "9";
 
-/** flip, size and turn of one icon in one number: flip × 32 + size step × 8 + turn, 0–63. */
-const flags = (flip: boolean, sz: SizeKey, t: number) => (flip ? 32 : 0) + SIZE_KEYS.indexOf(sz) * 8 + t;
+/** flip, size and turn of one icon in one number: flip × 64 + size step × 8 + turn, 0–127. */
+const flags = (flip: boolean, sz: SizeKey, t: number) => (flip ? 64 : 0) + SIZE_KEYS.indexOf(sz) * 8 + t;
 const unflags = (n: number) => ({
-  flip: n >= 32,
-  size: SIZE_KEYS[Math.floor((n % 32) / 8)] as SizeKey,
+  flip: n >= 64,
+  size: SIZE_KEYS[Math.floor((n % 64) / 8)] as SizeKey,
   turn: (n % 8) as Turn,
 });
 
@@ -393,7 +409,7 @@ export function unpackToken(packed: string): TokenDesign | null {
     const [nItem, f, x, y] = nums.slice(i, i + 4);
     i += 4;
     const slug = at(ITEM_KEYS, nItem);
-    if (!slug || f > 63 || x > 2 * OFFSET_MAX || y > 2 * OFFSET_MAX) return null;
+    if (!slug || f > 127 || x > 2 * OFFSET_MAX || y > 2 * OFFSET_MAX) return null;
     const u = unflags(f);
     raw[k] = slug;
     raw[`${k}_flip`] = u.flip;
