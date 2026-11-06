@@ -10,6 +10,7 @@ import { WorkingOn } from "@/components/working-on";
 import { achievementGrid, resolveShown, resolveWorking } from "@/lib/badges";
 import { ago, corrupt, decayLevel, BADGE_MANA } from "@/lib/crystr";
 import { bannerOf, bannerStyle } from "@/lib/banner";
+import { formatBirthday } from "@/lib/birthday";
 import { tokenTitle } from "@/lib/token";
 
 /** Someone else's profile: who they are, what they say about themselves, who they
@@ -47,6 +48,7 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
   const days = Math.max(1, Math.round((Date.now() - new Date(person.created_at).getTime()) / 86_400_000));
   const details: { kind: DetailKind; value: string }[] = (
     [
+      ["birthday", formatBirthday(person.birthday)],
       ["likes", person.likes],
       ["food", person.food],
       ["obsession", person.obsession],
