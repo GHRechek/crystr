@@ -10,7 +10,7 @@ import type { ShownBadge } from "@/lib/badges";
 /** The portrait's size, and how tall the banner is when it carries the shown badges: a row of
  *  badges (63 pixels), a gap, and the thought below them, clear of the portrait. */
 const FACE = 104;
-const BANNER_WITH_BADGES = 176;
+const BANNER_WITH_BADGES = 136;
 
 /** The banner, the portrait and the thought hanging in the air above it.
  *  Tapping the portrait offers what you can change about a face: what it looks like, what it's
@@ -62,7 +62,7 @@ export function ProfileHead({
               setOpen(true);
               setEditing(true);
             }}
-            style={{ position: "absolute", left: FACE + 28, right: 16, bottom: 14 }}
+            style={{ position: "absolute", left: FACE + 28, right: 16, bottom: 3 }}
           >
             <span>{mood || "…"}</span>
           </button>

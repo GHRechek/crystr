@@ -6,7 +6,7 @@ import { ArrowIcon } from "@/components/icons";
 import { setWorkingOn } from "@/lib/actions";
 import { WORKING_MAX, type ShownBadge } from "@/lib/badges";
 
-const PER_PAGE = 36; // six across, six down
+const PER_PAGE = 8; // rows to a page
 
 /** "Working on": the badges a person is going after, as a plain list, one to a row, each with
  *  what it takes. On your own profile a button opens every badge there is, to pick up to five
@@ -15,7 +15,6 @@ export function WorkingOn({ items, all, editable }: { items: ShownBadge[]; all?:
   const [open, setOpen] = useState(false);
   const [pick, setPick] = useState<string[]>(items.map((b) => b.key));
   const [page, setPage] = useState(0);
-  const [last, setLast] = useState<ShownBadge | null>(null);
 
   if (!editable && items.length === 0) return null;
 
@@ -23,7 +22,6 @@ export function WorkingOn({ items, all, editable }: { items: ShownBadge[]; all?:
   const pages = Math.max(1, Math.ceil(options.length / PER_PAGE));
   const at = Math.min(page, pages - 1);
   const toggle = (b: ShownBadge) => {
-    setLast(b);
     setPick((p) => (p.includes(b.key) ? p.filter((k) => k !== b.key) : p.length >= WORKING_MAX ? p : [...p, b.key]));
   };
 
@@ -59,7 +57,6 @@ export function WorkingOn({ items, all, editable }: { items: ShownBadge[]; all?:
           className="btn btn-block"
           onClick={() => {
             setPick(items.map((b) => b.key));
-            setLast(null);
             setPage(0);
             setOpen(true);
           }}
@@ -97,21 +94,7 @@ export function WorkingOn({ items, all, editable }: { items: ShownBadge[]; all?:
               </button>
             </div>
 
-            {/* What the last badge touched is, as a line, since the pictures carry no names. */}
-            <div style={{ minHeight: 44, padding: "6px 0" }} aria-live="polite">
-              {last ? (
-                <>
-                  <div className="px" style={{ fontSize: 11, color: "var(--text)" }}>
-                    {last.title}
-                  </div>
-                  <div style={{ fontSize: 12, lineHeight: 1.4, color: "var(--muted)" }}>{last.line}</div>
-                </>
-              ) : (
-                <div style={{ fontSize: 12, lineHeight: 1.4, color: "var(--muted)" }}>Tap a badge to see what it takes and to pick it. Up to {WORKING_MAX}.</div>
-              )}
-            </div>
-
-            <div role="listbox" aria-multiselectable aria-label="All badges" style={{ display: "grid", gridTemplateColumns: "repeat(6, minmax(0, 1fr))", gap: 6 }}>
+            <div role="listbox" aria-multiselectable aria-label="All badges" style={{ display: "flex", flexDirection: "column", gap: 6 }}>
               {options.slice(at * PER_PAGE, (at + 1) * PER_PAGE).map((b) => {
                 const n = pick.indexOf(b.key);
                 return (
@@ -120,16 +103,18 @@ export function WorkingOn({ items, all, editable }: { items: ShownBadge[]; all?:
                     type="button"
                     role="option"
                     aria-selected={n >= 0}
-                    aria-label={`${b.title}. ${b.line}`}
-                    title={b.title}
                     onClick={() => toggle(b)}
-                    style={{ position: "relative", minHeight: 52, padding: 4, background: n >= 0 ? "rgba(145,132,217,.18)" : "var(--surface)", border: `1px solid ${n >= 0 ? "var(--pur)" : "var(--edge)"}`, borderRadius: "var(--px-r)", cursor: "pointer", display: "grid", placeItems: "center", opacity: b.locked || n >= 0 ? 1 : 0.85 }}
+                    style={{ position: "relative", display: "flex", alignItems: "center", gap: 10, textAlign: "left", padding: "6px 8px", background: n >= 0 ? "rgba(145,132,217,.18)" : "var(--surface)", border: `1px solid ${n >= 0 ? "var(--pur)" : "var(--edge)"}`, borderRadius: "var(--px-r)", cursor: "pointer", color: "inherit", font: "inherit" }}
                   >
-                    <BadgeFace b={b} size={42} />
+                    <span style={{ flex: "none", lineHeight: 0, opacity: b.locked ? 0.7 : 1 }}>
+                      <BadgeFace b={b} size={42} />
+                    </span>
+                    <span style={{ minWidth: 0, flex: 1 }}>
+                      <span className="px" style={{ display: "block", fontSize: 11, color: "var(--text)", lineHeight: 1.5 }}>{b.title}</span>
+                      <span style={{ display: "block", fontSize: 12, lineHeight: 1.4, color: "var(--muted)" }}>{b.line}</span>
+                    </span>
                     {n >= 0 ? (
-                      <span aria-hidden className="px" style={{ position: "absolute", top: 1, right: 1, minWidth: 15, height: 15, display: "grid", placeItems: "center", fontSize: 10, background: "var(--pur)", color: "#fff", borderRadius: 8 }}>
-                        {n + 1}
-                      </span>
+                      <span aria-hidden className="px" style={{ flex: "none", minWidth: 20, height: 20, display: "grid", placeItems: "center", fontSize: 11, background: "var(--pur)", color: "#fff", borderRadius: 10 }}>{n + 1}</span>
                     ) : null}
                   </button>
                 );

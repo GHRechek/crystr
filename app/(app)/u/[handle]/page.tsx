@@ -56,7 +56,7 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
   return (
     <div style={{ paddingBottom: 24 }}>
       {/* The banner, taller when they have badges on show, which sit centred on it. */}
-      <div style={{ position: "relative", height: shown.length ? 150 : 96, ...bannerStyle(bannerOf(person)) }}>
+      <div style={{ position: "relative", height: shown.length ? 124 : 96, ...bannerStyle(bannerOf(person)) }}>
         {shown.length ? (
           <div style={{ position: "absolute", inset: 0, padding: "0 16px", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <div style={{ width: "100%" }}>
