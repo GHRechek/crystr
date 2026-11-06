@@ -103,10 +103,10 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
             <div className="px" style={{ fontSize: 11, color: "var(--blu-soft)", letterSpacing: ".07em", marginBottom: 8 }}>
               THE DETAILS
             </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: "8px 12px" }}>
               {details.map(([label, value]) => (
-                <div key={label} style={{ display: "flex", gap: 10, alignItems: "center" }}>
-                  <div style={{ width: 48, flex: "none", display: "flex", justifyContent: "center" }}>
+                <div key={label} style={{ display: "flex", gap: 8, minWidth: 0, alignItems: "flex-start" }}>
+                  <div style={{ width: 20, flex: "none", display: "flex", justifyContent: "center" }}>
                     <PixelGlyph kind={GLYPH[label]} label={label} />
                   </div>
                   <div style={{ fontSize: 12.5, lineHeight: 1.5, color: "var(--text-2)", minWidth: 0 }}>
