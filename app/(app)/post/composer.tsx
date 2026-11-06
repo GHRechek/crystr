@@ -9,7 +9,7 @@ import { Placeholder } from "@/components/bits";
 
 export function Composer({ mana, badge }: { mana: number; badge?: { slug: string; title: string; how: string } }) {
   const [text, setText] = useState("");
-  const [photo, setPhoto] = useState(!!badge);
+  const [photo, setPhoto] = useState(false);
 
   const cost = COSTS.post + (photo ? COSTS.photo : 0);
   const affordable = mana >= cost;
@@ -43,7 +43,7 @@ export function Composer({ mana, badge }: { mana: number; badge?: { slug: string
           </div>
           <div style={{ fontSize: 12.5, lineHeight: 1.5, color: "var(--text-3)", marginTop: 4 }}>{badge.how}</div>
           <div style={{ fontSize: 12, lineHeight: 1.45, color: "var(--muted)", marginTop: 4 }}>
-            This post is marked as a request. When a witch likes it, the badge is yours.
+            Show it however you like: words, a poem, a drawing, a photo. It is marked as a request, and when a witch likes it, the badge is yours.
           </div>
         </div>
       ) : null}
