@@ -6,6 +6,10 @@ import { untilReady, ago } from "@/lib/crystr";
 import { resolveWorking, finishedWorking, goalGrid, questGrid } from "@/lib/badges";
 import { WorkingOn } from "@/components/working-on";
 import { QuestBrowser } from "@/components/quest-browser";
+import { HubTabs } from "@/components/hub-tabs";
+import { BadgeViewer } from "@/components/badge-viewer";
+import { achievementGrid, resolveShown } from "@/lib/badges";
+import { getBadgeItems } from "@/lib/data";
 
 const head = (text: string, colour: string, aside?: React.ReactNode) => (
   <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 8 }}>
@@ -23,7 +27,10 @@ export default async function QuestsPage(props: { searchParams: Promise<{ pick?:
   await createClient().rpc("cr_check_badges");
   const { data: progressData } = await createClient().rpc("cr_goal_progress");
   const progress = (progressData ?? {}) as Record<string, number>;
-  const [badges, people, well] = await Promise.all([getBadges(userId), getPeopleKinds(userId), getQuests(userId)]);
+  const [badges, people, well, items] = await Promise.all([getBadges(userId), getPeopleKinds(userId), getQuests(userId), getBadgeItems(userId)]);
+  const tradable = items.filter((i) => i.kind === "tradable");
+  const shown = resolveShown(profile.shown_badges, badges, items, profile.handle);
+  const heldCount = badges.filter((b) => b.earned_at).length + tradable.length;
   const waiting = await getQuestWaiting(userId, profile.is_witch, new Set(badges.filter((b) => b.earned_at).map((b) => b.slug)));
 
   const pending: Record<string, string> = {};
@@ -39,6 +46,24 @@ export default async function QuestsPage(props: { searchParams: Promise<{ pick?:
         <h1 className="px" style={{ fontSize: 13, color: "var(--pur-soft)", fontWeight: 400 }}>QUESTS</h1>
       </div>
 
+      <HubTabs
+        heldCount={heldCount}
+        held={
+          <BadgeViewer
+            inline
+            editable
+            earned={achievementGrid(badges.filter((b) => b.earned_at))}
+            tradable={resolveShown(tradable.map((i) => `i:${i.id}`), badges, items, profile.handle, 10000)}
+            current={shown.map((b) => b.key)}
+            aside={
+              <Link href="/me/trades" className="px" style={{ fontSize: 11, color: "var(--pur-pale)", whiteSpace: "nowrap" }}>
+                TRADES →
+              </Link>
+            }
+          />
+        }
+        quests={
+          <>
       <WorkingOn
         key={sp.pick === "1" ? "pick" : "view"}
         openAtStart={sp.pick === "1"}
@@ -142,6 +167,9 @@ export default async function QuestsPage(props: { searchParams: Promise<{ pick?:
           )}
         </div>
       ) : null}
+          </>
+        }
+      />
     </div>
   );
 }

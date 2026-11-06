@@ -8,9 +8,6 @@ export const SPECIES = [
   { value: "human", label: "Human" },
   { value: "orc", label: "Orc" },
   { value: "goblin", label: "Goblin" },
-  { value: "troll", label: "Troll" },
-  { value: "gnome", label: "Gnome" },
-  { value: "tauren", label: "Tauren" },
   { value: "planar", label: "Planar" },
 ] as const;
 

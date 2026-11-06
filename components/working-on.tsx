@@ -47,7 +47,7 @@ export function WorkingOn({ items, all, editable, person, finished, isWitch, ope
             }}
             style={{ background: "none", border: 0, padding: 0, cursor: "pointer", fontSize: 11, color: "var(--pur-pale)" }}
           >
-            {items.length ? "CHANGE →" : "PICK EPIC QUESTS →"}
+            {items.length ? "CHANGE FOCUS →" : "PICK EPIC QUESTS →"}
           </button>
         ) : null}
       </div>

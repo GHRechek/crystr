@@ -16,13 +16,16 @@ export function BadgeViewer({
   editable,
   aside,
   onClose,
+  inline,
 }: {
   earned: ShownBadge[];
   tradable: ShownBadge[];
   current: string[];
   editable?: boolean;
   aside?: React.ReactNode;
-  onClose: () => void;
+  onClose?: () => void;
+  /** Sit in the page instead of covering it: no close button, and the page scrolls. */
+  inline?: boolean;
 }) {
   const [tab, setTab] = useState(0);
   const [pick, setPick] = useState<string[]>(current);
@@ -35,21 +38,23 @@ export function BadgeViewer({
   };
 
   return (
-    <div role="dialog" aria-label="All badges" style={{ position: "fixed", inset: 0, zIndex: 80, maxWidth: 480, margin: "0 auto", background: "var(--device)", display: "flex", flexDirection: "column" }}>
+    <div role={inline ? undefined : "dialog"} aria-label="All badges" style={inline ? { display: "flex", flexDirection: "column" } : { position: "fixed", inset: 0, zIndex: 80, maxWidth: 480, margin: "0 auto", background: "var(--device)", display: "flex", flexDirection: "column" }}>
       <form action={editable ? setShownBadges : undefined} style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}>
         <input type="hidden" name="list" value={JSON.stringify(pick)} />
-        <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "14px 16px 8px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, padding: inline ? "4px 0 8px" : "14px 16px 8px" }}>
           <div className="px" style={{ fontSize: 12, color: "var(--pur-soft)" }}>
             BADGES{editable ? ` · SHOWING ${pick.length}/${SHOW_MAX}` : ""}
           </div>
           <span className="spacer" />
           {aside}
-          <button type="button" className="btn btn-sm" onClick={onClose} aria-label="Close" style={{ minHeight: 40, padding: "0 10px" }}>
-            ✕
-          </button>
+          {inline ? null : (
+            <button type="button" className="btn btn-sm" onClick={onClose} aria-label="Close" style={{ minHeight: 40, padding: "0 10px" }}>
+              ✕
+            </button>
+          )}
         </div>
 
-        <div className="seg" style={{ margin: "0 16px" }}>
+        <div className="seg" style={{ margin: inline ? 0 : "0 16px" }}>
           <button type="button" data-on={tab === 0} onClick={() => setTab(0)}>
             EARNED · {earned.length}
           </button>
@@ -58,7 +63,7 @@ export function BadgeViewer({
           </button>
         </div>
 
-        <div style={{ minHeight: 56, padding: "10px 16px 4px" }} aria-live="polite">
+        <div style={{ minHeight: 56, padding: inline ? "10px 0 4px" : "10px 16px 4px" }} aria-live="polite">
           {last ? (
             <>
               <div className="px" style={{ fontSize: 11, color: "var(--text)" }}>{last.title}</div>
@@ -71,7 +76,7 @@ export function BadgeViewer({
           )}
         </div>
 
-        <div style={{ flex: 1, minHeight: 0, overflowY: "auto", padding: "8px 16px 16px" }}>
+        <div style={inline ? { padding: "8px 0 16px" } : { flex: 1, minHeight: 0, overflowY: "auto", padding: "8px 16px 16px" }}>
           {list.length ? (
             <div style={{ display: "flex", flexWrap: "wrap", gap: "14px 10px" }}>
               {list.map((b) => {
@@ -106,7 +111,7 @@ export function BadgeViewer({
         </div>
 
         {editable ? (
-          <div style={{ padding: "8px 16px 20px" }}>
+          <div style={{ padding: inline ? "4px 0 12px" : "8px 16px 20px" }}>
             <button type="submit" className="btn btn-lg btn-purple btn-block">
               SHOW THESE
             </button>
