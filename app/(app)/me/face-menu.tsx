@@ -44,10 +44,12 @@ export function ProfileHead({
         {/* Taller when badges are on show, so they sit on the banner with the thought below them. */}
         <div style={{ height: shown.length ? BANNER_WITH_BADGES : 112, ...banner }} />
 
-        {/* The shown badges, centred on the banner, clear of the thought and the portrait. */}
+        {/* The shown badges, centred on the banner both ways. The thought sits low and may come close. */}
         {shown.length ? (
-          <div style={{ position: "absolute", top: 18, left: 16, right: 16 }}>
-            <ShownBadges shown={shown} />
+          <div style={{ position: "absolute", inset: 0, padding: "0 16px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <div style={{ width: "100%" }}>
+              <ShownBadges shown={shown} />
+            </div>
           </div>
         ) : null}
 
@@ -60,7 +62,7 @@ export function ProfileHead({
               setOpen(true);
               setEditing(true);
             }}
-            style={{ position: "absolute", left: FACE + 28, right: 16, bottom: 30 }}
+            style={{ position: "absolute", left: FACE + 28, right: 16, bottom: 14 }}
           >
             <span>{mood || "…"}</span>
           </button>

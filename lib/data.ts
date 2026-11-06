@@ -30,6 +30,8 @@ export type Profile = {
   birthday_badge_year?: number | null;
   /** Up to five badges they show on their profile: "a:<slug>" or "i:<item id>". */
   shown_badges?: string[] | null;
+  /** Up to five badges they are going after ("a:<slug>"). */
+  working_on?: string[] | null;
   banner_pattern: string | null;
   banner_a: string | null;
   banner_b: string | null;

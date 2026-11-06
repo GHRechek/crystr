@@ -143,6 +143,15 @@ on the column (`profiles_shown_badges_guard`) drops anything the person has not 
 not hold, so a badge traded away disappears from the display; migration
 `20261106010000_shown_badges.sql` (four, not five, from `20261106020000_shown_badges_four.sql`).
 
+On a profile the shown badges sit centred, both ways, in the striped banner. Below the banner the
+collections (BADGES, TRADABLE BADGES, WHAT THEY HOLD) are icons only, packed tight, three rows to
+a page with the count and the page arrows on the header line; tapping one gives its tooltip. It
+is built to hold hundreds. WORKING ON lists up to five badges a person is going after, one to a
+row with what each takes; on your own page a button opens every badge, earned or not, to pick
+them. They are `profiles.working_on` (`a:<slug>`, any active badge, no need to have earned it),
+saved by `cr_set_working_on` and cleaned by `profiles_working_on_guard`; migration
+`20261106030000_working_on.sql`.
+
 ## Max mana and badges
 
 Nobody has a flat ceiling any more. `profiles.mana_cap` is each person's own:

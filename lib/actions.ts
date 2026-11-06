@@ -304,6 +304,21 @@ export async function setShownBadges(fd: FormData) {
   redirect("/me");
 }
 
+/** Save which badges a person says they are working on (up to five, in order). */
+export async function setWorkingOn(fd: FormData) {
+  let list: unknown = [];
+  try {
+    list = JSON.parse(str(fd, "list") || "[]");
+  } catch {
+    list = [];
+  }
+  const r = await call("cr_set_working_on", { p_list: Array.isArray(list) ? list.filter((x) => typeof x === "string").slice(0, 5) : [] });
+  if (!r.ok) await wentWrong();
+  else await setFlash("SAVED", "Your list of what you are working on is updated.", EDGE.blue);
+  revalidatePath("/me");
+  redirect("/me");
+}
+
 /** Send a post to someone in a whisper, with a note if you like. Costs what a whisper costs. */
 export async function sendPost(fd: FormData) {
   const post = Number(fd.get("post_id"));

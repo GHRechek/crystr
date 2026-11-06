@@ -168,3 +168,24 @@ export function achievementGrid(badges: BadgeRow[]): ShownBadge[] {
   });
   return [...badges.filter((b) => b.earned_at), ...badges.filter((b) => !b.earned_at)].map(cell);
 }
+
+/** How many badges a person can say they are working on. */
+export const WORKING_MAX = 5;
+
+/** The badges a person says they are working on, in order, ready to list: each with what to do to
+ *  earn it. They need not be earned yet. */
+export function resolveWorking(list: string[] | null | undefined, badges: BadgeRow[]): ShownBadge[] {
+  const out: ShownBadge[] = [];
+  for (const key of list ?? []) {
+    const b = key.startsWith("a:") ? badges.find((x) => x.slug === key.slice(2)) : undefined;
+    if (!b) continue;
+    out.push({
+      key,
+      badge: { slug: b.slug, art: b.art, tiers: b.tiers, tier: b.tier },
+      title: b.earned_at && b.tiers > 1 ? `${b.title} ${ROMAN[b.tier]}` : b.title,
+      line: b.how,
+      locked: !b.earned_at,
+    });
+  }
+  return out.slice(0, WORKING_MAX);
+}

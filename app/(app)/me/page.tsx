@@ -13,10 +13,11 @@ import {
   countOpenBugs,
   getOverride,
 } from "@/lib/data";
-import { ROMAN, tokenReadyAt, resolveShown, achievementGrid } from "@/lib/badges";
+import { ROMAN, tokenReadyAt, resolveShown, resolveWorking, achievementGrid } from "@/lib/badges";
 import { Avatar } from "@/components/bits";
 import { BadgeArt, ItemTile, TokenImage } from "@/components/badges";
 import { BadgeGrid } from "@/components/badge-grid";
+import { WorkingOn } from "@/components/working-on";
 import { ProfileHead } from "./face-menu";
 import { bannerOf, bannerStyle } from "@/lib/banner";
 import { portraitFromId, normalizePortrait, packPortrait } from "@/lib/portrait/core";
@@ -229,35 +230,25 @@ export default async function ProfilePage() {
           </Link>
         </div>
 
+        {/* The badges you have, just the pictures, packed tight; tap one for its tooltip. */}
         {badges.length ? (
-          <div>
-            {heading(
-              "BADGES",
-              "var(--mag-soft)",
-              <div className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
-                {earnedCount} OF {badges.length}
-              </div>,
-            )}
-            {/* Small icons, thirty to a page, tap for the tooltip: made to stay usable at hundreds. */}
-            <BadgeGrid label="Badges" filter items={achievementGrid(badges)} />
-          </div>
+          <BadgeGrid title="BADGES" count={`${earnedCount} OF ${badges.length}`} items={achievementGrid(badges.filter((b) => b.earned_at))} />
         ) : null}
 
+        {/* What you are going after, as a list, with a button to see every badge and choose. */}
+        <WorkingOn editable items={resolveWorking(profile.working_on, badges)} all={achievementGrid(badges)} />
+
         <div>
-          {heading(
-            "TRADABLE BADGES",
-            "var(--mag-soft)",
-            <div className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
-              {tradable.length} · +{BADGE_MANA.tradable} EACH
-            </div>,
-          )}
           {tradable.length === 0 ? (
-            <div className="notice">
-              None yet. Help someone from the City with a problem and have them say yes, {HELPS_PER_BADGE} times, and
-              one is drawn for you. They can be traded from anybody&apos;s page, badge for badge or badge for nothing.
-            </div>
+            <>
+              {heading("TRADABLE BADGES", "var(--mag-soft)", <div className="px" style={{ fontSize: 11, color: "var(--muted)" }}>0 · +{BADGE_MANA.tradable} EACH</div>)}
+              <div className="notice">
+                None yet. Help someone from the City with a problem and have them say yes, {HELPS_PER_BADGE} times, and
+                one is drawn for you. They can be traded from anybody&apos;s page, badge for badge or badge for nothing.
+              </div>
+            </>
           ) : (
-            <BadgeGrid label="Tradable badges" items={resolveShown(tradable.map((i) => `i:${i.id}`), badges, items, profile.handle, 10000)} />
+            <BadgeGrid title="TRADABLE BADGES" count={`${tradable.length} · +${BADGE_MANA.tradable} EACH`} items={resolveShown(tradable.map((i) => `i:${i.id}`), badges, items, profile.handle, 10000)} />
           )}
         </div>
 

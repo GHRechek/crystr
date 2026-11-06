@@ -5,8 +5,9 @@ import { openThread } from "@/lib/actions";
 import { Avatar } from "@/components/bits";
 import { TokenImage } from "@/components/badges";
 import { BadgeGrid } from "@/components/badge-grid";
+import { WorkingOn } from "@/components/working-on";
 import { ShownBadges } from "@/components/shown-badges";
-import { achievementGrid, resolveShown } from "@/lib/badges";
+import { achievementGrid, resolveShown, resolveWorking } from "@/lib/badges";
 import { ago, corrupt, decayLevel, BADGE_MANA } from "@/lib/crystr";
 import { bannerOf, bannerStyle } from "@/lib/banner";
 import { tokenTitle } from "@/lib/token";
@@ -57,8 +58,10 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
       {/* The banner, taller when they have badges on show, which sit centred on it. */}
       <div style={{ position: "relative", height: shown.length ? 150 : 96, ...bannerStyle(bannerOf(person)) }}>
         {shown.length ? (
-          <div style={{ position: "absolute", top: 18, left: 16, right: 16 }}>
-            <ShownBadges shown={shown} />
+          <div style={{ position: "absolute", inset: 0, padding: "0 16px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <div style={{ width: "100%" }}>
+              <ShownBadges shown={shown} />
+            </div>
           </div>
         ) : null}
       </div>
@@ -176,34 +179,22 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
           </div>
         ) : null}
 
-        {earned.length ? (
-          <div>
-            <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 8 }}>
-              <div className="px" style={{ fontSize: 12, color: "var(--mag-soft)" }}>
-                BADGES
-              </div>
-              <span className="spacer" />
-              <div className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
-                {earned.length} OF {badges.length}
-              </div>
-            </div>
-            <BadgeGrid label="Badges" items={achievementGrid(earned)} />
-          </div>
-        ) : null}
+        {earned.length ? <BadgeGrid title="BADGES" count={`${earned.length} OF ${badges.length}`} items={achievementGrid(earned)} /> : null}
+
+        <WorkingOn items={resolveWorking(person.working_on, badges)} />
 
         {items.length ? (
-          <div>
-            <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 8 }}>
-              <div className="px" style={{ fontSize: 12, color: "var(--pur-soft)" }}>
-                WHAT THEY HOLD
-              </div>
-              <span className="spacer" />
-              <Link href={`/u/${person.handle}/trade`} className="px" style={{ fontSize: 11, color: "var(--pur-pale)" }}>
+          <BadgeGrid
+            title="WHAT THEY HOLD"
+            tone="var(--pur-soft)"
+            count={String(items.length)}
+            aside={
+              <Link href={`/u/${person.handle}/trade`} className="px" style={{ fontSize: 11, color: "var(--pur-pale)", whiteSpace: "nowrap" }}>
                 OFFER A TRADE →
               </Link>
-            </div>
-            <BadgeGrid label="What they hold" items={resolveShown(items.filter((i) => i.kind === "tradable").map((i) => `i:${i.id}`), badges, items, person.handle, 10000)} />
-          </div>
+            }
+            items={resolveShown(items.filter((i) => i.kind === "tradable").map((i) => `i:${i.id}`), badges, items, person.handle, 10000)}
+          />
         ) : null}
       </div>
     </div>

@@ -1,0 +1,146 @@
+"use client";
+
+import { useState } from "react";
+import { BadgeFace } from "@/components/badge-chooser";
+import { ArrowIcon } from "@/components/icons";
+import { setWorkingOn } from "@/lib/actions";
+import { WORKING_MAX, type ShownBadge } from "@/lib/badges";
+
+const PER_PAGE = 36; // six across, six down
+
+/** "Working on": the badges a person is going after, as a plain list, one to a row, each with
+ *  what it takes. On your own profile a button opens every badge there is, to pick up to five
+ *  (tap to pick, tap again to put back; the order you pick them is the order they are listed in). */
+export function WorkingOn({ items, all, editable }: { items: ShownBadge[]; all?: ShownBadge[]; editable?: boolean }) {
+  const [open, setOpen] = useState(false);
+  const [pick, setPick] = useState<string[]>(items.map((b) => b.key));
+  const [page, setPage] = useState(0);
+  const [last, setLast] = useState<ShownBadge | null>(null);
+
+  if (!editable && items.length === 0) return null;
+
+  const options = all ?? [];
+  const pages = Math.max(1, Math.ceil(options.length / PER_PAGE));
+  const at = Math.min(page, pages - 1);
+  const toggle = (b: ShownBadge) => {
+    setLast(b);
+    setPick((p) => (p.includes(b.key) ? p.filter((k) => k !== b.key) : p.length >= WORKING_MAX ? p : [...p, b.key]));
+  };
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+      <div className="px" style={{ fontSize: 12, color: "var(--blu-soft)", minHeight: 24, display: "flex", alignItems: "center" }}>
+        WORKING ON <span style={{ fontSize: 11, color: "var(--muted)", marginLeft: 6 }}>· {items.length}/{WORKING_MAX}</span>
+      </div>
+
+      {items.length ? (
+        <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: 6 }}>
+          {items.map((b) => (
+            <li key={b.key} style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <span style={{ flex: "none", opacity: b.locked ? 0.7 : 1, lineHeight: 0 }}>
+                <BadgeFace b={b} size={42} />
+              </span>
+              <span style={{ minWidth: 0 }}>
+                <span className="px" style={{ display: "block", fontSize: 11, color: "var(--text)", lineHeight: 1.5 }}>
+                  {b.title}
+                </span>
+                <span style={{ display: "block", fontSize: 12, lineHeight: 1.4, color: "var(--muted)" }}>{b.line}</span>
+              </span>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <div style={{ fontSize: 12, lineHeight: 1.5, color: "var(--muted)" }}>Nothing picked yet. See all the badges and choose up to five to go after.</div>
+      )}
+
+      {editable ? (
+        <button
+          type="button"
+          className="btn btn-block"
+          onClick={() => {
+            setPick(items.map((b) => b.key));
+            setLast(null);
+            setPage(0);
+            setOpen(true);
+          }}
+          style={{ minHeight: 44 }}
+        >
+          SEE ALL BADGES · CHOOSE WHAT YOU ARE WORKING ON
+        </button>
+      ) : null}
+
+      {open && editable ? (
+        <div role="dialog" aria-label="Choose what you are working on" style={{ position: "fixed", inset: 0, zIndex: 80, display: "flex", flexDirection: "column", justifyContent: "flex-end", maxWidth: 480, margin: "0 auto" }}>
+          <button type="button" aria-label="Close" onClick={() => setOpen(false)} style={{ flex: 1, border: 0, background: "rgba(5,5,12,.6)", cursor: "default" }} />
+          <form action={setWorkingOn} style={{ maxHeight: "82%", overflowY: "auto", background: "var(--device)", boxShadow: "0 -1px 0 var(--edge), 0 -12px 36px rgba(0,0,0,.5)", padding: "12px 16px 24px", display: "flex", flexDirection: "column", gap: 10 }}>
+            <input type="hidden" name="list" value={JSON.stringify(pick)} />
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <div className="px" style={{ fontSize: 12, color: "var(--pur-soft)" }}>
+                ALL BADGES · {pick.length}/{WORKING_MAX}
+              </div>
+              <span className="spacer" />
+              {pages > 1 ? (
+                <>
+                  <span className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
+                    {at + 1} / {pages}
+                  </span>
+                  <button type="button" className="btn btn-sm" aria-label="Previous page" disabled={at === 0} onClick={() => setPage(at - 1)} style={{ minHeight: 32, minWidth: 34, padding: 0 }}>
+                    <ArrowIcon dir="left" />
+                  </button>
+                  <button type="button" className="btn btn-sm" aria-label="Next page" disabled={at === pages - 1} onClick={() => setPage(at + 1)} style={{ minHeight: 32, minWidth: 34, padding: 0 }}>
+                    <ArrowIcon dir="right" />
+                  </button>
+                </>
+              ) : null}
+              <button type="button" className="btn btn-sm" onClick={() => setOpen(false)} style={{ minHeight: 40, padding: "0 9px" }}>
+                ✕
+              </button>
+            </div>
+
+            {/* What the last badge touched is, as a line, since the pictures carry no names. */}
+            <div style={{ minHeight: 44, padding: "6px 0" }} aria-live="polite">
+              {last ? (
+                <>
+                  <div className="px" style={{ fontSize: 11, color: "var(--text)" }}>
+                    {last.title}
+                  </div>
+                  <div style={{ fontSize: 12, lineHeight: 1.4, color: "var(--muted)" }}>{last.line}</div>
+                </>
+              ) : (
+                <div style={{ fontSize: 12, lineHeight: 1.4, color: "var(--muted)" }}>Tap a badge to see what it takes and to pick it. Up to {WORKING_MAX}.</div>
+              )}
+            </div>
+
+            <div role="listbox" aria-multiselectable aria-label="All badges" style={{ display: "grid", gridTemplateColumns: "repeat(6, minmax(0, 1fr))", gap: 6 }}>
+              {options.slice(at * PER_PAGE, (at + 1) * PER_PAGE).map((b) => {
+                const n = pick.indexOf(b.key);
+                return (
+                  <button
+                    key={b.key}
+                    type="button"
+                    role="option"
+                    aria-selected={n >= 0}
+                    aria-label={`${b.title}. ${b.line}`}
+                    title={b.title}
+                    onClick={() => toggle(b)}
+                    style={{ position: "relative", minHeight: 52, padding: 4, background: n >= 0 ? "rgba(145,132,217,.18)" : "var(--surface)", border: `1px solid ${n >= 0 ? "var(--pur)" : "var(--edge)"}`, borderRadius: "var(--px-r)", cursor: "pointer", display: "grid", placeItems: "center", opacity: b.locked || n >= 0 ? 1 : 0.85 }}
+                  >
+                    <BadgeFace b={b} size={42} />
+                    {n >= 0 ? (
+                      <span aria-hidden className="px" style={{ position: "absolute", top: 1, right: 1, minWidth: 15, height: 15, display: "grid", placeItems: "center", fontSize: 10, background: "var(--pur)", color: "#fff", borderRadius: 8 }}>
+                        {n + 1}
+                      </span>
+                    ) : null}
+                  </button>
+                );
+              })}
+            </div>
+            <button type="submit" className="btn btn-lg btn-purple btn-block">
+              SAVE
+            </button>
+          </form>
+        </div>
+      ) : null}
+    </div>
+  );
+}
