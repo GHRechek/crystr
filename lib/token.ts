@@ -1,9 +1,10 @@
 // A token: the badge a person designs for themselves and gives away, once every six
 // months, for 7 max mana. It is built from parts rather than drawn: a badge shape (a
 // circle, a framed circle, a shield, a diamond...) in a colour of their choosing, with a
-// rim colour for the framed shapes, and up to two items from the uploaded set, placed by
-// dragging, each of which can be flipped, turned, shrunk in steps of fifteen in a hundred,
-// and sit over or under the other. The shape is drawn small on purpose, so an item at its
+// rim colour for the framed shapes, and up to three items from the uploaded set, placed by
+// dragging, each of which can be flipped, turned (in steps of 45 degrees), shrunk in steps of
+// fifteen in a hundred, set behind the badge or in front of it, and drawn over or under the
+// others. The shape is drawn small on purpose, so an item at its
 // drawn size already reaches the rim and one dragged outward hangs over it: crossed swords
 // with hilts and points past the edge. Everything here is shared by the designer (browser)
 // and the compositor (server, lib/token.server.ts); /token/<packed>.png draws one, and the
@@ -136,6 +137,20 @@ export type ItemSlug = (typeof ITEMS)[number]["slug"];
 
 export const NO_ITEM = "none";
 
+/** The three places an icon can sit. */
+export const SLOTS = ["a", "b", "c"] as const;
+export type Slot = (typeof SLOTS)[number];
+
+/** Turns are in eighths of a full turn, clockwise: 0 is as drawn, 1 is 45 degrees, 2 is a
+ *  quarter turn, up to 7. (The first designs turned in quarters, 0 to 3; they are read as
+ *  twice that.) */
+export const TURNS = 8;
+export type Turn = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
+
+/** Every order three icons can be drawn in, first to last. */
+export const ORDERS = ["abc", "acb", "bac", "bca", "cab", "cba"] as const;
+export type Order = (typeof ORDERS)[number];
+
 export type TokenDesign = {
   shape: ShapeKey;
   /** 50, 75 or 100: how much of the picture the shape takes. */
@@ -144,23 +159,26 @@ export type TokenDesign = {
   fill: TokenColour;
   /** The band inside the edge, on framed shapes. */
   rim: TokenColour;
-  a: ItemSlug | typeof NO_ITEM;
-  a_flip: boolean;
-  /** Quarter turns clockwise, 0–3. */
-  a_rot: 0 | 1 | 2 | 3;
+  /** Which order the icons are drawn in, first to last: the last is on top of the rest. */
+  order: Order;
+} & {
+  [K in Slot]: ItemSlug | typeof NO_ITEM;
+} & {
+  [K in Slot as `${K}_flip`]: boolean;
+} & {
+  /** Eighths of a turn clockwise, 0–7. */
+  [K in Slot as `${K}_turn`]: Turn;
+} & {
   /** Hundredths of the drawn size: 55, 70, 85 or 100. */
-  a_size: SizeKey;
+  [K in Slot as `${K}_size`]: SizeKey;
+} & {
   /** Where its centre sits, in cells from the middle of the picture. */
-  a_x: number;
-  a_y: number;
-  b: ItemSlug | typeof NO_ITEM;
-  b_flip: boolean;
-  b_rot: 0 | 1 | 2 | 3;
-  b_size: SizeKey;
-  b_x: number;
-  b_y: number;
-  /** Which item is drawn last, over the other. */
-  top: "a" | "b";
+  [K in Slot as `${K}_x`]: number;
+} & {
+  [K in Slot as `${K}_y`]: number;
+} & {
+  /** Drawn under the badge shape, so only what hangs out past it shows. */
+  [K in Slot as `${K}_behind`]: boolean;
 };
 
 const COLOUR_KEYS: readonly string[] = TOKEN_COLOURS.map((c) => c.key);
@@ -179,26 +197,21 @@ export function defaultToken(): TokenDesign {
     badge_size: 100,
     fill: "blu-dark",
     rim: "gold",
-    a: "sword",
-    a_flip: false,
-    a_rot: 0,
-    a_size: 100,
-    a_x: 0,
-    a_y: 0,
-    b: "sword",
-    b_flip: true,
-    b_rot: 0,
-    b_size: 100,
-    b_x: 0,
-    b_y: 0,
-    top: "b",
+    order: "abc",
+    a: "sword", a_flip: false, a_turn: 0, a_size: 100, a_x: 0, a_y: 0, a_behind: false,
+    b: "sword", b_flip: true, b_turn: 0, b_size: 100, b_x: 0, b_y: 0, b_behind: false,
+    c: NO_ITEM, c_flip: false, c_turn: 0, c_size: 100, c_x: 0, c_y: 0, c_behind: false,
   };
 }
 
 const pick = <T extends string>(v: unknown, list: readonly string[], fallback: T): T =>
   typeof v === "string" && list.includes(v) ? (v as T) : fallback;
-const rot = (v: unknown, fallback: 0 | 1 | 2 | 3): 0 | 1 | 2 | 3 =>
-  v === 0 || v === 1 || v === 2 || v === 3 ? v : fallback;
+/** A turn in eighths; a design from before diagonals has `_rot` in quarters instead. */
+const turn = (eighths: unknown, quarters: unknown): Turn => {
+  if (typeof eighths === "number" && Number.isInteger(eighths) && eighths >= 0 && eighths < TURNS) return eighths as Turn;
+  if (typeof quarters === "number" && Number.isInteger(quarters) && quarters >= 0 && quarters < 4) return (quarters * 2) as Turn;
+  return 0;
+};
 /** A size from the list; the first designs said "big", "small" or "normal", or went above 100. */
 const size = (v: unknown): SizeKey => {
   if (typeof v === "number" && (SIZES as readonly number[]).includes(v)) return v as SizeKey;
@@ -210,87 +223,101 @@ const offset = (v: unknown, max: number): number =>
 const badgeSize = (v: unknown): BadgeSize =>
   typeof v === "number" && (BADGE_SIZES as readonly number[]).includes(v) ? (v as BadgeSize) : 100;
 
+/** The size of the box an item takes once scaled and turned: a quarter turn swaps its sides,
+ *  a diagonal one needs room for the corners (the compositor makes the same box). */
+export function turnedBox(w: number, h: number, t: number): { w: number; h: number } {
+  if (t % 2 === 0) return (t / 2) % 2 === 0 ? { w, h } : { w: h, h: w };
+  const side = Math.ceil((w + h) * Math.SQRT1_2 - 1e-9);
+  return { w: side, h: side };
+}
+
 /** How far an item's centre may sit from the middle and still be wholly in the picture,
  *  given its turn and size (the compositor scales and turns it the same way). */
-export function itemBounds(slug: string, rot: number, size: SizeKey): { x: number; y: number } {
+export function itemBounds(slug: string, t: number, sz: SizeKey): { x: number; y: number } {
   const it = ITEMS.find((i) => i.slug === slug);
   if (!it) return { x: 0, y: 0 };
-  const f = size / 100;
+  const f = sz / 100;
   const sw = Math.max(1, Math.round(it.w * f));
   const sh = Math.max(1, Math.round(it.h * f));
-  const w = rot % 2 === 0 ? sw : sh;
-  const h = rot % 2 === 0 ? sh : sw;
+  const box = turnedBox(sw, sh, t);
   const C = TOKEN_SIZE / 2;
-  return { x: Math.floor(C - w / 2), y: Math.floor(C - h / 2) };
+  return { x: Math.floor(C - box.w / 2), y: Math.floor(C - box.h / 2) };
 }
 
 /** Whatever was saved, as a complete design. Anything unknown falls back to the default. */
 export function normalizeToken(raw: unknown): TokenDesign {
   const d = defaultToken();
   const c = (raw ?? {}) as Record<string, unknown>;
-  const a = pick(c.a, ITEM_KEYS, d.a);
-  const aRot = rot(c.a_rot, 0);
-  const aSize = size(c.a_size);
-  const ab = itemBounds(a, aRot, aSize);
-  const b = pick(c.b, ITEM_KEYS, d.b);
-  const bRot = rot(c.b_rot, 0);
-  const bSize = size(c.b_size);
-  const bb = itemBounds(b, bRot, bSize);
-  return {
+  const out: Record<string, unknown> = {
     shape: pick(c.shape, SHAPE_KEYS, d.shape),
     badge_size: badgeSize(c.badge_size),
     fill: pick(c.fill, COLOUR_KEYS, d.fill),
     rim: pick(c.rim, COLOUR_KEYS, d.rim),
-    a,
-    a_flip: c.a_flip === true,
-    a_rot: aRot,
-    a_size: aSize,
-    a_x: offset(c.a_x, ab.x),
-    a_y: offset(c.a_y, ab.y),
-    b,
-    b_flip: c.b_flip === true,
-    b_rot: bRot,
-    b_size: bSize,
-    b_x: offset(c.b_x, bb.x),
-    b_y: offset(c.b_y, bb.y),
-    top: c.top === "a" ? "a" : "b",
   };
+  for (const k of SLOTS) {
+    // A third icon is new: a design from before it has none rather than the default's.
+    const slug = pick(c[k], ITEM_KEYS, k === "c" ? NO_ITEM : d[k]);
+    const t = turn(c[`${k}_turn`], c[`${k}_rot`]);
+    const sz = size(c[`${k}_size`]);
+    const bounds = itemBounds(slug, t, sz);
+    out[k] = slug;
+    out[`${k}_flip`] = c[`${k}_flip`] === true;
+    out[`${k}_turn`] = t;
+    out[`${k}_size`] = sz;
+    out[`${k}_x`] = offset(c[`${k}_x`], bounds.x);
+    out[`${k}_y`] = offset(c[`${k}_y`], bounds.y);
+    out[`${k}_behind`] = c[`${k}_behind`] === true;
+  }
+  // The draw order; the first designs only said which of two was on top.
+  out.order = (ORDERS as readonly string[]).includes(c.order as string)
+    ? (c.order as Order)
+    : c.top === "a"
+      ? "bac"
+      : "abc";
+  return out as TokenDesign;
+}
+
+/** Put one icon last in the order, on top of the others. */
+export function bringToFront(order: Order, slot: Slot): Order {
+  return [...order.replace(slot, ""), slot].join("") as Order;
 }
 
 // ------------------------------------------------------------ url packing
 
 /** Bump when the compositor changes: tokens are cached immutably by their packed spec. */
-export const TOKEN_RENDER = "6";
+export const TOKEN_RENDER = "7";
 
-/** flip, size and turn of one item in one number: flip × 16 + size step × 4 + turn, 0–31. */
-const flags = (flip: boolean, sz: SizeKey, r: number) => (flip ? 16 : 0) + SIZE_KEYS.indexOf(sz) * 4 + r;
-const unflags = (n: number) => ({ flip: n >= 16, size: SIZE_KEYS[Math.floor((n % 16) / 4)] as SizeKey, rot: (n % 4) as 0 | 1 | 2 | 3 });
+/** behind, flip, size and turn of one icon in one number: behind × 64 + flip × 32 +
+ *  size step × 8 + turn, 0–127. */
+const flags = (behind: boolean, flip: boolean, sz: SizeKey, t: number) =>
+  (behind ? 64 : 0) + (flip ? 32 : 0) + SIZE_KEYS.indexOf(sz) * 8 + t;
+const unflags = (n: number) => ({
+  behind: n >= 64,
+  flip: n % 64 >= 32,
+  size: SIZE_KEYS[Math.floor((n % 32) / 8)] as SizeKey,
+  turn: (n % 8) as Turn,
+});
 
 /** `/token/<this>.png` draws the design. Each part is an index into its list, base 36. */
 export function packToken(design: TokenDesign): string {
   const d = normalizeToken(design);
-  const parts = [
+  const parts: number[] = [
     SHAPE_KEYS.indexOf(d.shape),
     BADGE_SIZE_KEYS.indexOf(d.badge_size),
     COLOUR_KEYS.indexOf(d.fill),
     COLOUR_KEYS.indexOf(d.rim),
-    ITEM_KEYS.indexOf(d.a),
-    flags(d.a_flip, d.a_size, d.a_rot),
-    d.a_x + OFFSET_MAX,
-    d.a_y + OFFSET_MAX,
-    ITEM_KEYS.indexOf(d.b),
-    flags(d.b_flip, d.b_size, d.b_rot),
-    d.b_x + OFFSET_MAX,
-    d.b_y + OFFSET_MAX,
-    d.top === "a" ? 0 : 1,
   ];
+  for (const k of SLOTS) {
+    parts.push(ITEM_KEYS.indexOf(d[k]), flags(d[`${k}_behind`], d[`${k}_flip`], d[`${k}_size`], d[`${k}_turn`]), d[`${k}_x`] + OFFSET_MAX, d[`${k}_y`] + OFFSET_MAX);
+  }
+  parts.push(ORDERS.indexOf(d.order));
   return [TOKEN_RENDER, ...parts.map((n) => n.toString(36))].join(".");
 }
 
 export function unpackToken(packed: string): TokenDesign | null {
-  if (packed.length > 52) return null;
+  if (packed.length > 80) return null;
   const parts = packed.split(".");
-  if (parts.length !== 14 || parts[0] !== TOKEN_RENDER) return null;
+  if (parts.length !== 1 + 4 + 4 * SLOTS.length + 1 || parts[0] !== TOKEN_RENDER) return null;
   const nums: number[] = [];
   for (const p of parts.slice(1)) {
     const n = parseInt(p, 36);
@@ -299,36 +326,29 @@ export function unpackToken(packed: string): TokenDesign | null {
     nums.push(n);
   }
   const at = (list: readonly string[], n: number) => (n < list.length ? list[n] : null);
-  const [nShape, nBadge, nFill, nRim, nA, fA, ax, ay, nB, fB, bx, by, nTop] = nums;
+  const [nShape, nBadge, nFill, nRim] = nums;
   const shape = at(SHAPE_KEYS, nShape);
   const fill = at(COLOUR_KEYS, nFill);
   const rim = at(COLOUR_KEYS, nRim);
-  const a = at(ITEM_KEYS, nA);
-  const b = at(ITEM_KEYS, nB);
-  if (!shape || !fill || !rim || !a || !b) return null;
-  if (nBadge >= BADGE_SIZE_KEYS.length || fA > 31 || fB > 31 || nTop > 1) return null;
-  if ([ax, ay, bx, by].some((n) => n > 2 * OFFSET_MAX)) return null;
-  const fa = unflags(fA);
-  const fb = unflags(fB);
-  const d = normalizeToken({
-    shape,
-    badge_size: BADGE_SIZE_KEYS[nBadge],
-    fill,
-    rim,
-    a,
-    a_flip: fa.flip,
-    a_rot: fa.rot,
-    a_size: fa.size,
-    a_x: ax - OFFSET_MAX,
-    a_y: ay - OFFSET_MAX,
-    b,
-    b_flip: fb.flip,
-    b_rot: fb.rot,
-    b_size: fb.size,
-    b_x: bx - OFFSET_MAX,
-    b_y: by - OFFSET_MAX,
-    top: nTop === 0 ? "a" : "b",
-  });
+  const order = nums[nums.length - 1] < ORDERS.length ? ORDERS[nums[nums.length - 1]] : null;
+  if (!shape || !fill || !rim || !order || nBadge >= BADGE_SIZE_KEYS.length) return null;
+  const raw: Record<string, unknown> = { shape, badge_size: BADGE_SIZE_KEYS[nBadge], fill, rim, order };
+  let i = 4;
+  for (const k of SLOTS) {
+    const [nItem, f, x, y] = nums.slice(i, i + 4);
+    i += 4;
+    const slug = at(ITEM_KEYS, nItem);
+    if (!slug || f > 127 || x > 2 * OFFSET_MAX || y > 2 * OFFSET_MAX) return null;
+    const u = unflags(f);
+    raw[k] = slug;
+    raw[`${k}_flip`] = u.flip;
+    raw[`${k}_turn`] = u.turn;
+    raw[`${k}_size`] = u.size;
+    raw[`${k}_behind`] = u.behind;
+    raw[`${k}_x`] = x - OFFSET_MAX;
+    raw[`${k}_y`] = y - OFFSET_MAX;
+  }
+  const d = normalizeToken(raw);
   // Only the one URL per token: a spec that normalises to something else is not one.
   return packToken(d) === packed ? d : null;
 }

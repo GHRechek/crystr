@@ -1,12 +1,14 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { PNG } from "pngjs";
-import { TOKEN_SIZE, colourHex, isFramed, normalizeToken, type SizeKey, type TokenDesign } from "./token";
+import { SLOTS, TOKEN_SIZE, colourHex, isFramed, normalizeToken, turnedBox, type SizeKey, type TokenDesign } from "./token";
 
 // Drawing a token: one badge shape in three tones of its colour (the outline is the art's
 // own near-black), a band in the rim colour just inside the edge when the shape is framed,
-// then the two items from the uploaded set, flipped, turned or shrunk as asked, each
-// centred where it was dragged to, the chosen one on top. The shape takes the middle 22 of
+// then up to three items from the uploaded set, flipped, turned (in 45-degree steps) or
+// shrunk as asked, each centred where it was dragged to. An item set behind the badge is
+// drawn first and the shape over it, so only what hangs out past the edge shows; the rest
+// go on after, in the saved order, the last on top. The shape takes the middle 22 of
 // the 32 cells, small on purpose: an item at its drawn size reaches the rim, one dragged
 // outward hangs over it, a shrunk one sits inside like heraldry. The browser shows it two
 // to four times larger with the pixels kept square.
@@ -127,28 +129,86 @@ function paintShape(px: Uint8Array, inside: Inside, t: Tones) {
   }
 }
 
-function blendSprite(px: Uint8Array, sp: Sprite, flip: boolean, rot: number, cx: number, cy: number) {
-  // Flip, then turn in quarter steps, by remapping where each source pixel lands; the
-  // sprite's centre goes where it was dragged to (the designer places it the same way).
-  const w = rot % 2 === 0 ? sp.w : sp.h;
-  const h = rot % 2 === 0 ? sp.h : sp.w;
-  const ox = Math.floor(C + cx - w / 2);
-  const oy = Math.floor(C + cy - h / 2);
+/** The picture of an item once flipped and turned: whole quarter turns move each pixel to
+ *  its place; a diagonal turn is rotated at four times the size and brought back down by
+ *  taking each cell's commonest colour, which keeps pixel art solid where a plain turn of a
+ *  small sprite would leave holes. The box is turnedBox's, which the designer clamps to. */
+function turned(sp: Sprite, flip: boolean, t: number): Sprite {
+  const box = turnedBox(sp.w, sp.h, t);
+  const out = new Uint8ClampedArray(box.w * box.h * 4);
+  const at = (x: number, y: number) => (flip ? sp.w - 1 - x : x) + y * sp.w;
+
+  if (t % 2 === 0) {
+    const q = t / 2;
+    for (let sy = 0; sy < sp.h; sy++) {
+      for (let sx = 0; sx < sp.w; sx++) {
+        const src = at(sx, sy) * 4;
+        if (sp.data[src + 3] === 0) continue;
+        let dx: number, dy: number;
+        switch (q) {
+          case 1: dx = sp.h - 1 - sy; dy = sx; break;
+          case 2: dx = sp.w - 1 - sx; dy = sp.h - 1 - sy; break;
+          case 3: dx = sy; dy = sp.w - 1 - sx; break;
+          default: dx = sx; dy = sy;
+        }
+        out.set(sp.data.subarray(src, src + 4), (dy * box.w + dx) * 4);
+      }
+    }
+    return { w: box.w, h: box.h, data: out };
+  }
+
+  const K = 4;
+  const th = (t * Math.PI) / 4;
+  const cos = Math.cos(th);
+  const sin = Math.sin(th);
+  const W = box.w;
+  const H = box.h;
+  for (let y = 0; y < H; y++) {
+    for (let x = 0; x < W; x++) {
+      const votes = new Map<number, number>();
+      let solid = 0;
+      for (let j = 0; j < K; j++) {
+        for (let i = 0; i < K; i++) {
+          // This sample's place relative to the middle of the box, then back through the
+          // turn to the source, where it falls in a source pixel.
+          const u = x + (i + 0.5) / K - W / 2;
+          const v = y + (j + 0.5) / K - H / 2;
+          const sx = Math.floor(u * cos + v * sin + sp.w / 2);
+          const sy = Math.floor(-u * sin + v * cos + sp.h / 2);
+          if (sx < 0 || sy < 0 || sx >= sp.w || sy >= sp.h) continue;
+          const src = at(sx, sy) * 4;
+          if (sp.data[src + 3] < 128) continue;
+          solid++;
+          const key = (sp.data[src] << 24) | (sp.data[src + 1] << 16) | (sp.data[src + 2] << 8) | sp.data[src + 3];
+          votes.set(key, (votes.get(key) ?? 0) + 1);
+        }
+      }
+      if (solid * 2 < K * K) continue;
+      let best = 0;
+      let bestN = -1;
+      for (const [key, n] of votes) if (n > bestN) { best = key; bestN = n; }
+      const o = (y * W + x) * 4;
+      out[o] = (best >>> 24) & 255;
+      out[o + 1] = (best >>> 16) & 255;
+      out[o + 2] = (best >>> 8) & 255;
+      out[o + 3] = best & 255;
+    }
+  }
+  return { w: W, h: H, data: out };
+}
+
+/** Lay an item's pixels over the picture, its centre where it was dragged to (the designer
+ *  places it the same way). */
+function blendSprite(px: Uint8Array, sp: Sprite, cx: number, cy: number) {
+  const ox = Math.floor(C + cx - sp.w / 2);
+  const oy = Math.floor(C + cy - sp.h / 2);
   for (let sy = 0; sy < sp.h; sy++) {
-    for (let sx0 = 0; sx0 < sp.w; sx0++) {
-      const s = (sy * sp.w + sx0) * 4;
+    for (let sx = 0; sx < sp.w; sx++) {
+      const s = (sy * sp.w + sx) * 4;
       const a = sp.data[s + 3];
       if (a === 0) continue;
-      const sx = flip ? sp.w - 1 - sx0 : sx0;
-      let dx: number, dy: number;
-      switch (rot) {
-        case 1: dx = sp.h - 1 - sy; dy = sx; break;
-        case 2: dx = sp.w - 1 - sx; dy = sp.h - 1 - sy; break;
-        case 3: dx = sy; dy = sp.w - 1 - sx; break;
-        default: dx = sx; dy = sy;
-      }
-      const x = ox + dx;
-      const y = oy + dy;
+      const x = ox + sx;
+      const y = oy + sy;
       if (x < 0 || y < 0 || x >= N || y >= N) continue;
       const d = (y * N + x) * 4;
       const al = a / 255;
@@ -168,6 +228,20 @@ export function composeToken(raw: TokenDesign): Buffer {
   const px = png.data as unknown as Uint8Array;
   px.fill(0);
 
+  // The icons, in the saved order (the last on top), each as the turned, flipped and
+  // shrunk picture it will be.
+  const layers = d.order.split("").flatMap((k) => {
+    const key = k as (typeof SLOTS)[number];
+    const slug = d[key];
+    if (slug === "none") return [];
+    const sp = item(slug);
+    if (!sp) return [];
+    return [{ behind: d[`${key}_behind`], sp: turned(resized(sp, d[`${key}_size`]), d[`${key}_flip`], d[`${key}_turn`]), x: d[`${key}_x`], y: d[`${key}_y`] }];
+  });
+
+  // Behind the badge first, then the badge over them.
+  for (const l of layers) if (l.behind) blendSprite(px, l.sp, l.x, l.y);
+
   // The shape, and for a framed one the same shape again inside the rim band (thinner on
   // the smallest badge, where three cells would be most of it).
   const family = SHAPE[d.shape.replace("-frame", "")] ?? SHAPE.circle;
@@ -180,21 +254,7 @@ export function composeToken(raw: TokenDesign): Buffer {
     paintShape(px, family(r), tones(colourHex(d.fill)));
   }
 
-  const first = d.top === "a" ? "b" : "a";
-  for (const which of [first, d.top] as const) {
-    const slug = which === "a" ? d.a : d.b;
-    if (slug === "none") continue;
-    const sp = item(slug);
-    if (!sp) continue;
-    blendSprite(
-      px,
-      resized(sp, which === "a" ? d.a_size : d.b_size),
-      which === "a" ? d.a_flip : d.b_flip,
-      which === "a" ? d.a_rot : d.b_rot,
-      which === "a" ? d.a_x : d.b_x,
-      which === "a" ? d.a_y : d.b_y,
-    );
-  }
+  for (const l of layers) if (!l.behind) blendSprite(px, l.sp, l.x, l.y);
 
   return PNG.sync.write(png);
 }

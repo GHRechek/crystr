@@ -8,21 +8,24 @@ import {
   NO_ITEM,
   SHAPES,
   SIZES,
+  SLOTS,
   TOKEN_COLOURS,
   TOKEN_SIZE,
+  bringToFront,
   isFramed,
   itemBounds,
   normalizeToken,
   tokenSrc,
   type SizeKey,
+  type Slot,
   type TokenColour,
   type TokenDesign,
+  type Turn,
 } from "@/lib/token";
 
 /** Stage pixels per token cell: the 32-cell token fills a 256px square. */
 const CELL = 8;
 const STAGE = TOKEN_SIZE * CELL;
-type Slot = "a" | "b";
 type Panel = "icons" | "shape" | "colours" | null;
 
 const BADGE_SIZE_LABELS: Record<number, string> = { 50: "Small", 75: "Mid", 100: "Large" };
@@ -115,10 +118,10 @@ function Sticker({
   const x = d[`${which}_x`];
   const y = d[`${which}_y`];
   const flip = d[`${which}_flip`];
-  const rot = d[`${which}_rot`];
+  const turn = d[`${which}_turn`];
   const size = d[`${which}_size`];
   // It can go to the edge of the picture and no further.
-  const bounds = itemBounds(slug, rot, size);
+  const bounds = itemBounds(slug, turn, size);
   const clampX = (n: number) => Math.max(-bounds.x, Math.min(bounds.x, n));
   const clampY = (n: number) => Math.max(-bounds.y, Math.min(bounds.y, n));
 
@@ -157,12 +160,14 @@ function Sticker({
         width: it.w * CELL,
         height: it.h * CELL,
         // Flip first, then turn, then shrink, about the middle; the server draws it the same way.
-        transform: `translate(-50%, -50%) rotate(${rot * 90}deg) scaleX(${flip ? -1 : 1}) scale(${size / 100})`,
+        transform: `translate(-50%, -50%) rotate(${turn * 45}deg) scaleX(${flip ? -1 : 1}) scale(${size / 100})`,
         touchAction: "none",
         cursor: "grab",
         outline: selected ? "2px dashed var(--pur-bright)" : "none",
         outlineOffset: 4,
-        zIndex: d.top === which ? 2 : 1,
+        // Behind the badge sits under the shape's picture (which is layer 0 of the stage),
+        // the rest above it, each group in the saved order.
+        zIndex: (d[`${which}_behind`] ? -3 : 3) + d.order.indexOf(which),
         userSelect: "none",
       }}
     >
@@ -188,14 +193,23 @@ export function TokenDesigner({ start, fresh }: { start: TokenDesign; fresh: boo
   const [panel, setPanel] = useState<Panel>(null);
   const set = (patch: Partial<TokenDesign>) => setD((prev) => normalizeToken({ ...prev, ...patch }));
 
-  const placed = (["a", "b"] as const).filter((s) => d[s] !== NO_ITEM);
-  const free = (["a", "b"] as const).find((s) => d[s] === NO_ITEM);
+  const placed = SLOTS.filter((s) => d[s] !== NO_ITEM);
+  const free = SLOTS.find((s) => d[s] === NO_ITEM);
   const sel = selected && d[selected] !== NO_ITEM ? selected : null;
   const selItem = sel ? ITEMS.find((i) => i.slug === d[sel]) : null;
 
   function addIcon(slug: string) {
     if (!free) return;
-    set({ [free]: slug, [`${free}_x`]: 0, [`${free}_y`]: 0, [`${free}_flip`]: false, [`${free}_rot`]: 0, [`${free}_size`]: 100, top: free } as Partial<TokenDesign>);
+    set({
+      [free]: slug,
+      [`${free}_x`]: 0,
+      [`${free}_y`]: 0,
+      [`${free}_flip`]: false,
+      [`${free}_turn`]: 0,
+      [`${free}_size`]: 100,
+      [`${free}_behind`]: false,
+      order: bringToFront(d.order, free),
+    } as Partial<TokenDesign>);
     setSelected(free);
     setPanel(null);
   }
@@ -208,7 +222,8 @@ export function TokenDesigner({ start, fresh }: { start: TokenDesign; fresh: boo
   }
 
   const toolbar = { display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "center" } as const;
-  const stageOnly = normalizeToken({ ...d, a: NO_ITEM, b: NO_ITEM });
+  const stageOnly = normalizeToken({ ...d, a: NO_ITEM, b: NO_ITEM, c: NO_ITEM });
+  const turnBy = (n: number) => sel && set({ [`${sel}_turn`]: ((d[`${sel}_turn`] + n + 8) % 8) as Turn } as Partial<TokenDesign>);
 
   return (
     <form action={setToken} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
@@ -256,6 +271,7 @@ export function TokenDesigner({ start, fresh }: { start: TokenDesign; fresh: boo
           boxShadow: "0 0 0 1px var(--edge)",
           touchAction: "none",
           overflow: "hidden",
+          isolation: "isolate",
         }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -265,23 +281,27 @@ export function TokenDesigner({ start, fresh }: { start: TokenDesign; fresh: boo
           width={STAGE}
           height={STAGE}
           draggable={false}
-          style={{ position: "absolute", inset: 0, imageRendering: "pixelated", pointerEvents: "none" }}
+          style={{ position: "absolute", inset: 0, imageRendering: "pixelated", pointerEvents: "none", zIndex: 0 }}
         />
-        <Sticker which="a" d={d} selected={sel === "a"} onSelect={setSelected} onMove={(s, x, y) => set({ [`${s}_x`]: x, [`${s}_y`]: y } as Partial<TokenDesign>)} />
-        <Sticker which="b" d={d} selected={sel === "b"} onSelect={setSelected} onMove={(s, x, y) => set({ [`${s}_x`]: x, [`${s}_y`]: y } as Partial<TokenDesign>)} />
+        {SLOTS.map((k) => (
+          <Sticker key={k} which={k} d={d} selected={sel === k} onSelect={setSelected} onMove={(s, x, y) => set({ [`${s}_x`]: x, [`${s}_y`]: y } as Partial<TokenDesign>)} />
+        ))}
       </div>
 
       {sel && selItem ? (
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
           <div className="px" style={{ fontSize: 11, color: "var(--pur-pale)", textAlign: "center" }}>
-            {selItem.label.toUpperCase()} · DRAG IT TO PLACE IT
+            {selItem.label.toUpperCase()} · {d[`${sel}_turn`] * 45}° · DRAG IT TO PLACE IT
           </div>
           <div style={toolbar}>
             <button type="button" className={`btn btn-sm${d[`${sel}_flip`] ? " btn-purple" : ""}`} aria-pressed={d[`${sel}_flip`]} onClick={() => set({ [`${sel}_flip`]: !d[`${sel}_flip`] } as Partial<TokenDesign>)} style={{ minHeight: 40 }}>
               ⇄ FLIP
             </button>
-            <button type="button" className="btn btn-sm" onClick={() => set({ [`${sel}_rot`]: ((d[`${sel}_rot`] + 1) % 4) as 0 | 1 | 2 | 3 } as Partial<TokenDesign>)} style={{ minHeight: 40 }}>
-              ↻ TURN
+            <button type="button" className="btn btn-sm" onClick={() => turnBy(-1)} aria-label="Turn a little to the left" style={{ minHeight: 40 }}>
+              ↺ 45°
+            </button>
+            <button type="button" className="btn btn-sm" onClick={() => turnBy(1)} aria-label="Turn a little to the right" style={{ minHeight: 40 }}>
+              ↻ 45°
             </button>
             <span role="group" aria-label="Size" style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
               <button type="button" className="btn btn-sm" onClick={() => sizeBy(-1)} disabled={d[`${sel}_size`] === SIZES[0]} aria-label="Smaller" style={{ minHeight: 40, minWidth: 40 }}>
@@ -294,8 +314,11 @@ export function TokenDesigner({ start, fresh }: { start: TokenDesign; fresh: boo
                 +
               </button>
             </span>
-            <button type="button" className={`btn btn-sm${d.top === sel ? " btn-purple" : ""}`} aria-pressed={d.top === sel} onClick={() => set({ top: sel })} style={{ minHeight: 40 }}>
-              {d.top === sel ? "ON TOP" : "PUT ON TOP"}
+            <button type="button" className={`btn btn-sm${d[`${sel}_behind`] ? " btn-purple" : ""}`} aria-pressed={d[`${sel}_behind`]} onClick={() => set({ [`${sel}_behind`]: !d[`${sel}_behind`] } as Partial<TokenDesign>)} style={{ minHeight: 40 }}>
+              {d[`${sel}_behind`] ? "BEHIND BADGE" : "IN FRONT"}
+            </button>
+            <button type="button" className="btn btn-sm" onClick={() => set({ order: bringToFront(d.order, sel) })} disabled={d.order.endsWith(sel)} style={{ minHeight: 40 }}>
+              {d.order.endsWith(sel) ? "ON TOP" : "PUT ON TOP"}
             </button>
             <button
               type="button"
@@ -312,13 +335,13 @@ export function TokenDesigner({ start, fresh }: { start: TokenDesign; fresh: boo
         </div>
       ) : (
         <div style={{ fontSize: 12, lineHeight: 1.5, color: "var(--muted)", textAlign: "center" }}>
-          {placed.length ? "Tap an icon to flip, turn or shrink it. Drag it to place it." : "Add an icon or two, then drag them where you want them."}
+          {placed.length ? "Tap an icon to flip, turn, shrink or send it behind the badge. Drag it to place it." : "Add up to three icons, then drag them where you want them."}
         </div>
       )}
 
       <div style={toolbar}>
         <button type="button" className="btn btn-sm btn-purple" onClick={() => setPanel("icons")} disabled={!free} style={{ minHeight: 40 }}>
-          ✚ ADD ICON {placed.length}/2
+          ✚ ADD ICON {placed.length}/3
         </button>
         <button type="button" className="btn btn-sm" onClick={() => setPanel("shape")} style={{ minHeight: 40 }}>
           ◈ SHAPE
@@ -333,7 +356,7 @@ export function TokenDesigner({ start, fresh }: { start: TokenDesign; fresh: boo
       </button>
 
       {panel === "icons" ? (
-        <Sheet title={`ADD AN ICON · ${placed.length}/2`} onClose={() => setPanel(null)}>
+        <Sheet title={`ADD AN ICON · ${placed.length}/3`} onClose={() => setPanel(null)}>
           <div role="listbox" aria-label="Icons" style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 6 }}>
             {ITEMS.map((it) => (
               <button
