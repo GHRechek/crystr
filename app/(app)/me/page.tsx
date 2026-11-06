@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/server";
 import {
   requireMe,
   getLedger,
@@ -32,6 +33,8 @@ const longDate = (d: Date) => d.toLocaleDateString("en-GB", { day: "numeric", mo
 export default async function ProfilePage(props: { searchParams: Promise<{ quests?: string }> }) {
   const quests = (await props.searchParams).quests === "1";
   const { userId, profile } = await requireMe();
+  // Count anything that has come due since you were last here (a day more in the City, a Top 5).
+  await createClient().rpc("cr_check_badges");
   const [ledger, top, badges, items, token, helps, trades, plaintiffSince, override] = await Promise.all([
     getLedger(userId),
     getTopFriends(userId),
