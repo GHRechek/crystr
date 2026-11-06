@@ -9,7 +9,7 @@ import { setWorkingOn, vouchFromProfile, claimBadge } from "@/lib/actions";
 import { WORKING_MAX, type ShownBadge } from "@/lib/badges";
 import { isKind, targetLabel, type Kind } from "@/lib/species";
 
-const PER_PAGE = 20; // rows to a page, scrolling
+const PER_PAGE = 1000; // every epic quest on one scrolling page
 
 /** "Working on": the badges a person is going after, as a plain list, one to a row, each with
  *  what it takes. On your own profile a button opens every badge there is, to pick up to five
