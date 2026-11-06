@@ -67,6 +67,7 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
           <div style={{ minWidth: 0, flex: 1, paddingBottom: 6 }}>
             <AboutBadges
                 compact
+                token={token ? { design: token.design, title: tokenTitle(person.display_name, person.handle) } : undefined}
                 shown={shown}
                 earned={achievementGrid(earned)}
                 tradable={resolveShown(items.filter((i) => i.kind === "tradable").map((i) => `i:${i.id}`), badges, items, person.handle, 10000)}
@@ -110,15 +111,8 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
         </div>
         <ProfileDetails rows={details.map((d) => ({ kind: d.kind, value: corrupt(d.value, decay) }))} />
 
-        <div style={{ display: "flow-root" }}>
-          {token ? (
-            <span title={tokenTitle(person.display_name, person.handle)} style={{ float: "left", lineHeight: 0, margin: "0 12px 4px 0" }}>
-              <TokenImage design={token.design} size={64} />
-            </span>
-          ) : null}
-          <div style={{ fontSize: 12.5, lineHeight: 1.6, color: "var(--text-3)", textWrap: "pretty" }}>
-            {corrupt(person.bio || "Nothing written here yet.", decay)}
-          </div>
+        <div style={{ fontSize: 12.5, lineHeight: 1.6, color: "var(--text-3)", textWrap: "pretty" }}>
+          {corrupt(person.bio || "Nothing written here yet.", decay)}
         </div>
 
         {top.length ? (

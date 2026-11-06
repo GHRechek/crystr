@@ -115,6 +115,7 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
             }
             tradeHref="/me/trades"
             tradeCount={waiting}
+            token={{ design: token?.design ?? null, href: "/me/token" }}
           />
         }
       />
@@ -127,8 +128,8 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
           gap: 12,
         }}
       >
-        {/* Who you are: the username and character name, left aligned; under them the token on the left with the
-            bio beside it, which runs on under the token when it is long. */}
+        {/* Who you are: the username and character name, left aligned; under them the
+            details and the bio. */}
         <div>
           <h1 className="px" style={{ fontSize: 16, fontWeight: 400, lineHeight: 1.5, overflowWrap: "anywhere" }}>
             {profile.handle}
@@ -141,17 +142,8 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
         </div>
         <ProfileDetails rows={details.map((d) => ({ kind: d.kind, value: corrupt(d.value, decay) }))} />
 
-        <div style={{ display: "flow-root" }}>
-          <Link
-            href="/me/token"
-            aria-label="Your token"
-            style={{ float: "left", width: 64, height: 64, margin: "0 12px 4px 0", display: "grid", placeItems: "center", color: "var(--dim)", border: token ? 0 : "1px dashed var(--edge)", borderRadius: "var(--px-r)", textDecoration: "none", lineHeight: 0 }}
-          >
-            {token ? <TokenImage design={token.design} size={64} /> : <span className="px" style={{ fontSize: 16 }}>?</span>}
-          </Link>
-          <div style={{ fontSize: 12.5, lineHeight: 1.6, color: "var(--text-3)", textWrap: "pretty" }}>
-            {corrupt(profile.bio || "Nothing written here yet. The City will assume the worst.", decay)}
-          </div>
+        <div style={{ fontSize: 12.5, lineHeight: 1.6, color: "var(--text-3)", textWrap: "pretty" }}>
+          {corrupt(profile.bio || "Nothing written here yet. The City will assume the worst.", decay)}
         </div>
 
         <div>
