@@ -5,6 +5,7 @@ import { openThread } from "@/lib/actions";
 import { Avatar } from "@/components/bits";
 import { TokenImage } from "@/components/badges";
 import { BadgeTabs } from "@/components/badge-tabs";
+import { PixelGlyph, type GlyphKind } from "@/components/pixel-glyph";
 import { WorkingOn } from "@/components/working-on";
 import { achievementGrid, resolveShown, resolveWorking } from "@/lib/badges";
 import { ago, corrupt, decayLevel, BADGE_MANA } from "@/lib/crystr";
@@ -15,6 +16,8 @@ import { tokenTitle } from "@/lib/token";
  *  rank, what they've earned and what they hold that could be traded. Their mana,
  *  ledger and anything private stays theirs. Your own handle sends you to your own
  *  page, where you can change things. */
+const GLYPH: Record<string, GlyphKind> = { BIRTHDAY: "birthday", LIKES: "likes", DISLIKES: "dislikes", "FAVOURITE FOOD": "food", "OBSESSED WITH": "obsession" };
+
 export default async function PersonPage(props: { params: Promise<{ handle: string }> }) {
   const { handle: raw } = await props.params;
   const { userId, profile: me } = await requireMe();
@@ -102,9 +105,9 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
               {details.map(([label, value]) => (
-                <div key={label} style={{ display: "flex", gap: 10, alignItems: "baseline" }}>
-                  <div className="px" style={{ fontSize: 11, color: "var(--muted)", width: 120, flex: "none" }}>
-                    {label}
+                <div key={label} style={{ display: "flex", gap: 10, alignItems: "center" }}>
+                  <div style={{ width: 48, flex: "none", display: "flex", justifyContent: "center" }}>
+                    <PixelGlyph kind={GLYPH[label]} label={label} />
                   </div>
                   <div style={{ fontSize: 12.5, lineHeight: 1.5, color: "var(--text-2)", minWidth: 0 }}>
                     {corrupt(value, decay)}

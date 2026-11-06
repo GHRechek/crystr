@@ -18,6 +18,7 @@ import { ROMAN, tokenReadyAt, resolveShown, resolveWorking, tokenAsWorking, achi
 import { Avatar } from "@/components/bits";
 import { BadgeArt, ItemTile, TokenImage } from "@/components/badges";
 import { BadgeTabs } from "@/components/badge-tabs";
+import { PixelGlyph, type GlyphKind } from "@/components/pixel-glyph";
 import { WorkingOn } from "@/components/working-on";
 import { ProfileHead } from "./face-menu";
 import { bannerOf, bannerStyle } from "@/lib/banner";
@@ -27,6 +28,8 @@ import { formatBirthday } from "@/lib/birthday";
 import { tokenTitle } from "@/lib/token";
 
 const longDate = (d: Date) => d.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+
+const GLYPH: Record<string, GlyphKind> = { BIRTHDAY: "birthday", LIKES: "likes", DISLIKES: "dislikes", "FAVOURITE FOOD": "food", "OBSESSED WITH": "obsession" };
 
 export default async function ProfilePage() {
   const { userId, profile } = await requireMe();
@@ -132,12 +135,9 @@ export default async function ProfilePage() {
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
               {details.map(([label, value]) => (
-                <div key={label} style={{ display: "flex", gap: 10, alignItems: "baseline" }}>
-                  <div
-                    className="px"
-                    style={{ fontSize: 11, color: "var(--muted)", width: 120, flex: "none" }}
-                  >
-                    {label}
+                <div key={label} style={{ display: "flex", gap: 10, alignItems: "center" }}>
+                  <div style={{ width: 48, flex: "none", display: "flex", justifyContent: "center" }}>
+                    <PixelGlyph kind={GLYPH[label]} label={label} />
                   </div>
                   <div style={{ fontSize: 12.5, lineHeight: 1.5, color: "var(--text-2)", minWidth: 0 }}>
                     {corrupt(value, decay)}
