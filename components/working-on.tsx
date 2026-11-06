@@ -17,6 +17,8 @@ const PER_PAGE = 1000; // every epic quest on one scrolling page
 export function WorkingOn({ items, all, editable, person, finished, isWitch, openAtStart, bare, people }: { people?: (Kind & { id: string; handle: string })[]; items: ShownBadge[]; all?: ShownBadge[]; editable?: boolean; person?: { id: string; handle: string }; finished?: string[]; isWitch?: boolean; openAtStart?: boolean; /** Just the rows: no heading, no change link. */ bare?: boolean }) {
   const [draft, setDraft] = useState<Draft | null>(null);
   const [say, setSay] = useState<string | null>(null);
+  const [who, setWho] = useState("");
+  const [list, setList] = useState(false);
   const [open, setOpen] = useState(!!openAtStart && !!editable);
   const [pick, setPick] = useState<string[]>(items.map((b) => b.key));
   const [page, setPage] = useState(0);
@@ -111,16 +113,29 @@ export function WorkingOn({ items, all, editable, person, finished, isWitch, ope
                       <div style={{ fontSize: 12, lineHeight: 1.45, color: "var(--muted)" }}>
                         Pick someone it happened with{b.target ? ` (${targetLabel(b.target)})` : ""}. They get a whisper and say yes or no. Five different yeses finish it.
                       </div>
-                      <div style={{ maxHeight: 220, overflowY: "auto", display: "flex", flexDirection: "column", gap: 6 }}>
-                        {pool.map((p) => (
-                          <form key={p.id} action={async (fd) => { await claimBadge(fd); setSay(null); }}>
-                            <input type="hidden" name="slug" value={b.key.slice(2)} />
-                            <input type="hidden" name="other_id" value={p.id} />
-                            <button type="submit" className="btn btn-sm btn-block" style={{ minHeight: 40, justifyContent: "flex-start" }}>{p.handle}</button>
-                          </form>
-                        ))}
-                        {pool.length === 0 ? <div className="empty">NOBODY FITS YET</div> : null}
-                      </div>
+                      <input
+                        className="input"
+                        value={who}
+                        onChange={(e) => { setWho(e.target.value); setList(true); }}
+                        onFocus={() => setList(true)}
+                        placeholder="Search for someone"
+                        aria-label="Search people"
+                        aria-expanded={list}
+                        role="combobox"
+                        style={{ width: "100%", fontSize: 12.5 }}
+                      />
+                      {list ? (
+                        <div role="listbox" style={{ maxHeight: 180, overflowY: "auto", display: "flex", flexDirection: "column", border: "1px solid var(--edge)", borderRadius: "var(--px-r)", background: "var(--surface)" }}>
+                          {pool.filter((p) => !who.trim() || p.handle.toLowerCase().includes(who.trim().toLowerCase())).map((p) => (
+                            <form key={p.id} action={async (fd) => { await claimBadge(fd); setSay(null); setWho(""); setList(false); }}>
+                              <input type="hidden" name="slug" value={b.key.slice(2)} />
+                              <input type="hidden" name="other_id" value={p.id} />
+                              <button type="submit" role="option" style={{ width: "100%", textAlign: "left", minHeight: 40, padding: "0 12px", background: "none", border: 0, borderBottom: "1px solid var(--edge)", color: "inherit", font: "inherit", fontSize: 12.5, cursor: "pointer" }}>{p.handle}</button>
+                            </form>
+                          ))}
+                          {pool.length === 0 ? <div className="empty">NOBODY FITS YET</div> : null}
+                        </div>
+                      ) : null}
                     </div>
                   ) : null}
                 </li>
