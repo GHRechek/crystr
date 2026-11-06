@@ -5,17 +5,17 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import jsQR from "jsqr";
 import { BadgeArt } from "@/components/badges";
-import { claimBadge, scanPerson, type Scanned } from "@/lib/actions";
+import { claimBadge, scanPerson, vouchFromProfile, type Scanned } from "@/lib/actions";
 import { targetLabel } from "@/lib/species";
 
 /** The camera, full screen, looking for another person's CRYSTR code. A code that points at a
  *  profile (…/u/<handle>) opens the trade page with that person. */
-export function QrScanner({ onClose, tradesHref, waiting }: { onClose: () => void; tradesHref?: string; waiting?: number }) {
+export function QrScanner({ onClose, tradesHref, waiting, mode = "general" }: { onClose: () => void; tradesHref?: string; waiting?: number; /** "general": trade, open a profile, or say they helped you. "quest": only the quests you can do with them. */ mode?: "general" | "quest" }) {
   const router = useRouter();
   const video = useRef<HTMLVideoElement>(null);
   const [err, setErr] = useState<string | null>(null);
   const [found, setFound] = useState<Scanned | null>(null);
-  const [view, setView] = useState<"pick" | "quests">("pick");
+  const [view, setView] = useState<"pick" | "quests" | "help">(mode === "quest" ? "quests" : "pick");
   const [sent, setSent] = useState<string[]>([]);
 
   useEffect(() => {
@@ -50,7 +50,7 @@ export function QrScanner({ onClose, tradesHref, waiting }: { onClose: () => voi
           if (h) {
             stop = true;
             stream?.getTracks().forEach((t) => t.stop());
-            scanPerson(h).then((p) => (p ? setFound(p) : setErr("That person is not in the City. Close this and scan again.")));
+            scanPerson(h, mode === "quest").then((p) => (p ? setFound(p) : setErr("That person is not in the City. Close this and scan again.")));
             return;
           }
           setErr("That code is not a CRYSTR person.");
@@ -81,12 +81,12 @@ export function QrScanner({ onClose, tradesHref, waiting }: { onClose: () => voi
       cancelAnimationFrame(raf);
       stream?.getTracks().forEach((t) => t.stop());
     };
-  }, [onClose, router]);
+  }, [onClose, router, mode]);
 
   return (
     <div role="dialog" aria-label="Scan someone's code" style={{ position: "fixed", inset: 0, zIndex: 90, maxWidth: 480, margin: "0 auto", background: "#000", display: "flex", flexDirection: "column" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "14px 16px" }}>
-        <div className="px" style={{ fontSize: 12, color: "var(--pur-soft)" }}>SCAN THEIR CODE</div>
+        <div className="px" style={{ fontSize: 12, color: "var(--pur-soft)" }}>{mode === "quest" ? "SCAN FOR A QUEST" : "SCAN THEIR CODE"}</div>
         <span className="spacer" />
         {tradesHref ? (
           <Link href={tradesHref} onClick={onClose} className="px" style={{ fontSize: 11, color: "var(--pur-pale)" }}>
@@ -114,7 +114,7 @@ export function QrScanner({ onClose, tradesHref, waiting }: { onClose: () => voi
                 [
                   ["⇄", "TRADE", () => { router.push(`/u/${found.handle}/trade`); onClose(); }],
                   ["☺", "PROFILE", () => { router.push(`/u/${found.handle}`); onClose(); }],
-                  ["★", `QUEST${found.quests.length ? ` · ${found.quests.length}` : ""}`, () => setView("quests")],
+                  ["✚", "HELP", () => setView("help")],
                 ] as [string, string, () => void][]
               ).map(([icon, label, go]) => (
                 <button key={label} type="button" onClick={go} className="btn" style={{ flex: 1, minHeight: 84, flexDirection: "column", gap: 6, padding: "10px 4px" }}>
@@ -123,10 +123,25 @@ export function QrScanner({ onClose, tradesHref, waiting }: { onClose: () => voi
                 </button>
               ))}
             </div>
-          ) : (
+          ) : view === "help" ? (
             <>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                 <button type="button" className="btn btn-sm" onClick={() => setView("pick")} style={{ minHeight: 36 }}>← BACK</button>
+                <span className="px" style={{ fontSize: 11, color: "var(--pur-soft)" }}>DID THEY HELP YOU?</span>
+              </div>
+              <div style={{ fontSize: 12.5, lineHeight: 1.5, color: "var(--muted)" }}>If {found.handle} helped you with something, say so. It counts for them right away, and every ten helps brings them a tradable badge.</div>
+              <form action={vouchFromProfile}>
+                <input type="hidden" name="kind" value="helped" />
+                <input type="hidden" name="person_id" value={found.id} />
+                <input type="hidden" name="handle" value={found.handle} />
+                <input type="hidden" name="badge" value="a-helping-hand" />
+                <button type="submit" className="btn btn-purple btn-block" style={{ minHeight: 48 }}>THEY HELPED ME</button>
+              </form>
+            </>
+          ) : (
+            <>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                {mode === "quest" ? null : <button type="button" className="btn btn-sm" onClick={() => setView("pick")} style={{ minHeight: 36 }}>← BACK</button>}
                 <span className="px" style={{ fontSize: 11, color: "var(--pur-soft)" }}>WHAT HAPPENED WITH THEM?</span>
               </div>
               {found.quests.length === 0 ? (
@@ -171,7 +186,7 @@ export function QrScanner({ onClose, tradesHref, waiting }: { onClose: () => voi
       </div>
       )}
       <div style={{ padding: "12px 16px 20px", fontSize: 12.5, lineHeight: 1.5, color: err ? "var(--mag-soft)" : "var(--muted)", textAlign: "center" }}>
-        {found ? (view === "quests" ? "One at a time. They get a whisper and say yes or no." : "") : err ?? "Point the camera at the code on someone's profile menu."}
+        {found ? (view === "quests" ? "One at a time. They get a whisper and say yes or no." : "") : err ?? (mode === "quest" ? "Point the camera at their code to see which quests you can do with them." : "Point the camera at the code on someone's profile menu.")}
       </div>
     </div>
   );

@@ -1169,12 +1169,12 @@ export type ScanQuest = { slug: string; title: string; how: string; art: string;
 export type Scanned = { id: string; handle: string; name: string | null; species: string | null; spellcaster: boolean; face: string; quests: ScanQuest[] };
 
 /** Someone's code was scanned: who they are, and the quests you can ask them about (the ones they can actually be part of). */
-export async function scanPerson(handle: string): Promise<Scanned | null> {
+export async function scanPerson(handle: string, withQuests = false): Promise<Scanned | null> {
   if (!/^[a-z0-9_.-]{1,40}$/.test(handle)) return null;
   const supabase = createClient();
   const { data: p } = await supabase.from("profiles").select("id, handle, display_name, species, spellcaster, avatar_config").eq("handle", handle).maybeSingle();
   if (!p) return null;
-  const { data: slugs } = await supabase.rpc("cr_scan_quests", { p_other: p.id });
+  const { data: slugs } = withQuests ? await supabase.rpc("cr_scan_quests", { p_other: p.id }) : { data: [] };
   const list = (slugs ?? []) as string[];
   const { data: rows } = list.length ? await supabase.from("badges").select("slug, title, how, art, tiers, kind").in("slug", list) : { data: [] };
   const by = new Map((rows ?? []).map((r) => [r.slug as string, r]));

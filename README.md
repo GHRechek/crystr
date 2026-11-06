@@ -494,3 +494,6 @@ After a scan: TRADE, PROFILE or QUEST. QUEST lists only the with-quests that per
 
 ### Asking is done by scanning; finding people
 Quests that need someone else are asked only by scanning their code (no person picker in the quest lists). The magnifier left of CRYSTR opens `/people`: search by name plus icon toggles (elf, forsaken, shifter, human, orc, goblin, planar, spellcaster, witch). The phone-mock status bar is gone.
+
+### Two ways to scan
+The exchange button on your profile opens the camera for general things: TRADE, PROFILE, or HELP ("they helped me", which counts for them). Quests only show up when you scan from a quest's own SCAN A CODE button (`<QrScanner mode="quest">`), and then the result is the list of quests you can do with that person.

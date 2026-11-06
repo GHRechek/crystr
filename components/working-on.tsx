@@ -8,6 +8,7 @@ import { BadgeEditor, type BadgeDraft as Draft } from "@/components/badge-editor
 import { setWorkingOn, vouchFromProfile } from "@/lib/actions";
 import { WORKING_MAX, type ShownBadge } from "@/lib/badges";
 import { targetLabel } from "@/lib/species";
+import { ScanQuestButton } from "@/components/scan-quest-button";
 
 const PER_PAGE = 1000; // every main quest on one scrolling page
 
@@ -109,7 +110,8 @@ export function WorkingOn({ items, all, editable, person, finished, isWitch, ope
                   </button>
                   {open ? (
                     <div style={{ paddingLeft: 52, fontSize: 12, lineHeight: 1.45, color: "var(--muted)" }}>
-                      {b.target ? `It has to be ${/^[aeiou]/i.test(targetLabel(b.target)) ? "an" : "a"} ${targetLabel(b.target).toLowerCase()}. ` : ""}Find them and scan their code (the exchange button on your profile), then pick this quest. They get a whisper and say yes or no.
+                      {b.target ? `It has to be ${/^[aeiou]/i.test(targetLabel(b.target)) ? "an" : "a"} ${targetLabel(b.target).toLowerCase()}. ` : ""}Scan {b.target ? `${/^[aeiou]/i.test(targetLabel(b.target)) ? "an" : "a"} ${targetLabel(b.target).toLowerCase()}'s` : "their"} QR code. Use the button below to open the camera (the exchange button on your profile is for trades, profiles and thanking helpers). They get a whisper and say yes or no.
+                      <div style={{ marginTop: 8 }}><ScanQuestButton /></div>
                     </div>
                   ) : null}
                 </li>
