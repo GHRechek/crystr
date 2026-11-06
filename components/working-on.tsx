@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { BadgeFace } from "@/components/badge-chooser";
 import { ArrowIcon } from "@/components/icons";
-import { setWorkingOn, vouchFromProfile } from "@/lib/actions";
+import { deleteBadge, saveBadge, setWorkingOn, vouchFromProfile } from "@/lib/actions";
 import { WORKING_MAX, type ShownBadge } from "@/lib/badges";
 
 const PER_PAGE = 20; // rows to a page, scrolling
@@ -12,9 +12,12 @@ const PER_PAGE = 20; // rows to a page, scrolling
 /** "Working on": the badges a person is going after, as a plain list, one to a row, each with
  *  what it takes. On your own profile a button opens every badge there is, to pick up to five
  *  (tap to pick, tap again to put back; the order you pick them is the order they are listed in). */
-export function WorkingOn({ items, all, editable, person, finished }: { items: ShownBadge[]; all?: ShownBadge[]; editable?: boolean; person?: { id: string; handle: string }; finished?: string[] }) {
+type Draft = { slug?: string; title: string; how: string; blurb: string; art: number };
+
+export function WorkingOn({ items, all, editable, person, finished, isWitch, openAtStart }: { items: ShownBadge[]; all?: ShownBadge[]; editable?: boolean; person?: { id: string; handle: string }; finished?: string[]; isWitch?: boolean; openAtStart?: boolean }) {
+  const [draft, setDraft] = useState<Draft | null>(null);
   const [say, setSay] = useState<string | null>(null);
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(!!openAtStart && !!editable);
   const [pick, setPick] = useState<string[]>(items.map((b) => b.key));
   const [page, setPage] = useState(0);
 
@@ -149,6 +152,11 @@ export function WorkingOn({ items, all, editable, person, finished }: { items: S
                 ALL BADGES · {pick.length}/{WORKING_MAX}
               </div>
               <span className="spacer" />
+              {isWitch ? (
+                <button type="button" className="btn btn-sm" onClick={() => setDraft({ title: "", how: "", blurb: "", art: 1 })} style={{ minHeight: 32, padding: "0 9px" }}>
+                  + NEW BADGE
+                </button>
+              ) : null}
               {pages > 1 ? (
                 <>
                   <span className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
@@ -171,25 +179,44 @@ export function WorkingOn({ items, all, editable, person, finished }: { items: S
               {options.slice(at * PER_PAGE, (at + 1) * PER_PAGE).map((b) => {
                 const n = pick.indexOf(b.key);
                 return (
-                  <button
+                  <div
                     key={b.key}
-                    type="button"
                     role="option"
+                    tabIndex={0}
                     aria-selected={n >= 0}
                     onClick={() => toggle(b)}
+                    onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && (e.preventDefault(), toggle(b))}
                     style={{ position: "relative", display: "flex", alignItems: "center", gap: 10, textAlign: "left", padding: "6px 8px", background: n >= 0 ? "rgba(145,132,217,.18)" : "var(--surface)", border: `1px solid ${n >= 0 ? "var(--pur)" : "var(--edge)"}`, borderRadius: "var(--px-r)", cursor: "pointer", color: "inherit", font: "inherit" }}
                   >
                     <span style={{ flex: "none", lineHeight: 0, opacity: b.locked ? 0.7 : 1 }}>
                       <BadgeFace b={b} size={42} />
                     </span>
                     <span style={{ minWidth: 0, flex: 1 }}>
-                      <span className="px" style={{ display: "block", fontSize: 11, color: "var(--text)", lineHeight: 1.5 }}>{b.title}</span>
+                      <span className="px" style={{ display: "block", fontSize: 11, color: "var(--text)", lineHeight: 1.5 }}>
+                        {b.title}
+                        {b.auto ? <span title="The system awards this one itself" aria-label="Awarded by the system" style={{ color: "#e8c14b", marginLeft: 6 }}>★</span> : null}
+                      </span>
                       <span style={{ display: "block", fontSize: 12, lineHeight: 1.4, color: "var(--muted)" }}>{b.line}</span>
                     </span>
+                    {isWitch && b.edit ? (
+                      <button
+                        type="button"
+                        aria-label={`Edit ${b.title}`}
+                        title="Edit this badge"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setDraft({ ...b.edit! });
+                        }}
+                        className="btn btn-sm"
+                        style={{ flex: "none", minHeight: 32, minWidth: 32, padding: 0 }}
+                      >
+                        ✎
+                      </button>
+                    ) : null}
                     {n >= 0 ? (
                       <span aria-hidden className="px" style={{ flex: "none", minWidth: 20, height: 20, display: "grid", placeItems: "center", fontSize: 11, background: "var(--pur)", color: "#fff", borderRadius: 10 }}>{n + 1}</span>
                     ) : null}
-                  </button>
+                  </div>
                 );
               })}
             </div>
@@ -197,6 +224,46 @@ export function WorkingOn({ items, all, editable, person, finished }: { items: S
               SAVE
             </button>
           </form>
+
+          {draft ? (
+            <div role="dialog" aria-label={draft.slug ? "Edit badge" : "New badge"} style={{ position: "absolute", inset: 0, background: "var(--device)", padding: "16px 16px 24px", overflowY: "auto", display: "flex", flexDirection: "column", gap: 10 }}>
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <div className="px" style={{ fontSize: 12, color: "var(--pur-soft)" }}>{draft.slug ? "EDIT BADGE" : "NEW BADGE"}</div>
+                <span className="spacer" />
+                <button type="button" className="btn btn-sm" onClick={() => setDraft(null)} style={{ minHeight: 40, padding: "0 9px" }}>✕</button>
+              </div>
+              <form action={saveBadge} style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                {draft.slug ? <input type="hidden" name="slug" value={draft.slug} /> : null}
+                <label className="field">
+                  <span className="px" style={{ fontSize: 11, color: "var(--blu-soft)" }}>TITLE</span>
+                  <input name="title" className="input" value={draft.title} maxLength={40} required onChange={(e) => setDraft({ ...draft, title: e.target.value })} />
+                </label>
+                <label className="field">
+                  <span className="px" style={{ fontSize: 11, color: "var(--blu-soft)" }}>HOW TO EARN IT</span>
+                  <textarea name="how" className="textarea" rows={3} value={draft.how} maxLength={200} required onChange={(e) => setDraft({ ...draft, how: e.target.value })} />
+                </label>
+                <label className="field">
+                  <span className="px" style={{ fontSize: 11, color: "var(--blu-soft)" }}>ONCE EARNED (PAST TENSE)</span>
+                  <input name="blurb" className="input" value={draft.blurb} maxLength={120} required onChange={(e) => setDraft({ ...draft, blurb: e.target.value })} />
+                </label>
+                <label className="field">
+                  <span className="px" style={{ fontSize: 11, color: "var(--blu-soft)" }}>PICTURE NUMBER (1 TO 299)</span>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                    <input name="art" className="input" type="number" min={1} max={299} value={draft.art} required onChange={(e) => setDraft({ ...draft, art: Math.min(299, Math.max(1, Number(e.target.value) || 1)) })} style={{ width: 110 }} />
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={`/badges/set/${draft.art}.png`} alt="" width={46} height={46} style={{ imageRendering: "pixelated", display: "block" }} />
+                  </div>
+                </label>
+                <button type="submit" className="btn btn-lg btn-purple btn-block">SAVE BADGE</button>
+              </form>
+              {draft.slug ? (
+                <form action={deleteBadge} onSubmit={(e) => { if (!confirm("Delete this badge? Anyone who earned it loses it too.")) e.preventDefault(); }}>
+                  <input type="hidden" name="slug" value={draft.slug} />
+                  <button type="submit" className="btn btn-block" style={{ color: "var(--mag-soft)" }}>DELETE THIS BADGE</button>
+                </form>
+              ) : null}
+            </div>
+          ) : null}
         </div>
       ) : null}
     </div>

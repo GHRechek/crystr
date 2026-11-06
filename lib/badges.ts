@@ -108,6 +108,10 @@ export type ShownBadge = {
   locked?: boolean;
   /** A badge to ask a witch for: make a post, and a witch's like earns it. */
   request?: boolean;
+  /** Handed out by the system itself, not by a witch's like: marked with a star. */
+  auto?: boolean;
+  /** A witch-approved badge's own fields, for a witch to edit. */
+  edit?: { slug: string; title: string; how: string; blurb: string; art: number };
 };
 
 /** How each achievement reads once it is on show: what its owner did, in the past tense (the
@@ -172,6 +176,10 @@ export function achievementGrid(badges: BadgeRow[]): ShownBadge[] {
     title: b.earned_at ? `${b.title}${b.tiers > 1 ? ` ${ROMAN[b.tier]}` : ""}` : b.title,
     line: b.earned_at ? (DID[b.slug] ?? b.blurb ?? b.how) : b.how,
     locked: !b.earned_at,
+    auto: !b.witch_approved,
+    edit: b.witch_approved
+      ? { slug: b.slug, title: b.title, how: b.how, blurb: b.blurb, art: Number(/(\d+)\.png$/.exec(b.art ?? "")?.[1] ?? 1) }
+      : undefined,
   });
   return [...badges.filter((b) => b.earned_at), ...badges.filter((b) => !b.earned_at)].map(cell);
 }

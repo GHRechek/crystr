@@ -29,7 +29,8 @@ import { tokenTitle } from "@/lib/token";
 const longDate = (d: Date) => d.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
 
 
-export default async function ProfilePage() {
+export default async function ProfilePage(props: { searchParams: Promise<{ quests?: string }> }) {
+  const quests = (await props.searchParams).quests === "1";
   const { userId, profile } = await requireMe();
   const [ledger, top, badges, items, token, helps, trades, plaintiffSince, override] = await Promise.all([
     getLedger(userId),
@@ -229,7 +230,7 @@ export default async function ProfilePage() {
 
         {/* The badges you have, just the pictures, packed tight; tap one for its tooltip. */}
         {/* What you are going after, as a list, with a button to see every badge and choose. */}
-        <WorkingOn editable finished={finishedWorking(profile.working_on, badges)} items={resolveWorking(profile.working_on, badges, allTokens)} all={[...achievementGrid(badges.filter(stillWorking)), ...allTokens.map(tokenAsWorking)]} />
+        <WorkingOn key={quests ? "pick" : "view"} openAtStart={quests} isWitch={profile.is_witch} editable finished={finishedWorking(profile.working_on, badges)} items={resolveWorking(profile.working_on, badges, allTokens)} all={[...achievementGrid(badges.filter(stillWorking)), ...allTokens.map(tokenAsWorking)]} />
 
         {tokens.length ? (
           <div>

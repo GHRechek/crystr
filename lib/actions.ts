@@ -316,7 +316,7 @@ export async function setWorkingOn(fd: FormData) {
   }
   const r = await call("cr_set_working_on", { p_list: Array.isArray(list) ? list.filter((x) => typeof x === "string").slice(0, 5) : [] });
   if (!r.ok) await wentWrong();
-  else await setFlash("SAVED", "Your list of what you are working on is updated.", EDGE.blue);
+  else await setFlash("SAVED", `Your list of what you are working on is updated.${await newBadges()}`, EDGE.blue);
   revalidatePath("/me");
   redirect("/me");
 }
@@ -894,6 +894,22 @@ export async function setMood(fd: FormData) {
 
   const mood = str(fd, "mood").slice(0, 120);
 
+  const { data: me } = await supabase.from("profiles").select("handle, mood").eq("id", user.id).maybeSingle();
+  const changed = mood !== ((me?.mood as string | null) ?? "");
+
+  // Asking for help puts a post on the wall: "<handle> needs help!" and what is needed. It costs
+  // what a post costs. Clearing the line is free and posts nothing.
+  let cost = 0;
+  if (mood && changed) {
+    const r = await call("cr_create_post", { p_body: `${me?.handle ?? "Someone"} needs help! ${mood}`, p_has_image: false, p_badge: null });
+    if (!r.ok) {
+      if (r.code === "insufficient") await broke(r, "Asking for help costs five, and you are {short} short. A little time at the Well will help.");
+      else await wentWrong();
+      redirect("/me");
+    }
+    cost = Number(r.cost ?? 5);
+  }
+
   const { error } = await supabase
     .from("profiles")
     .update({ mood: mood || null, updated_at: new Date().toISOString() })
@@ -907,9 +923,14 @@ export async function setMood(fd: FormData) {
 
   await setFlash(
     mood ? "ASKED" : "CLEARED",
-    mood ? `The City can see what you need help with.${await newBadges()}` : "Bubble cleared.",
+    mood
+      ? changed
+        ? `It is on the wall for the City to see. That took ${cost} out of you.${await newBadges()}`
+        : "Still on the wall."
+      : "Bubble cleared.",
     EDGE.purple,
   );
+  revalidatePath("/");
   revalidatePath("/me");
   redirect("/me");
 }
@@ -1073,5 +1094,36 @@ export async function vouchFromProfile(fd: FormData) {
     await setFlash("ASKED", "They will see a note asking whether you met up. If they say yes, you both earn a badge.", EDGE.blue);
   }
   revalidatePath(`/u/${handle}`);
+  revalidatePath("/", "layout");
+}
+
+/** A witch makes or edits a badge a witch approves. */
+export async function saveBadge(fd: FormData) {
+  const r = await call("cr_badge_save", {
+    p_slug: str(fd, "slug") || null,
+    p_title: str(fd, "title"),
+    p_how: str(fd, "how"),
+    p_blurb: str(fd, "blurb"),
+    p_art: Number(fd.get("art")),
+  });
+  if (!r.ok) {
+    if (r.code === "forbidden") await setFlash("WITCHES ONLY", "Only witches make and edit badges.", EDGE.mag);
+    else if (r.code === "bad_input") await setFlash("CHECK IT OVER", "A title, what to do, the line once earned, and a picture from 1 to 299, please.", EDGE.mag);
+    else await wentWrong();
+  } else {
+    await setFlash("SAVED", "The badge is saved.", EDGE.blue);
+  }
+  revalidatePath("/", "layout");
+}
+
+/** A witch deletes a badge a witch approves. Anyone who earned it loses it too. */
+export async function deleteBadge(fd: FormData) {
+  const r = await call("cr_badge_delete", { p_slug: str(fd, "slug") });
+  if (!r.ok) {
+    if (r.code === "forbidden") await setFlash("WITCHES ONLY", "Only witches delete badges.", EDGE.mag);
+    else await wentWrong();
+  } else {
+    await setFlash("DELETED", "The badge is gone.", EDGE.purple);
+  }
   revalidatePath("/", "layout");
 }

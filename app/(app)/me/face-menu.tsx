@@ -109,6 +109,9 @@ export function ProfileHead({
               >
                 <span aria-hidden="true">◔</span> ASK FOR HELP
               </button>
+              <Link href="/me?quests=1" className="face-menu-item" role="menuitem">
+                <span aria-hidden="true">★</span> PICK QUESTS
+              </Link>
               <Link href="/me/edit" className="face-menu-item" role="menuitem">
                 <span aria-hidden="true">▤</span> EDIT PROFILE
               </Link>
@@ -130,9 +133,14 @@ export function ProfileHead({
               placeholder="What do you need help with? Someone to water the plants, a second opinion, a ride to the airport."
               style={{ fontSize: 12.5, minHeight: 76 }}
             />
-            <button type="submit" className="btn btn-sm btn-purple" style={{ alignSelf: "flex-end" }}>
-              GET HELP
-            </button>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span style={{ flex: 1, fontSize: 11.5, lineHeight: 1.4, color: "var(--muted)" }}>
+                Costs 5 mana, and goes on the wall for everyone to see.
+              </span>
+              <button type="submit" className="btn btn-sm btn-purple" style={{ flex: "none" }}>
+                GET HELP
+              </button>
+            </div>
           </form>
         ) : null}
       </div>
