@@ -36,7 +36,8 @@ export default async function QuestsPage(props: { searchParams: Promise<{ pick?:
   const pending: Record<string, string> = {};
   for (const r of waiting.requests) pending[r.slug] = "WAITING FOR A WITCH";
   for (const c of waiting.askedOut) pending[c.slug] = `WAITING FOR ${c.to.toUpperCase()}`;
-  const waitingCount = waiting.asked.length + waiting.askedOut.length + waiting.requests.length + waiting.vouches.length;
+  const queue = profile.is_witch ? waiting.queue : [];
+  const waitingCount = waiting.asked.length + waiting.askedOut.length + waiting.requests.length + waiting.vouches.length + queue.length;
   const quests = questGrid(badges);
 
   return (
@@ -111,6 +112,14 @@ export default async function QuestsPage(props: { searchParams: Promise<{ pick?:
                 <span className="px" style={{ fontSize: 9.5, color: "var(--pur-pale)" }}>WAITING</span>
               </Link>
             ))}
+            {queue.map((r) => (
+              <Link key={`q${r.id}`} href={`/thread/${r.id}`} className="rowcard" style={{ minHeight: 52, padding: "8px 11px" }}>
+                <div style={{ flex: 1, minWidth: 0, fontSize: 12.5 }}>
+                  {r.title} <span style={{ color: "var(--muted)" }}>· {r.who} · {ago(r.created_at)}</span>
+                </div>
+                <span className="px" style={{ fontSize: 9.5, color: "var(--pur-pale)" }}>LIKE TO APPROVE →</span>
+              </Link>
+            ))}
             {waiting.vouches.map((v) => (
               <Link key={`v${v.id}`} href={`/u/${v.to}`} className="rowcard" style={{ minHeight: 48, padding: "8px 11px" }}>
                 <div style={{ flex: 1, minWidth: 0, fontSize: 12.5 }}>
@@ -123,25 +132,6 @@ export default async function QuestsPage(props: { searchParams: Promise<{ pick?:
         </div>
       ) : null}
 
-      {profile.is_witch ? (
-        <div>
-          {head("BADGE REQUESTS", "var(--mag)", <span className="px" style={{ fontSize: 11, color: "var(--muted)" }}>{waiting.queue.length} WAITING</span>)}
-          {waiting.queue.length === 0 ? (
-            <div className="empty">NOTHING IS WAITING FOR A WITCH</div>
-          ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              {waiting.queue.map((r) => (
-                <Link key={r.id} href={`/thread/${r.id}`} className="rowcard" style={{ minHeight: 52, padding: "8px 11px" }}>
-                  <div style={{ flex: 1, minWidth: 0, fontSize: 12.5 }}>
-                    {r.title} <span style={{ color: "var(--muted)" }}>· {r.who} · {ago(r.created_at)}</span>
-                  </div>
-                  <span className="px" style={{ fontSize: 9.5, color: "var(--pur-pale)" }}>LIKE TO APPROVE →</span>
-                </Link>
-              ))}
-            </div>
-          )}
-        </div>
-      ) : null}
 
       <div>
         {head("ALL QUESTS", "var(--mag-soft)", <span className="px" style={{ fontSize: 11, color: "var(--muted)" }}>{quests.filter((b) => !b.locked).length} / {quests.length}</span>)}
