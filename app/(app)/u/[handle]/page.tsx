@@ -96,25 +96,23 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
           </Link>
         </div>
 
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        <div style={{ display: "flow-root" }}>
           {token ? (
-            <span title={tokenTitle(person.display_name, person.handle)} style={{ lineHeight: 0, flex: "none" }}>
+            <span title={tokenTitle(person.display_name, person.handle)} style={{ float: "left", lineHeight: 0, margin: "0 12px 4px 0" }}>
               <TokenImage design={token.design} size={64} />
             </span>
           ) : null}
-          <div style={{ minWidth: 0 }}>
-            <h1 className="px" style={{ fontSize: 16, fontWeight: 400, lineHeight: 1.5, overflowWrap: "anywhere" }}>
-              {person.handle}
-            </h1>
-            {person.display_name ? (
-              <div className="px" style={{ fontSize: 11, color: "var(--muted)", lineHeight: 1.5, overflowWrap: "anywhere" }}>
-                {person.display_name}
-              </div>
-            ) : null}
+          <h1 className="px" style={{ fontSize: 16, fontWeight: 400, lineHeight: 1.5, overflowWrap: "anywhere" }}>
+            {person.handle}
+          </h1>
+          {person.display_name ? (
+            <div className="px" style={{ fontSize: 11, color: "var(--muted)", lineHeight: 1.5, overflowWrap: "anywhere" }}>
+              {person.display_name}
+            </div>
+          ) : null}
+          <div style={{ fontSize: 12.5, lineHeight: 1.6, color: "var(--text-3)", textWrap: "pretty", marginTop: 4 }}>
+            {corrupt(person.bio || "Nothing written here yet.", decay)}
           </div>
-        </div>
-        <div style={{ fontSize: 12.5, lineHeight: 1.6, color: "var(--text-3)", textWrap: "pretty", marginTop: -4 }}>
-          {corrupt(person.bio || "Nothing written here yet.", decay)}
         </div>
 
         {details.length ? (
