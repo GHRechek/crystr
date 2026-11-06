@@ -6,6 +6,7 @@ import { ArrowIcon } from "@/components/icons";
 import {
   BADGE_SIZES,
   ITEMS,
+  itemSrc,
   NO_ITEM,
   SHAPES,
   SIZES,
@@ -185,7 +186,7 @@ function Sticker({
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src={`/badges/items/${slug}.png`}
+        src={itemSrc(slug)}
         alt=""
         width={it.w * cell}
         height={it.h * cell}
@@ -438,7 +439,7 @@ export function TokenDesigner({ start, fresh, how = "", canGive = false, onUse }
                 }}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={`/badges/items/${it.slug}.png`} alt="" width={it.w * 2} height={it.h * 2} style={{ imageRendering: "pixelated" }} />
+                <img src={itemSrc(it.slug)} alt="" width={it.w * 2} height={it.h * 2} style={{ imageRendering: "pixelated" }} />
               </button>
             ))}
           </div>

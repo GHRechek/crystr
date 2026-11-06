@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { PNG } from "pngjs";
-import { SLOTS, TOKEN_SIZE, colourHex, isFramed, normalizeToken, turnedBox, type SizeKey, type TokenDesign } from "./token";
+import { SLOTS, TOKEN_SIZE, itemSrc, colourHex, isFramed, normalizeToken, turnedBox, type SizeKey, type TokenDesign } from "./token";
 
 // Drawing a token: one badge shape in three tones of its colour (the outline is the art's
 // own near-black), a band in the rim colour just inside the edge when the shape is framed,
@@ -13,7 +13,6 @@ import { SLOTS, TOKEN_SIZE, colourHex, isFramed, normalizeToken, turnedBox, type
 // outward hangs over it, a shrunk one sits inside like heraldry. The browser shows it two
 // to four times larger with the pixels kept square.
 
-const ITEMS_DIR = join(process.cwd(), "public", "badges", "items");
 type Sprite = { w: number; h: number; data: Uint8ClampedArray };
 const decoded = new Map<string, Sprite | null>();
 
@@ -22,7 +21,7 @@ function item(slug: string): Sprite | null {
   if (hit !== undefined) return hit;
   let out: Sprite | null = null;
   try {
-    const png = PNG.sync.read(readFileSync(join(ITEMS_DIR, `${slug}.png`)));
+    const png = PNG.sync.read(readFileSync(join(process.cwd(), "public", itemSrc(slug))));
     if (png.width <= 24 && png.height <= 24) out = { w: png.width, h: png.height, data: new Uint8ClampedArray(png.data) };
   } catch {
     out = null;

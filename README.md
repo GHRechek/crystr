@@ -452,3 +452,5 @@ and article banners record *that* there's an image but there's nowhere to
 upload one yet (quest proofs do upload, to the `proofs` bucket). The prototype's
 feed-layout and pixel-intensity variation knobs are baked to their defaults
 (Roomy cards, Subtle).
+
+The token maker offers 117 icons: the 69 plain ones and, added after them so existing tokens are unchanged, the 48 tradable badge pictures (`t-<name>`, files in `public/badges/tradable`; `itemSrc` in `lib/token.ts` says where each lives).
