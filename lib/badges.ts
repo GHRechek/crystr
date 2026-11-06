@@ -18,6 +18,8 @@ export type BadgeRow = {
   tiers: number;
   /** Earned by posting it and having a witch like the post. */
   witch_approved?: boolean;
+  /** Earned when someone you ask says yes (a whisper with YES and NO). */
+  peer_approved?: boolean;
   /** A long-term goal (only counts while on Working On) or a quest (everything else). */
   kind?: "goal" | "quest";
   /** The counts that earn each step, and the single count of a one-step badge. */
@@ -113,12 +115,14 @@ export type ShownBadge = {
   locked?: boolean;
   /** A badge to ask a witch for: make a post, and a witch's like earns it. */
   request?: boolean;
+  /** Earned by asking someone, who answers in a whisper. */
+  peer?: boolean;
   /** How far along a goal is: the count so far, and the count that finishes the next step. */
   progress?: { n: number; of: number };
   /** Handed out by the system itself, not by a witch's like: marked with a star. */
   auto?: boolean;
   /** A witch-approved badge's own fields, for a witch to edit. */
-  edit?: { slug: string; title: string; how: string; blurb: string; art: number; custom?: string; /** A long-term goal: only its name and picture may change. */ fixed?: boolean };
+  edit?: { slug: string; title: string; how: string; blurb: string; art: number; custom?: string; /** A long-term goal: only its name and picture may change. */ fixed?: boolean; peer?: boolean };
 };
 
 /** How each achievement reads once it is on show: what its owner did, in the past tense (the
@@ -135,7 +139,7 @@ const DID: Record<string, string> = {
 };
 
 /** How many badges a person can have on show. */
-export const SHOW_MAX = 5;
+export const SHOW_MAX = 6;
 
 /** What a person's saved list of shown badges means, from their earned badges and the
  *  tradable badges they hold. Anything no longer theirs is skipped. */
@@ -183,8 +187,8 @@ export function achievementGrid(badges: BadgeRow[]): ShownBadge[] {
     title: b.earned_at ? `${b.title}${b.tiers > 1 ? ` ${ROMAN[b.tier]}` : ""}` : b.title,
     line: b.earned_at ? (b.blurb || DID[b.slug] || b.how) : b.how,
     locked: !b.earned_at,
-    auto: !b.witch_approved,
-    edit: { slug: b.slug, title: b.title, how: b.how, blurb: b.blurb, art: Number(/(\d+)\.png$/.exec(b.art ?? "")?.[1] ?? 1), custom: b.art?.startsWith("token:") ? b.art.slice(6) : undefined, fixed: b.kind === "goal" },
+    auto: !b.witch_approved && !b.peer_approved,
+    edit: { slug: b.slug, title: b.title, how: b.how, blurb: b.blurb, art: Number(/(\d+)\.png$/.exec(b.art ?? "")?.[1] ?? 1), custom: b.art?.startsWith("token:") ? b.art.slice(6) : undefined, fixed: b.kind === "goal", peer: b.witch_approved || b.peer_approved ? !!b.peer_approved : undefined },
   });
   return [...badges.filter((b) => b.earned_at), ...badges.filter((b) => !b.earned_at)].map(cell);
 }
@@ -269,8 +273,9 @@ export const questGrid = (badges: BadgeRow[]): ShownBadge[] => {
     title: b.earned_at ? `${b.title}${b.tiers > 1 ? ` ${ROMAN[b.tier]}` : ""}` : b.title,
     line: b.earned_at ? b.blurb || b.how : b.how,
     locked: !b.earned_at,
-    auto: !b.witch_approved,
+    auto: !b.witch_approved && !b.peer_approved,
     request: !!b.witch_approved && !b.earned_at,
+    peer: !!b.peer_approved && !b.earned_at,
   }));
 };
 

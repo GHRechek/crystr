@@ -12,6 +12,7 @@ import {
   countOpenReports,
   countOpenBugs,
   getOverride,
+  getPeople,
 } from "@/lib/data";
 import { ROMAN, tokenReadyAt, resolveShown, resolveWorking, finishedWorking, goalGrid, questGrid, achievementGrid } from "@/lib/badges";
 import { Avatar } from "@/components/bits";
@@ -38,7 +39,7 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
   await createClient().rpc("cr_check_badges");
   const { data: progressData } = await createClient().rpc("cr_goal_progress");
   const progress = (progressData ?? {}) as Record<string, number>;
-  const [top, badges, items, token, helps, trades, plaintiffSince, override] = await Promise.all([
+  const [top, badges, items, token, helps, trades, plaintiffSince, override, people] = await Promise.all([
     getTopFriends(userId),
     getBadges(userId),
     getBadgeItems(userId),
@@ -47,6 +48,7 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
     getPendingTrades(userId),
     getPlaintiffSince(userId),
     getOverride(userId),
+    getPeople(userId),
   ]);
   const [openReports, openBugs] = profile.is_witch ? await Promise.all([countOpenReports(), countOpenBugs()]) : [0, 0];
   const earnedCount = badges.filter((b) => b.earned_at).length;
@@ -193,6 +195,7 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
           key={quests ? "open" : "shut"}
           openAtStart={quests}
           items={questGrid(badges)}
+          people={people.map((p) => ({ id: p.id, handle: p.handle }))}
           viewer={{
             earned: achievementGrid(badges.filter((b) => b.earned_at)),
             tradable: resolveShown(tradable.map((i) => `i:${i.id}`), badges, items, profile.handle, 10000),

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { BadgeFace } from "@/components/badge-chooser";
 import { BadgeViewer } from "@/components/badge-viewer";
+import { claimBadge } from "@/lib/actions";
 import type { ShownBadge } from "@/lib/badges";
 
 /** Where each system badge is done, for the ones that have a place to go. */
@@ -23,16 +24,21 @@ export function Quests({
   items,
   openAtStart,
   viewer,
+  people,
   children,
 }: {
   items: ShownBadge[];
   openAtStart?: boolean;
   /** Your own badges, for choosing which four to show. */
   viewer?: { earned: ShownBadge[]; tradable: ShownBadge[]; current: string[]; aside?: React.ReactNode };
+  /** Everyone else in the City, for asking someone to confirm a quest. */
+  people?: { id: string; handle: string }[];
   /** The row that sits under the heading: the token and the badges you show. */
   children?: React.ReactNode;
 }) {
   const [choosing, setChoosing] = useState(false);
+  const [asking, setAsking] = useState<string | null>(null);
+  const [who, setWho] = useState("");
   const [open, setOpen] = useState(!!openAtStart);
   const [tab, setTab] = useState(0);
   const [q, setQ] = useState("");
@@ -95,7 +101,16 @@ export function Quests({
                   </button>
                   {sel && b.locked ? (
                     <div style={{ paddingLeft: 52, display: "flex", flexDirection: "column", gap: 6 }}>
-                      {b.request ? (
+                      {b.peer ? (
+                        <>
+                          <div style={{ fontSize: 12, lineHeight: 1.45, color: "var(--muted)" }}>
+                            Pick who it was. They get a whisper asking whether it happened, with YES and NO. If they say yes, the badge is yours.
+                          </div>
+                          <button type="button" className="btn btn-sm btn-purple" onClick={() => setAsking(slug)} style={{ minHeight: 40, alignSelf: "flex-start" }}>
+                            ASK SOMEONE →
+                          </button>
+                        </>
+                      ) : b.request ? (
                         <>
                           <div style={{ fontSize: 12, lineHeight: 1.45, color: "var(--muted)" }}>
                             Make a post that shows it. It is marked as a badge request, and when a witch likes it, the badge is yours.
@@ -120,6 +135,30 @@ export function Quests({
               );
             })}
           </ul>
+          {asking ? (
+            <div role="dialog" aria-label="Who was it?" style={{ position: "absolute", inset: 0, zIndex: 2, background: "var(--device)", display: "flex", flexDirection: "column" }}>
+              <div style={{ display: "flex", alignItems: "center", padding: "14px 16px 8px" }}>
+                <div className="px" style={{ fontSize: 12, color: "var(--pur-soft)" }}>WHO WAS IT?</div>
+                <span className="spacer" />
+                <button type="button" className="btn btn-sm" onClick={() => setAsking(null)} aria-label="Close" style={{ minHeight: 40, padding: "0 10px" }}>✕</button>
+              </div>
+              <div style={{ padding: "0 16px 8px" }}>
+                <input className="input" value={who} onChange={(e) => setWho(e.target.value)} placeholder="Search for someone" aria-label="Search people" style={{ width: "100%", fontSize: 12.5 }} />
+              </div>
+              <ul style={{ listStyle: "none", margin: 0, padding: "0 16px 24px", flex: 1, minHeight: 0, overflowY: "auto", display: "flex", flexDirection: "column", gap: 6 }}>
+                {(people ?? []).filter((p) => !who.trim() || p.handle.toLowerCase().includes(who.trim().toLowerCase())).map((p) => (
+                  <li key={p.id}>
+                    <form action={async (fd) => { await claimBadge(fd); setAsking(null); setOpen(false); }}>
+                      <input type="hidden" name="slug" value={asking} />
+                      <input type="hidden" name="other_id" value={p.id} />
+                      <button type="submit" className="btn btn-block" style={{ minHeight: 46, justifyContent: "flex-start" }}>{p.handle}</button>
+                    </form>
+                  </li>
+                ))}
+                {(people ?? []).length === 0 ? <li className="empty">THERE IS NOBODY ELSE IN THE CITY YET</li> : null}
+              </ul>
+            </div>
+          ) : null}
         </div>
       ) : null}
       {choosing && viewer ? <BadgeViewer earned={viewer.earned} tradable={viewer.tradable} current={viewer.current} editable aside={viewer.aside} onClose={() => setChoosing(false)} /> : null}

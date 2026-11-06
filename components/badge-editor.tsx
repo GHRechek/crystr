@@ -6,7 +6,7 @@ import { defaultToken } from "@/lib/token";
 import { SET_COUNT } from "@/lib/badges";
 import { deleteBadge, saveBadge } from "@/lib/actions";
 
-export type BadgeDraft = { slug?: string; title: string; how: string; blurb: string; art: number; /** A picture made in the token maker, as its packed design. */ custom?: string; /** A long-term goal: only its name and picture may change. */ fixed?: boolean };
+export type BadgeDraft = { slug?: string; title: string; how: string; blurb: string; art: number; /** A picture made in the token maker, as its packed design. */ custom?: string; /** A long-term goal: only its name and picture may change. */ fixed?: boolean; /** How a badge a witch makes is approved: true when someone you ask says yes, false when a witch likes a post. Undefined for the system's own. */ peer?: boolean };
 
 /** The form a witch edits a badge in: its title, how to earn it, the line once earned, and its
  *  picture. It covers whatever it sits in. A new badge has no slug. Delete asks first. */
@@ -47,6 +47,16 @@ export function BadgeEditor({ draft, setDraft, used = [] }: { draft: BadgeDraft;
           <span className="px" style={{ fontSize: 11, color: "var(--blu-soft)" }}>ONCE EARNED (PAST TENSE)</span>
           <input name="blurb" className="input" value={draft.blurb} maxLength={120} required readOnly={draft.fixed} style={draft.fixed ? { opacity: 0.55 } : undefined} onChange={(e) => setDraft({ ...draft, blurb: e.target.value })} />
         </label>
+        {!draft.fixed && (draft.slug === undefined || draft.peer !== undefined) ? (
+          <div className="field">
+            <span className="px" style={{ fontSize: 11, color: "var(--blu-soft)" }}>HOW IS IT APPROVED?</span>
+            <input type="hidden" name="peer" value={draft.peer ? "1" : "0"} />
+            <div className="seg">
+              <button type="button" data-on={!draft.peer} onClick={() => setDraft({ ...draft, peer: false })}>A WITCH LIKES A POST</button>
+              <button type="button" data-on={!!draft.peer} onClick={() => setDraft({ ...draft, peer: true })}>SOMEONE SAYS YES</button>
+            </div>
+          </div>
+        ) : null}
         <div className="field">
           <span className="px" style={{ fontSize: 11, color: "var(--blu-soft)" }}>PICTURE</span>
           <input type="hidden" name="art" value={draft.art} />

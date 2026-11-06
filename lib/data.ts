@@ -340,6 +340,8 @@ export type Message = {
    *  Null when no post was sent. `gone` is true when one was sent and has since been deleted. */
   post: { id: number; handle: string | null; body: string; has_image: boolean } | null;
   post_gone: boolean;
+  /** A quest question carried in this whisper: asked of one person, answered YES or NO. */
+  claim: { id: number; status: "pending" | "confirmed" | "declined"; title: string; forMe: boolean } | null;
 };
 
 export async function getThread(
@@ -365,7 +367,7 @@ export async function getThread(
 
   const { data: rows } = await supabase
     .from("dm_messages")
-    .select("id, sender_id, body, created_at, image_path, reply_to, deleted_at, post_id")
+    .select("id, sender_id, body, created_at, image_path, reply_to, deleted_at, post_id, claim_id")
     .eq("thread_id", id)
     .order("created_at");
   const msgs = (rows ?? []) as {
@@ -377,7 +379,19 @@ export async function getThread(
     reply_to: number | null;
     deleted_at: string | null;
     post_id: number | null;
+    claim_id: number | null;
   }[];
+
+  const claimIds = [...new Set(msgs.map((m) => m.claim_id).filter((x): x is number => x !== null))];
+  const { data: claimRows } = claimIds.length
+    ? await supabase.from("badge_claims").select("id, status, other, badge:badges!badge_claims_badge_slug_fkey(title)").in("id", claimIds)
+    : { data: [] };
+  const claimOf = new Map(
+    ((claimRows ?? []) as unknown as { id: number; status: "pending" | "confirmed" | "declined"; other: string; badge: { title: string } | null }[]).map((c) => [
+      c.id,
+      { id: c.id, status: c.status, title: c.badge?.title ?? "a quest", forMe: c.other === userId },
+    ]),
+  );
 
   const ids = msgs.map((m) => m.id);
   const postIds = [...new Set(msgs.map((m) => m.post_id).filter((x): x is number => x !== null))];
@@ -431,6 +445,7 @@ export async function getThread(
         post: m.post_id !== null ? (postOf.get(m.post_id) ?? null) : null,
         // A message that was only a post, whose post has since been deleted.
         post_gone: m.post_id === null && !m.deleted_at && !m.body && !m.image_path,
+        claim: m.claim_id !== null ? (claimOf.get(m.claim_id) ?? null) : null,
       };
     }),
   };
@@ -773,7 +788,7 @@ export async function peekOverride(code: string): Promise<{ ok: true; witch: str
 export async function getBadges(userId: string): Promise<BadgeRow[]> {
   const supabase = createClient();
   const [all, mine] = await Promise.all([
-    supabase.from("badges").select("slug, title, how, blurb, art, tiers, sort, witch_approved, kind, steps, threshold").order("sort"),
+    supabase.from("badges").select("slug, title, how, blurb, art, tiers, sort, witch_approved, peer_approved, kind, steps, threshold").order("sort"),
     supabase.from("user_badges").select("badge_slug, earned_at, tier").eq("user_id", userId),
   ]);
   const earned = new Map(

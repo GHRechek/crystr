@@ -1105,6 +1105,7 @@ export async function saveBadge(fd: FormData) {
     p_how: str(fd, "how"),
     p_blurb: str(fd, "blurb"),
     p_art: Number(fd.get("art")),
+    p_peer: fd.get("peer") === "1" ? true : fd.get("peer") === "0" ? false : null,
     p_art_custom: (() => {
       const c = str(fd, "art_custom");
       return c && unpackToken(c) ? c : null;
@@ -1129,5 +1130,30 @@ export async function deleteBadge(fd: FormData) {
   } else {
     await setFlash("DELETED", "The badge is gone.", EDGE.purple);
   }
+  revalidatePath("/", "layout");
+}
+
+/** From a quest that someone else confirms: ask them, in a whisper, whether it happened. */
+export async function claimBadge(fd: FormData) {
+  const r = await call("cr_badge_claim", { p_slug: str(fd, "slug"), p_other: str(fd, "other_id") });
+  if (!r.ok) {
+    if (r.code === "already") await setFlash("ALREADY ASKED", "They already have that question waiting.", EDGE.purple);
+    else if (r.code === "have_it") await setFlash("ALREADY YOURS", "You have that badge already.", EDGE.purple);
+    else if (r.code === "too_many") await setFlash("TOO MANY WAITING", "Wait for some of your questions to be answered first.", EDGE.mag);
+    else await wentWrong();
+  } else {
+    await setFlash("ASKED", "They have a whisper asking whether it happened. If they say yes, the badge is yours.", EDGE.blue);
+  }
+  revalidatePath("/me");
+  revalidatePath("/", "layout");
+}
+
+/** The other person says yes or no to a quest question in a whisper. */
+export async function answerBadgeClaim(fd: FormData) {
+  const yes = str(fd, "answer") === "yes";
+  const r = await call("cr_badge_claim_answer", { p_id: Number(fd.get("id")), p_yes: yes });
+  if (!r.ok) await setFlash("ALREADY ANSWERED", "That question is no longer waiting for you.", EDGE.purple);
+  else await setFlash(yes ? "THANK YOU" : "NO WORRIES", yes ? "Confirmed. The badge is theirs." : "Left as it was.", yes ? EDGE.blue : EDGE.purple);
+  revalidatePath(`/whispers/${Number(fd.get("thread"))}`);
   revalidatePath("/", "layout");
 }

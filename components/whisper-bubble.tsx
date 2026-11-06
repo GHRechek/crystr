@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { reactToMessage, unsendMessage } from "@/lib/actions";
+import { answerBadgeClaim, reactToMessage, unsendMessage } from "@/lib/actions";
 import { REACTIONS } from "@/lib/whisper";
 import { corrupt } from "@/lib/crystr";
 import type { Message } from "@/lib/data";
@@ -125,6 +125,26 @@ export function Bubble({
             </div>
           ) : null}
           {m.body ? <div>{corrupt(m.body, decay)}</div> : null}
+          {m.claim ? (
+            m.claim.status === "pending" && m.claim.forMe ? (
+              <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
+                {(["yes", "no"] as const).map((a) => (
+                  <form key={a} action={answerBadgeClaim} style={{ flex: 1 }}>
+                    <input type="hidden" name="id" value={m.claim!.id} />
+                    <input type="hidden" name="answer" value={a} />
+                    <input type="hidden" name="thread" value={thread} />
+                    <button type="submit" className={`btn btn-sm btn-block${a === "yes" ? " btn-purple" : ""}`} style={{ minHeight: 40 }}>
+                      {a === "yes" ? "YES" : "NO"}
+                    </button>
+                  </form>
+                ))}
+              </div>
+            ) : (
+              <div className="px" style={{ fontSize: 11, marginTop: 6, color: m.claim.status === "confirmed" ? "var(--blu-soft)" : "var(--muted)" }}>
+                {m.claim.status === "confirmed" ? "✓ CONFIRMED" : m.claim.status === "declined" ? "✗ NOT QUITE" : "WAITING FOR AN ANSWER"}
+              </div>
+            )
+          ) : null}
         </div>
 
       </div>
