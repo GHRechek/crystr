@@ -69,10 +69,14 @@ export function AboutBadges({
     };
   }, [tip]);
 
+  // The slim row fills the space beside the portrait, out to where the thought bubble ends: five badges
+  // and the trade (or eye) button share the width.
+  const gap = 4;
+  const px = compact ? Math.max(28, Math.min(48, Math.floor((width - gap * 5) / 6))) : 42;
   const tipBadge = tip ? shown.find((b) => b.key === tip.key) : undefined;
 
   return (
-    <div ref={box} style={{ position: "relative", display: "flex", flexWrap: compact ? "nowrap" : "wrap", alignItems: compact ? "flex-end" : "center", gap: compact ? 4 : 6 }}>
+    <div ref={box} style={{ position: "relative", display: "flex", flexWrap: compact ? "nowrap" : "wrap", alignItems: compact ? "flex-end" : "center", gap: compact ? gap : 6 }}>
       {children}
       {shown.slice(0, SHOW_MAX).map((b) => (
         <button
@@ -87,7 +91,7 @@ export function AboutBadges({
           }}
           style={{ flex: "none", padding: 0, background: "none", border: 0, cursor: "pointer", lineHeight: 0 }}
         >
-          <BadgeFace b={b} size={compact ? 36 : 42} />
+          <BadgeFace b={b} size={px} />
         </button>
       ))}
       {!noPen && !compact && (earned.length || tradable.length || editable) ? (
@@ -105,7 +109,7 @@ export function AboutBadges({
           href={tradeHref}
           aria-label={tradeCount ? `Trades, ${tradeCount} waiting` : "Trades"}
           title="Trades"
-          style={{ position: "relative", flex: "none", width: compact ? 32 : 42, height: compact ? 32 : 42, display: "grid", placeItems: "center", border: "1px dashed var(--edge)", borderRadius: "var(--px-r)", color: "var(--muted)", textDecoration: "none" }}
+          style={{ position: "relative", flex: "none", width: px, height: px, display: "grid", placeItems: "center", border: "1px dashed var(--edge)", borderRadius: "var(--px-r)", color: "var(--muted)", textDecoration: "none" }}
         >
           <TradeIcon />
           {tradeCount ? (
@@ -120,7 +124,7 @@ export function AboutBadges({
           type="button"
           aria-label="See all their badges"
           onClick={() => setChoosing(true)}
-          style={{ flex: "none", width: compact ? 32 : 42, height: compact ? 32 : 42, display: "grid", placeItems: "center", background: "none", border: "1px dashed var(--edge)", borderRadius: "var(--px-r)", color: "var(--muted)", cursor: "pointer" }}
+          style={{ flex: "none", width: px, height: px, display: "grid", placeItems: "center", background: "none", border: "1px dashed var(--edge)", borderRadius: "var(--px-r)", color: "var(--muted)", cursor: "pointer" }}
         >
           <EyeIcon />
         </button>
