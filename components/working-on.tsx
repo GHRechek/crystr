@@ -67,9 +67,8 @@ export function WorkingOn({ items, all, editable }: { items: ShownBadge[]; all?:
       ) : null}
 
       {open && editable ? (
-        <div role="dialog" aria-label="Choose what you are working on" style={{ position: "fixed", inset: 0, zIndex: 80, display: "flex", flexDirection: "column", justifyContent: "flex-end", maxWidth: 480, margin: "0 auto" }}>
-          <button type="button" aria-label="Close" onClick={() => setOpen(false)} style={{ flex: 1, border: 0, background: "rgba(5,5,12,.6)", cursor: "default" }} />
-          <form action={setWorkingOn} style={{ maxHeight: "82%", overflowY: "auto", background: "var(--device)", boxShadow: "0 -1px 0 var(--edge), 0 -12px 36px rgba(0,0,0,.5)", padding: "12px 16px 24px", display: "flex", flexDirection: "column", gap: 10 }}>
+        <div role="dialog" aria-label="Choose what you are working on" style={{ position: "fixed", inset: 0, zIndex: 80, display: "flex", flexDirection: "column", maxWidth: 480, margin: "0 auto" }}>
+          <form action={setWorkingOn} style={{ flex: 1, minHeight: 0, overflowY: "auto", background: "var(--device)", padding: "16px 16px 24px", display: "flex", flexDirection: "column", gap: 10 }}>
             <input type="hidden" name="list" value={JSON.stringify(pick)} />
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <div className="px" style={{ fontSize: 12, color: "var(--pur-soft)" }}>
