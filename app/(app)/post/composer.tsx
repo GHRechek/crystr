@@ -7,9 +7,9 @@ import { COSTS } from "@/lib/crystr";
 import { Cost } from "@/components/mana";
 import { Placeholder } from "@/components/bits";
 
-export function Composer({ mana }: { mana: number }) {
+export function Composer({ mana, badge }: { mana: number; badge?: { slug: string; title: string; how: string } }) {
   const [text, setText] = useState("");
-  const [photo, setPhoto] = useState(false);
+  const [photo, setPhoto] = useState(!!badge);
 
   const cost = COSTS.post + (photo ? COSTS.photo : 0);
   const affordable = mana >= cost;
@@ -18,6 +18,7 @@ export function Composer({ mana }: { mana: number }) {
   return (
     <form action={createPost} className="pad">
       <input type="hidden" name="has_image" value={photo ? "true" : "false"} />
+      {badge ? <input type="hidden" name="badge" value={badge.slug} /> : null}
 
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
         <Link href="/" className="btn btn-sm">
@@ -34,6 +35,18 @@ export function Composer({ mana }: { mana: number }) {
           -{cost}
         </div>
       </div>
+
+      {badge ? (
+        <div className="tile" style={{ padding: 12 }}>
+          <div className="px" style={{ fontSize: 11, color: "var(--pur-soft)" }}>
+            BADGE REQUEST · {badge.title.toUpperCase()}
+          </div>
+          <div style={{ fontSize: 12.5, lineHeight: 1.5, color: "var(--text-3)", marginTop: 4 }}>{badge.how}</div>
+          <div style={{ fontSize: 12, lineHeight: 1.45, color: "var(--muted)", marginTop: 4 }}>
+            This post is marked as a request. When a witch likes it, the badge is yours.
+          </div>
+        </div>
+      ) : null}
 
       <textarea
         name="body" aria-label="Your post"

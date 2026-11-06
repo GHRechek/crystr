@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { BadgeFace } from "@/components/badge-chooser";
 import { ArrowIcon } from "@/components/icons";
@@ -50,6 +51,25 @@ export function WorkingOn({ items, all, editable, person }: { items: ShownBadge[
             );
             // On someone else's page a badge they are working on can be tapped to say
             // "they helped me" or "we met up".
+            // On your own page, a badge to ask a witch for opens the way to make the post.
+            if (editable && b.request) {
+              const open = say === b.key;
+              return (
+                <li key={b.key} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                  <button type="button" aria-expanded={open} onClick={() => setSay(open ? null : b.key)} style={{ display: "flex", alignItems: "center", gap: 10, padding: 0, background: "none", border: 0, cursor: "pointer", color: "inherit", font: "inherit" }}>
+                    {row}
+                  </button>
+                  {open ? (
+                    <div style={{ paddingLeft: 52, display: "flex", flexDirection: "column", gap: 6 }}>
+                      <div style={{ fontSize: 12, lineHeight: 1.45, color: "var(--muted)" }}>Make a post that shows it. It is marked as a badge request, and when a witch likes it, the badge is yours.</div>
+                      <Link href={`/post?badge=${b.key.slice(2)}`} className="btn btn-sm btn-purple" style={{ minHeight: 40, alignSelf: "flex-start", display: "inline-flex", alignItems: "center" }}>
+                        MAKE THE POST →
+                      </Link>
+                    </div>
+                  ) : null}
+                </li>
+              );
+            }
             if (!person || !b.key.startsWith("a:")) {
               return (
                 <li key={b.key} style={{ display: "flex", alignItems: "center", gap: 10 }}>

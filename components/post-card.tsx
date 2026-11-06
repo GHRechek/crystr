@@ -71,6 +71,12 @@ export function PostCard({
           <PostMenu kind="post" target={post.id} mine={mine} back={inThread && thread ? `/thread/${thread}` : "/"} />
         </div>
 
+        {post.badge_title ? (
+          <div className="px" style={{ fontSize: 11, color: "var(--pur-soft)" }}>
+            BADGE REQUEST · {post.badge_title.toUpperCase()}
+          </div>
+        ) : null}
+
         {post.quest_title ? (
           <div className="px" style={{ fontSize: 11, color: "var(--mag-soft)" }}>
             FROM THE WELL · {post.quest_title.toUpperCase()}

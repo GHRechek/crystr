@@ -143,12 +143,8 @@ export default async function BallPage(
 
       {visible.map((a) => (
         <Link key={a.id} href={`/ball/${a.id}`} className="card" style={{ padding: 0, gap: 0, overflow: "hidden", color: "var(--text)" }}>
-          {a.banner_icon ? (
-            <div style={{ height: 96, display: "flex", alignItems: "center", justifyContent: "flex-start", padding: "0 12px", background: "var(--inset)", boxShadow: "inset 0 -1px 0 var(--edge)" }}>
-              <ArticleIcon slug={a.banner_icon} box={80} />
-            </div>
-          ) : null}
-          <div style={{ padding: 12, display: "flex", flexDirection: "column", gap: 6 }}>
+          <div style={{ padding: 12, display: "flex", alignItems: "center", gap: 12 }}>
+            <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 6 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
               <span className="kicker">{a.kicker}</span>
               <Pill article={a} />
@@ -158,6 +154,12 @@ export default async function BallPage(
             <div className="byline" style={{ marginTop: 2 }}>
               {byline(a.author.handle, a.status, a.created_at, a.published_at, a.byline_name)}
             </div>
+            </div>
+            {a.banner_icon ? (
+              <div style={{ flex: "none", display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
+                <ArticleIcon slug={a.banner_icon} box={72} />
+              </div>
+            ) : null}
           </div>
         </Link>
       ))}

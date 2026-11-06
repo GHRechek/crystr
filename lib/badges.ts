@@ -16,6 +16,8 @@ export type BadgeRow = {
   art: string | null;
   /** How many tiers this badge has: 1 for most, 4 for the three counting badges. */
   tiers: number;
+  /** Earned by posting it and having a witch like the post. */
+  witch_approved?: boolean;
   earned_at: string | null;
   /** The tier held, 1 to 4 (1 on a badge with one tier). 0 until earned. */
   tier: number;
@@ -104,6 +106,8 @@ export type ShownBadge = {
   line: string;
   /** Not earned yet: drawn dimmed, and the line says what to do to earn it. */
   locked?: boolean;
+  /** A badge to ask a witch for: make a post, and a witch's like earns it. */
+  request?: boolean;
 };
 
 /** How each achievement reads once it is on show: what its owner did, in the past tense (the
@@ -206,6 +210,7 @@ export function resolveWorking(list: string[] | null | undefined, badges: BadgeR
       title: b.earned_at && b.tiers > 1 ? `${b.title} ${ROMAN[b.tier]}` : b.title,
       line: b.how,
       locked: !b.earned_at,
+      request: !!b.witch_approved && !b.earned_at,
     });
   }
   return out.slice(0, WORKING_MAX);

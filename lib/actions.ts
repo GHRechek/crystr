@@ -81,13 +81,15 @@ export async function createPost(fd: FormData) {
   const body = str(fd, "body");
   const hasImage = fd.get("has_image") === "on" || fd.get("has_image") === "true";
 
-  const r = await call("cr_create_post", { p_body: body, p_has_image: hasImage });
+  const r = await call("cr_create_post", { p_body: body, p_has_image: hasImage, p_badge: str(fd, "badge") || null });
 
   if (!r.ok) {
     if (r.code === "empty") {
       await setFlash("DECLINED", "There is nothing here yet. Write a few words first.", EDGE.mag);
     } else if (r.code === "insufficient") {
       await broke(r, "You are {short} short of the strength for that. A little time at the Well will help.");
+    } else if (r.code === "have_it") {
+      await setFlash("ALREADY YOURS", "You have that badge already.", EDGE.purple);
     } else {
       await wentWrong();
     }

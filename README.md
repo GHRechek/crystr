@@ -153,6 +153,7 @@ saved by `cr_set_working_on` and cleaned by `profiles_working_on_guard`; migrati
 `20261106030000_working_on.sql`.
 Other people's tokens can be listed too (`t:<user id>`, "Be given it by …"), from `20261106040000_working_on_tokens.sql`.
 On someone else's page, tapping a badge in their Working On list offers THEY HELPED ME (counts at once, since the helped person is saying it) and WE MET UP (waits for their yes), with no whisper needed: `cr_vouch_from_profile`, `vouches.badge_slug`, `20261107000000_vouch_from_profile.sql`.
+Badge requests (`20261107010000_badge_requests.sql`): a badge with `badges.witch_approved` (Take a Hike, Latte Art) is earned by making a post from its Working On entry (`/post?badge=<slug>`, saved in `posts.badge_slug`, marked BADGE REQUEST); a witch's like on that post awards it (trigger `badge_request_liked`).
 
 ## Max mana and badges
 

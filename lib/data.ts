@@ -84,6 +84,8 @@ export type FeedPost = {
   image_url: string | null;
   /** Set when the post was shared from the Well: the quest's title. */
   quest_title: string | null;
+  /** Set on a badge request: the title of the badge the post asks a witch to approve. */
+  badge_title?: string | null;
   /** On the timeline: the newest reply, shown under the post. */
   latest_reply?: { id: number; author: Author; body: string; created_at: string } | null;
 };
@@ -125,7 +127,7 @@ export async function getFeed(userId: string): Promise<FeedItem[]> {
   const [{ data: posts }, { data: dispatches }] = await Promise.all([
     supabase
       .from("posts")
-      .select(`id, body, has_image, cost, created_at, proof_path, quest:quests!posts_quest_slug_fkey(title), author:profiles!posts_author_id_fkey(${AUTHOR_COLS}), likes:post_likes(count))`)
+      .select(`id, body, has_image, cost, created_at, proof_path, quest:quests!posts_quest_slug_fkey(title), badge:badges!posts_badge_slug_fkey(title), author:profiles!posts_author_id_fkey(${AUTHOR_COLS}), likes:post_likes(count))`)
       .is("parent_id", null)
       .order("created_at", { ascending: false })
       .limit(50),
@@ -145,6 +147,7 @@ export async function getFeed(userId: string): Promise<FeedItem[]> {
     created_at: string;
     proof_path: string | null;
     quest: { title: string } | null;
+    badge: { title: string } | null;
     author: Author;
     likes: { count: number }[];
   }>;
@@ -190,6 +193,7 @@ export async function getFeed(userId: string): Promise<FeedItem[]> {
     replies: replyCount.get(p.id) ?? 0,
     image_url: p.proof_path ? (signed.get(p.proof_path) ?? null) : null,
     quest_title: p.quest?.title ?? null,
+    badge_title: p.badge?.title ?? null,
     latest_reply: latest.get(p.id) ?? null,
   }));
 
@@ -508,12 +512,12 @@ export async function getPostThread(
   const [{ data: top }, { data: kids }] = await Promise.all([
     supabase
       .from("posts")
-      .select(`id, body, has_image, cost, created_at, parent_id, proof_path, quest:quests!posts_quest_slug_fkey(title), author:profiles!posts_author_id_fkey(${AUTHOR_COLS}), likes:post_likes(count)`)
+      .select(`id, body, has_image, cost, created_at, parent_id, proof_path, quest:quests!posts_quest_slug_fkey(title), badge:badges!posts_badge_slug_fkey(title), author:profiles!posts_author_id_fkey(${AUTHOR_COLS}), likes:post_likes(count)`)
       .eq("id", id)
       .maybeSingle(),
     supabase
       .from("posts")
-      .select(`id, body, has_image, cost, created_at, parent_id, proof_path, quest:quests!posts_quest_slug_fkey(title), author:profiles!posts_author_id_fkey(${AUTHOR_COLS}), likes:post_likes(count)`)
+      .select(`id, body, has_image, cost, created_at, parent_id, proof_path, quest:quests!posts_quest_slug_fkey(title), badge:badges!posts_badge_slug_fkey(title), author:profiles!posts_author_id_fkey(${AUTHOR_COLS}), likes:post_likes(count)`)
       .eq("parent_id", id)
       .order("created_at", { ascending: true })
       .limit(200),
@@ -529,6 +533,7 @@ export async function getPostThread(
     created_at: string;
     proof_path: string | null;
     quest: { title: string } | null;
+    badge: { title: string } | null;
     author: Author;
     likes: { count: number }[];
   };
@@ -555,6 +560,7 @@ export async function getPostThread(
     replies,
     image_url: r.proof_path ? (signed.get(r.proof_path) ?? null) : null,
     quest_title: r.quest?.title ?? null,
+    badge_title: r.badge?.title ?? null,
   });
 
   return {
@@ -767,7 +773,7 @@ export async function peekOverride(code: string): Promise<{ ok: true; witch: str
 export async function getBadges(userId: string): Promise<BadgeRow[]> {
   const supabase = createClient();
   const [all, mine] = await Promise.all([
-    supabase.from("badges").select("slug, title, how, blurb, art, tiers, sort").order("sort"),
+    supabase.from("badges").select("slug, title, how, blurb, art, tiers, sort, witch_approved").order("sort"),
     supabase.from("user_badges").select("badge_slug, earned_at, tier").eq("user_id", userId),
   ]);
   const earned = new Map(
@@ -1002,6 +1008,7 @@ export async function getShareable(userId: string, slug: string): Promise<Sharea
     proof_url: string | null;
     created_at: string;
     quest: { title: string } | null;
+    badge: { title: string } | null;
   } | null;
   if (!row) return null;
   if (Date.now() - new Date(row.created_at).getTime() > 3600_000) return null;
