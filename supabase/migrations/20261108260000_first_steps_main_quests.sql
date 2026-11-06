@@ -25,8 +25,7 @@ insert into public.badges (slug, title, how, blurb, art, sort, active, witch_app
   ('first-friend', 'Make a Friend', 'Make friends with someone. Any of the Friend quests counts.', 'Made a friend.', 'set/600.png', 340, true, false, false, null, true, 'quest', 1),
   ('support-group', 'Support Group', 'Attend a support group. A witch says you were there.', 'Went to a support group.', 'set/601.png', 341, true, false, true, 'witch', true, 'quest', 1),
   ('first-timer', 'Bring a First Timer', 'Bring someone new to the café. A witch says they came.', 'Brought a first timer to the café.', 'set/602.png', 342, true, false, true, 'witch', true, 'quest', 1),
-  ('learn-leylines', 'Learn About Leylines', 'Learn about leylines from someone who already knows them.', 'Learned about leylines.', 'set/603.png', 343, true, false, true, 'leylines', true, 'quest', 1),
-  ('bring-a-friend', 'Bring a Friend', 'Bring a friend to the café. A witch says they came.', 'Brought a friend to the café.', 'set/604.png', 344, true, false, true, 'witch', false, 'quest', 1)
+  ('learn-leylines', 'Learn About Leylines', 'Learn about leylines from someone who already knows them.', 'Learned about leylines.', 'set/603.png', 343, true, false, true, 'leylines', true, 'quest', 1)
 on conflict (slug) do update set title = excluded.title, how = excluded.how, blurb = excluded.blurb, peer_approved = excluded.peer_approved,
   peer_target = excluded.peer_target, first_step = excluded.first_step, kind = 'quest';
 
@@ -283,3 +282,6 @@ $$;
 
 revoke all on function public.cr_scan_quests(uuid) from public, anon;
 grant execute on function public.cr_scan_quests(uuid) to authenticated;
+
+-- Bring a Friend was folded into Bring a First Timer.
+delete from public.badges where slug = 'bring-a-friend';

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { requireMe, getBadges, getPeopleKinds, getQuestWaiting, countHelps } from "@/lib/data";
+import { requireMe, getBadges, getQuestWaiting, countHelps } from "@/lib/data";
 import { createClient } from "@/lib/supabase/server";
 import { answerBadgeClaim } from "@/lib/actions";
 import { ago } from "@/lib/crystr";
@@ -27,7 +27,7 @@ export default async function QuestsPage(props: { searchParams: Promise<{ pick?:
   await createClient().rpc("cr_check_badges");
   const { data: progressData } = await createClient().rpc("cr_goal_progress");
   const progress = (progressData ?? {}) as Record<string, number>;
-  const [badges, people, items, helps] = await Promise.all([getBadges(userId), getPeopleKinds(userId), getBadgeItems(userId), countHelps(userId)]);
+  const [badges, items, helps] = await Promise.all([getBadges(userId), getBadgeItems(userId), countHelps(userId)]);
   const stepsDone = firstStepsDone(badges);
   const steps = firstStepGrid(badges);
   const help = helpingRow(badges, helps);
@@ -76,13 +76,12 @@ export default async function QuestsPage(props: { searchParams: Promise<{ pick?:
           openAtStart={sp.pick === "1"}
           isWitch={profile.is_witch}
           editable
-          people={people}
           finished={finishedWorking(profile.working_on, badges)}
           items={resolveWorking(profile.working_on, badges, [], progress)}
           all={goalGrid(badges, progress)}
         />
       ) : (
-        <WorkingOn editable heading="FIRST STEPS" total={steps.length} people={people} items={steps} />
+        <WorkingOn editable heading="FIRST STEPS" total={steps.length} items={steps} />
       )}
 
       {waitingCount ? (
@@ -144,7 +143,7 @@ export default async function QuestsPage(props: { searchParams: Promise<{ pick?:
 
       <div>
         {head("SIDE QUESTS", "var(--mag-soft)", <span className="px" style={{ fontSize: 11, color: "var(--muted)" }}>{quests.filter((b) => !b.locked).length} / {quests.length}</span>)}
-        <QuestBrowser items={quests} people={people} pending={pending} />
+        <QuestBrowser items={quests} pending={pending} />
       </div>
 
           </>

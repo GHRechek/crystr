@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import Link from "next/link";
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { requireMe, getPendingVouches, getTopSixNotices, getTradeNotices, hasAcceptedTerms, claimBirthdayBadge, getUnreadThreadIds } from "@/lib/data";
@@ -6,9 +7,10 @@ import { birthdayBadgeDue } from "@/lib/birthday";
 import { EDGE } from "@/lib/toast";
 import { TERMS_VERSION } from "@/lib/terms";
 import { readFlash } from "@/lib/flash";
-import { Clock, SetupBanner, TabBar, Toast } from "@/components/chrome";
+import { SetupBanner, TabBar, Toast } from "@/components/chrome";
 import { DecayFrame } from "@/components/decay";
 import { InfoMenu } from "@/components/info-menu";
+import { SearchIcon } from "@/components/icons";
 import { ManaButton } from "@/components/mana";
 import { VouchBanner } from "@/components/vouch-banner";
 import { TopSixBanner } from "@/components/top-six-banner";
@@ -64,14 +66,13 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   return (
     <div className="stage">
       <div className="frame">
-        <div className="statusbar">
-          <Clock />
-          <span className="where">THE CITY · LOW MARKET</span>
-          <span aria-hidden>▓▓▓░</span>
-        </div>
-
         <header className="head">
           <div className="head-row">
+            {welcoming ? null : (
+              <Link href="/people" aria-label="Search people" title="Search people" style={{ flex: "none", display: "grid", placeItems: "center", width: 28, height: 28, color: "var(--muted)" }}>
+                <SearchIcon />
+              </Link>
+            )}
             <div className="wordmark">CRYSTR</div>
             {/* The meter fills the space between the name and the potion. */}
             <div

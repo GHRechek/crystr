@@ -490,4 +490,7 @@ After a scan: TRADE, PROFILE or QUEST. QUEST lists only the with-quests that per
 ### First steps, Main Quests, Side Quests
 - **Main Quests** (the three you pick, `kind='goal'`) and **Side Quests** (everything else). Help Someone Else is always a Main Quest, pinned at the top: every 10 confirmed helps brings a tradable badge, and the count starts again.
 - **First steps** (`badges.first_step`): Vote on a Motion, Make a Friend (any Friend quest counts), Support Group and Bring a First Timer (a witch confirms from a scan), Learn About Leylines (anyone who holds it confirms; every witch holds it). Until all five are earned there are no Main Quests to pick (`cr_set_working_on` returns `first_steps`); then the first-steps list turns into the three Main Quest slots.
-- Also new: Bring a Friend (a witch confirms). `peer_target='leylines'` means "holds Learn About Leylines". The picture numbers for the new badges are placeholders; a witch can change them from the badge editor.
+- The picture numbers for the new badges are placeholders; a witch can change them from the badge editor. Bring a first timer is the one café quest.
+
+### Asking is done by scanning; finding people
+Quests that need someone else are asked only by scanning their code (no person picker in the quest lists). The magnifier left of CRYSTR opens `/people`: search by name plus icon toggles (elf, forsaken, shifter, human, orc, goblin, planar, spellcaster, witch). The phone-mock status bar is gone.

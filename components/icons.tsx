@@ -70,3 +70,12 @@ export function MoreIcon() {
     </svg>
   );
 }
+
+export function SearchIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" shapeRendering="crispEdges" aria-hidden="true">
+      <circle cx="6.5" cy="6.5" r="4.3" />
+      <path d="M10 10l4 4" strokeLinecap="square" />
+    </svg>
+  );
+}

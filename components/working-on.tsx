@@ -5,20 +5,18 @@ import { useState } from "react";
 import { BadgeFace } from "@/components/badge-chooser";
 import { ArrowIcon } from "@/components/icons";
 import { BadgeEditor, type BadgeDraft as Draft } from "@/components/badge-editor";
-import { setWorkingOn, vouchFromProfile, claimBadge } from "@/lib/actions";
+import { setWorkingOn, vouchFromProfile } from "@/lib/actions";
 import { WORKING_MAX, type ShownBadge } from "@/lib/badges";
-import { isKind, targetLabel, type Kind } from "@/lib/species";
+import { targetLabel } from "@/lib/species";
 
 const PER_PAGE = 1000; // every main quest on one scrolling page
 
 /** "Working on": the badges a person is going after, as a plain list, one to a row, each with
  *  what it takes. On your own profile a button opens every badge there is, to pick up to five
  *  (tap to pick, tap again to put back; the order you pick them is the order they are listed in). */
-export function WorkingOn({ items, all, editable, person, finished, isWitch, openAtStart, bare, people, heading, total }: { /** A different title for the row list (First Steps): no picker, and `total` is how many there are. */ heading?: string; total?: number; people?: (Kind & { id: string; handle: string })[]; items: ShownBadge[]; all?: ShownBadge[]; editable?: boolean; person?: { id: string; handle: string }; finished?: string[]; isWitch?: boolean; openAtStart?: boolean; /** Just the rows: no heading, no change link. */ bare?: boolean }) {
+export function WorkingOn({ items, all, editable, person, finished, isWitch, openAtStart, bare, people, heading, total }: { /** A different title for the row list (First Steps): no picker, and `total` is how many there are. */ heading?: string; total?: number; people?: unknown; items: ShownBadge[]; all?: ShownBadge[]; editable?: boolean; person?: { id: string; handle: string }; finished?: string[]; isWitch?: boolean; openAtStart?: boolean; /** Just the rows: no heading, no change link. */ bare?: boolean }) {
   const [draft, setDraft] = useState<Draft | null>(null);
   const [say, setSay] = useState<string | null>(null);
-  const [who, setWho] = useState("");
-  const [list, setList] = useState(false);
   const [open, setOpen] = useState(!!openAtStart && !!editable);
   const [pick, setPick] = useState<string[]>(items.map((b) => b.key));
   const [page, setPage] = useState(0);
@@ -101,43 +99,17 @@ export function WorkingOn({ items, all, editable, person, finished, isWitch, ope
                 </li>
               );
             }
-            // A quest that people have to confirm: ask someone, five different yeses finish it.
-            if (editable && b.peer && people) {
+            // A quest that people have to confirm: asking is done by scanning their code.
+            if (editable && b.peer) {
               const open = say === b.key;
-              const pool = people.filter((p) => isKind(p, b.target));
               return (
                 <li key={b.key} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                   <button type="button" aria-expanded={open} onClick={() => setSay(open ? null : b.key)} style={{ display: "flex", alignItems: "center", gap: 10, padding: 0, background: "none", border: 0, cursor: "pointer", color: "inherit", font: "inherit" }}>
                     {row}
                   </button>
                   {open ? (
-                    <div style={{ paddingLeft: 52, display: "flex", flexDirection: "column", gap: 6 }}>
-                      <div style={{ fontSize: 12, lineHeight: 1.45, color: "var(--muted)" }}>
-                        Pick someone it happened with{b.target ? ` (${targetLabel(b.target)})` : ""}. They get a whisper and say yes or no. Five different yeses finish it.
-                      </div>
-                      <input
-                        className="input"
-                        value={who}
-                        onChange={(e) => { setWho(e.target.value); setList(true); }}
-                        onFocus={() => setList(true)}
-                        placeholder="Search for someone"
-                        aria-label="Search people"
-                        aria-expanded={list}
-                        role="combobox"
-                        style={{ width: "100%", fontSize: 12.5 }}
-                      />
-                      {list ? (
-                        <div role="listbox" style={{ maxHeight: 180, overflowY: "auto", display: "flex", flexDirection: "column", border: "1px solid var(--edge)", borderRadius: "var(--px-r)", background: "var(--surface)" }}>
-                          {pool.filter((p) => !who.trim() || p.handle.toLowerCase().includes(who.trim().toLowerCase())).map((p) => (
-                            <form key={p.id} action={async (fd) => { await claimBadge(fd); setSay(null); setWho(""); setList(false); }}>
-                              <input type="hidden" name="slug" value={b.key.slice(2)} />
-                              <input type="hidden" name="other_id" value={p.id} />
-                              <button type="submit" role="option" style={{ width: "100%", textAlign: "left", minHeight: 40, padding: "0 12px", background: "none", border: 0, borderBottom: "1px solid var(--edge)", color: "inherit", font: "inherit", fontSize: 12.5, cursor: "pointer" }}>{p.handle}</button>
-                            </form>
-                          ))}
-                          {pool.length === 0 ? <div className="empty">NOBODY FITS YET</div> : null}
-                        </div>
-                      ) : null}
+                    <div style={{ paddingLeft: 52, fontSize: 12, lineHeight: 1.45, color: "var(--muted)" }}>
+                      {b.target ? `It has to be ${/^[aeiou]/i.test(targetLabel(b.target)) ? "an" : "a"} ${targetLabel(b.target).toLowerCase()}. ` : ""}Find them and scan their code (the exchange button on your profile), then pick this quest. They get a whisper and say yes or no.
                     </div>
                   ) : null}
                 </li>
