@@ -99,6 +99,8 @@ export type ShownBadge = {
   title: string;
   /** How it is earned, for the tooltip. */
   line: string;
+  /** Not earned yet: drawn dimmed, and the line says what to do to earn it. */
+  locked?: boolean;
 };
 
 /** How each achievement reads once it is on show: what its owner did, in the past tense (the
@@ -114,6 +116,9 @@ const DID: Record<string, string> = {
   "registered-plaintiff": "Became a Registered Plaintiff.",
 };
 
+/** How many badges a person can have on show. */
+export const SHOW_MAX = 4;
+
 /** What a person's saved list of shown badges means, from their earned badges and the
  *  tradable badges they hold. Anything no longer theirs is skipped. */
 export function resolveShown(
@@ -121,7 +126,7 @@ export function resolveShown(
   badges: BadgeRow[],
   items: BadgeItem[],
   owner: string,
-  limit = 5,
+  limit = SHOW_MAX,
 ): ShownBadge[] {
   const out: ShownBadge[] = [];
   for (const key of list ?? []) {
@@ -149,4 +154,17 @@ export function resolveShown(
     }
   }
   return out.slice(0, limit);
+}
+
+/** Every achievement badge there is, earned ones first (in the order the badges are kept in),
+ *  as a grid will draw them: earned ones say what their owner did, the others what to do. */
+export function achievementGrid(badges: BadgeRow[]): ShownBadge[] {
+  const cell = (b: BadgeRow): ShownBadge => ({
+    key: `a:${b.slug}`,
+    badge: { slug: b.slug, art: b.art, tiers: b.tiers, tier: b.tier },
+    title: b.earned_at ? `${b.title}${b.tiers > 1 ? ` ${ROMAN[b.tier]}` : ""}` : b.title,
+    line: b.earned_at ? (DID[b.slug] ?? b.blurb ?? b.how) : b.how,
+    locked: !b.earned_at,
+  });
+  return [...badges.filter((b) => b.earned_at), ...badges.filter((b) => !b.earned_at)].map(cell);
 }

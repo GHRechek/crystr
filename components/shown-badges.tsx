@@ -2,27 +2,29 @@
 
 import { useEffect, useRef, useState } from "react";
 import { BadgeFace } from "@/components/badge-chooser";
-import type { ShownBadge } from "@/lib/badges";
+import { BadgeTip } from "@/components/badge-tip";
+import { SHOW_MAX, type ShownBadge } from "@/lib/badges";
 
-const SHOW = 5;
-const GAP = 6;
+const GAP = 10;
 
-/** The badges a person shows, in a row above their About card, on the profile's own background
- *  (no cards, no heading). Tap one for a tooltip with its name and what its owner did to earn it.
- *  They are chosen from the menu on your own portrait. */
+/** The badges a person shows: a row, centred, with no cards. It lives on the banner at the top of
+ *  their profile. Tap one for a tooltip with its name and what its owner did to earn it. They are
+ *  chosen from the menu on your own portrait. */
 export function ShownBadges({ shown }: { shown: ShownBadge[] }) {
-  const [tip, setTip] = useState<{ key: string; x: number } | null>(null);
+  const [tip, setTip] = useState<{ key: string; x: number; top: number } | null>(null);
   const row = useRef<HTMLDivElement>(null);
-  // Whole multiples of the art's 21 cells keep its pixels square: three times where five fit across
-  // the page, twice or once on a narrower one.
+  // Whole multiples of the art's 21 cells keep its pixels square: three times where four fit
+  // across the page, twice or once on a narrower one.
   const [px, setPx] = useState(63);
+  const [width, setWidth] = useState(320);
 
   useEffect(() => {
     const el = row.current;
     if (!el) return;
     const fit = () => {
-      const cell = (el.clientWidth - (SHOW - 1) * GAP) / SHOW;
+      const cell = (el.clientWidth - (SHOW_MAX - 1) * GAP) / SHOW_MAX;
       setPx(cell >= 65 ? 63 : cell >= 44 ? 42 : 21);
+      setWidth(el.clientWidth);
     };
     fit();
     const ro = new ResizeObserver(fit);
@@ -34,7 +36,7 @@ export function ShownBadges({ shown }: { shown: ShownBadge[] }) {
   useEffect(() => {
     if (!tip) return;
     const away = (e: Event) => {
-      if (!(e.target as HTMLElement).closest?.("[data-shown-badge], [data-shown-tip]")) setTip(null);
+      if (!(e.target as HTMLElement).closest?.("[data-shown-badge], [data-badge-tip]")) setTip(null);
     };
     const esc = (e: KeyboardEvent) => e.key === "Escape" && setTip(null);
     document.addEventListener("pointerdown", away);
@@ -59,37 +61,14 @@ export function ShownBadges({ shown }: { shown: ShownBadge[] }) {
           aria-expanded={tip?.key === b.key}
           onClick={(e) => {
             const r = e.currentTarget;
-            setTip((t) => (t?.key === b.key ? null : { key: b.key, x: r.offsetLeft + r.offsetWidth / 2 }));
+            setTip((t) => (t?.key === b.key ? null : { key: b.key, x: r.offsetLeft + r.offsetWidth / 2, top: r.offsetTop + r.offsetHeight + 8 }));
           }}
-          style={{ flex: "none", width: px + 2, minHeight: px + 2, padding: 1, background: "none", border: 0, cursor: "pointer", display: "grid", placeItems: "center" }}
+          style={{ flex: "none", width: px + 2, minHeight: px + 2, padding: 1, background: "none", border: 0, cursor: "pointer", display: "grid", placeItems: "center", filter: "drop-shadow(0 2px 0 rgba(0,0,0,.35))" }}
         >
           <BadgeFace b={b} size={px} />
         </button>
       ))}
-
-      {tipBadge && tip ? (
-        <div
-          data-shown-tip
-          role="tooltip"
-          style={{
-            position: "absolute",
-            left: 0,
-            right: 0,
-            top: "calc(100% + 8px)",
-            zIndex: 20,
-            padding: "9px 11px",
-            background: "var(--raised)",
-            boxShadow: "0 0 0 1px var(--edge), 0 8px 24px rgba(0,0,0,.45)",
-            borderRadius: "var(--px-r)",
-          }}
-        >
-          <span aria-hidden style={{ position: "absolute", top: -5, left: Math.max(10, Math.min(tip.x - 5, (row.current?.clientWidth ?? 320) - 20)), width: 10, height: 10, background: "var(--raised)", boxShadow: "-1px -1px 0 var(--edge)", transform: "rotate(45deg)" }} />
-          <div className="px" style={{ fontSize: 11, color: "var(--text)", lineHeight: 1.5 }}>
-            {tipBadge.title}
-          </div>
-          <div style={{ fontSize: 12, lineHeight: 1.45, color: "var(--muted)", marginTop: 3 }}>{tipBadge.line}</div>
-        </div>
-      ) : null}
+      {tipBadge && tip ? <BadgeTip x={tip.x} top={tip.top} width={width} title={tipBadge.title} line={tipBadge.line} /> : null}
     </div>
   );
 }
