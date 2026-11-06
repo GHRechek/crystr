@@ -273,3 +273,6 @@ export const questGrid = (badges: BadgeRow[]): ShownBadge[] => {
     request: !!b.witch_approved && !b.earned_at,
   }));
 };
+
+/** How many pictures from the uploaded badge set the app has: public/badges/set/1.png to this number. */
+export const SET_COUNT = 509;

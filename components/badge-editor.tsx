@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { TokenDesigner } from "@/app/(app)/me/token/designer";
 import { defaultToken } from "@/lib/token";
+import { SET_COUNT } from "@/lib/badges";
 import { deleteBadge, saveBadge } from "@/lib/actions";
 
 export type BadgeDraft = { slug?: string; title: string; how: string; blurb: string; art: number; /** A picture made in the token maker, as its packed design. */ custom?: string; /** A long-term goal: only its name and picture may change. */ fixed?: boolean };
@@ -78,7 +79,7 @@ export function BadgeEditor({ draft, setDraft, used = [] }: { draft: BadgeDraft;
             <button type="button" className="btn btn-sm" onClick={() => setPicking(false)} aria-label="Close" style={{ minHeight: 40, padding: "0 9px", marginLeft: 6 }}>✕</button>
           </div>
           <div style={{ flex: 1, minHeight: 0, overflowY: "auto", padding: "4px 16px 20px", display: "flex", flexWrap: "wrap", gap: 8, alignContent: "flex-start" }}>
-            {Array.from({ length: 299 }, (_, i) => i + 1).map((n) => (
+            {Array.from({ length: SET_COUNT }, (_, i) => i + 1).map((n) => (
               <button
                 key={n}
                 type="button"

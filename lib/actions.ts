@@ -1112,7 +1112,7 @@ export async function saveBadge(fd: FormData) {
   });
   if (!r.ok) {
     if (r.code === "forbidden") await setFlash("WITCHES ONLY", "Only witches make and edit badges.", EDGE.mag);
-    else if (r.code === "bad_input") await setFlash("CHECK IT OVER", "A title, what to do, the line once earned, and a picture from 1 to 299, please.", EDGE.mag);
+    else if (r.code === "bad_input") await setFlash("CHECK IT OVER", "A title, what to do, the line once earned, and a picture, please.", EDGE.mag);
     else await wentWrong();
   } else {
     await setFlash("SAVED", "The badge is saved.", EDGE.blue);

@@ -454,3 +454,5 @@ feed-layout and pixel-intensity variation knobs are baked to their defaults
 (Roomy cards, Subtle).
 
 The token maker offers 117 icons: the 69 plain ones and, added after them so existing tokens are unchanged, the 48 tradable badge pictures (`t-<name>`, files in `public/badges/tradable`; `itemSrc` in `lib/token.ts` says where each lives).
+
+The badge picture set (`public/badges/set/`) is the 299 first served plus picture 100 (which had been missed) and 210 more (300 to 509) picked from the 1,015 in the achievement archive for the quests we have: trees, sun, moon, stars, water, fire, music, books, animals, food and drink, maps and boots, hands and hearts. The combat, monster and sci-fi pictures were left out. `SET_COUNT` in `lib/badges.ts` and the limit in `cr_badge_save` say how far it runs.
