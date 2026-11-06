@@ -826,7 +826,6 @@ export async function updateProfile(fd: FormData) {
       // Left out when the boxes are empty, so a birthday is never cleared by accident.
       ...(birthday ? { birthday } : {}),
       likes: field(fd, "likes"),
-      dislikes: field(fd, "dislikes"),
       food: field(fd, "food"),
       obsession: field(fd, "obsession"),
       updated_at: new Date().toISOString(),

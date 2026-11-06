@@ -5,6 +5,7 @@ import { openThread } from "@/lib/actions";
 import { Avatar } from "@/components/bits";
 import { TokenImage } from "@/components/badges";
 import { AboutBadges } from "@/components/about-badges";
+import { ProfileDetails, type DetailKind } from "@/components/profile-details";
 import { WorkingOn } from "@/components/working-on";
 import { achievementGrid, resolveShown, resolveWorking } from "@/lib/badges";
 import { ago, corrupt, decayLevel, BADGE_MANA } from "@/lib/crystr";
@@ -44,14 +45,13 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
   const decay = decayLevel(me.mana);
 
   const days = Math.max(1, Math.round((Date.now() - new Date(person.created_at).getTime()) / 86_400_000));
-  const details: [string, string][] = (
+  const details: { kind: DetailKind; value: string }[] = (
     [
-      ["LIKES", person.likes],
-      ["DISLIKES", person.dislikes],
-      ["FAVOURITE FOOD", person.food],
-      ["OBSESSED WITH", person.obsession],
-    ] satisfies [string, string | null][]
-  ).flatMap(([label, value]) => (value?.trim() ? [[label, value.trim()] as [string, string]] : []));
+      ["likes", person.likes],
+      ["food", person.food],
+      ["obsession", person.obsession],
+    ] as [DetailKind, string | null | undefined][]
+  ).flatMap(([kind, value]) => (value?.trim() ? [{ kind, value: value.trim() }] : []));
 
   return (
     <div style={{ paddingBottom: 24 }}>
@@ -117,25 +117,7 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
           </div>
         </div>
 
-        {details.length ? (
-          <div>
-            <div className="px" style={{ fontSize: 11, color: "var(--blu-soft)", letterSpacing: ".07em", marginBottom: 8 }}>
-              THE DETAILS
-            </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
-              {details.map(([label, value]) => (
-                <div key={label} style={{ display: "flex", gap: 10, alignItems: "baseline" }}>
-                  <div className="px" style={{ fontSize: 11, color: "var(--muted)", width: 120, flex: "none" }}>
-                    {label}
-                  </div>
-                  <div style={{ fontSize: 12.5, lineHeight: 1.5, color: "var(--text-2)", minWidth: 0 }}>
-                    {corrupt(value, decay)}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        ) : null}
+        <ProfileDetails rows={details.map((d) => ({ kind: d.kind, value: corrupt(d.value, decay) }))} />
 
         {top.length ? (
           <div>

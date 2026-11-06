@@ -464,3 +464,5 @@ The large framed pictures (about 37 pixels, a rounded square with a thick frame:
 The Well's rewards (`quests.reward`) and a daily sunrise gift of 4 mana (in `cr_dawn_snapshot`, 6 am US Eastern standard time, before the Brimming snapshot) are in `20261108110000_well_rewards_scaled.sql`.
 
 Profile header (`20261108120000_make_friends_three_shown.sql`): beside the portrait sit up to five shown badges and a trade icon (the portrait menu has CHANGE BADGE DISPLAY to pick them); the token sits to the left of the username. The token, username (pixel font) and character name sit together, with the bio as plain text under them (no About Me card). QUESTS keeps its heading and SEE ALL QUESTS link. A new epic quest, Make Friends, counts the "make friends with a ..." quests you finish, of any kind (five of them; `20261108130000_make_friends_quests.sql`).
+
+The profile details are small pictures (gift, heart, burger, magnifying glass) with the words beside them and no labels; tapping a row says what it is. Dislikes is gone from the form and the profile.

@@ -18,6 +18,7 @@ import { ROMAN, tokenReadyAt, resolveShown, resolveWorking, finishedWorking, goa
 import { Avatar } from "@/components/bits";
 import { BadgeArt, ItemTile, TokenImage } from "@/components/badges";
 import { AboutBadges } from "@/components/about-badges";
+import { ProfileDetails, type DetailKind } from "@/components/profile-details";
 import { WorkingOn } from "@/components/working-on";
 import { Quests } from "@/components/quests";
 import { ProfileHead } from "./face-menu";
@@ -67,15 +68,14 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
   const faceSrc = `/face/${packPortrait(
     profile.avatar_config ? normalizePortrait(profile.avatar_config) : portraitFromId(userId),
   )}.png`;
-  const details: [string, string][] = (
+  const details: { kind: DetailKind; value: string }[] = (
     [
-      ["BIRTHDAY", formatBirthday(profile.birthday)],
-      ["LIKES", profile.likes],
-      ["DISLIKES", profile.dislikes],
-      ["FAVOURITE FOOD", profile.food],
-      ["OBSESSED WITH", profile.obsession],
-    ] satisfies [string, string | null | undefined][]
-  ).flatMap(([label, value]) => (value?.trim() ? [[label, value.trim()] as [string, string]] : []));
+      ["birthday", formatBirthday(profile.birthday)],
+      ["likes", profile.likes],
+      ["food", profile.food],
+      ["obsession", profile.obsession],
+    ] as [DetailKind, string | null | undefined][]
+  ).flatMap(([kind, value]) => (value?.trim() ? [{ kind, value: value.trim() }] : []));
 
   const shown = resolveShown(profile.shown_badges, badges, items, profile.handle);
   const decay = decayLevel(profile.mana);
@@ -150,28 +150,7 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
           </div>
         </div>
 
-        {details.length ? (
-          <div>
-            <div
-              className="px"
-              style={{ fontSize: 11, color: "var(--blu-soft)", letterSpacing: ".07em", marginBottom: 8 }}
-            >
-              THE DETAILS
-            </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
-              {details.map(([label, value]) => (
-                <div key={label} style={{ display: "flex", gap: 10, alignItems: "baseline" }}>
-                  <div className="px" style={{ fontSize: 11, color: "var(--muted)", width: 120, flex: "none" }}>
-                    {label}
-                  </div>
-                  <div style={{ fontSize: 12.5, lineHeight: 1.5, color: "var(--text-2)", minWidth: 0 }}>
-                    {corrupt(value, decay)}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        ) : null}
+        <ProfileDetails rows={details.map((d) => ({ kind: d.kind, value: corrupt(d.value, decay) }))} />
 
         <div>
           {heading(

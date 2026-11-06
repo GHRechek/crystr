@@ -78,7 +78,6 @@ export default async function EditProfilePage() {
         {(
           [
             ["likes", "LIKES", "cold mornings, an honest scale"],
-            ["dislikes", "DISLIKES", "the guild tax, pretending to be weather"],
             ["food", "FAVOURITE FOOD", "whatever the low market is selling at dusk"],
             ["obsession", "CURRENT OBSESSION", "the fountain, obviously"],
           ] as const
