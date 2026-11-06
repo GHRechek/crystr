@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { requireMe, getTopFriends, getBadges, getBadgeItems, getToken, getPlaintiffSince, getProfileByHandle } from "@/lib/data";
+import { requireMe, getTopFriends, getBadges, getBadgeItems, getToken, getPlaintiffSince, getProfileByHandle, getAllTokens } from "@/lib/data";
 import { openThread } from "@/lib/actions";
 import { Avatar } from "@/components/bits";
 import { TokenImage } from "@/components/badges";
@@ -165,7 +165,7 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
           </div>
         ) : null}
 
-        <WorkingOn items={resolveWorking(person.working_on, badges)} />
+        <WorkingOn items={resolveWorking(person.working_on, badges, person.working_on?.some((k) => k.startsWith("t:")) ? await getAllTokens(person.id) : [])} />
 
         <BadgeTabs
           tabs={[

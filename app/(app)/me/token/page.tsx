@@ -33,6 +33,10 @@ export default async function TokenPage() {
           Whoever you give it to holds {BADGE_MANA.token} more max mana. You can give it once every{" "}
           {TOKEN_GIFT_MONTHS} months.
         </div>
+        <div className="screen-intro" style={{ marginTop: 8 }}>
+          HOW IT IS EARNED: only by being given it by you. Others can list it under Working On, and
+          you choose who gets it.
+        </div>
       </div>
 
       <TokenDesigner start={token ? normalizeToken(token.design) : defaultToken()} fresh={!token} />

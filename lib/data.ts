@@ -820,6 +820,21 @@ export async function getToken(userId: string): Promise<TokenRow | null> {
   return (data as TokenRow | null) ?? null;
 }
 
+/** Everyone's token (bar the one asking), for the list of badges to work towards. */
+export async function getAllTokens(exceptUserId: string): Promise<{ user_id: string; design: unknown; handle: string; display_name: string | null }[]> {
+  const supabase = createClient();
+  const { data } = await supabase
+    .from("tokens")
+    .select("user_id, design, owner:profiles!tokens_user_id_fkey(handle, display_name)")
+    .neq("user_id", exceptUserId)
+    .limit(300);
+  type Row = { user_id: string; design: unknown; owner: { handle: string; display_name: string | null } | { handle: string; display_name: string | null }[] | null };
+  return ((data ?? []) as unknown as Row[]).flatMap((r) => {
+    const o = Array.isArray(r.owner) ? r.owner[0] : r.owner;
+    return o ? [{ user_id: r.user_id, design: r.design, handle: o.handle, display_name: o.display_name }] : [];
+  });
+}
+
 /** Confirmed "I helped them" vouches this person has given. The policy shows you only
  *  your own, so for anyone else this is zero. */
 export async function countHelps(userId: string): Promise<number> {

@@ -12,8 +12,9 @@ import {
   countOpenReports,
   countOpenBugs,
   getOverride,
+  getAllTokens,
 } from "@/lib/data";
-import { ROMAN, tokenReadyAt, resolveShown, resolveWorking, achievementGrid } from "@/lib/badges";
+import { ROMAN, tokenReadyAt, resolveShown, resolveWorking, tokenAsWorking, achievementGrid } from "@/lib/badges";
 import { Avatar } from "@/components/bits";
 import { BadgeArt, ItemTile, TokenImage } from "@/components/badges";
 import { BadgeTabs } from "@/components/badge-tabs";
@@ -40,6 +41,7 @@ export default async function ProfilePage() {
     getPlaintiffSince(userId),
     getOverride(userId),
   ]);
+  const allTokens = await getAllTokens(profile.id);
   const [openReports, openBugs] = profile.is_witch ? await Promise.all([countOpenReports(), countOpenBugs()]) : [0, 0];
   const earnedCount = badges.filter((b) => b.earned_at).length;
   const tradable = items.filter((i) => i.kind === "tradable");
@@ -232,7 +234,7 @@ export default async function ProfilePage() {
         />
 
         {/* What you are going after, as a list, with a button to see every badge and choose. */}
-        <WorkingOn editable items={resolveWorking(profile.working_on, badges)} all={achievementGrid(badges)} />
+        <WorkingOn editable items={resolveWorking(profile.working_on, badges, allTokens)} all={[...achievementGrid(badges), ...allTokens.map(tokenAsWorking)]} />
 
         {tokens.length ? (
           <div>

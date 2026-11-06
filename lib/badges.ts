@@ -6,6 +6,8 @@
 // (supabase/migrations/20261027000000_badges_max_mana_birthday.sql and
 // 20261028070000_badge_tiers.sql); this is what the screens need.
 
+import { normalizeToken, tokenSrc, tokenTitle } from "@/lib/token";
+
 export type BadgeRow = {
   slug: string;
   title: string;
@@ -174,9 +176,27 @@ export const WORKING_MAX = 5;
 
 /** The badges a person says they are working on, in order, ready to list: each with what to do to
  *  earn it. They need not be earned yet. */
-export function resolveWorking(list: string[] | null | undefined, badges: BadgeRow[]): ShownBadge[] {
+export type TokenRef = { user_id: string; design: unknown; handle: string; display_name: string | null };
+
+/** A token as a badge to go after: you earn it by being given it. */
+export function tokenAsWorking(t: TokenRef): ShownBadge {
+  return {
+    key: `t:${t.user_id}`,
+    src: tokenSrc(normalizeToken(t.design)),
+    title: tokenTitle(t.display_name, t.handle).toUpperCase(),
+    line: `Be given it by ${t.handle}. They choose who gets it.`,
+    locked: true,
+  };
+}
+
+export function resolveWorking(list: string[] | null | undefined, badges: BadgeRow[], tokens: TokenRef[] = []): ShownBadge[] {
   const out: ShownBadge[] = [];
   for (const key of list ?? []) {
+    if (key.startsWith("t:")) {
+      const t = tokens.find((x) => x.user_id === key.slice(2));
+      if (t) out.push(tokenAsWorking(t));
+      continue;
+    }
     const b = key.startsWith("a:") ? badges.find((x) => x.slug === key.slice(2)) : undefined;
     if (!b) continue;
     out.push({
