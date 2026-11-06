@@ -10,7 +10,7 @@ import { targetLabel } from "@/lib/species";
 
 /** The camera, full screen, looking for another person's CRYSTR code. A code that points at a
  *  profile (…/u/<handle>) opens the trade page with that person. */
-export function QrScanner({ onClose, tradesHref, waiting, mode = "general", only }: { only?: string; onClose: () => void; tradesHref?: string; waiting?: number; /** "general": trade, open a profile, or say they helped you. "quest": only the quests you can do with them. */ mode?: "general" | "quest" }) {
+export function QrScanner({ onClose, tradesHref, waiting, mode = "general", only, title, how }: { only?: string; title?: string; how?: string; onClose: () => void; tradesHref?: string; waiting?: number; /** "general": trade, open a profile, or say they helped you. "quest": only the quests you can do with them. */ mode?: "general" | "quest" }) {
   const router = useRouter();
   const video = useRef<HTMLVideoElement>(null);
   const [err, setErr] = useState<string | null>(null);
@@ -179,7 +179,7 @@ export function QrScanner({ onClose, tradesHref, waiting, mode = "general", only
       </div>
       )}
       <div style={{ padding: "12px 16px 20px", fontSize: 12.5, lineHeight: 1.5, color: err ? "var(--mag-soft)" : "var(--muted)", textAlign: "center" }}>
-        {found ? (view === "quests" ? "One at a time. They get a whisper and say yes or no." : "") : err ?? (mode === "quest" ? "Point the camera at their code to see which quests you can do with them." : "Point the camera at the code on someone's profile menu.")}
+        {found ? (view === "quests" ? "One at a time. They get a whisper and say yes or no." : "") : err ?? (mode === "quest" ? (title ? `${title}: ${how ?? ""} Point the camera at their code.` : "Point the camera at their code to see which quests you can do with them.") : "Point the camera at the code on someone's profile menu.")}
       </div>
     </div>
   );

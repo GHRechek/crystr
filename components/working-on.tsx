@@ -8,7 +8,7 @@ import { BadgeEditor, type BadgeDraft as Draft } from "@/components/badge-editor
 import { setWorkingOn, vouchFromProfile } from "@/lib/actions";
 import { WORKING_MAX, type ShownBadge } from "@/lib/badges";
 import { targetLabel } from "@/lib/species";
-import { ScanQuestButton } from "@/components/scan-quest-button";
+import { ScanRow } from "@/components/scan-quest-button";
 
 const PER_PAGE = 1000; // every main quest on one scrolling page
 
@@ -136,31 +136,18 @@ export function WorkingOn({ items, all, editable, person, finished, isWitch, ope
                 </li>
               );
             }
-            // A quest that people have to confirm: asking is done by scanning their code.
-            if (editable && b.peer) {
-              const open = say === b.key;
-              const kind = b.target ? `${/^[aeiou]/i.test(targetLabel(b.target)) ? "an" : "a"} ${targetLabel(b.target).toLowerCase()}` : null;
+            // A quest that needs scanning: the badge and the name both open the camera.
+            if (scan) {
               return (
-                <li key={b.key} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    {scan ? <ScanQuestButton slug={b.key.slice(2)}>{face}</ScanQuestButton> : null}
-                    <button type="button" aria-expanded={open} onClick={() => setSay(open ? null : b.key)} style={{ flex: 1, minWidth: 0, display: "flex", alignItems: "center", gap: 10, padding: 0, background: "none", border: 0, cursor: "pointer", color: "inherit", font: "inherit" }}>
-                      {scan ? rest : row}
-                    </button>
-                  </div>
-                  {open ? (
-                    <div style={{ paddingLeft: 52, fontSize: 11, lineHeight: 1.45, color: "var(--muted)" }}>
-                      {kind ? `It has to be ${kind}. ` : ""}Tap the badge and scan {kind ? `${kind}'s` : "their"} QR code. {b.instant ? "That is all: it completes the moment you scan." : "They get a whisper asking whether it happened, and if they say yes it counts."}
-                    </div>
-                  ) : null}
+                <li key={b.key}>
+                  <ScanRow slug={b.key.slice(2)} title={b.title} how={b.line} face={face} rest={rest} />
                 </li>
               );
             }
             if (!person || !b.key.startsWith("a:")) {
               return (
                 <li key={b.key} style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  {scan ? <ScanQuestButton slug={b.key.slice(2)}>{face}</ScanQuestButton> : face}
-                  {rest}
+                  {row}
                 </li>
               );
             }

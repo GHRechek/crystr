@@ -6,7 +6,7 @@ import { BadgeFace } from "@/components/badge-chooser";
 import type { ShownBadge } from "@/lib/badges";
 import { targetLabel } from "@/lib/species";
 import { CameraIcon } from "@/components/icons";
-import { ScanQuestButton } from "@/components/scan-quest-button";
+import { ScanRow } from "@/components/scan-quest-button";
 
 /** Where each system badge is done, for the ones that have a place to go. */
 const WHERE: Record<string, [string, string]> = {
@@ -72,21 +72,33 @@ export function QuestBrowser({
             <li key={b.key} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               {b.peer && b.locked ? (
-                <ScanQuestButton slug={slug}>
-                  <span style={{ display: "block", opacity: 0.85 }}><BadgeFace b={b} size={42} /></span>
-                </ScanQuestButton>
-              ) : null}
+                <ScanRow
+                  slug={slug}
+                  title={b.title}
+                  how={b.line}
+                  face={<span style={{ display: "block", opacity: 0.85 }}><BadgeFace b={b} size={42} /></span>}
+                  rest={
+                    <>
+                      <span style={{ minWidth: 0, flex: 1, textAlign: "left" }}>
+                        <span className="px" style={{ display: "block", fontSize: 11, color: "var(--text)", lineHeight: 1.5 }}>
+                          {b.title}
+                          <span style={{ marginLeft: 6, color: "var(--pur-pale)" }}><CameraIcon /></span>
+                        </span>
+                        <span style={{ display: "block", fontSize: 11, lineHeight: 1.4, color: "var(--muted)" }}>{b.line}</span>
+                      </span>
+                      {pending[slug] ? <span className="px" style={{ flex: "none", fontSize: 9.5, color: "var(--pur-pale)", textAlign: "right", maxWidth: 96, lineHeight: 1.4 }}>{pending[slug]}</span> : null}
+                    </>
+                  }
+                />
+              ) : (
               <button type="button" aria-expanded={sel} onClick={() => setAt(sel ? null : b.key)} style={{ flex: 1, minWidth: 0, display: "flex", alignItems: "center", gap: 10, padding: 0, background: "none", border: 0, cursor: "pointer", color: "inherit", font: "inherit", textAlign: "left" }}>
-                {b.peer && b.locked ? null : (
                   <span style={{ flex: "none", lineHeight: 0, opacity: b.locked ? 0.85 : 1 }}>
                     <BadgeFace b={b} size={42} />
                   </span>
-                )}
                 <span style={{ minWidth: 0, flex: 1 }}>
                   <span className="px" style={{ display: "block", fontSize: 11, color: "var(--text)", lineHeight: 1.5 }}>
                     {b.title}
-                    {b.peer && b.locked ? <span style={{ marginLeft: 6, color: "var(--pur-pale)" }}><CameraIcon /></span> : null}
-                    {b.auto ? <span aria-label="Awarded by the system" title="The system gives this one out itself" style={{ color: "#e8c14b", marginLeft: 6 }}>★</span> : null}
+                                        {b.auto ? <span aria-label="Awarded by the system" title="The system gives this one out itself" style={{ color: "#e8c14b", marginLeft: 6 }}>★</span> : null}
                   </span>
                   <span style={{ display: "block", fontSize: 11, lineHeight: 1.4, color: "var(--muted)" }}>{b.line}</span>
                 </span>
@@ -94,6 +106,7 @@ export function QuestBrowser({
                   <span className="px" style={{ flex: "none", fontSize: 9.5, color: "var(--pur-pale)", textAlign: "right", maxWidth: 96, lineHeight: 1.4 }}>{pending[slug]}</span>
                 ) : null}
               </button>
+              )}
               </div>
               {sel && b.locked ? (
                 <div style={{ paddingLeft: 52, display: "flex", flexDirection: "column", gap: 6 }}>
