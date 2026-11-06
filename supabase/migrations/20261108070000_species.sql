@@ -117,8 +117,8 @@ update public.badges set peer_target = 'gnome' where slug = 'gnome-workshop';
 update public.badges set peer_target = 'tauren' where slug = 'tauren-walk';
 
 insert into public.badges (slug, title, how, blurb, art, sort, active, witch_approved, peer_approved, peer_target) values
-  ('human-friend', 'Human Friend', 'Make friends with a human.', 'Made friends with a human.', 'set/103.png', 508, true, false, true, 'human'),
-  ('orc-friend', 'Orc Friend', 'Make friends with an orc.', 'Made friends with an orc.', 'set/103.png', 509, true, false, true, 'orc'),
-  ('shifter-friend', 'Shifter Friend', 'Make friends with a shifter.', 'Made friends with a shifter.', 'set/103.png', 510, true, false, true, 'shifter'),
-  ('spellcaster-friend', 'Spellcaster Friend', 'Make friends with a spellcaster.', 'Made friends with a spellcaster.', 'set/103.png', 511, true, false, true, 'spellcaster')
+  ('human-friend', 'Human Friend', 'Make friends with a human.', 'Made friends with a human.', 'set/198.png', 508, true, false, true, 'human'),
+  ('orc-friend', 'Orc Friend', 'Make friends with an orc.', 'Made friends with an orc.', 'set/424.png', 509, true, false, true, 'orc'),
+  ('shifter-friend', 'Shifter Friend', 'Make friends with a shifter.', 'Made friends with a shifter.', 'set/387.png', 510, true, false, true, 'shifter'),
+  ('spellcaster-friend', 'Spellcaster Friend', 'Make friends with a spellcaster.', 'Made friends with a spellcaster.', 'set/162.png', 511, true, false, true, 'spellcaster')
 on conflict (slug) do nothing;
