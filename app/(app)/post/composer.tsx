@@ -43,7 +43,7 @@ export function Composer({ mana, badge }: { mana: number; badge?: { slug: string
           </div>
           <div style={{ fontSize: 12.5, lineHeight: 1.5, color: "var(--text-3)", marginTop: 4 }}>{badge.how}</div>
           <div style={{ fontSize: 12, lineHeight: 1.45, color: "var(--muted)", marginTop: 4 }}>
-            Pictures help get a witch's attention! It is marked as a badge request, and when a witch likes it, the badge is yours.
+            Poems and pictures are a good way to get a witch's attention! It is marked as a badge request, and when a witch likes it, the badge is yours.
           </div>
         </div>
       ) : null}
