@@ -217,7 +217,7 @@ export function TokenDesigner({ start, fresh, how = "", canGive = false, onUse }
   const [d, setD] = useState<TokenDesign>(() => normalizeToken(start));
   const [selected, setSelected] = useState<Slot | null>(null);
   const [panel, setPanel] = useState<Panel>(null);
-  const [group, setGroup] = useState(3);
+  const [group, setGroup] = useState(-1);
   const [menu, setMenu] = useState(false);
   const [cell, setCell] = useState(MAX_CELL);
   const row = useRef<HTMLDivElement>(null);
@@ -428,15 +428,18 @@ export function TokenDesigner({ start, fresh, how = "", canGive = false, onUse }
 
       {panel === "icons" ? (
         <Sheet title={`ADD AN ICON · ${placed.length}/${SLOTS.length}`} onClose={() => setPanel(null)}>
-          <div style={{ display: "flex", gap: 6, overflowX: "auto", paddingBottom: 6 }}>
-            {PICTURE_CATEGORIES.map((c, i) => (
-              <button key={c.label} type="button" aria-pressed={group === i} onClick={() => setGroup(i)} className={`btn btn-sm${group === i ? " btn-purple" : ""}`} style={{ flex: "none", minHeight: 36, fontSize: 10 }}>
-                {c.label}
-              </button>
-            ))}
+          <div style={{ display: "flex", flex: "none", gap: 6, overflowX: "auto", paddingBottom: 6 }}>
+            {[{ label: "ALL" }, ...PICTURE_CATEGORIES].map((c, k) => {
+              const i = k - 1;
+              return (
+                <button key={c.label} type="button" aria-pressed={group === i} onClick={() => setGroup(i)} className={`btn btn-sm${group === i ? " btn-purple" : ""}`} style={{ flex: "none", minHeight: 36, fontSize: 10 }}>
+                  {c.label}
+                </button>
+              );
+            })}
           </div>
           <div role="listbox" aria-label="Icons" style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 6 }}>
-            {ITEMS.filter((it) => !(it.slug.startsWith("s-") && SET_REMOVED.includes(Number(it.slug.slice(2)))) && iconGroup(it.slug, it.label) === group).map((it) => (
+            {ITEMS.filter((it) => !(it.slug.startsWith("s-") && SET_REMOVED.includes(Number(it.slug.slice(2)))) && (group < 0 || iconGroup(it.slug, it.label) === group)).map((it) => (
               <button
                 key={it.slug}
                 type="button"
@@ -457,7 +460,7 @@ export function TokenDesigner({ start, fresh, how = "", canGive = false, onUse }
                 }}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={itemSrc(it.slug)} alt="" loading="lazy" width={it.w * 2} height={it.h * 2} style={{ imageRendering: "pixelated" }} />
+                <img src={itemSrc(it.slug)} alt="" loading="lazy" width={it.w * 2} height={it.h * 2} style={{ imageRendering: "pixelated", width: it.w * 2, height: it.h * 2, maxWidth: "100%", maxHeight: 44, objectFit: "contain" }} />
               </button>
             ))}
           </div>

@@ -1160,6 +1160,19 @@ export const ITEMS = [
   { slug: "s-1013", label: "Picture 1013", w: 21, h: 19 },
   { slug: "s-1014", label: "Picture 1014", w: 21, h: 7 },
   { slug: "s-1015", label: "Picture 1015", w: 23, h: 23 },
+  { slug: "s-4", label: "Picture 4", w: 48, h: 23 },
+  { slug: "s-13", label: "Picture 13", w: 48, h: 24 },
+  { slug: "s-22", label: "Picture 22", w: 48, h: 24 },
+  { slug: "s-31", label: "Picture 31", w: 48, h: 24 },
+  { slug: "s-50", label: "Picture 50", w: 48, h: 23 },
+  { slug: "s-59", label: "Picture 59", w: 48, h: 24 },
+  { slug: "s-68", label: "Picture 68", w: 48, h: 24 },
+  { slug: "s-77", label: "Picture 77", w: 48, h: 24 },
+  { slug: "s-751", label: "Picture 751", w: 48, h: 23 },
+  { slug: "s-760", label: "Picture 760", w: 48, h: 24 },
+  { slug: "s-769", label: "Picture 769", w: 48, h: 24 },
+  { slug: "s-778", label: "Picture 778", w: 48, h: 24 },
+  { slug: "s-849", label: "Picture 849", w: 25, h: 38 },
 ] as const;
 export type ItemSlug = (typeof ITEMS)[number]["slug"];
 
