@@ -12,7 +12,7 @@ const PER_PAGE = 20; // rows to a page, scrolling
 /** "Working on": the badges a person is going after, as a plain list, one to a row, each with
  *  what it takes. On your own profile a button opens every badge there is, to pick up to five
  *  (tap to pick, tap again to put back; the order you pick them is the order they are listed in). */
-export function WorkingOn({ items, all, editable, person }: { items: ShownBadge[]; all?: ShownBadge[]; editable?: boolean; person?: { id: string; handle: string } }) {
+export function WorkingOn({ items, all, editable, person, finished }: { items: ShownBadge[]; all?: ShownBadge[]; editable?: boolean; person?: { id: string; handle: string }; finished?: string[] }) {
   const [say, setSay] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
   const [pick, setPick] = useState<string[]>(items.map((b) => b.key));
@@ -115,6 +115,15 @@ export function WorkingOn({ items, all, editable, person }: { items: ShownBadge[
       ) : (
         <div style={{ fontSize: 12, lineHeight: 1.5, color: "var(--muted)" }}>Nothing picked yet. See all the badges and choose up to five to go after.</div>
       )}
+
+      {editable && (finished?.length || items.length < WORKING_MAX) ? (
+        <div className="notice" style={{ fontSize: 12, lineHeight: 1.5 }}>
+          {finished?.length
+            ? `You earned ${finished.join(" and ")}. `
+            : ""}
+          {items.length < WORKING_MAX ? "Pick a new goal." : ""}
+        </div>
+      ) : null}
 
       {editable ? (
         <button

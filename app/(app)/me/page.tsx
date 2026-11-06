@@ -14,7 +14,7 @@ import {
   getOverride,
   getAllTokens,
 } from "@/lib/data";
-import { ROMAN, tokenReadyAt, resolveShown, resolveWorking, tokenAsWorking, achievementGrid } from "@/lib/badges";
+import { ROMAN, tokenReadyAt, resolveShown, resolveWorking, finishedWorking, stillWorking, tokenAsWorking, achievementGrid } from "@/lib/badges";
 import { Avatar } from "@/components/bits";
 import { BadgeArt, ItemTile, TokenImage } from "@/components/badges";
 import { AboutBadges } from "@/components/about-badges";
@@ -229,7 +229,7 @@ export default async function ProfilePage() {
 
         {/* The badges you have, just the pictures, packed tight; tap one for its tooltip. */}
         {/* What you are going after, as a list, with a button to see every badge and choose. */}
-        <WorkingOn editable items={resolveWorking(profile.working_on, badges, allTokens)} all={[...achievementGrid(badges), ...allTokens.map(tokenAsWorking)]} />
+        <WorkingOn editable finished={finishedWorking(profile.working_on, badges)} items={resolveWorking(profile.working_on, badges, allTokens)} all={[...achievementGrid(badges.filter(stillWorking)), ...allTokens.map(tokenAsWorking)]} />
 
         {tokens.length ? (
           <div>

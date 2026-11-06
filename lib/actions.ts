@@ -892,7 +892,7 @@ export async function setMood(fd: FormData) {
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const mood = str(fd, "mood").slice(0, PROFILE_FIELD_MAX);
+  const mood = str(fd, "mood").slice(0, 160);
 
   const { error } = await supabase
     .from("profiles")
@@ -906,10 +906,8 @@ export async function setMood(fd: FormData) {
   }
 
   await setFlash(
-    mood ? "NOTED" : "UNSAID",
-    mood
-      ? "The City can see what is on your mind. Thoughts are free; posting takes five."
-      : "Bubble cleared.",
+    mood ? "ASKED" : "CLEARED",
+    mood ? `The City can see what you need help with.${await newBadges()}` : "Bubble cleared.",
     EDGE.purple,
   );
   revalidatePath("/me");

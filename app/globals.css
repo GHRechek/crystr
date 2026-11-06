@@ -851,10 +851,11 @@ select {
 /* The truncation lives on the text, not the bubble — clipping the bubble
    takes the tail with it, since the tail hangs outside the box. */
 .thought > span {
-  display: block;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
 }
 .thought:hover {
   background: var(--surface-2);

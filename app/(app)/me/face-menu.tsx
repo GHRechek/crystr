@@ -118,18 +118,20 @@ export function ProfileHead({
 
 
         {editing ? (
-          <form action={setMood} style={{ display: "flex", gap: 7, alignItems: "center" }}>
-            <input
-              name="mood" aria-label="What you are thinking"
-              className="input"
+          <form action={setMood} style={{ display: "flex", flexDirection: "column", gap: 7 }}>
+            <textarea
+              name="mood"
+              aria-label="What you need help with"
+              className="textarea"
               defaultValue={mood ?? ""}
-              maxLength={40}
+              maxLength={160}
+              rows={3}
               autoFocus
-              placeholder="owed a favour, unsure by whom"
-              style={{ flex: 1, minWidth: 0, fontSize: 12.5 }}
+              placeholder="What do you need help with? Someone to water the plants, a second opinion, a ride to the airport."
+              style={{ fontSize: 12.5, minHeight: 76 }}
             />
-            <button type="submit" className="btn btn-sm btn-purple">
-              THINK IT
+            <button type="submit" className="btn btn-sm btn-purple" style={{ alignSelf: "flex-end" }}>
+              GET HELP
             </button>
           </form>
         ) : null}

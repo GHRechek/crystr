@@ -194,6 +194,23 @@ export function tokenAsWorking(t: TokenRef): ShownBadge {
   };
 }
 
+/** A badge that goes on counting once you have it (helping people again and again, or the ones
+ *  with steps), so it can stay on the list. Everything else comes off once earned. */
+const repeatable = (b: BadgeRow) => b.slug === "a-helping-hand" || (b.tiers > 1 && b.tier < b.tiers);
+
+/** Whether a badge is still something to work on. */
+export const stillWorking = (b: BadgeRow) => !b.earned_at || repeatable(b);
+
+/** Titles of the badges on a person's list that they have now earned, and which come off it. */
+export function finishedWorking(list: string[] | null | undefined, badges: BadgeRow[]): string[] {
+  return (list ?? [])
+    .filter((k) => k.startsWith("a:"))
+    .flatMap((k) => {
+      const b = badges.find((x) => x.slug === k.slice(2));
+      return b && !stillWorking(b) ? [b.title] : [];
+    });
+}
+
 export function resolveWorking(list: string[] | null | undefined, badges: BadgeRow[], tokens: TokenRef[] = []): ShownBadge[] {
   const out: ShownBadge[] = [];
   for (const key of list ?? []) {
@@ -203,7 +220,7 @@ export function resolveWorking(list: string[] | null | undefined, badges: BadgeR
       continue;
     }
     const b = key.startsWith("a:") ? badges.find((x) => x.slug === key.slice(2)) : undefined;
-    if (!b) continue;
+    if (!b || !stillWorking(b)) continue;
     out.push({
       key,
       badge: { slug: b.slug, art: b.art, tiers: b.tiers, tier: b.tier },
