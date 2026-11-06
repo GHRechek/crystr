@@ -20,6 +20,7 @@ export function AboutBadges({
   noPen,
   tradeHref,
   tradeCount,
+  compact,
 }: {
   children?: React.ReactNode;
   shown: ShownBadge[];
@@ -32,6 +33,8 @@ export function AboutBadges({
   /** A trade icon at the end of the row, to the trade menu, with how many are waiting. */
   tradeHref?: string;
   tradeCount?: number;
+  /** The slim version that sits beside the portrait: a small trade icon and a cog at the end. */
+  compact?: boolean;
   editable?: boolean;
 }) {
   const [tip, setTip] = useState<{ key: string; x: number; top: number } | null>(null);
@@ -66,7 +69,7 @@ export function AboutBadges({
   const tipBadge = tip ? shown.find((b) => b.key === tip.key) : undefined;
 
   return (
-    <div ref={box} style={{ position: "relative", display: "flex", flexWrap: "wrap", alignItems: "center", gap: 6 }}>
+    <div ref={box} style={{ position: "relative", display: "flex", flexWrap: compact ? "nowrap" : "wrap", alignItems: "center", gap: compact ? 4 : 6 }}>
       {children}
       {shown.slice(0, SHOW_MAX).map((b) => (
         <button
@@ -84,7 +87,7 @@ export function AboutBadges({
           <BadgeFace b={b} size={42} />
         </button>
       ))}
-      {!noPen && (earned.length || tradable.length || editable) ? (
+      {!noPen && !compact && (earned.length || tradable.length || editable) ? (
         <button
           type="button"
           aria-label={editable ? "See all your badges and choose which to show" : "See all their badges"}
@@ -99,15 +102,36 @@ export function AboutBadges({
           href={tradeHref}
           aria-label={tradeCount ? `Trades, ${tradeCount} waiting` : "Trades"}
           title="Trades"
-          style={{ position: "relative", flex: "none", width: 42, height: 42, display: "grid", placeItems: "center", border: "1px dashed var(--edge)", borderRadius: "var(--px-r)", color: "var(--muted)", textDecoration: "none" }}
+          style={{ position: "relative", flex: "none", width: compact ? 28 : 42, height: compact ? 28 : 42, display: "grid", placeItems: "center", border: "1px dashed var(--edge)", borderRadius: "var(--px-r)", color: "var(--muted)", textDecoration: "none" }}
         >
-          <TradeIcon />
+          <TradeIcon small={compact} />
           {tradeCount ? (
             <span aria-hidden className="px" style={{ position: "absolute", top: -6, right: -6, minWidth: 16, height: 16, display: "grid", placeItems: "center", fontSize: 10, lineHeight: 1, background: "var(--pur)", color: "#fff", borderRadius: 8 }}>
               {tradeCount}
             </span>
           ) : null}
         </Link>
+      ) : null}
+      {compact && !editable && (earned.length || tradable.length) ? (
+        <button
+          type="button"
+          aria-label="See all their badges"
+          onClick={() => setChoosing(true)}
+          style={{ flex: "none", width: 28, height: 28, display: "grid", placeItems: "center", background: "none", border: "1px dashed var(--edge)", borderRadius: "var(--px-r)", color: "var(--muted)", cursor: "pointer" }}
+        >
+          <EyeIcon />
+        </button>
+      ) : null}
+      {compact && editable ? (
+        <button
+          type="button"
+          aria-label="See all your badges and choose which to show"
+          title="Choose your shown badges"
+          onClick={() => setChoosing(true)}
+          style={{ flex: "none", width: 28, height: 28, display: "grid", placeItems: "center", background: "none", border: "1px dashed var(--edge)", borderRadius: "var(--px-r)", color: "var(--muted)", cursor: "pointer" }}
+        >
+          <CogIcon />
+        </button>
       ) : null}
       {tipBadge && tip ? <BadgeTip x={tip.x} top={tip.top} width={width} title={tipBadge.title} line={tipBadge.line} /> : null}
       {choosing ? <BadgeViewer earned={earned} tradable={tradable} current={shown.map((b) => b.key)} editable={editable} aside={aside} onClose={() => setChoosing(false)} /> : null}
@@ -126,12 +150,22 @@ function EyeIcon() {
 }
 
 /** Two pixel arrows passing each other: a trade. */
-function TradeIcon() {
+function TradeIcon({ small }: { small?: boolean }) {
   const rows = ["......#..", ".......#.", "#########", ".......#.", "......#..", ".........", "..#......", ".#.......", "#########", ".#.......", "..#......"];
   const on = (r: number, c: number) => rows[r][c] === "#";
   return (
-    <svg width={20} height={22} viewBox="0 0 9 11" shapeRendering="crispEdges" aria-hidden>
+    <svg width={small ? 12 : 20} height={small ? 13 : 22} viewBox="0 0 9 11" shapeRendering="crispEdges" aria-hidden>
       {rows.flatMap((r, y) => [...r].map((_, x) => (on(y, x) ? <rect key={`${x}${y}`} x={x} y={y} width={1} height={1} fill="currentColor" /> : null)))}
+    </svg>
+  );
+}
+
+/** A pixel cog: the settings for which badges you show. */
+function CogIcon() {
+  const rows = ["...###...", ".#.###.#.", "..#####..", "###...###", "###...###", "###...###", "..#####..", ".#.###.#.", "...###..."];
+  return (
+    <svg width={14} height={14} viewBox="0 0 9 9" shapeRendering="crispEdges" aria-hidden>
+      {rows.flatMap((r, y) => [...r].map((c, x) => (c === "#" ? <rect key={`${x}${y}`} x={x} y={y} width={1} height={1} fill="currentColor" /> : null)))}
     </svg>
   );
 }

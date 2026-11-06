@@ -462,3 +462,5 @@ The badge picture set (`public/badges/set/`) is the whole 1,015-picture achievem
 The large framed pictures (about 37 pixels, a rounded square with a thick frame: 417 to 443 and 817 to 848) were taken out of the badge set. `SET_REMOVED` and `SET_NUMBERS` in `lib/badges.ts` say which numbers are left; the token maker hides them too (their slots stay so tokens already made keep their indexes).
 
 The Well's rewards (`quests.reward`) and a daily sunrise gift of 4 mana (in `cr_dawn_snapshot`, 6 am US Eastern standard time, before the Brimming snapshot) are in `20261108110000_well_rewards_scaled.sql`.
+
+Profile header (`20261108120000_make_friends_three_shown.sql`): beside the portrait sit your token, up to three shown badges, a small trade icon and a cog (which picks the shown badges). The username (pixel font) sits above About Me with the character name smaller beneath it. QUESTS keeps its heading and SEE ALL QUESTS link. A new epic quest, Make Friends, counts people you trade whispers with who write back.

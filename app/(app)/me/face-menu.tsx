@@ -14,15 +14,16 @@ const BANNER_WITH_BADGES = 136;
  *  thinking, which of your badges are on show, and the rest of the profile. */
 export function ProfileHead({
   src,
-  handle,
   mood,
   banner,
+  strip,
 }: {
   src: string;
-  handle: string;
   mood: string | null;
   /** The banner's CSS, from bannerStyle(). */
   banner: CSSProperties;
+  /** Beside the portrait: the token, the badges you show, and the trade and settings buttons. */
+  strip?: React.ReactNode;
 }) {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -90,9 +91,7 @@ export function ProfileHead({
             <img src={src} alt="" width={FACE} height={FACE} style={{ imageRendering: "pixelated" }} />
           </button>
 
-          <div style={{ paddingBottom: 14, minWidth: 0, flex: 1 }}>
-            <h1 className="px" style={{ fontSize: 16, fontWeight: 400, lineHeight: 1.5, overflowWrap: "anywhere" }}>{handle}</h1>
-          </div>
+          <div style={{ paddingBottom: 14, minWidth: 0, flex: 1 }}>{strip}</div>
 
           {/* Hangs off the portrait rather than sitting in the flow, so
               opening it doesn't shove the whole profile down the screen. */}

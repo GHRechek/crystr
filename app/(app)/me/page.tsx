@@ -94,9 +94,32 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
     <div style={{ paddingBottom: 24 }}>
       <ProfileHead
         src={faceSrc}
-        handle={profile.handle}
         mood={profile.mood}
         banner={bannerStyle(bannerOf(profile))}
+        strip={
+          <AboutBadges
+            compact
+            editable
+            shown={shown}
+            earned={achievementGrid(badges.filter((b) => b.earned_at))}
+            tradable={resolveShown(tradable.map((i) => `i:${i.id}`), badges, items, profile.handle, 10000)}
+            aside={
+              <Link href="/me/trades" className="px" style={{ fontSize: 11, color: "var(--pur-pale)", whiteSpace: "nowrap" }}>
+                TRADES{waiting ? ` · ${waiting}` : ""} →
+              </Link>
+            }
+            tradeHref="/me/trades"
+            tradeCount={waiting}
+          >
+            <Link
+              href="/me/token"
+              aria-label="Your token"
+              style={{ width: 40, height: 40, flex: "none", display: "grid", placeItems: "center", color: "var(--dim)", border: token ? 0 : "1px dashed var(--edge)", borderRadius: "var(--px-r)", textDecoration: "none", lineHeight: 0 }}
+            >
+              {token ? <TokenImage design={token.design} size={40} /> : <span className="px" style={{ fontSize: 14 }}>?</span>}
+            </Link>
+          </AboutBadges>
+        }
       />
 
       <div
@@ -107,6 +130,18 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
           gap: 12,
         }}
       >
+        {/* Who you are: the username, and under it the character name, smaller. */}
+        <div>
+          <h1 className="px" style={{ fontSize: 16, fontWeight: 400, lineHeight: 1.5, overflowWrap: "anywhere" }}>
+            {profile.handle}
+          </h1>
+          {profile.display_name ? (
+            <div className="px" style={{ fontSize: 11, color: "var(--muted)", lineHeight: 1.5, overflowWrap: "anywhere" }}>
+              {profile.display_name}
+            </div>
+          ) : null}
+        </div>
+
         <div className="tile" style={{ padding: 12 }}>
           <div
             className="px"
@@ -206,17 +241,7 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
               </Link>
             ),
           }}
-        >
-          <AboutBadges noPen earned={[]} tradable={[]} shown={shown} tradeHref="/me/trades" tradeCount={waiting}>
-            <Link
-              href="/me/token"
-              aria-label="Your token"
-              style={{ width: 64, height: 64, flex: "none", display: "grid", placeItems: "center", color: "var(--dim)", border: token ? 0 : "1px dashed var(--edge)", borderRadius: "var(--px-r)", textDecoration: "none", lineHeight: 0 }}
-            >
-              {token ? <TokenImage design={token.design} size={64} /> : <span className="px" style={{ fontSize: 16 }}>?</span>}
-            </Link>
-          </AboutBadges>
-        </Quests>
+        />
 
         {plaintiffSince ? (
           <div className="tile" style={{ padding: 12, display: "flex", alignItems: "center", gap: 10 }}>
