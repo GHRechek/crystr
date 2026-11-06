@@ -83,11 +83,14 @@ export function BadgeArt({
   got,
   progress,
   tier,
+  size = 42,
 }: {
   b: Pick<BadgeRow, "art" | "slug"> & Partial<Pick<BadgeRow, "tiers">>;
   got: boolean;
   progress?: number;
   tier?: number;
+  /** Pixels across; a whole multiple of the art's 21 keeps its pixels square (42, 63, 84). */
+  size?: number;
 }) {
   const tiered = (b.tiers ?? 1) > 1 && got && tier !== undefined && tier > 0;
   const ring = tiered ? TIER_RING[tier] : undefined;
@@ -96,8 +99,8 @@ export function BadgeArt({
       <div
         aria-hidden
         style={{
-          width: 42,
-          height: 42,
+          width: size,
+          height: size,
           flex: "none",
           display: "grid",
           placeItems: "center",
@@ -119,8 +122,8 @@ export function BadgeArt({
     <span
       style={{
         position: "relative",
-        width: 42,
-        height: 42,
+        width: size,
+        height: size,
         flex: "none",
         display: "block",
         outline: ring ? `2px solid ${ring}` : undefined,
@@ -133,8 +136,8 @@ export function BadgeArt({
       <img
         src={`/badges/${b.art}`}
         alt=""
-        width={42}
-        height={42}
+        width={size}
+        height={size}
         style={{ display: "block", imageRendering: "pixelated", filter: got ? "none" : "grayscale(1)" }}
       />
       {progress !== undefined && b.slug === "a-helping-hand" ? <HeartProgress done={progress} /> : null}
@@ -180,12 +183,12 @@ export function ItemArt({ item, size }: { item: Pick<BadgeItem, "kind" | "design
 }
 
 /** A tradable badge or a token in the badges grid: picture, name, what it is worth. */
-export function ItemTile({ item, note }: { item: BadgeItem | TradeItem; note?: string }) {
+export function ItemTile({ item, note, plain }: { item: BadgeItem | TradeItem; note?: string; plain?: boolean }) {
   const worth = item.kind === "token" ? BADGE_MANA.token : BADGE_MANA.tradable;
   const maker = "maker" in item ? item.maker?.handle : undefined;
   const birthday = "occasion" in item && item.occasion === "birthday" ? "A birthday badge. " : "";
   return (
-    <div className="tile" style={{ padding: 10, display: "flex", gap: 9, alignItems: "flex-start" }}>
+    <div className={plain ? undefined : "tile"} style={{ padding: plain ? 4 : 10, display: "flex", gap: 9, alignItems: "flex-start" }}>
       <ItemArt item={item} />
       <div style={{ minWidth: 0 }}>
         <div className="px" style={{ fontSize: 11, color: "var(--text)", lineHeight: 1.5 }}>

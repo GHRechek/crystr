@@ -20,7 +20,7 @@ Supabase and Vercel.
 | `/whispers`, `/whispers/[id]`, `/whispers/new` | DMs at 2 mana a message. A conversation with something new in it shows as unread, and the WHISPER tab wears a small bubble with how many such conversations there are; opening one reads it (`dm_reads`, `cr_mark_thread_read`, `cr_unread_whispers`; migration `20261105010000_whisper_reads.sql`). |
 | `/thread/[id]/send` | Send a post to someone in a whisper, with a note if you like, for the price of a whisper (2 mana). Reached from SEND IN A WHISPER in the three-dot menu on a post, beside REPORT (which opens the detailed form in place). The post arrives in the whisper as a quoted card (`dm_messages.post_id`, `cr_send_post`; the migration is `20261105000000_send_post_in_whisper.sql`). Unsending drops the post from the message. |
 | `/welcome` | The registry: a face, your info (your own name, username, character name), birthday, district and species codes. Until it is done the tab bar is REGISTRY and WIKI, nothing else. |
-| `/me`, `/me/edit`, `/me/avatar`, `/me/top-six` | MySpace-shaped profile: mood, about, Top 6 (picked on its own page), badges six to a page (earned first, swiped or clicked through), max mana, the mana ledger, and the portrait builder. |
+| `/me`, `/me/edit`, `/me/avatar`, `/me/top-six` | MySpace-shaped profile: mood, up to five chosen badges on show above the About card (tap one for its name and how it is earned; CHOOSE picks them from the badges you have earned and the tradable ones you hold), about, Top 6 (picked on its own page), badges six to a page (earned first, swiped or clicked through, on the page's own background rather than on cards), max mana, the mana ledger, and the portrait builder. |
 | `/me/token`, `/me/trades`, `/u/[handle]/trade` | Badges: design your token, see offers waiting, offer someone a trade. |
 | `/me/override`, `/override/[code]`, `/breach` | The override (witches only on the first): a witch's key as a QR code, the address it points at, and the break-in that lets someone past the registry. See below. |
 | `/ball?tab=motions`, `/vote/new` | The motion board (open / decided) is the MOTIONS tab of the Ball, beside CITY NEWS and OP-EDS; `/vote` redirects there. `/vote/new` is the witch-only two-step composer. |
@@ -136,6 +136,12 @@ Well button). It shakes harder the lower the meter gets: still above half, a slo
 half, faster below a quarter, a constant rattle below an eighth, the fastest at nothing, and
 still for anyone who asks the browser for reduced motion. Before registering the Well is shut,
 so there it is only a potion.
+
+Shown badges are `profiles.shown_badges` (`a:<slug>` for an earned achievement, `i:<id>` for a
+tradable badge held now, at most five, in order). `cr_set_shown_badges` saves them and a trigger
+on the column (`profiles_shown_badges_guard`) drops anything the person has not earned or does
+not hold, so a badge traded away disappears from the display; migration
+`20261106010000_shown_badges.sql`.
 
 ## Max mana and badges
 

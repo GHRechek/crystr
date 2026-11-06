@@ -88,3 +88,52 @@ export function tokenReadyAt(lastGiven: string | null | undefined): Date | null 
   d.setMonth(d.getMonth() + 6);
   return d.getTime() > Date.now() ? d : null;
 }
+
+/** One badge a person shows on their profile, ready to draw. */
+export type ShownBadge = {
+  key: string;
+  /** An achievement badge: drawn with its tier mark. */
+  badge?: { slug: string; art: string | null; tiers: number; tier: number };
+  /** A tradable badge: just its picture. */
+  src?: string;
+  title: string;
+  /** How it is earned, for the tooltip. */
+  line: string;
+};
+
+/** What a person's saved list of shown badges means, from their earned badges and the
+ *  tradable badges they hold. Anything no longer theirs is skipped. */
+export function resolveShown(
+  list: string[] | null | undefined,
+  badges: BadgeRow[],
+  items: BadgeItem[],
+  owner: string,
+  limit = 5,
+): ShownBadge[] {
+  const out: ShownBadge[] = [];
+  for (const key of list ?? []) {
+    if (key.startsWith("a:")) {
+      const b = badges.find((x) => x.slug === key.slice(2) && x.earned_at);
+      if (!b) continue;
+      out.push({
+        key,
+        badge: { slug: b.slug, art: b.art, tiers: b.tiers, tier: b.tier },
+        title: `${b.title}${b.tiers > 1 ? ` ${ROMAN[b.tier]}` : ""}`,
+        line: b.how,
+      });
+    } else if (key.startsWith("i:")) {
+      const it = items.find((x) => x.kind === "tradable" && String(x.id) === key.slice(2));
+      if (!it?.kindRow) continue;
+      const line =
+        it.occasion === "birthday"
+          ? "A birthday badge."
+          : it.earned_by && it.earned_by !== it.owner_id
+            ? `Traded from ${it.maker?.handle ?? "someone"}.`
+            : it.maker?.handle === owner
+              ? "Earned by helping others."
+              : it.kindRow.blurb || "A tradable badge.";
+      out.push({ key, src: `/badges/tradable/${it.kindRow.art}`, title: it.kindRow.title.toUpperCase(), line });
+    }
+  }
+  return out.slice(0, limit);
+}

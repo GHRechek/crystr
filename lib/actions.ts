@@ -288,6 +288,22 @@ export async function sendWhisper(fd: FormData) {
   redirect(`/whispers/${threadId}`);
 }
 
+/** Save which of their badges a person shows on their profile (up to five, in order). The
+ *  database keeps only what they have earned or hold. */
+export async function setShownBadges(fd: FormData) {
+  let list: unknown = [];
+  try {
+    list = JSON.parse(str(fd, "list") || "[]");
+  } catch {
+    list = [];
+  }
+  const r = await call("cr_set_shown_badges", { p_list: Array.isArray(list) ? list.filter((x) => typeof x === "string").slice(0, 5) : [] });
+  if (!r.ok) await wentWrong();
+  else await setFlash("SAVED", "Your badges are on show.", EDGE.blue);
+  revalidatePath("/me");
+  redirect("/me");
+}
+
 /** Send a post to someone in a whisper, with a note if you like. Costs what a whisper costs. */
 export async function sendPost(fd: FormData) {
   const post = Number(fd.get("post_id"));

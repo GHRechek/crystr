@@ -5,7 +5,8 @@ import { openThread } from "@/lib/actions";
 import { Avatar } from "@/components/bits";
 import { BadgeArt, ItemTile, TokenImage } from "@/components/badges";
 import { TilePager } from "@/components/pager";
-import { ROMAN } from "@/lib/badges";
+import { ShownBadges } from "@/components/shown-badges";
+import { ROMAN, resolveShown } from "@/lib/badges";
 import { ago, corrupt, decayLevel, BADGE_MANA } from "@/lib/crystr";
 import { bannerOf, bannerStyle } from "@/lib/banner";
 import { tokenTitle } from "@/lib/token";
@@ -87,6 +88,8 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
             TRADE BADGES
           </Link>
         </div>
+
+        <ShownBadges shown={resolveShown(person.shown_badges, badges, items, person.handle)} />
 
         <div className="tile" style={{ padding: 12 }}>
           <div className="px" style={{ fontSize: 11, color: "var(--mag)", letterSpacing: ".07em", marginBottom: 7 }}>
@@ -181,7 +184,7 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
             <TilePager
               label="Badges"
               tiles={earned.map((b) => (
-                <div key={b.slug} className="tile" style={{ padding: 10, display: "flex", gap: 9, alignItems: "flex-start" }}>
+                <div key={b.slug} style={{ padding: 4, display: "flex", gap: 9, alignItems: "flex-start" }}>
                   <BadgeArt b={b} got tier={b.tier} />
                   <div style={{ minWidth: 0 }}>
                     <div className="px" style={{ fontSize: 11, color: "var(--text)", lineHeight: 1.5 }}>
@@ -207,7 +210,7 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
                 OFFER A TRADE →
               </Link>
             </div>
-            <TilePager label="What they hold" tiles={items.map((it) => <ItemTile key={it.id} item={it} />)} />
+            <TilePager label="What they hold" tiles={items.map((it) => <ItemTile key={it.id} item={it} plain />)} />
           </div>
         ) : null}
       </div>
