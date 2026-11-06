@@ -2,7 +2,22 @@
 
 import { useRef, useState } from "react";
 import { TokenDesigner } from "@/app/(app)/me/token/designer";
-import { defaultToken } from "@/lib/token";
+import { defaultToken, unpackToken } from "@/lib/token";
+
+const LAST_KEY = "crystr.lastMadePicture";
+
+/** Where MAKE A NEW ONE starts: the picture this badge already wears if it is a made one, else the last one made on this device, else a blank. */
+function startingDesign(custom?: string) {
+  let packed = custom ?? null;
+  if (!packed) {
+    try {
+      packed = localStorage.getItem(LAST_KEY);
+    } catch {
+      packed = null;
+    }
+  }
+  return (packed ? unpackToken(packed) : null) ?? defaultToken();
+}
 import { TARGETS } from "@/lib/species";
 import { PICTURE_CATEGORIES, pictureCategory, SET_COUNT, SET_NUMBERS } from "@/lib/badges";
 import { deleteBadge, saveBadge } from "@/lib/actions";
@@ -137,9 +152,12 @@ export function BadgeEditor({ draft, setDraft, used = [] }: { draft: BadgeDraft;
             <button type="button" className="btn btn-sm" onClick={() => setMaking(false)} aria-label="Close" style={{ minHeight: 40, padding: "0 9px" }}>✕</button>
           </div>
           <TokenDesigner
-            start={defaultToken()}
+            start={startingDesign(draft.custom)}
             fresh
             onUse={(packed) => {
+              try {
+                localStorage.setItem(LAST_KEY, packed);
+              } catch {}
               setDraft({ ...draft, custom: packed });
               setMaking(false);
               setPicking(false);
