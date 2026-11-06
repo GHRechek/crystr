@@ -793,7 +793,7 @@ export async function peekOverride(code: string): Promise<{ ok: true; witch: str
 export async function getBadges(userId: string): Promise<BadgeRow[]> {
   const supabase = createClient();
   const [all, mine] = await Promise.all([
-    supabase.from("badges").select("slug, title, how, blurb, art, tiers, sort, witch_approved, peer_approved, peer_target, kind, steps, threshold, first_step").order("sort"),
+    supabase.from("badges").select("slug, title, how, blurb, art, tiers, sort, witch_approved, peer_approved, peer_target, kind, steps, threshold, first_step, scan_instant").order("sort"),
     supabase.from("user_badges").select("badge_slug, earned_at, tier").eq("user_id", userId),
   ]);
   const earned = new Map(

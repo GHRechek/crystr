@@ -500,3 +500,4 @@ The exchange button on your profile opens the camera for general things: after a
 
 ### Pronouns
 `profiles.pronouns` (free text, max 30): set on Edit Profile, shown under the character name on profiles. Species and spellcaster are now also protected by `guard_profile_economy` (the table-wide UPDATE grant meant the earlier column revoke did nothing).
+Support Group (`badges.scan_instant`) completes the moment you scan a witch's code: no whisper.

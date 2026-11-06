@@ -29,6 +29,8 @@ export type BadgeRow = {
   threshold?: number | null;
   /** One of the quests everyone does first, before they can pick Main Quests. */
   first_step?: boolean;
+  /** A witch scanning completes it at once, no whisper. */
+  scan_instant?: boolean;
   earned_at: string | null;
   /** The tier held, 1 to 4 (1 on a badge with one tier). 0 until earned. */
   tier: number;
@@ -121,6 +123,8 @@ export type ShownBadge = {
   request?: boolean;
   /** Earned by asking someone, who answers in a whisper. */
   peer?: boolean;
+  /** Completes the moment the right person's code is scanned. */
+  instant?: boolean;
   /** A Main Quest that is finished: it stays in its slot, greyed out and struck through, until it is replaced. */
   done?: boolean;
   /** How a quest is done: on your own (the system sees it), by showing a post to a witch, or with someone. */
@@ -264,6 +268,7 @@ export function resolveWorking(list: string[] | null | undefined, badges: BadgeR
       done: finished,
       request: !!b.witch_approved && !b.earned_at,
       peer: !!b.peer_approved && !b.earned_at,
+      instant: !!b.scan_instant,
       target: b.peer_target ?? undefined,
       progress: progress ? { n: progress[b.slug] ?? 0, of: goalTarget(b, progress[b.slug] ?? 0) } : undefined,
     });
@@ -290,6 +295,7 @@ export const questGrid = (badges: BadgeRow[]): ShownBadge[] => {
     auto: !b.witch_approved && !b.peer_approved,
     request: !!b.witch_approved && !b.earned_at,
     peer: !!b.peer_approved && !b.earned_at,
+    instant: !!b.scan_instant,
     mode: b.peer_approved ? "with" : b.witch_approved ? "show" : "do",
     target: b.peer_target ?? undefined,
   }));
@@ -314,6 +320,7 @@ export const firstStepGrid = (badges: BadgeRow[]): ShownBadge[] =>
     locked: !b.earned_at,
     auto: !b.witch_approved && !b.peer_approved,
     peer: !!b.peer_approved && !b.earned_at,
+    instant: !!b.scan_instant,
     mode: b.peer_approved ? "with" : "do",
     target: b.peer_target ?? undefined,
   }));

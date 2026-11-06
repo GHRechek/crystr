@@ -161,7 +161,7 @@ export function QrScanner({ onClose, tradesHref, waiting, mode = "general", only
                               <span className="px" style={{ display: "block", fontSize: 11, lineHeight: 1.5 }}>{q.title}</span>
                               <span style={{ display: "block", fontSize: 12, lineHeight: 1.4, color: "var(--muted)" }}>{q.how}</span>
                             </span>
-                            <span className="px" style={{ flex: "none", fontSize: 11, color: "var(--pur-pale)" }}>{done ? "ASKED" : "ASK →"}</span>
+                            <span className="px" style={{ flex: "none", fontSize: 11, color: "var(--pur-pale)" }}>{done ? (q.instant ? "DONE" : "ASKED") : q.instant ? "COMPLETE →" : "ASK →"}</span>
                           </button>
                         </form>
                       </li>

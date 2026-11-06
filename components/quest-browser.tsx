@@ -92,7 +92,7 @@ export function QuestBrowser({
                   {b.peer ? (
                     <>
                       <div style={{ fontSize: 12, lineHeight: 1.45, color: "var(--muted)" }}>
-                        {b.target ? `It has to be ${/^[aeiou]/i.test(targetLabel(b.target)) ? "an" : "a"} ${targetLabel(b.target).toLowerCase()}. ` : ""}Tap the ! and scan {b.target ? `${/^[aeiou]/i.test(targetLabel(b.target)) ? "an" : "a"} ${targetLabel(b.target).toLowerCase()}'s` : "their"} QR code. They get a whisper asking whether it happened, and if they say yes the badge is yours.
+                        {b.target ? `It has to be ${/^[aeiou]/i.test(targetLabel(b.target)) ? "an" : "a"} ${targetLabel(b.target).toLowerCase()}. ` : ""}Tap the ! and scan {b.target ? `${/^[aeiou]/i.test(targetLabel(b.target)) ? "an" : "a"} ${targetLabel(b.target).toLowerCase()}'s` : "their"} QR code. {b.instant ? "That is all: it completes the moment you scan." : "They get a whisper asking whether it happened, and if they say yes the badge is yours."}
                       </div>
                     </>
                   ) : b.request ? (

@@ -1146,6 +1146,8 @@ export async function claimBadge(fd: FormData) {
     else if (r.code === "wrong_kind") await setFlash("NOT THE RIGHT KIND", "That quest is for a different kind of person. Pick someone who fits.", EDGE.purple);
     else if (r.code === "too_many") await setFlash("TOO MANY WAITING", "Wait for some of your questions to be answered first.", EDGE.mag);
     else await wentWrong();
+  } else if ((r as { instant?: boolean }).instant) {
+    await setFlash("DONE", `That one is complete.${await newBadges()}`, EDGE.blue);
   } else {
     await setFlash("ASKED", "They have a whisper asking whether it happened. If they say yes, the badge is yours.", EDGE.blue);
   }
@@ -1176,7 +1178,7 @@ export async function claimHelp(fd: FormData) {
   revalidatePath("/", "layout");
 }
 
-export type ScanQuest = { slug: string; title: string; how: string; art: string; tiers: number; tier: number; epic: boolean };
+export type ScanQuest = { slug: string; title: string; how: string; art: string; tiers: number; tier: number; epic: boolean; instant: boolean };
 export type Scanned = { id: string; handle: string; name: string | null; species: string | null; spellcaster: boolean; face: string; quests: ScanQuest[] };
 
 /** Someone's code was scanned: who they are, and the quests you can ask them about (the ones they can actually be part of). */
@@ -1187,11 +1189,11 @@ export async function scanPerson(handle: string, withQuests = false): Promise<Sc
   if (!p) return null;
   const { data: slugs } = withQuests ? await supabase.rpc("cr_scan_quests", { p_other: p.id }) : { data: [] };
   const list = (slugs ?? []) as string[];
-  const { data: rows } = list.length ? await supabase.from("badges").select("slug, title, how, art, tiers, kind").in("slug", list) : { data: [] };
+  const { data: rows } = list.length ? await supabase.from("badges").select("slug, title, how, art, tiers, kind, scan_instant").in("slug", list) : { data: [] };
   const by = new Map((rows ?? []).map((r) => [r.slug as string, r]));
   const quests: ScanQuest[] = list.flatMap((slug) => {
     const r = by.get(slug);
-    return r ? [{ slug, title: String(r.title), how: String(r.how), art: String(r.art), tiers: Number(r.tiers ?? 1), tier: 0, epic: r.kind === "goal" }] : [];
+    return r ? [{ slug, title: String(r.title), how: String(r.how), art: String(r.art), tiers: Number(r.tiers ?? 1), tier: 0, epic: r.kind === "goal", instant: !!r.scan_instant }] : [];
   });
   const face = `/face/${packPortrait(p.avatar_config ? normalizePortrait(p.avatar_config) : portraitFromId(String(p.id)))}.png`;
   return { id: String(p.id), handle: String(p.handle), name: p.display_name ?? null, species: p.species ?? null, spellcaster: !!p.spellcaster, face, quests };
