@@ -6,6 +6,7 @@ import { saveDispatch, submitOpEd } from "@/lib/actions";
 import { COSTS } from "@/lib/crystr";
 import { Cost } from "@/components/mana";
 import type { Article } from "@/lib/data";
+import { IconPicker } from "@/components/icon-picker";
 
 export function Editor({
   kind,
@@ -15,14 +16,12 @@ export function Editor({
   article?: Article | null;
 }) {
   const [headline, setHeadline] = useState(article?.headline ?? "");
-  const [banner, setBanner] = useState(article?.banner ?? false);
   const oped = kind === "oped";
   const ready = headline.trim().length > 0;
 
   return (
     <form action={oped ? submitOpEd : saveDispatch} className="pad" style={{ gap: 11 }}>
       {article ? <input type="hidden" name="id" value={article.id} /> : null}
-      <input type="hidden" name="banner" value={banner ? "true" : "false"} />
 
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
         <Link href="/ball" className="btn btn-sm">
@@ -103,13 +102,8 @@ export function Editor({
         />
       </div>
 
-      <button
-        type="button"
-        className={`btn${banner ? " btn-purple" : ""}`}
-        onClick={() => setBanner((b) => !b)}
-      >
-        ▣ {banner ? "BANNER ATTACHED" : "ATTACH BANNER IMAGE"}
-      </button>
+      {/* The picture goes first in the article, below the highlight, half the width. */}
+      <IconPicker name="banner_icon" initial={article?.banner_icon} />
 
       <div style={{ display: "flex", gap: 8 }}>
         {!oped ? (

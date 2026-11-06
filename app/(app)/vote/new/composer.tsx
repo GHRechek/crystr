@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { createMotion } from "@/lib/actions";
+import { IconPicker } from "@/components/icon-picker";
 
 const WINDOWS = [
   { hours: 4, label: "4 HOURS" },
@@ -18,7 +19,6 @@ export function MotionComposer() {
   const [hours, setHours] = useState(24);
   const [headline, setHeadline] = useState("");
   const [body, setBody] = useState("");
-  const [banner, setBanner] = useState(false);
 
   const canAdvance = title.trim().length > 0;
   const canPublish = canAdvance && headline.trim().length > 0 && body.trim().length >= 40;
@@ -26,7 +26,6 @@ export function MotionComposer() {
   return (
     <form action={createMotion} className="pad" style={{ gap: 11 }}>
       <input type="hidden" name="m_hours" value={hours} />
-      <input type="hidden" name="b_banner" value={banner ? "true" : "false"} />
       <input type="hidden" name="b_kicker" value="MOTION BRIEFING" />
 
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
@@ -174,13 +173,7 @@ export function MotionComposer() {
           </span>
         </div>
 
-        <button
-          type="button"
-          className={`btn${banner ? " btn-purple" : ""}`}
-          onClick={() => setBanner((b) => !b)}
-        >
-          ▣ {banner ? "BANNER ATTACHED" : "ATTACH BANNER IMAGE"}
-        </button>
+        <IconPicker name="b_banner_icon" />
 
         <button
           type="submit"

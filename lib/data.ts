@@ -93,6 +93,8 @@ export type FeedDispatch = {
   standfirst: string;
   banner: boolean;
   banner_label: string;
+  /** The icon picked as its picture (a slug from the token icon set), or null. */
+  banner_icon: string | null;
   author: Author;
   published_at: string | null;
   created_at: string;
@@ -125,7 +127,7 @@ export async function getFeed(userId: string): Promise<FeedItem[]> {
       .limit(50),
     supabase
       .from("articles")
-      .select(`id, kicker, headline, standfirst, banner, banner_label, created_at, published_at, byline_name, author:profiles!articles_author_id_fkey(${AUTHOR_COLS})`)
+      .select(`id, kicker, headline, standfirst, banner, banner_label, banner_icon, created_at, published_at, byline_name, author:profiles!articles_author_id_fkey(${AUTHOR_COLS})`)
       .eq("status", "published")
       .order("published_at", { ascending: false })
       .limit(3),
@@ -570,13 +572,14 @@ export type Article = {
   body: string;
   banner: boolean;
   banner_label: string;
+  banner_icon: string | null;
   author: Author;
   author_id: string;
   created_at: string;
   published_at: string | null;
 };
 
-const ARTICLE_COLS = `id, kind, status, kicker, headline, standfirst, body, banner, banner_label, byline_name,
+const ARTICLE_COLS = `id, kind, status, kicker, headline, standfirst, body, banner, banner_label, banner_icon, byline_name,
   author_id, created_at, published_at, author:profiles!articles_author_id_fkey(${AUTHOR_COLS})`;
 
 /** RLS already hides drafts and other people's queued op-eds. */

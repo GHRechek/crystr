@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { requireMe, getFeed, type FeedItem } from "@/lib/data";
-import { Avatar, Placeholder } from "@/components/bits";
+import { Avatar } from "@/components/bits";
 import { PostCard } from "@/components/post-card";
 import { Cost } from "@/components/mana";
+import { ArticleIcon } from "@/components/article-icon";
 import {
   ago,
   corrupt,
@@ -90,8 +91,10 @@ function Card({ item, decay, me }: { item: FeedItem; decay: number; me: string }
           </div>
         ) : null}
 
-        {item.banner ? (
-          <Placeholder label={item.banner_label || "IMAGE — PENDING TILE"} height={132} />
+        {item.banner_icon ? (
+          <div style={{ height: 112, display: "grid", placeItems: "center", background: "var(--inset)", boxShadow: "inset 0 0 0 1px var(--edge)" }}>
+            <ArticleIcon slug={item.banner_icon} box={96} />
+          </div>
         ) : null}
 
         <Link href={`/ball/${item.id}`} className="btn btn-blue" style={{ alignSelf: "flex-start" }}>

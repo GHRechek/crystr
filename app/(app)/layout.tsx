@@ -12,7 +12,7 @@ import { ManaButton } from "@/components/mana";
 import { VouchBanner } from "@/components/vouch-banner";
 import { TopSixBanner } from "@/components/top-six-banner";
 import { TradeBanner } from "@/components/trade-banner";
-import { BADGE_MANA, BASE_CAP, WELCOME_CAP, hasStarterHandle, manaColor, wellLine } from "@/lib/crystr";
+import { BADGE_MANA, BASE_CAP, WELCOME_CAP, hasStarterHandle, manaColor } from "@/lib/crystr";
 import { BREACH_COOKIE } from "@/lib/breach";
 
 export const dynamic = "force-dynamic";
@@ -82,9 +82,11 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           <div className="gauge">
             <i style={{ width: `${Math.max(2, (mana / cap) * 100)}%` }} />
           </div>
-          <div className="head-foot">
-            <span>{welcoming ? "Register to enter the City." : wellLine(mana)}</span>
-          </div>
+          {welcoming ? (
+            <div className="head-foot">
+              <span>Register to enter the City.</span>
+            </div>
+          ) : null}
         </header>
 
         {hasStarterHandle(profile.handle) && !welcoming ? <SetupBanner /> : null}
