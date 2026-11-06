@@ -19,13 +19,16 @@ const MODES = [
 export function QuestBrowser({
   items,
   pending,
+  initialMode,
 }: {
+  /** Open on one of the filters, e.g. "with" for the quests you do with someone. */
+  initialMode?: (typeof MODES)[number][0];
   items: ShownBadge[];
   /** Quests with something waiting, by badge slug: what it is waiting on. */
   pending: Record<string, string>;
 }) {
   const [tab, setTab] = useState(0);
-  const [mode, setMode] = useState<(typeof MODES)[number][0]>("all");
+  const [mode, setMode] = useState<(typeof MODES)[number][0]>(initialMode ?? "all");
   const [q, setQ] = useState("");
   const [at, setAt] = useState<string | null>(null);
   const todo = items.filter((b) => b.locked);

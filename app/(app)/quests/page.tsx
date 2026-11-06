@@ -21,7 +21,7 @@ const head = (text: string, colour: string, aside?: React.ReactNode) => (
 
 /** Every quest in one place: the epic ones you are working on, what is waiting, the Well's daily ones,
  *  and all the rest. */
-export default async function QuestsPage(props: { searchParams: Promise<{ pick?: string }> }) {
+export default async function QuestsPage(props: { searchParams: Promise<{ pick?: string; mode?: string }> }) {
   const sp = await props.searchParams;
   const { userId, profile } = await requireMe();
   await createClient().rpc("cr_check_badges");
@@ -141,9 +141,9 @@ export default async function QuestsPage(props: { searchParams: Promise<{ pick?:
       ) : null}
 
 
-      <div>
+      <div id="side-quests" style={{ scrollMarginTop: 12 }}>
         {head("SIDE QUESTS", "var(--mag-soft)", <span className="px" style={{ fontSize: 11, color: "var(--muted)" }}>{quests.filter((b) => !b.locked).length} / {quests.length}</span>)}
-        <QuestBrowser items={quests} pending={pending} />
+        <QuestBrowser key={sp.mode ?? "all"} items={quests} pending={pending} initialMode={sp.mode === "with" || sp.mode === "show" || sp.mode === "do" ? sp.mode : undefined} />
       </div>
 
           </>

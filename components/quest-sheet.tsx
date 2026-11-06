@@ -18,6 +18,14 @@ export const WHERE: Record<string, [string, string]> = {
   "first-trade": ["/me/trades", "YOUR TRADES"],
 };
 
+/** Quests that are earned by doing something else: how to find the thing, and where it is. */
+const CUSTOM: Record<string, { text: string; link: [string, string] }> = {
+  "first-friend": {
+    text: "Go to Side Quests, tap WITH SOMEONE, and find a Friend quest, like Human Friend or Elf Friend. Tap it, then scan their QR code from there. Any one of them counts.",
+    link: ["/quests?mode=with#side-quests", "GO TO SIDE QUESTS"],
+  },
+};
+
 const article = (t: string) => (/^[aeiou]/i.test(t) ? "an" : "a");
 
 /** One quest in a list. Tap it (the badge or the name) and a tooltip opens in the middle of the screen
@@ -27,7 +35,8 @@ export function QuestRow({ b, face, rest, scan, bare }: { b: ShownBadge; face: R
   const [tip, setTip] = useState(false);
   const [scanning, setScanning] = useState(false);
   const slug = b.key.slice(2);
-  const where = WHERE[slug];
+  const custom = CUSTOM[slug];
+  const where = custom?.link ?? WHERE[slug];
   const kind = b.target ? `${article(targetLabel(b.target))} ${targetLabel(b.target).toLowerCase()}` : null;
   const delay = (Array.from(slug).reduce((n, c) => n + c.charCodeAt(0), 0) % 7) * 0.9;
   const open = () => setTip(true);
@@ -57,9 +66,11 @@ export function QuestRow({ b, face, rest, scan, bare }: { b: ShownBadge; face: R
                     : `${kind ? `It has to be ${kind}. ` : ""}Scan ${kind ? `${kind}'s` : "their"} QR code. ${b.instant ? "That is all: it completes the moment you scan." : "They get a whisper asking whether it happened, and if they say yes it counts."}`
                   : b.request
                     ? "Make a post that shows it. It is marked as a badge request, and when a witch likes it, the badge is yours."
-                    : b.auto
-                      ? "You get this one on your own, the moment it is true."
-                      : null}
+                    : custom
+                      ? custom.text
+                      : b.auto
+                        ? "You get this one on your own, the moment it is true."
+                        : null}
               </div>
             ) : null}
             <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "center", marginTop: 4 }}>
