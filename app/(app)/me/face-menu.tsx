@@ -3,16 +3,20 @@
 import Link from "next/link";
 import { useState, type CSSProperties } from "react";
 import { setMood } from "@/lib/actions";
+import { BadgeChooser } from "@/components/badge-chooser";
+import type { ShownBadge } from "@/lib/badges";
 
 /** The banner, the portrait and the thought hanging in the air above it.
- *  Tapping the portrait offers the two things you can change about a face:
- *  what it looks like, and what it's thinking. */
+ *  Tapping the portrait offers what you can change about a face: what it looks like, what it's
+ *  thinking, which of your badges are on show, and the rest of the profile. */
 export function ProfileHead({
   src,
   handle,
   joined,
   mood,
   banner,
+  badgeOptions,
+  shownKeys,
 }: {
   src: string;
   handle: string;
@@ -20,8 +24,12 @@ export function ProfileHead({
   mood: string | null;
   /** The banner's CSS, from bannerStyle(). */
   banner: CSSProperties;
+  /** The badges that could be shown (earned or held), and the ones that are. */
+  badgeOptions: ShownBadge[];
+  shownKeys: string[];
 }) {
   const [open, setOpen] = useState(false);
+  const [choosing, setChoosing] = useState(false);
   const [editing, setEditing] = useState(false);
 
   return (
@@ -109,12 +117,25 @@ export function ProfileHead({
               >
                 <span aria-hidden="true">◔</span> CHANGE YOUR STATUS
               </button>
+              <button
+                type="button"
+                className="face-menu-item"
+                role="menuitem"
+                onClick={() => {
+                  setOpen(false);
+                  setChoosing(true);
+                }}
+              >
+                <span aria-hidden="true">◈</span> DISPLAY BADGES
+              </button>
               <Link href="/me/edit" className="face-menu-item" role="menuitem">
                 <span aria-hidden="true">▤</span> EDIT PROFILE
               </Link>
             </div>
           ) : null}
         </div>
+
+        {choosing ? <BadgeChooser options={badgeOptions} current={shownKeys} onClose={() => setChoosing(false)} /> : null}
 
         {editing ? (
           <form action={setMood} style={{ display: "flex", gap: 7, alignItems: "center" }}>

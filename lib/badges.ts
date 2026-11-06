@@ -101,6 +101,19 @@ export type ShownBadge = {
   line: string;
 };
 
+/** How each achievement reads once it is on show: what its owner did, in the past tense (the
+ *  badge's own text, "Post a picture.", says what to do to earn it). */
+const DID: Record<string, string> = {
+  "first-words": "Made a post.",
+  "show-and-tell": "Posted a picture.",
+  "joined-in": "Replied on five different posts.",
+  "whisper-web": "Whispered to five different people.",
+  "a-voice-in-council": "Voted on five motions.",
+  "meet-in-person": "Met up with someone from the City.",
+  "a-helping-hand": "Helped someone with a problem.",
+  "registered-plaintiff": "Became a Registered Plaintiff.",
+};
+
 /** What a person's saved list of shown badges means, from their earned badges and the
  *  tradable badges they hold. Anything no longer theirs is skipped. */
 export function resolveShown(
@@ -119,16 +132,16 @@ export function resolveShown(
         key,
         badge: { slug: b.slug, art: b.art, tiers: b.tiers, tier: b.tier },
         title: `${b.title}${b.tiers > 1 ? ` ${ROMAN[b.tier]}` : ""}`,
-        line: b.how,
+        line: DID[b.slug] ?? b.blurb ?? b.how,
       });
     } else if (key.startsWith("i:")) {
       const it = items.find((x) => x.kind === "tradable" && String(x.id) === key.slice(2));
       if (!it?.kindRow) continue;
       const line =
         it.occasion === "birthday"
-          ? "A birthday badge."
+          ? "Given on their birthday."
           : it.earned_by && it.earned_by !== it.owner_id
-            ? `Traded from ${it.maker?.handle ?? "someone"}.`
+            ? `Came in a trade from ${it.maker?.handle ?? "someone"}.`
             : it.maker?.handle === owner
               ? "Earned by helping others."
               : it.kindRow.blurb || "A tradable badge.";
