@@ -60,11 +60,18 @@ export function WorkingOn({ items, all, editable, person, finished, isWitch, ope
         <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: 6 }}>
           {items.map((b) => {
             const done = heading ? !b.locked : !!b.done;
+            // Help Someone Else keeps its count inside the heart.
+            const onBadge = b.key === "a:a-helping-hand";
             const scanBtn = !person && (b.peer || b.key === "a:a-helping-hand") ? <ScanQuestButton slug={b.key.slice(2)} /> : null;
             const row = (
               <>
-                <span style={{ flex: "none", opacity: done ? 0.4 : b.locked ? 0.7 : 1, lineHeight: 0 }}>
+                <span style={{ flex: "none", opacity: done ? 0.4 : b.locked ? 0.7 : 1, lineHeight: 0, position: "relative" }}>
                   <BadgeFace b={b} size={42} />
+                  {onBadge && b.progress ? (
+                    <span className="px" aria-label={`${b.progress.n} of ${b.progress.of}`} style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", fontSize: 9, lineHeight: 1, color: "#fff", textShadow: "0 1px 0 #000, 1px 0 0 #000, -1px 0 0 #000, 0 -1px 0 #000" }}>
+                      {b.progress.n}/{b.progress.of}
+                    </span>
+                  ) : null}
                 </span>
                 <span style={{ minWidth: 0, textAlign: "left" }}>
                   <span className="px" style={{ display: "block", fontSize: 11, color: done ? "var(--dim)" : "var(--text)", lineHeight: 1.5, textDecoration: done ? "line-through" : "none", textDecorationColor: "var(--dim)" }}>
@@ -74,7 +81,7 @@ export function WorkingOn({ items, all, editable, person, finished, isWitch, ope
                 </span>
                 {done ? (
                   <span aria-label="Done" className="px" style={{ marginLeft: "auto", flex: "none", fontSize: 13, color: "var(--dim)" }}>✓</span>
-                ) : b.progress ? (
+                ) : b.progress && !onBadge ? (
                   <span className="px" style={{ marginLeft: "auto", flex: "none", fontSize: 12, color: "var(--pur-pale)" }}>
                     {b.progress.n}/{b.progress.of}
                   </span>
