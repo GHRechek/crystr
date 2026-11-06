@@ -90,7 +90,7 @@ export function ProfileHead({
             <img src={src} alt="" width={FACE} height={FACE} style={{ imageRendering: "pixelated" }} />
           </button>
 
-          <div style={{ paddingBottom: 28, minWidth: 0, flex: 1 }}>
+          <div style={{ paddingBottom: 14, minWidth: 0, flex: 1 }}>
             <h1 className="px" style={{ fontSize: 16, fontWeight: 400, lineHeight: 1.5, overflowWrap: "anywhere" }}>{handle}</h1>
           </div>
 

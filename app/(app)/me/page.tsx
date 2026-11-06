@@ -97,13 +97,13 @@ export default async function ProfilePage() {
         }}
       >
         <div className="tile" style={{ padding: 12, display: "flex", gap: 12, alignItems: "flex-start" }}>
-        {/* Your own token: a blank with a ? until you tap it, which opens it. */}
+        {/* Your own token: a blank with a ? until you make one, then the token itself. Tap to open. */}
         <Link
           href="/me/token"
           aria-label="Your token"
-          style={{ width: 64, height: 64, flex: "none", display: "grid", placeItems: "center", color: "var(--dim)", border: "1px dashed var(--edge)", borderRadius: "var(--px-r)", textDecoration: "none" }}
+          style={{ width: 64, height: 64, flex: "none", display: "grid", placeItems: "center", color: "var(--dim)", border: token ? 0 : "1px dashed var(--edge)", borderRadius: "var(--px-r)", textDecoration: "none", lineHeight: 0 }}
         >
-          <span className="px" style={{ fontSize: 16 }}>?</span>
+          {token ? <TokenImage design={token.design} size={64} /> : <span className="px" style={{ fontSize: 16 }}>?</span>}
         </Link>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div
