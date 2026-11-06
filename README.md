@@ -399,8 +399,8 @@ cells from the Supabase bucket instead if it doesn't.
 
 A page can sit under another (`wiki_pages.parent_id`), to any depth: MORDLs holds
 Orcs, Humans and Goblins; The Forsaken holds Planar and Undead, and Undead holds
-Zombies, Vampires and Banshees. On the shelf (`/wiki`) the pages under a page are
-folded under a count and open with a click; on the page itself they are listed at
+Zombies, Vampires and Banshees. On the shelf (`/wiki`) each page is one card, and the pages under it are
+folded inside the card under a count and open with a click (as darker cards of their own); on the page itself they are listed at
 the bottom and also turn up inside the rune text as links, each at a spot of its
 own. Anyone adding a few words to a page can instead start a new page under it
 for 40 mana (`cr_wiki_add_subpage`), with those words as its first fact, on the

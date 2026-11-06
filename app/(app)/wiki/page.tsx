@@ -119,22 +119,25 @@ export default async function WikiIndex(props: { searchParams: Promise<{ q?: str
   );
 }
 
-/** A page and, folded under a count, the pages under it, each of which folds its own. */
+/** A page as one card: its name, and folded inside the card under a count, the pages under it,
+ *  each of which is a card of its own with its own fold. */
 function Branch({ node, decay, witch }: { node: PageTree<WikiListing>; decay: number; witch: boolean }) {
   const { page, under } = node;
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+    // A plain wrapper: a .card that is a direct child of the page is flattened into a list row.
+    <div>
+    <div className="card" style={{ gap: 4, opacity: page.archived ? 0.55 : 1 }}>
       <Row page={page} decay={decay} witch={witch} />
       {under.length ? (
         // Folded until clicked, and clicked again to fold: the stack stays a stack.
-        <details className="subpages">
+        <details className="subpages subpages-in">
           <summary className="px">
             <span className="caret" aria-hidden>
               ▸
             </span>
             {under.length} {under.length === 1 ? "SUBPAGE" : "SUBPAGES"}
           </summary>
-          <div style={{ display: "flex", flexDirection: "column", gap: 8, marginLeft: 26, borderLeft: "2px solid var(--edge)", paddingLeft: 10, marginTop: 4, marginBottom: 6 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8, marginLeft: 4, borderLeft: "2px solid var(--edge)", paddingLeft: 10, marginTop: 4 }}>
             {under.map((child) => (
               <Branch key={child.page.id} node={child} decay={decay} witch={witch} />
             ))}
@@ -142,15 +145,16 @@ function Branch({ node, decay, witch }: { node: PageTree<WikiListing>; decay: nu
         </details>
       ) : null}
     </div>
+    </div>
   );
 }
 
+/** The page's name and what is known about it, a link to the page, drawn on its card. */
 function Row({ page, decay, witch }: { page: WikiListing; decay: number; witch: boolean }) {
   return (
     <Link
       href={`/wiki/${page.slug}`}
-      className="card"
-      style={{ gap: 4, textDecoration: "none", opacity: page.archived ? 0.55 : 1 }}
+      style={{ display: "flex", flexDirection: "column", gap: 4, textDecoration: "none", color: "inherit" }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
         <div style={{ fontSize: 14.5, fontWeight: 500, letterSpacing: "-.01em", flex: 1, minWidth: 0 }}>
