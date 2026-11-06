@@ -91,7 +91,7 @@ export function ProfileHead({
             <img src={src} alt="" width={FACE} height={FACE} style={{ imageRendering: "pixelated" }} />
           </button>
 
-          <div style={{ paddingBottom: 14, minWidth: 0, flex: 1 }}>{strip}</div>
+          <div style={{ minWidth: 0, flex: 1 }}>{strip}</div>
 
           {/* Hangs off the portrait rather than sitting in the flow, so
               opening it doesn't shove the whole profile down the screen. */}

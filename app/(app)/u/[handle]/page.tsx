@@ -62,7 +62,7 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
           <div style={{ width: 104, height: 104, flex: "none" }}>
             <Avatar person={person} size={104} />
           </div>
-          <div style={{ minWidth: 0, flex: 1, paddingBottom: 4 }}>
+          <div style={{ minWidth: 0, flex: 1 }}>
             <AboutBadges
                 compact
                 shown={shown}
@@ -76,7 +76,7 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
               >
                 {token ? (
                   <span title={tokenTitle(person.display_name, person.handle)} style={{ lineHeight: 0, flex: "none" }}>
-                    <TokenImage design={token.design} size={40} />
+                    <TokenImage design={token.design} size={64} />
                   </span>
                 ) : null}
               </AboutBadges>

@@ -108,15 +108,13 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
                 TRADES{waiting ? ` · ${waiting}` : ""} →
               </Link>
             }
-            tradeHref="/me/trades"
-            tradeCount={waiting}
           >
             <Link
               href="/me/token"
               aria-label="Your token"
-              style={{ width: 40, height: 40, flex: "none", display: "grid", placeItems: "center", color: "var(--dim)", border: token ? 0 : "1px dashed var(--edge)", borderRadius: "var(--px-r)", textDecoration: "none", lineHeight: 0 }}
+              style={{ width: 64, height: 64, flex: "none", display: "grid", placeItems: "center", color: "var(--dim)", border: token ? 0 : "1px dashed var(--edge)", borderRadius: "var(--px-r)", textDecoration: "none", lineHeight: 0 }}
             >
-              {token ? <TokenImage design={token.design} size={40} /> : <span className="px" style={{ fontSize: 14 }}>?</span>}
+              {token ? <TokenImage design={token.design} size={64} /> : <span className="px" style={{ fontSize: 16 }}>?</span>}
             </Link>
           </AboutBadges>
         }
