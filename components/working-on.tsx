@@ -134,7 +134,7 @@ export function WorkingOn({ items, all, editable, person, finished, isWitch, ope
                   </div>
                   {open ? (
                     <div style={{ paddingLeft: 52, fontSize: 12, lineHeight: 1.45, color: "var(--muted)" }}>
-                      {kind ? `It has to be ${kind}. ` : ""}Tap COMPLETE and scan {kind ? `${kind}'s` : "their"} QR code. They get a whisper asking whether it happened, and if they say yes it counts.
+                      {kind ? `It has to be ${kind}. ` : ""}Tap the ! and scan {kind ? `${kind}'s` : "their"} QR code. They get a whisper asking whether it happened, and if they say yes it counts.
                     </div>
                   ) : null}
                 </li>
