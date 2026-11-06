@@ -281,3 +281,7 @@ export const questGrid = (badges: BadgeRow[]): ShownBadge[] => {
 
 /** How many pictures from the uploaded badge set the app has: public/badges/set/1.png to this number. */
 export const SET_COUNT = 1015;
+
+/** The pictures of the badge set that are in the app: 1 to SET_COUNT, less the large framed ones that were taken out. */
+export const SET_REMOVED: readonly number[] = [417,418,419,420,421,422,423,424,425,426,427,428,429,430,431,432,433,434,435,436,437,438,439,440,441,442,443,817,818,819,820,821,822,823,824,825,826,827,828,829,830,831,832,833,834,835,836,837,838,839,840,841,842,843,844,845,846,847,848];
+export const SET_NUMBERS: number[] = Array.from({ length: SET_COUNT }, (_, i) => i + 1).filter((n) => !SET_REMOVED.includes(n));

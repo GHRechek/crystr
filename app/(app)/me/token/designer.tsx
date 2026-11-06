@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { setToken } from "@/lib/actions";
+import { SET_REMOVED } from "@/lib/badges";
 import { ArrowIcon } from "@/components/icons";
 import {
   BADGE_SIZES,
@@ -418,7 +419,7 @@ export function TokenDesigner({ start, fresh, how = "", canGive = false, onUse }
       {panel === "icons" ? (
         <Sheet title={`ADD AN ICON · ${placed.length}/${SLOTS.length}`} onClose={() => setPanel(null)}>
           <div role="listbox" aria-label="Icons" style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 6 }}>
-            {ITEMS.map((it) => (
+            {ITEMS.filter((it) => !(it.slug.startsWith("s-") && SET_REMOVED.includes(Number(it.slug.slice(2))))).map((it) => (
               <button
                 key={it.slug}
                 type="button"

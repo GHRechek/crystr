@@ -55,3 +55,11 @@ update public.badges set art = 'set/185.png' where slug = 'troll-tales';
 update public.badges set art = 'set/461.png' where slug = 'gnome-workshop';
 update public.badges set art = 'set/180.png' where slug = 'tauren-walk';
 update public.badges set art = 'set/118.png' where slug = 'token-made';
+
+-- The large framed pictures (417 to 443 and 817 to 848) were taken out of the app, so the five badges
+-- that wore one got new ones.
+update public.badges set art = 'set/472.png' where slug = 'long-bath';
+update public.badges set art = 'set/315.png' where slug = 'sunrise';
+update public.badges set art = 'set/305.png' where slug = 'plant-something';
+update public.badges set art = 'set/340.png' where slug = 'museum-visit';
+update public.badges set art = 'set/354.png' where slug = 'high-place';
