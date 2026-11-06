@@ -33,7 +33,7 @@ export function WorkingOn({ items, all, editable, person, finished, isWitch, ope
     <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
       <div className="px" style={{ fontSize: 12, color: "var(--blu-soft)", minHeight: 24, display: "flex", alignItems: "center", gap: 8 }}>
         <span>
-          WORKING ON <span style={{ fontSize: 11, color: "var(--muted)", marginLeft: 6 }}>· {items.length}/{WORKING_MAX}</span>
+          EPIC QUESTS <span style={{ fontSize: 11, color: "var(--muted)", marginLeft: 6 }}>· {items.length}/{WORKING_MAX}</span>
         </span>
         <span className="spacer" />
         {editable ? (
@@ -47,7 +47,7 @@ export function WorkingOn({ items, all, editable, person, finished, isWitch, ope
             }}
             style={{ background: "none", border: 0, padding: 0, cursor: "pointer", fontSize: 11, color: "var(--pur-pale)" }}
           >
-            {items.length ? "CHANGE →" : "PICK GOALS →"}
+            {items.length ? "CHANGE →" : "PICK EPIC QUESTS →"}
           </button>
         ) : null}
       </div>
@@ -137,7 +137,7 @@ export function WorkingOn({ items, all, editable, person, finished, isWitch, ope
           })}
         </ul>
       ) : (
-        <div style={{ fontSize: 12, lineHeight: 1.5, color: "var(--muted)" }}>Nothing picked yet. Choose up to three long-term goals to work on.</div>
+        <div style={{ fontSize: 12, lineHeight: 1.5, color: "var(--muted)" }}>Nothing picked yet. Choose up to three epic quests to work on.</div>
       )}
 
       {editable && (finished?.length || items.length < WORKING_MAX) ? (
@@ -145,17 +145,17 @@ export function WorkingOn({ items, all, editable, person, finished, isWitch, ope
           {finished?.length
             ? `You earned ${finished.join(" and ")}. `
             : ""}
-          {items.length < WORKING_MAX ? "Pick a new goal." : ""}
+          {items.length < WORKING_MAX ? "Pick a new epic quest." : ""}
         </div>
       ) : null}
 
       {open && editable ? (
-        <div role="dialog" aria-label="Choose what you are working on" style={{ position: "fixed", inset: 0, zIndex: 80, display: "flex", flexDirection: "column", maxWidth: 480, margin: "0 auto" }}>
+        <div role="dialog" aria-label="Choose your epic quests" style={{ position: "fixed", inset: 0, zIndex: 80, display: "flex", flexDirection: "column", maxWidth: 480, margin: "0 auto" }}>
           <form action={setWorkingOn} style={{ flex: 1, minHeight: 0, overflowY: "auto", background: "var(--device)", padding: "16px 16px 24px", display: "flex", flexDirection: "column", gap: 10 }}>
             <input type="hidden" name="list" value={JSON.stringify(pick)} />
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <div className="px" style={{ fontSize: 12, color: "var(--pur-soft)" }}>
-                GOALS · {pick.length}/{WORKING_MAX}
+                EPIC QUESTS · {pick.length}/{WORKING_MAX}
               </div>
               <span className="spacer" />
               {isWitch ? (

@@ -110,7 +110,7 @@ export function ProfileHead({
                 <span aria-hidden="true">◔</span> ASK FOR HELP
               </button>
               <Link href="/me?goals=1" className="face-menu-item" role="menuitem">
-                <span aria-hidden="true">★</span> PICK GOALS
+                <span aria-hidden="true">★</span> PICK EPIC QUESTS
               </Link>
               <Link href="/me?quests=1" className="face-menu-item" role="menuitem">
                 <span aria-hidden="true">◈</span> SEE QUESTS
