@@ -68,7 +68,7 @@ begin
   end if;
   if p_art_custom is not null and p_art_custom ~ '^[0-9a-z.]{1,120}$' then
     v_art := 'token:' || p_art_custom;
-  elsif p_art is not null and p_art between 1 and 509 then
+  elsif p_art is not null and p_art between 1 and 1015 then
     v_art := 'set/' || p_art || '.png';
   end if;
   if p_slug is not null and exists (select 1 from public.badges where slug = p_slug and kind = 'goal') then

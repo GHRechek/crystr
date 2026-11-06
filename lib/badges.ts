@@ -280,4 +280,4 @@ export const questGrid = (badges: BadgeRow[]): ShownBadge[] => {
 };
 
 /** How many pictures from the uploaded badge set the app has: public/badges/set/1.png to this number. */
-export const SET_COUNT = 509;
+export const SET_COUNT = 1015;

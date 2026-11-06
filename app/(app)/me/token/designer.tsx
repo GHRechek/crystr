@@ -439,7 +439,7 @@ export function TokenDesigner({ start, fresh, how = "", canGive = false, onUse }
                 }}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={itemSrc(it.slug)} alt="" width={it.w * 2} height={it.h * 2} style={{ imageRendering: "pixelated" }} />
+                <img src={itemSrc(it.slug)} alt="" loading="lazy" width={it.w * 2} height={it.h * 2} style={{ imageRendering: "pixelated" }} />
               </button>
             ))}
           </div>
