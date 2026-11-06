@@ -136,7 +136,7 @@ export default async function QuestsPage(props: { searchParams: Promise<{ pick?:
                   <div style={{ fontSize: 11.5, color: "var(--muted)", lineHeight: 1.4 }}>{q.sub}</div>
                 </div>
                 <div className="px" style={{ fontSize: wait ? 9 : 12, color: wait ? "var(--dim)" : "var(--blu-soft)", flex: "none", textAlign: "right" }}>
-                  {wait ? `IN ${untilReady(q.ready_at!)}` : `+${q.reward}`}
+                  {wait ? `IN ${untilReady(q.ready_at!)}` : "FULL"}
                 </div>
               </Link>
             );

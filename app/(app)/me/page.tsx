@@ -88,7 +88,6 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
       <div className="px" style={{ fontSize: 12, color: colour }}>
         {text}
       </div>
-      <span className="spacer" />
       {aside}
     </div>
   );
@@ -202,8 +201,7 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
           <span>
             QUESTS <span style={{ fontSize: 11, color: "var(--muted)", marginLeft: 6 }}>· {questGrid(badges).filter((b) => !b.locked).length} / {questGrid(badges).length}</span>
           </span>
-          <span className="spacer" />
-          <Link href="/quests" className="px" style={{ fontSize: 11, color: "var(--pur-pale)" }}>
+          <Link href="/quests" className="px" style={{ fontSize: 11, color: "var(--pur-pale)", marginLeft: 6 }}>
             SEE ALL QUESTS →
           </Link>
         </div>
