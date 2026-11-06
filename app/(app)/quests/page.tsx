@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { requireMe, getBadges, getPeople, getQuests, getQuestWaiting } from "@/lib/data";
+import { requireMe, getBadges, getPeopleKinds, getQuests, getQuestWaiting } from "@/lib/data";
 import { createClient } from "@/lib/supabase/server";
 import { answerBadgeClaim } from "@/lib/actions";
 import { untilReady, ago } from "@/lib/crystr";
@@ -23,7 +23,7 @@ export default async function QuestsPage(props: { searchParams: Promise<{ pick?:
   await createClient().rpc("cr_check_badges");
   const { data: progressData } = await createClient().rpc("cr_goal_progress");
   const progress = (progressData ?? {}) as Record<string, number>;
-  const [badges, people, well] = await Promise.all([getBadges(userId), getPeople(userId), getQuests(userId)]);
+  const [badges, people, well] = await Promise.all([getBadges(userId), getPeopleKinds(userId), getQuests(userId)]);
   const waiting = await getQuestWaiting(userId, profile.is_witch, new Set(badges.filter((b) => b.earned_at).map((b) => b.slug)));
 
   const pending: Record<string, string> = {};
@@ -120,7 +120,7 @@ export default async function QuestsPage(props: { searchParams: Promise<{ pick?:
 
       <div>
         {head("QUESTS", "var(--mag-soft)", <span className="px" style={{ fontSize: 11, color: "var(--muted)" }}>{quests.filter((b) => !b.locked).length} / {quests.length}</span>)}
-        <QuestBrowser items={quests} people={people.map((p) => ({ id: p.id, handle: p.handle }))} pending={pending} />
+        <QuestBrowser items={quests} people={people} pending={pending} />
       </div>
 
       {profile.is_witch ? (

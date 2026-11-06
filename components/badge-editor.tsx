@@ -3,10 +3,11 @@
 import { useRef, useState } from "react";
 import { TokenDesigner } from "@/app/(app)/me/token/designer";
 import { defaultToken } from "@/lib/token";
+import { TARGETS } from "@/lib/species";
 import { SET_COUNT, SET_NUMBERS } from "@/lib/badges";
 import { deleteBadge, saveBadge } from "@/lib/actions";
 
-export type BadgeDraft = { slug?: string; title: string; how: string; blurb: string; art: number; /** A picture made in the token maker, as its packed design. */ custom?: string; /** A long-term goal: only its name and picture may change. */ fixed?: boolean; /** How a badge a witch makes is approved: true when someone you ask says yes, false when a witch likes a post. Undefined for the system's own. */ peer?: boolean };
+export type BadgeDraft = { slug?: string; title: string; how: string; blurb: string; art: number; /** A picture made in the token maker, as its packed design. */ custom?: string; /** A long-term goal: only its name and picture may change. */ fixed?: boolean; /** How a badge a witch makes is approved: true when someone you ask says yes, false when a witch likes a post. Undefined for the system's own. */ peer?: boolean; /** For a quest someone confirms: who it has to be. */ target?: string };
 
 /** The form a witch edits a badge in: its title, how to earn it, the line once earned, and its
  *  picture. It covers whatever it sits in. A new badge has no slug. Delete asks first. */
@@ -55,6 +56,17 @@ export function BadgeEditor({ draft, setDraft, used = [] }: { draft: BadgeDraft;
               <button type="button" data-on={!draft.peer} onClick={() => setDraft({ ...draft, peer: false })}>A WITCH LIKES A POST</button>
               <button type="button" data-on={!!draft.peer} onClick={() => setDraft({ ...draft, peer: true })}>SOMEONE SAYS YES</button>
             </div>
+          </div>
+        ) : null}
+        {!draft.fixed && draft.peer ? (
+          <div className="field">
+            <span className="px" style={{ fontSize: 11, color: "var(--blu-soft)" }}>WHO IT HAS TO BE</span>
+            <select name="target" className="input" value={draft.target ?? ""} onChange={(e) => setDraft({ ...draft, target: e.target.value || undefined })}>
+              <option value="">Anyone</option>
+              {TARGETS.map((t) => (
+                <option key={t.value} value={t.value}>{t.label}</option>
+              ))}
+            </select>
           </div>
         ) : null}
         <div className="field">

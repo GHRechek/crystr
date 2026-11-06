@@ -1,3 +1,4 @@
+import { SPECIES } from "@/lib/species";
 import Link from "next/link";
 import { requireMe } from "@/lib/data";
 import { updateProfile } from "@/lib/actions";
@@ -48,6 +49,20 @@ export default async function EditProfilePage() {
             pattern="[a-zA-Z0-9_.\-]+"
           />
         </div>
+
+        <div className="field">
+          <label htmlFor="species">SPECIES</label>
+          <select id="species" name="species" className="input" defaultValue={profile.species ?? ""}>
+            <option value="">Not saying</option>
+            {SPECIES.map((x) => (
+              <option key={x.value} value={x.value}>{x.label}</option>
+            ))}
+          </select>
+        </div>
+        <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12.5 }}>
+          <input type="checkbox" name="spellcaster" defaultChecked={!!profile.spellcaster} />
+          I cast spells
+        </label>
 
         <div className="field">
           <label htmlFor="display_name">CHARACTER NAME</label>

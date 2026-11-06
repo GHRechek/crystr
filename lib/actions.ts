@@ -11,6 +11,7 @@ import { isPattern, isSwatch } from "@/lib/banner";
 import { COSTS, hasStarterHandle, untilReady } from "@/lib/crystr";
 import { normalizePortrait } from "@/lib/portrait/core";
 import { normalizeToken, unpackToken } from "@/lib/token";
+import { SPECIES } from "@/lib/species";
 import { pictureFor } from "@/lib/article-icons";
 import { composeBirthday } from "@/lib/birthday";
 import { listBadges, ROMAN } from "@/lib/badges";
@@ -828,6 +829,8 @@ export async function updateProfile(fd: FormData) {
       likes: field(fd, "likes"),
       food: field(fd, "food"),
       obsession: field(fd, "obsession"),
+      species: SPECIES.some((x) => x.value === str(fd, "species")) ? str(fd, "species") : null,
+      spellcaster: fd.get("spellcaster") === "on",
       updated_at: new Date().toISOString(),
     })
     .eq("id", user.id);
@@ -1105,6 +1108,7 @@ export async function saveBadge(fd: FormData) {
     p_blurb: str(fd, "blurb"),
     p_art: Number(fd.get("art")),
     p_peer: fd.get("peer") === "1" ? true : fd.get("peer") === "0" ? false : null,
+    p_target: str(fd, "target") || null,
     p_art_custom: (() => {
       const c = str(fd, "art_custom");
       return c && unpackToken(c) ? c : null;
@@ -1138,6 +1142,7 @@ export async function claimBadge(fd: FormData) {
   if (!r.ok) {
     if (r.code === "already") await setFlash("ALREADY ASKED", "They already have that question waiting.", EDGE.purple);
     else if (r.code === "have_it") await setFlash("ALREADY YOURS", "You have that badge already.", EDGE.purple);
+    else if (r.code === "wrong_kind") await setFlash("NOT THE RIGHT KIND", "That quest is for a different kind of person. Pick someone who fits.", EDGE.purple);
     else if (r.code === "too_many") await setFlash("TOO MANY WAITING", "Wait for some of your questions to be answered first.", EDGE.mag);
     else await wentWrong();
   } else {

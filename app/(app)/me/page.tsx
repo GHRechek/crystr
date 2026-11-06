@@ -20,7 +20,6 @@ import { Avatar } from "@/components/bits";
 import { BadgeArt, ItemTile, TokenImage } from "@/components/badges";
 import { AboutBadges } from "@/components/about-badges";
 import { ProfileDetails, type DetailKind } from "@/components/profile-details";
-import { WorkingOn } from "@/components/working-on";
 import { ProfileHead } from "./face-menu";
 import { bannerOf, bannerStyle } from "@/lib/banner";
 import { portraitFromId, normalizePortrait, packPortrait } from "@/lib/portrait/core";
@@ -227,7 +226,6 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
 
         {/* The badges you have, just the pictures, packed tight; tap one for its tooltip. */}
         {/* What you are going after, as a list, with a button to see every badge and choose. */}
-        <WorkingOn key={goals ? "pick" : "view"} openAtStart={goals} isWitch={profile.is_witch} editable finished={finishedWorking(profile.working_on, badges)} items={resolveWorking(profile.working_on, badges, [], progress)} all={goalGrid(badges, progress)} />
 
         {tokens.length ? (
           <div>

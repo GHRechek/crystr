@@ -19,6 +19,9 @@ export type Profile = {
   mana: number;
   spent_total: number;
   is_witch: boolean;
+  /** Chosen on Edit Profile: an elf, a goblin, a Forsaken... and whether they cast. */
+  species?: string | null;
+  spellcaster?: boolean | null;
   /** False until they have registered on the welcome page. Missing means a database from before the flag. */
   onboarded?: boolean;
   /** What they can hold: 10 before registering, 40 after, more with badges. Missing means a
@@ -788,7 +791,7 @@ export async function peekOverride(code: string): Promise<{ ok: true; witch: str
 export async function getBadges(userId: string): Promise<BadgeRow[]> {
   const supabase = createClient();
   const [all, mine] = await Promise.all([
-    supabase.from("badges").select("slug, title, how, blurb, art, tiers, sort, witch_approved, peer_approved, kind, steps, threshold").order("sort"),
+    supabase.from("badges").select("slug, title, how, blurb, art, tiers, sort, witch_approved, peer_approved, peer_target, kind, steps, threshold").order("sort"),
     supabase.from("user_badges").select("badge_slug, earned_at, tier").eq("user_id", userId),
   ]);
   const earned = new Map(
@@ -1125,4 +1128,11 @@ export async function getQuestWaiting(userId: string, isWitch: boolean, earned: 
     vouches: ((vouches.data ?? []) as unknown as { id: number; kind: "meetup" | "helped"; other_p: One<{ handle: string }> }[]).map((v) => ({ id: v.id, kind: v.kind, to: one(v.other_p)?.handle ?? "someone" })),
     queue,
   };
+}
+
+/** Everyone else in the City with the kind of person they are, for asking someone to confirm a quest. */
+export async function getPeopleKinds(userId: string): Promise<{ id: string; handle: string; species: string | null; spellcaster: boolean; is_witch: boolean }[]> {
+  const supabase = createClient();
+  const { data } = await supabase.from("profiles").select("id, handle, species, spellcaster, is_witch").neq("id", userId).order("handle");
+  return (data ?? []) as { id: string; handle: string; species: string | null; spellcaster: boolean; is_witch: boolean }[];
 }

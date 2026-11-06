@@ -5,6 +5,7 @@ import { useState } from "react";
 import { BadgeFace } from "@/components/badge-chooser";
 import { claimBadge } from "@/lib/actions";
 import type { ShownBadge } from "@/lib/badges";
+import { isKind, targetLabel, type Kind } from "@/lib/species";
 
 /** Where each system badge is done, for the ones that have a place to go. */
 const WHERE: Record<string, [string, string]> = {
@@ -33,7 +34,7 @@ export function QuestBrowser({
   pending,
 }: {
   items: ShownBadge[];
-  people: { id: string; handle: string }[];
+  people: ({ id: string; handle: string } & Kind)[];
   /** Quests with something waiting, by badge slug: what it is waiting on. */
   pending: Record<string, string>;
 }) {
@@ -43,6 +44,8 @@ export function QuestBrowser({
   const [at, setAt] = useState<string | null>(null);
   const [asking, setAsking] = useState<string | null>(null);
   const [who, setWho] = useState("");
+  const need = asking ? items.find((b) => b.key === `a:${asking}`)?.target : undefined;
+  const pool = people.filter((p) => isKind(p, need));
   const todo = items.filter((b) => b.locked);
   const done = items.filter((b) => !b.locked);
   const list = (tab === 0 ? todo : done)
@@ -92,7 +95,7 @@ export function QuestBrowser({
                   {b.peer ? (
                     <>
                       <div style={{ fontSize: 12, lineHeight: 1.45, color: "var(--muted)" }}>
-                        Pick who it was. They get a whisper asking whether it happened, with YES and NO. If they say yes, the badge is yours.
+                        {b.target ? `It has to be ${/^[aeiou]/i.test(targetLabel(b.target)) ? "an" : "a"} ${targetLabel(b.target).toLowerCase()}. ` : ""}Pick who it was. They get a whisper asking whether it happened, with YES and NO. If they say yes, the badge is yours.
                       </div>
                       <button type="button" className="btn btn-sm btn-purple" onClick={() => setAsking(slug)} style={{ minHeight: 40, alignSelf: "flex-start" }}>
                         ASK SOMEONE →
@@ -135,7 +138,7 @@ export function QuestBrowser({
             <input className="input" value={who} onChange={(e) => setWho(e.target.value)} placeholder="Search for someone" aria-label="Search people" style={{ width: "100%", fontSize: 12.5 }} />
           </div>
           <ul style={{ listStyle: "none", margin: 0, padding: "0 16px 24px", flex: 1, minHeight: 0, overflowY: "auto", display: "flex", flexDirection: "column", gap: 6 }}>
-            {people.filter((p) => !who.trim() || p.handle.toLowerCase().includes(who.trim().toLowerCase())).map((p) => (
+            {pool.filter((p) => !who.trim() || p.handle.toLowerCase().includes(who.trim().toLowerCase())).map((p) => (
               <li key={p.id}>
                 <form action={async (fd) => { await claimBadge(fd); setAsking(null); }}>
                   <input type="hidden" name="slug" value={asking} />
@@ -144,7 +147,7 @@ export function QuestBrowser({
                 </form>
               </li>
             ))}
-            {people.length === 0 ? <li className="empty">THERE IS NOBODY ELSE IN THE CITY YET</li> : null}
+            {pool.length === 0 ? <li className="empty">{need ? `NOBODY IN THE CITY IS ${/^[aeiou]/i.test(targetLabel(need)) ? "AN" : "A"} ${targetLabel(need).toUpperCase()} YET` : "THERE IS NOBODY ELSE IN THE CITY YET"}</li> : null}
           </ul>
         </div>
       ) : null}

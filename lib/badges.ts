@@ -20,6 +20,8 @@ export type BadgeRow = {
   witch_approved?: boolean;
   /** Earned when someone you ask says yes (a whisper with YES and NO). */
   peer_approved?: boolean;
+  /** For a quest someone confirms: the kind of person it has to be (a species, 'witch' or 'spellcaster'). */
+  peer_target?: string | null;
   /** A long-term goal (only counts while on Working On) or a quest (everything else). */
   kind?: "goal" | "quest";
   /** The counts that earn each step, and the single count of a one-step badge. */
@@ -119,12 +121,14 @@ export type ShownBadge = {
   peer?: boolean;
   /** How a quest is done: on your own (the system sees it), by showing a post to a witch, or with someone. */
   mode?: "do" | "show" | "with";
+  /** For a "with someone" quest: who it has to be. */
+  target?: string;
   /** How far along a goal is: the count so far, and the count that finishes the next step. */
   progress?: { n: number; of: number };
   /** Handed out by the system itself, not by a witch's like: marked with a star. */
   auto?: boolean;
   /** A witch-approved badge's own fields, for a witch to edit. */
-  edit?: { slug: string; title: string; how: string; blurb: string; art: number; custom?: string; /** A long-term goal: only its name and picture may change. */ fixed?: boolean; peer?: boolean };
+  edit?: { slug: string; title: string; how: string; blurb: string; art: number; custom?: string; /** A long-term goal: only its name and picture may change. */ fixed?: boolean; peer?: boolean; target?: string };
 };
 
 /** How each achievement reads once it is on show: what its owner did, in the past tense (the
@@ -190,7 +194,7 @@ export function achievementGrid(badges: BadgeRow[]): ShownBadge[] {
     line: b.earned_at ? (b.blurb || DID[b.slug] || b.how) : b.how,
     locked: !b.earned_at,
     auto: !b.witch_approved && !b.peer_approved,
-    edit: { slug: b.slug, title: b.title, how: b.how, blurb: b.blurb, art: Number(/(\d+)\.png$/.exec(b.art ?? "")?.[1] ?? 1), custom: b.art?.startsWith("token:") ? b.art.slice(6) : undefined, fixed: b.kind === "goal", peer: b.witch_approved || b.peer_approved ? !!b.peer_approved : undefined },
+    edit: { slug: b.slug, title: b.title, how: b.how, blurb: b.blurb, art: Number(/(\d+)\.png$/.exec(b.art ?? "")?.[1] ?? 1), custom: b.art?.startsWith("token:") ? b.art.slice(6) : undefined, fixed: b.kind === "goal", peer: b.witch_approved || b.peer_approved ? !!b.peer_approved : undefined, target: b.peer_target ?? undefined },
   });
   return [...badges.filter((b) => b.earned_at), ...badges.filter((b) => !b.earned_at)].map(cell);
 }
@@ -279,6 +283,7 @@ export const questGrid = (badges: BadgeRow[]): ShownBadge[] => {
     request: !!b.witch_approved && !b.earned_at,
     peer: !!b.peer_approved && !b.earned_at,
     mode: b.peer_approved ? "with" : b.witch_approved ? "show" : "do",
+    target: b.peer_target ?? undefined,
   }));
 };
 

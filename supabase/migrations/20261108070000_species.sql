@@ -3,7 +3,7 @@
 -- name the kind of person it has to be (badges.peer_target: a species, or 'spellcaster'), and only
 -- those people can be asked.
 alter table public.profiles add column if not exists species text
-  check (species is null or species in ('elf', 'forsaken', 'shifter', 'human', 'orc', 'goblin', 'dwarf', 'troll', 'gnome', 'tauren', 'planar'));
+  check (species is null or species in ('elf', 'forsaken', 'shifter', 'human', 'orc', 'goblin', 'troll', 'gnome', 'tauren', 'planar'));
 alter table public.profiles add column if not exists spellcaster boolean not null default false;
 grant update (species, spellcaster) on public.profiles to authenticated;
 
@@ -63,7 +63,7 @@ begin
   if not exists (select 1 from public.profiles where id = auth.uid() and is_witch) then
     return jsonb_build_object('ok', false, 'code', 'forbidden');
   end if;
-  if v_target is not null and v_target not in ('spellcaster', 'elf', 'forsaken', 'shifter', 'human', 'orc', 'goblin', 'dwarf', 'troll', 'gnome', 'tauren', 'planar') then
+  if v_target is not null and v_target not in ('spellcaster', 'elf', 'forsaken', 'shifter', 'human', 'orc', 'goblin', 'troll', 'gnome', 'tauren', 'planar') then
     v_target := null;
   end if;
   if p_art_custom is not null and p_art_custom ~ '^[0-9a-z.]{1,120}$' then
@@ -111,7 +111,7 @@ update public.badges set peer_target = 'goblin' where slug = 'goblin-friend';
 update public.badges set peer_target = 'elf' where slug = 'elf-friend';
 update public.badges set peer_target = 'forsaken' where slug = 'forsaken-friend';
 update public.badges set peer_target = 'orc' where slug = 'orcish-philosophy';
-update public.badges set peer_target = 'dwarf' where slug = 'dwarven-hospitality';
+delete from public.badges where slug = 'dwarven-hospitality';
 update public.badges set peer_target = 'troll' where slug = 'troll-tales';
 update public.badges set peer_target = 'gnome' where slug = 'gnome-workshop';
 update public.badges set peer_target = 'tauren' where slug = 'tauren-walk';
@@ -121,4 +121,15 @@ insert into public.badges (slug, title, how, blurb, art, sort, active, witch_app
   ('orc-friend', 'Orc Friend', 'Make friends with an orc.', 'Made friends with an orc.', 'set/424.png', 509, true, false, true, 'orc'),
   ('shifter-friend', 'Shifter Friend', 'Make friends with a shifter.', 'Made friends with a shifter.', 'set/387.png', 510, true, false, true, 'shifter'),
   ('spellcaster-friend', 'Spellcaster Friend', 'Make friends with a spellcaster.', 'Made friends with a spellcaster.', 'set/162.png', 511, true, false, true, 'spellcaster')
+on conflict (slug) do nothing;
+insert into public.badges (slug, title, how, blurb, art, sort, active, witch_approved, peer_approved, peer_target) values
+  ('culture-goblin', 'Goblin Culture', 'Talk culture with a goblin.', 'Talked culture with a goblin.', 'set/171.png', 600, true, false, true, 'goblin'),
+  ('culture-elf', 'Elf Culture', 'Talk culture with an elf.', 'Talked culture with an elf.', 'set/338.png', 601, true, false, true, 'elf'),
+  ('culture-forsaken', 'Forsaken Culture', 'Talk culture with a Forsaken.', 'Talked culture with a Forsaken.', 'set/336.png', 602, true, false, true, 'forsaken'),
+  ('culture-shifter', 'Shifter Culture', 'Talk culture with a shifter.', 'Talked culture with a shifter.', 'set/209.png', 603, true, false, true, 'shifter'),
+  ('culture-human', 'Human Culture', 'Talk culture with a human.', 'Talked culture with a human.', 'set/212.png', 604, true, false, true, 'human'),
+  ('culture-orc', 'Orc Culture', 'Talk culture with an orc.', 'Talked culture with an orc.', 'set/266.png', 605, true, false, true, 'orc'),
+  ('culture-troll', 'Troll Culture', 'Talk culture with a troll.', 'Talked culture with a troll.', 'set/489.png', 606, true, false, true, 'troll'),
+  ('culture-gnome', 'Gnome Culture', 'Talk culture with a gnome.', 'Talked culture with a gnome.', 'set/500.png', 607, true, false, true, 'gnome'),
+  ('culture-tauren', 'Tauren Culture', 'Talk culture with a tauren.', 'Talked culture with a tauren.', 'set/462.png', 608, true, false, true, 'tauren')
 on conflict (slug) do nothing;
