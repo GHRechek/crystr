@@ -214,43 +214,25 @@ export default async function ProfilePage() {
           </div>
         ) : null}
 
-        <div className="tile" style={{ padding: 12, display: "flex", alignItems: "center", gap: 10 }}>
-          <div>
-            <div className="px" style={{ fontSize: 11, color: "var(--pur-pale)" }}>
-              MAX MANA · {cap}
-            </div>
-            <div style={{ fontSize: 12, lineHeight: 1.45, color: "var(--muted)", marginTop: 4 }}>
-              {BASE_CAP} to start, {fromBadges} from badges. An achievement is worth {BADGE_MANA.achievement}, a tradable badge{" "}
-              {BADGE_MANA.tradable}, a token {BADGE_MANA.token}.
-            </div>
-          </div>
-          <span className="spacer" />
-          <Link href="/me/trades" className="btn btn-sm" style={{ minHeight: 40, flex: "none" }}>
-            TRADES{waiting ? ` · ${waiting}` : ""}
-          </Link>
-        </div>
-
         {/* The badges you have, just the pictures, packed tight; tap one for its tooltip. */}
-        {badges.length ? (
-          <BadgeGrid title="BADGES" count={`${earnedCount} OF ${badges.length}`} items={achievementGrid(badges.filter((b) => b.earned_at))} />
+        {badges.length || tradable.length ? (
+          <BadgeGrid
+            title="BADGES"
+            count={`${earnedCount + tradable.length} OF ${badges.length + tradable.length}`}
+            aside={
+              <Link href="/me/trades" className="px" style={{ fontSize: 11, color: "var(--pur-pale)", whiteSpace: "nowrap" }}>
+                TRADES{waiting ? ` · ${waiting}` : ""} →
+              </Link>
+            }
+            items={[
+              ...achievementGrid(badges.filter((b) => b.earned_at)),
+              ...resolveShown(tradable.map((i) => `i:${i.id}`), badges, items, profile.handle, 10000),
+            ]}
+          />
         ) : null}
 
         {/* What you are going after, as a list, with a button to see every badge and choose. */}
         <WorkingOn editable items={resolveWorking(profile.working_on, badges)} all={achievementGrid(badges)} />
-
-        <div>
-          {tradable.length === 0 ? (
-            <>
-              {heading("TRADABLE BADGES", "var(--mag-soft)", <div className="px" style={{ fontSize: 11, color: "var(--muted)" }}>0 · +{BADGE_MANA.tradable} EACH</div>)}
-              <div className="notice">
-                None yet. Help someone from the City with a problem and have them say yes, {HELPS_PER_BADGE} times, and
-                one is drawn for you. They can be traded from anybody&apos;s page, badge for badge or badge for nothing.
-              </div>
-            </>
-          ) : (
-            <BadgeGrid title="TRADABLE BADGES" count={`${tradable.length} · +${BADGE_MANA.tradable} EACH`} items={resolveShown(tradable.map((i) => `i:${i.id}`), badges, items, profile.handle, 10000)} />
-          )}
-        </div>
 
         {tokens.length ? (
           <div>
