@@ -28,6 +28,8 @@ export type Profile = {
   birthday?: string | null;
   /** The last year a birthday badge was given, or null. */
   birthday_badge_year?: number | null;
+  /** Up to five badges they show on their profile: "a:<slug>" or "i:<item id>". */
+  shown_badges?: string[] | null;
   banner_pattern: string | null;
   banner_a: string | null;
   banner_b: string | null;

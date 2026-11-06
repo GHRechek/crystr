@@ -13,10 +13,11 @@ import {
   countOpenBugs,
   getOverride,
 } from "@/lib/data";
-import { ROMAN, tokenReadyAt } from "@/lib/badges";
+import { ROMAN, tokenReadyAt, resolveShown } from "@/lib/badges";
 import { Avatar } from "@/components/bits";
 import { BadgeArt, ItemTile, TokenImage } from "@/components/badges";
 import { TilePager } from "@/components/pager";
+import { ShownBadges } from "@/components/shown-badges";
 import { ProfileHead } from "./face-menu";
 import { bannerOf, bannerStyle } from "@/lib/banner";
 import { portraitFromId, normalizePortrait, packPortrait } from "@/lib/portrait/core";
@@ -96,6 +97,19 @@ export default async function ProfilePage() {
           gap: 12,
         }}
       >
+        {/* The badges you choose to show, on the page's own background. */}
+        <ShownBadges
+          editable
+          shown={resolveShown(profile.shown_badges, badges, items, profile.handle)}
+          options={resolveShown(
+            [...badges.filter((b) => b.earned_at).map((b) => `a:${b.slug}`), ...items.filter((i) => i.kind === "tradable").map((i) => `i:${i.id}`)],
+            badges,
+            items,
+            profile.handle,
+            100,
+          )}
+        />
+
         <div className="tile" style={{ padding: 12 }}>
           <div
             className="px"
@@ -239,8 +253,7 @@ export default async function ProfilePage() {
                   return (
                     <div
                       key={b.slug}
-                      className="tile"
-                      style={{ padding: 10, display: "flex", gap: 9, alignItems: "flex-start", opacity: got ? 1 : 0.5 }}
+                      style={{ padding: 4, display: "flex", gap: 9, alignItems: "flex-start", opacity: got ? 1 : 0.5 }}
                     >
                       <BadgeArt b={b} got={got} tier={b.tier} progress={b.slug === "a-helping-hand" ? helps % HELPS_PER_BADGE : undefined} />
                       <div style={{ minWidth: 0 }}>
@@ -277,7 +290,7 @@ export default async function ProfilePage() {
               one is drawn for you. They can be traded from anybody&apos;s page, badge for badge or badge for nothing.
             </div>
           ) : (
-            <TilePager label="Tradable badges" tiles={tradable.map((it) => <ItemTile key={it.id} item={it} />)} />
+            <TilePager label="Tradable badges" tiles={tradable.map((it) => <ItemTile key={it.id} item={it} plain />)} />
           )}
         </div>
 
