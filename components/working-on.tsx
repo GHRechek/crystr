@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { BadgeFace } from "@/components/badge-chooser";
 import { ArrowIcon } from "@/components/icons";
-import { setWorkingOn } from "@/lib/actions";
+import { setWorkingOn, vouchFromProfile } from "@/lib/actions";
 import { WORKING_MAX, type ShownBadge } from "@/lib/badges";
 
 const PER_PAGE = 20; // rows to a page, scrolling
@@ -11,7 +11,8 @@ const PER_PAGE = 20; // rows to a page, scrolling
 /** "Working on": the badges a person is going after, as a plain list, one to a row, each with
  *  what it takes. On your own profile a button opens every badge there is, to pick up to five
  *  (tap to pick, tap again to put back; the order you pick them is the order they are listed in). */
-export function WorkingOn({ items, all, editable }: { items: ShownBadge[]; all?: ShownBadge[]; editable?: boolean }) {
+export function WorkingOn({ items, all, editable, person }: { items: ShownBadge[]; all?: ShownBadge[]; editable?: boolean; person?: { id: string; handle: string } }) {
+  const [say, setSay] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
   const [pick, setPick] = useState<string[]>(items.map((b) => b.key));
   const [page, setPage] = useState(0);
@@ -33,19 +34,63 @@ export function WorkingOn({ items, all, editable }: { items: ShownBadge[]; all?:
 
       {items.length ? (
         <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: 6 }}>
-          {items.map((b) => (
-            <li key={b.key} style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <span style={{ flex: "none", opacity: b.locked ? 0.7 : 1, lineHeight: 0 }}>
-                <BadgeFace b={b} size={42} />
-              </span>
-              <span style={{ minWidth: 0 }}>
-                <span className="px" style={{ display: "block", fontSize: 11, color: "var(--text)", lineHeight: 1.5 }}>
-                  {b.title}
+          {items.map((b) => {
+            const row = (
+              <>
+                <span style={{ flex: "none", opacity: b.locked ? 0.7 : 1, lineHeight: 0 }}>
+                  <BadgeFace b={b} size={42} />
                 </span>
-                <span style={{ display: "block", fontSize: 12, lineHeight: 1.4, color: "var(--muted)" }}>{b.line}</span>
-              </span>
-            </li>
-          ))}
+                <span style={{ minWidth: 0, textAlign: "left" }}>
+                  <span className="px" style={{ display: "block", fontSize: 11, color: "var(--text)", lineHeight: 1.5 }}>
+                    {b.title}
+                  </span>
+                  <span style={{ display: "block", fontSize: 12, lineHeight: 1.4, color: "var(--muted)" }}>{b.line}</span>
+                </span>
+              </>
+            );
+            // On someone else's page a badge they are working on can be tapped to say
+            // "they helped me" or "we met up".
+            if (!person || !b.key.startsWith("a:")) {
+              return (
+                <li key={b.key} style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  {row}
+                </li>
+              );
+            }
+            const open = say === b.key;
+            return (
+              <li key={b.key} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                <button
+                  type="button"
+                  aria-expanded={open}
+                  onClick={() => setSay(open ? null : b.key)}
+                  style={{ display: "flex", alignItems: "center", gap: 10, padding: 0, background: "none", border: 0, cursor: "pointer", color: "inherit", font: "inherit" }}
+                >
+                  {row}
+                </button>
+                {open ? (
+                  <div style={{ display: "flex", gap: 8, paddingLeft: 52 }}>
+                    {(
+                      [
+                        ["helped", "THEY HELPED ME"],
+                        ["meetup", "WE MET UP"],
+                      ] as const
+                    ).map(([kind, label]) => (
+                      <form key={kind} action={vouchFromProfile} style={{ flex: 1, minWidth: 0 }}>
+                        <input type="hidden" name="kind" value={kind} />
+                        <input type="hidden" name="person_id" value={person.id} />
+                        <input type="hidden" name="handle" value={person.handle} />
+                        <input type="hidden" name="badge" value={b.key.slice(2)} />
+                        <button type="submit" className="btn btn-sm btn-block" style={{ minHeight: 40 }}>
+                          {label}
+                        </button>
+                      </form>
+                    ))}
+                  </div>
+                ) : null}
+              </li>
+            );
+          })}
         </ul>
       ) : (
         <div style={{ fontSize: 12, lineHeight: 1.5, color: "var(--muted)" }}>Nothing picked yet. See all the badges and choose up to five to go after.</div>

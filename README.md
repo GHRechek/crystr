@@ -152,6 +152,7 @@ them. They are `profiles.working_on` (`a:<slug>`, any active badge, no need to h
 saved by `cr_set_working_on` and cleaned by `profiles_working_on_guard`; migration
 `20261106030000_working_on.sql`.
 Other people's tokens can be listed too (`t:<user id>`, "Be given it by …"), from `20261106040000_working_on_tokens.sql`.
+On someone else's page, tapping a badge in their Working On list offers THEY HELPED ME (counts at once, since the helped person is saying it) and WE MET UP (waits for their yes), with no whisper needed: `cr_vouch_from_profile`, `vouches.badge_slug`, `20261107000000_vouch_from_profile.sql`.
 
 ## Max mana and badges
 

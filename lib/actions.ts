@@ -1058,3 +1058,20 @@ export async function cancelTrade(fd: FormData) {
   await setFlash(r.ok ? "TAKEN BACK" : "ALREADY SETTLED", r.ok ? "The offer is withdrawn." : "That offer was already answered.", EDGE.purple);
   revalidatePath("/", "layout");
 }
+
+/** From someone's profile, on a badge they are working on: "they helped me" or "we met up". */
+export async function vouchFromProfile(fd: FormData) {
+  const kind = str(fd, "kind");
+  const handle = str(fd, "handle");
+  const r = await call("cr_vouch_from_profile", { p_kind: kind, p_person: str(fd, "person_id"), p_badge: str(fd, "badge") || null });
+  if (!r.ok) {
+    if (r.code === "already") await setFlash("ALREADY SAID", "That one is already counted, or already waiting.", EDGE.purple);
+    else await wentWrong();
+  } else if (kind === "helped") {
+    await setFlash("THANK YOU", `Counted. Every five helps earn them a tradable badge.${await newBadges()}`, EDGE.blue);
+  } else {
+    await setFlash("ASKED", "They will see a note asking whether you met up. If they say yes, you both earn a badge.", EDGE.blue);
+  }
+  revalidatePath(`/u/${handle}`);
+  revalidatePath("/", "layout");
+}
