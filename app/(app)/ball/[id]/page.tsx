@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { requireMe, getArticle } from "@/lib/data";
 import { setArticleStatus } from "@/lib/actions";
 import { byline, corrupt, decayLevel, paragraphs, readTime } from "@/lib/crystr";
+import { ArticleBody } from "@/components/article-body";
 
 export default async function ArticlePage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
@@ -28,12 +29,6 @@ export default async function ArticlePage(props: { params: Promise<{ id: string 
 
   return (
     <div style={{ paddingBottom: 24 }}>
-      {article.banner ? (
-        <div className="placeholder" style={{ height: 150, borderRadius: 0, boxShadow: "none" }}>
-          <span>{article.banner_label || "IMAGE — PENDING TILE"}</span>
-        </div>
-      ) : null}
-
       <div style={{ padding: "14px 16px", display: "flex", flexDirection: "column", gap: 12 }}>
         <Link href="/ball" className="btn btn-sm" style={{ alignSelf: "flex-start" }}>
           ← CRYSTR BALL
@@ -79,11 +74,7 @@ export default async function ArticlePage(props: { params: Promise<{ id: string 
           <span>{readTime(article.body)}</span>
         </div>
 
-        {paragraphs(article.body).map((p, i) => (
-          <div key={i} style={{ fontSize: 14, lineHeight: 1.65, color: "var(--text-2)", textWrap: "pretty" }}>
-            {corrupt(p, decay)}
-          </div>
-        ))}
+        <ArticleBody icon={article.banner_icon} paras={paragraphs(article.body)} decay={decay} />
 
         {isWitch ? (
           <div style={{ display: "flex", gap: 8, marginTop: 4 }}>

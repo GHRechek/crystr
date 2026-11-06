@@ -70,12 +70,6 @@ export function corrupt(text: string, level: number): string {
   return out;
 }
 
-export function wellLine(mana: number): string {
-  if (mana === 0) return "You are running on empty. Head to the Well and recover.";
-  if (mana < 11) return "Getting low. A little time at the Well will help.";
-  return "Feeling strong. Plenty for a few sincere thoughts.";
-}
-
 export function manaColor(mana: number): string {
   if (mana === 0) return "var(--mag)";
   if (mana < 11) return "var(--mag-soft)";

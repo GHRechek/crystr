@@ -10,7 +10,7 @@ import { INVISIBLE } from "@/lib/wiki-fact";
 import { isPattern, isSwatch } from "@/lib/banner";
 import { COSTS, hasStarterHandle, untilReady } from "@/lib/crystr";
 import { normalizePortrait } from "@/lib/portrait/core";
-import { normalizeToken } from "@/lib/token";
+import { ITEMS, normalizeToken } from "@/lib/token";
 import { composeBirthday } from "@/lib/birthday";
 import { listBadges, ROMAN } from "@/lib/badges";
 import { PLAINTIFF_ERRORS, type PlaintiffError } from "@/lib/plaintiff";
@@ -595,7 +595,7 @@ export async function createMotion(fd: FormData) {
     b_headline: str(fd, "b_headline"),
     b_standfirst: str(fd, "b_standfirst"),
     b_body: str(fd, "b_body"),
-    b_banner: fd.get("b_banner") === "on" || fd.get("b_banner") === "true",
+    b_banner: chosenIcon(fd, "b_banner_icon") !== null,
   });
 
   if (!r.ok) {
@@ -620,6 +620,7 @@ export async function createMotion(fd: FormData) {
     return;
   }
 
+  await attachIcon(r.briefing_id, chosenIcon(fd, "b_banner_icon"));
   await setFlash(
     "CREATED",
     "Your motion is on the board with its briefing attached.",
@@ -633,13 +634,26 @@ export async function createMotion(fd: FormData) {
 
 // ------------------------------------------------------------------- ball
 
+/** The icon chosen as an article's picture, if it is one of the icons we have. */
+function chosenIcon(fd: FormData, key: string): string | null {
+  const slug = str(fd, key);
+  return ITEMS.some((i) => i.slug === slug) ? slug : null;
+}
+
+/** Attach (or clear) the picture on an article just saved. Failure is not fatal: the
+ *  article is saved either way. */
+async function attachIcon(id: number | undefined, icon: string | null) {
+  if (!id) return;
+  await call("cr_set_article_icon", { p_id: id, p_icon: icon });
+}
+
 export async function submitOpEd(fd: FormData) {
   const r = await call("cr_submit_oped", {
     p_kicker: str(fd, "kicker") || "OP-ED",
     p_headline: str(fd, "headline"),
     p_standfirst: str(fd, "standfirst"),
     p_body: str(fd, "body"),
-    p_banner: fd.get("banner") === "on" || fd.get("banner") === "true",
+    p_banner: chosenIcon(fd, "banner_icon") !== null,
   });
 
   if (!r.ok) {
@@ -653,6 +667,7 @@ export async function submitOpEd(fd: FormData) {
     return;
   }
 
+  await attachIcon(r.id, chosenIcon(fd, "banner_icon"));
   await setFlash(
     "FILED",
     "Filed. It took six out of you. A witch will read it when they can, so no rush.",
@@ -672,7 +687,7 @@ export async function saveDispatch(fd: FormData) {
     p_headline: str(fd, "headline"),
     p_standfirst: str(fd, "standfirst"),
     p_body: str(fd, "body"),
-    p_banner: fd.get("banner") === "on" || fd.get("banner") === "true",
+    p_banner: chosenIcon(fd, "banner_icon") !== null,
     p_status: status,
     p_byline: str(fd, "byline") || null,
   });
@@ -688,6 +703,7 @@ export async function saveDispatch(fd: FormData) {
     return;
   }
 
+  await attachIcon(r.id, chosenIcon(fd, "banner_icon"));
   if (status === "published") {
     await setFlash(
       "PUBLISHED",

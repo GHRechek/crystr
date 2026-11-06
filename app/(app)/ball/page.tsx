@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Cost } from "@/components/mana";
+import { ArticleIcon } from "@/components/article-icon";
 import { requireMe, getArticles, type Article } from "@/lib/data";
 import { setArticleStatus } from "@/lib/actions";
 import { byline, corrupt, COSTS, decayLevel } from "@/lib/crystr";
@@ -182,12 +183,9 @@ export default async function BallPage(
 
       {visible.map((a) => (
         <Link key={a.id} href={`/ball/${a.id}`} className="card" style={{ padding: 0, gap: 0, overflow: "hidden", color: "var(--text)" }}>
-          {a.banner ? (
-            <div
-              className="placeholder"
-              style={{ height: 96, borderRadius: 0, boxShadow: "none" }}
-            >
-              <span>{a.banner_label || "IMAGE — PENDING TILE"}</span>
+          {a.banner_icon ? (
+            <div style={{ height: 96, display: "grid", placeItems: "center", background: "var(--inset)", boxShadow: "inset 0 -1px 0 var(--edge)" }}>
+              <ArticleIcon slug={a.banner_icon} box={80} />
             </div>
           ) : null}
           <div style={{ padding: 12, display: "flex", flexDirection: "column", gap: 6 }}>
