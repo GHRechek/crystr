@@ -92,7 +92,7 @@ function Card({ item, decay, me }: { item: FeedItem; decay: number; me: string }
         ) : null}
 
         {item.banner_icon ? (
-          <div style={{ height: 112, display: "grid", placeItems: "center", background: "var(--inset)", boxShadow: "inset 0 0 0 1px var(--edge)" }}>
+          <div style={{ height: 112, display: "flex", alignItems: "center", justifyContent: "flex-start", padding: "0 12px", background: "var(--inset)", boxShadow: "inset 0 0 0 1px var(--edge)" }}>
             <ArticleIcon slug={item.banner_icon} box={96} />
           </div>
         ) : null}
