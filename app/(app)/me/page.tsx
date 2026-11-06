@@ -96,7 +96,7 @@ export default async function ProfilePage() {
           gap: 12,
         }}
       >
-        <div style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
+        <div className="tile" style={{ padding: 12, display: "flex", gap: 12, alignItems: "flex-start" }}>
         {/* Your own token: a blank with a ? until you tap it, which opens it. */}
         <Link
           href="/me/token"
@@ -105,7 +105,7 @@ export default async function ProfilePage() {
         >
           <span className="px" style={{ fontSize: 16 }}>?</span>
         </Link>
-        <div className="tile" style={{ padding: 12, flex: 1, minWidth: 0 }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
           <div
             className="px"
             style={{ fontSize: 11, color: "var(--mag)", letterSpacing: ".07em", marginBottom: 7 }}

@@ -51,7 +51,7 @@ export function ProfileHead({
       <div
         style={{
           padding: "0 16px",
-          marginTop: -FACE * 0.42,
+          marginTop: -FACE * 0.5,
           display: "flex",
           flexDirection: "column",
           gap: 12,
@@ -90,7 +90,7 @@ export function ProfileHead({
             <img src={src} alt="" width={FACE} height={FACE} style={{ imageRendering: "pixelated" }} />
           </button>
 
-          <div style={{ paddingBottom: 4, minWidth: 0, flex: 1 }}>
+          <div style={{ paddingBottom: 28, minWidth: 0, flex: 1 }}>
             <h1 className="px" style={{ fontSize: 16, fontWeight: 400, lineHeight: 1.5, overflowWrap: "anywhere" }}>{handle}</h1>
           </div>
 
