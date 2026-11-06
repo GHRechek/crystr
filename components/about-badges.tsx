@@ -57,7 +57,7 @@ export function AboutBadges({
   const tipBadge = tip ? shown.find((b) => b.key === tip.key) : undefined;
 
   return (
-    <div ref={box} style={{ position: "relative", display: "flex", flexWrap: "wrap", alignItems: "center", gap: 8 }}>
+    <div ref={box} style={{ position: "relative", display: "flex", flexWrap: "wrap", alignItems: "center", gap: 6 }}>
       {children}
       {shown.slice(0, SHOW_MAX).map((b) => (
         <button
