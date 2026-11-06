@@ -481,7 +481,7 @@ Tapping the token in the header row says whose it is and how to earn it (and, on
 Epic quests can be peer-confirmed: `make-friends`, `culture-five`, `cast-five-spells`, `brew-five-potions`, `workshops-five`, `support-groups-five` (`kind='goal'`, `peer_approved`, threshold 5). Pick one, tap its row, choose someone, and they get a whisper with YES/NO. Each different person who says yes (after you picked it) counts once; five finish it and bring a tradable badge. First Words and Show and Tell are plain quests now.
 
 ### The Well and sunrise
-Finishing a Well quest, or earning any badge (a quest or an epic quest), fills your mana to your ceiling. Sunrise gives every registered person +10 mana (up to the ceiling).
+Earning any badge (a quest or an epic quest from the Quests page) fills your mana to your ceiling. Well quests pay fixed amounts: poem +5, hand-draw +10, "Don't touch your phone for 15 minutes" +3 (a server-side timer that keeps counting with the screen off). Sunrise gives every registered person +10 mana (up to the ceiling).
 
 ### Your code
 Everyone has a QR code at the bottom of the profile-picture menu (it points at `/u/<handle>`). The exchange icon on your own profile opens the camera (`components/qr-scanner.tsx`, jsQR); scanning someone's code opens a trade with them. "MY TRADES" is in the scanner's top bar. The menu is three quarters of the row wide.

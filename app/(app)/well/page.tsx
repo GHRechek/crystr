@@ -43,7 +43,7 @@ export default async function WellPage() {
                 lineHeight: 1.5,
               }}
             >
-              {waiting ? `IN ${untilReady(q.ready_at!)}` : "FULL"}
+              {waiting ? `IN ${untilReady(q.ready_at!)}` : `+${q.reward}`}
             </div>
           </Link>
         );

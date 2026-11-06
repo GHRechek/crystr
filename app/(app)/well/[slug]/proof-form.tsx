@@ -119,7 +119,7 @@ export function ProofForm({ quest, userId }: { quest: Quest; userId: string }) {
             RESTORES
           </div>
           <div className="px" style={{ fontSize: 16, color: "var(--blu-soft)" }}>
-            FULL
+            <Gain n={quest.reward} />
           </div>
         </div>
         <div className="tile" style={{ flex: 1 }}>
@@ -338,8 +338,8 @@ export function ProofForm({ quest, userId }: { quest: Quest; userId: string }) {
           ? `AVAILABLE IN ${untilReady(quest.ready_at!)}`
           : hasProof
             ? timed
-              ? `TAKE IT · FULL MANA`
-              : `SUBMIT PROOF · FULL MANA`
+              ? `TAKE IT · +${quest.reward}`
+              : `SUBMIT PROOF · +${quest.reward}`
             : timed
               ? "FINISH THE TIMER FIRST"
               : drawing

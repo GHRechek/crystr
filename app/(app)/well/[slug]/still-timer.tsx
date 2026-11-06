@@ -23,6 +23,10 @@ export function StillTimer({
   const [phase, setPhase] = useState<Phase>("idle");
   const [left, setLeft] = useState(seconds);
   const [message, setMessage] = useState("");
+  // A long one (ten minutes or more) is "leave it alone": the server keeps the time, so the screen
+  // can go dark and nothing here stops it. The end is kept on this device in case the page reloads.
+  const passive = seconds >= 600;
+  const key = `crystr.timer.${slug}`;
   const endAt = useRef(0);
   const lock = useRef<{ release: () => Promise<void> } | null>(null);
 
@@ -47,9 +51,25 @@ export function StillTimer({
       return;
     }
     endAt.current = Date.now() + seconds * 1000;
+    if (passive) {
+      try { localStorage.setItem(key, String(endAt.current)); } catch {}
+    }
     setLeft(seconds);
     setPhase("running");
   }
+
+  useEffect(() => {
+    if (!passive) return;
+    try {
+      const at = Number(localStorage.getItem(key) || 0);
+      if (at && at > Date.now() - 3 * 3600_000) {
+        endAt.current = at;
+        setPhase(at > Date.now() ? "running" : "done");
+        if (at <= Date.now()) onDone(true);
+      }
+    } catch {}
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // The countdown runs off the clock, not a tick count, so a slow or throttled
   // timer cannot drift it.
@@ -73,7 +93,7 @@ export function StillTimer({
 
   // While it runs: the page cannot scroll, the screen stays awake, and looking away ends it.
   useEffect(() => {
-    if (phase !== "running") return;
+    if (phase !== "running" || passive) return;
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
@@ -104,7 +124,7 @@ export function StillTimer({
 
   return (
     <>
-      {phase === "running" ? (
+      {phase === "running" && !passive ? (
         <div
           role="dialog"
           aria-label="Sitting still"
@@ -158,11 +178,15 @@ export function StillTimer({
         </div>
         <div style={{ fontSize: 12, color: "var(--muted)", textAlign: "center", lineHeight: 1.5, maxWidth: 250 }}>
           {phase === "done"
-            ? "Two minutes. Well done. Take what it gave you."
-            : message ||
-              "Press begin and the screen will keep time for you. Looking away stops it, and you can start again."}
+            ? `${Math.round(seconds / 60)} minutes. Well done. Take what it gave you.`
+            : phase === "running" && passive
+              ? `Put your phone away. It keeps counting with the screen off. Come back at ${new Date(endAt.current).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}. ${mm}:${ss} left.`
+              : message ||
+                (passive
+                  ? "Press begin, then put your phone away. The time is kept for you, even with the screen off."
+                  : "Press begin and the screen will keep time for you. Looking away stops it, and you can start again.")}
         </div>
-        {phase !== "done" ? (
+        {phase !== "done" && !(phase === "running" && passive) ? (
           <button
             type="button"
             className="btn btn-sm btn-purple"
