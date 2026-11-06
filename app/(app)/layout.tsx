@@ -72,15 +72,22 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         <header className="head">
           <div className="head-row">
             <div className="wordmark">CRYSTR</div>
-            <div className="spacer" />
+            {/* The meter fills the space between the name and the potion. */}
+            <div
+              className="gauge gauge-inline"
+              role="meter"
+              aria-label="Mana"
+              aria-valuemin={0}
+              aria-valuemax={cap}
+              aria-valuenow={mana}
+            >
+              <i style={{ width: `${Math.max(2, (mana / cap) * 100)}%` }} />
+            </div>
             <ManaButton mana={mana} cap={cap} closed={welcoming} />
             <div className="mana-count" style={{ color: manaColor(mana) }}>
               {String(mana).padStart(2, "0")}/{cap}
             </div>
             {welcoming ? null : <InfoMenu />}
-          </div>
-          <div className="gauge">
-            <i style={{ width: `${Math.max(2, (mana / cap) * 100)}%` }} />
           </div>
           {welcoming ? (
             <div className="head-foot">
