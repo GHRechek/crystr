@@ -124,7 +124,7 @@ export function ProfileHead({
               aria-label="What you need help with"
               className="textarea"
               defaultValue={mood ?? ""}
-              maxLength={160}
+              maxLength={120}
               rows={3}
               autoFocus
               placeholder="What do you need help with? Someone to water the plants, a second opinion, a ride to the airport."

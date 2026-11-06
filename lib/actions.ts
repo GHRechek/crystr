@@ -892,7 +892,7 @@ export async function setMood(fd: FormData) {
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const mood = str(fd, "mood").slice(0, 160);
+  const mood = str(fd, "mood").slice(0, 120);
 
   const { error } = await supabase
     .from("profiles")
