@@ -145,19 +145,8 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
             ) : null}
           </div>
         </div>
-
-        <div className="tile" style={{ padding: 12 }}>
-          <div
-            className="px"
-            style={{ fontSize: 11, color: "var(--mag)", letterSpacing: ".07em", marginBottom: 7 }}
-          >
-            ABOUT ME
-          </div>
-          <div
-            style={{ fontSize: 12.5, lineHeight: 1.6, color: "var(--text-3)", textWrap: "pretty" }}
-          >
-            {corrupt(profile.bio || "Nothing written here yet. The City will assume the worst.", decay)}
-          </div>
+        <div style={{ fontSize: 12.5, lineHeight: 1.6, color: "var(--text-3)", textWrap: "pretty", marginTop: -4 }}>
+          {corrupt(profile.bio || "Nothing written here yet. The City will assume the worst.", decay)}
         </div>
 
         {details.length ? (

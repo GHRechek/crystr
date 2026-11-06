@@ -113,14 +113,8 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
             ) : null}
           </div>
         </div>
-
-        <div className="tile" style={{ padding: 12 }}>
-          <div className="px" style={{ fontSize: 11, color: "var(--mag)", letterSpacing: ".07em", marginBottom: 7 }}>
-            ABOUT
-          </div>
-          <div style={{ fontSize: 12.5, lineHeight: 1.6, color: "var(--text-3)", textWrap: "pretty" }}>
-            {corrupt(person.bio || "Nothing written here yet.", decay)}
-          </div>
+        <div style={{ fontSize: 12.5, lineHeight: 1.6, color: "var(--text-3)", textWrap: "pretty", marginTop: -4 }}>
+          {corrupt(person.bio || "Nothing written here yet.", decay)}
         </div>
 
         {details.length ? (
