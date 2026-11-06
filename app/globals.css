@@ -1451,55 +1451,44 @@ select {
   transform: rotate(90deg);
 }
 
-/* The token designer's one row of tools: shape, its two colours, add an icon,
-   turn over flip, bigger over smaller, up over down. Small cells are square at a seventh of the
-   row or so; the big ones are two of them across and two down. */
-.tk-bar {
-  display: grid;
-  grid-template-columns: 2fr 1fr 2fr 1fr 1fr 1fr;
+/* The token designer: a column of buttons on each side of the stage. The left one holds +,
+   which opens a small menu; the right one holds the picked icon's tools, no words on them. */
+.tk-side {
+  flex: none;
+  display: flex;
+  flex-direction: column;
   gap: 4px;
-  align-items: start;
 }
-.tk-bar .tk-sm {
+.tk-tool {
   width: 100%;
   aspect-ratio: 1;
   min-height: 0;
   padding: 0;
-  align-self: start;
   display: grid;
   place-items: center;
-  font-size: 15px;
+  font-size: 16px;
   line-height: 1;
 }
-.tk-bar .tk-big {
-  width: 100%;
-  height: 100%;
-  min-height: 0;
-  padding: 2px;
-  font-size: 10px;
-  line-height: 1.3;
-  align-self: stretch;
-  display: grid;
-  place-items: center;
-  text-align: center;
+.tk-danger {
+  color: var(--mag-pale);
+  border-color: var(--mag-edge);
+  background: rgba(224, 57, 138, 0.18);
 }
-.tk-bar .tk-swatch:disabled {
-  opacity: 0.35;
-  background-image: repeating-linear-gradient(45deg, transparent 0 4px, var(--edge) 4px 5px);
-}
-.tk-x {
+.tk-menu {
   position: absolute;
-  z-index: 40;
-  width: 24px;
-  height: 24px;
-  padding: 0;
-  display: grid;
-  place-items: center;
-  font-size: 11px;
-  line-height: 1;
-  color: #fff;
-  background: var(--mag);
-  border: 2px solid var(--device);
-  border-radius: 50%;
-  cursor: pointer;
+  top: 0;
+  left: calc(100% + 6px);
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px;
+  min-width: 132px;
+  background: var(--device);
+  box-shadow: 0 0 0 1px var(--edge), 0 8px 24px rgba(0, 0, 0, 0.45);
+}
+.tk-menu .btn {
+  min-height: 40px;
+  justify-content: flex-start;
+  white-space: nowrap;
 }

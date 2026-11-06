@@ -23,10 +23,6 @@ export async function MotionBoard({
 
   return (
     <>
-      <div className="screen-intro">
-        Opinions people pay for are held slightly better than opinions they don&apos;t.
-      </div>
-
       {isWitch ? (
         <div className="witchbar">
           <span className="px" style={{ fontSize: 11, color: "var(--pur-pale)" }}>
