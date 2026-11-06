@@ -41,6 +41,8 @@ const pixelBody = localFont({
   display: "swap",
 });
 
+import { ZoomLock } from "@/components/zoom-lock";
+
 export const metadata: Metadata = {
   title: "CRYSTR",
   description:
@@ -51,13 +53,20 @@ export const viewport: Viewport = {
   themeColor: "#161826",
   width: "device-width",
   initialScale: 1,
+  // No pinch or double-tap zoom: the app stays the size it is.
+  minimumScale: 1,
+  maximumScale: 1,
+  userScalable: false,
   viewportFit: "cover",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${inter.variable} ${label.variable} ${pixelBody.variable}`}>
-      <body>{children}</body>
+      <body>
+        <ZoomLock />
+        {children}
+      </body>
     </html>
   );
 }

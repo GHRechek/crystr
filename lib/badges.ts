@@ -338,3 +338,18 @@ export function helpingRow(badges: BadgeRow[], helps: number): ShownBadge | null
     progress: { n: helps % 10, of: 10 },
   };
 }
+
+/** The picture picker's five groups. The set came in families that look alike, so these follow them:
+ *  blue sci-fi rounds, the gold-framed everyday icons, round medallions, plain loot, and everything
+ *  fantasy that is left (creatures, armour, crests). */
+export const PICTURE_CATEGORIES: { label: string; ranges: [number, number][] }[] = [
+  { label: "SPACE", ranges: [[1, 77], [393, 396], [742, 773]] },
+  { label: "ICONS", ranges: [[78, 140], [493, 494], [500, 509]] },
+  { label: "MEDALS", ranges: [[141, 177], [281, 308], [382, 392], [444, 451], [637, 672], [707, 741], [849, 892]] },
+  { label: "LOOT", ranges: [[178, 280], [309, 381], [397, 412], [774, 816], [893, 899]] },
+  { label: "FANTASY", ranges: [] },
+];
+export const pictureCategory = (n: number): number => {
+  const hit = PICTURE_CATEGORIES.findIndex((c) => c.ranges.some(([a, b]) => n >= a && n <= b));
+  return hit >= 0 ? hit : PICTURE_CATEGORIES.length - 1;
+};

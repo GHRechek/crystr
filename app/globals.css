@@ -58,6 +58,8 @@
 
 html,
 body {
+  touch-action: manipulation;
+  -webkit-text-size-adjust: 100%;
   margin: 0;
   padding: 0;
   height: 100%;

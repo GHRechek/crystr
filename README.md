@@ -504,3 +504,6 @@ Support Group (`badges.scan_instant`) completes the moment you scan a witch's co
 
 ### Bottom bar
 Icons only (no words), from `public/tabs/*.png` used as CSS masks so they take the tab colour: scroll and quill (Feed), crystal ball (Ball), book with a question mark (Wiki), conversation with an eye (Whisper), galaxy (Me). The Whisper icon turns CRYSTR-gradient with the unread count when whispers are waiting.
+
+### Zoom lock and picture groups
+Pinch and double-tap zoom are off (viewport `maximumScale=1`, `userScalable=false`, plus `components/zoom-lock.tsx` for iOS, which ignores the viewport setting). The badge picture picker has five tabs (SPACE, ICONS, MEDALS, LOOT, FANTASY), defined by number ranges in `PICTURE_CATEGORIES` (`lib/badges.ts`); it opens on the group of the badge's current picture.

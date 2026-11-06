@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import { TokenDesigner } from "@/app/(app)/me/token/designer";
 import { defaultToken } from "@/lib/token";
 import { TARGETS } from "@/lib/species";
-import { SET_COUNT, SET_NUMBERS } from "@/lib/badges";
+import { PICTURE_CATEGORIES, pictureCategory, SET_COUNT, SET_NUMBERS } from "@/lib/badges";
 import { deleteBadge, saveBadge } from "@/lib/actions";
 
 export type BadgeDraft = { slug?: string; title: string; how: string; blurb: string; art: number; /** A picture made in the token maker, as its packed design. */ custom?: string; /** A long-term goal: only its name and picture may change. */ fixed?: boolean; /** How a badge a witch makes is approved: true when someone you ask says yes, false when a witch likes a post. Undefined for the system's own. */ peer?: boolean; /** For a quest someone confirms: who it has to be. */ target?: string };
@@ -14,6 +14,7 @@ export type BadgeDraft = { slug?: string; title: string; how: string; blurb: str
 export function BadgeEditor({ draft, setDraft, used = [] }: { draft: BadgeDraft; setDraft: (d: BadgeDraft | null) => void; /** Picture numbers other badges already wear. */ used?: number[] }) {
   const [picking, setPicking] = useState(false);
   const [making, setMaking] = useState(false);
+  const [cat, setCat] = useState(() => (draft.custom ? 0 : pictureCategory(draft.art)));
   const own = useRef(draft.custom ? 0 : draft.art).current;
   const taken = new Set(used);
   return (
@@ -100,8 +101,15 @@ export function BadgeEditor({ draft, setDraft, used = [] }: { draft: BadgeDraft;
             <button type="button" className="btn btn-sm btn-purple" onClick={() => setMaking(true)} style={{ minHeight: 40 }}>+ MAKE A NEW ONE</button>
             <button type="button" className="btn btn-sm" onClick={() => setPicking(false)} aria-label="Close" style={{ minHeight: 40, padding: "0 9px", marginLeft: 6 }}>✕</button>
           </div>
+          <div style={{ display: "flex", gap: 6, padding: "0 16px 8px", overflowX: "auto" }}>
+            {PICTURE_CATEGORIES.map((c, i) => (
+              <button key={c.label} type="button" aria-pressed={cat === i} onClick={() => setCat(i)} className={`btn btn-sm${cat === i ? " btn-purple" : ""}`} style={{ flex: "none", minHeight: 36, fontSize: 10 }}>
+                {c.label}
+              </button>
+            ))}
+          </div>
           <div style={{ flex: 1, minHeight: 0, overflowY: "auto", padding: "4px 16px 20px", display: "flex", flexWrap: "wrap", gap: 8, alignContent: "flex-start" }}>
-            {SET_NUMBERS.map((n) => (
+            {SET_NUMBERS.filter((n) => pictureCategory(n) === cat).map((n) => (
               <button
                 key={n}
                 type="button"
