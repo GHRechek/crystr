@@ -481,4 +481,4 @@ Tapping the token in the header row says whose it is and how to earn it (and, on
 Epic quests can be peer-confirmed: `make-friends`, `culture-five`, `cast-five-spells`, `brew-five-potions`, `workshops-five`, `support-groups-five` (`kind='goal'`, `peer_approved`, threshold 5). Pick one, tap its row, choose someone, and they get a whisper with YES/NO. Each different person who says yes (after you picked it) counts once; five finish it and bring a tradable badge. First Words and Show and Tell are plain quests now.
 
 ### The Well and sunrise
-Finishing a Well quest fills your mana to your ceiling. Sunrise gives every registered person +10 mana (up to the ceiling). "Compliment a stranger" and "Photo with a friend" are retired (`quests.active=false`).
+Finishing a Well quest, or earning any badge (a quest or an epic quest), fills your mana to your ceiling. Sunrise gives every registered person +10 mana (up to the ceiling).
