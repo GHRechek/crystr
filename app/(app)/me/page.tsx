@@ -48,6 +48,7 @@ export default async function ProfilePage() {
   const fromBadges = earnedCount * BADGE_MANA.achievement + tradable.length * BADGE_MANA.tradable + tokens.length * BADGE_MANA.token;
   const tokenReady = tokenReadyAt(token?.last_given_at);
   const waiting = trades.incoming.length;
+  const shown = resolveShown(profile.shown_badges, badges, items, profile.handle);
 
   const days = Math.max(
     1,
@@ -87,6 +88,14 @@ export default async function ProfilePage() {
         joined={`JOINED THE NEW WORLD · ${days} ${days === 1 ? "DAY" : "DAYS"}`}
         mood={profile.mood}
         banner={bannerStyle(bannerOf(profile))}
+        badgeOptions={resolveShown(
+          [...badges.filter((b) => b.earned_at).map((b) => `a:${b.slug}`), ...items.filter((i) => i.kind === "tradable").map((i) => `i:${i.id}`)],
+          badges,
+          items,
+          profile.handle,
+          100,
+        )}
+        shownKeys={shown.map((b) => b.key)}
       />
 
       <div
@@ -97,18 +106,8 @@ export default async function ProfilePage() {
           gap: 12,
         }}
       >
-        {/* The badges you choose to show, on the page's own background. */}
-        <ShownBadges
-          editable
-          shown={resolveShown(profile.shown_badges, badges, items, profile.handle)}
-          options={resolveShown(
-            [...badges.filter((b) => b.earned_at).map((b) => `a:${b.slug}`), ...items.filter((i) => i.kind === "tradable").map((i) => `i:${i.id}`)],
-            badges,
-            items,
-            profile.handle,
-            100,
-          )}
-        />
+        {/* The badges you chose to show (from the menu on your portrait), on the page's own background. */}
+        <ShownBadges shown={shown} />
 
         <div className="tile" style={{ padding: 12 }}>
           <div
