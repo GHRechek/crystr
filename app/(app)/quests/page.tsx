@@ -69,6 +69,7 @@ export default async function QuestsPage(props: { searchParams: Promise<{ pick?:
         openAtStart={sp.pick === "1"}
         isWitch={profile.is_witch}
         editable
+        people={people}
         finished={finishedWorking(profile.working_on, badges)}
         items={resolveWorking(profile.working_on, badges, [], progress)}
         all={goalGrid(badges, progress)}

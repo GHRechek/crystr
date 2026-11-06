@@ -257,6 +257,8 @@ export function resolveWorking(list: string[] | null | undefined, badges: BadgeR
       line: b.how,
       locked: !b.earned_at,
       request: !!b.witch_approved && !b.earned_at,
+      peer: !!b.peer_approved && !b.earned_at,
+      target: b.peer_target ?? undefined,
       progress: progress ? { n: progress[b.slug] ?? 0, of: goalTarget(b, progress[b.slug] ?? 0) } : undefined,
     });
   }

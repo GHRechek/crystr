@@ -1141,6 +1141,7 @@ export async function claimBadge(fd: FormData) {
   const r = await call("cr_badge_claim", { p_slug: str(fd, "slug"), p_other: str(fd, "other_id") });
   if (!r.ok) {
     if (r.code === "already") await setFlash("ALREADY ASKED", "They already have that question waiting.", EDGE.purple);
+    else if (r.code === "not_picked") await setFlash("PICK IT FIRST", "Pick this epic quest first. Only people who say yes after you pick it count.", EDGE.purple);
     else if (r.code === "have_it") await setFlash("ALREADY YOURS", "You have that badge already.", EDGE.purple);
     else if (r.code === "wrong_kind") await setFlash("NOT THE RIGHT KIND", "That quest is for a different kind of person. Pick someone who fits.", EDGE.purple);
     else if (r.code === "too_many") await setFlash("TOO MANY WAITING", "Wait for some of your questions to be answered first.", EDGE.mag);

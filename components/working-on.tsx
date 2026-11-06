@@ -5,15 +5,16 @@ import { useState } from "react";
 import { BadgeFace } from "@/components/badge-chooser";
 import { ArrowIcon } from "@/components/icons";
 import { BadgeEditor, type BadgeDraft as Draft } from "@/components/badge-editor";
-import { setWorkingOn, vouchFromProfile } from "@/lib/actions";
+import { setWorkingOn, vouchFromProfile, claimBadge } from "@/lib/actions";
 import { WORKING_MAX, type ShownBadge } from "@/lib/badges";
+import { isKind, targetLabel, type Kind } from "@/lib/species";
 
 const PER_PAGE = 20; // rows to a page, scrolling
 
 /** "Working on": the badges a person is going after, as a plain list, one to a row, each with
  *  what it takes. On your own profile a button opens every badge there is, to pick up to five
  *  (tap to pick, tap again to put back; the order you pick them is the order they are listed in). */
-export function WorkingOn({ items, all, editable, person, finished, isWitch, openAtStart, bare }: { items: ShownBadge[]; all?: ShownBadge[]; editable?: boolean; person?: { id: string; handle: string }; finished?: string[]; isWitch?: boolean; openAtStart?: boolean; /** Just the rows: no heading, no change link. */ bare?: boolean }) {
+export function WorkingOn({ items, all, editable, person, finished, isWitch, openAtStart, bare, people }: { people?: (Kind & { id: string; handle: string })[]; items: ShownBadge[]; all?: ShownBadge[]; editable?: boolean; person?: { id: string; handle: string }; finished?: string[]; isWitch?: boolean; openAtStart?: boolean; /** Just the rows: no heading, no change link. */ bare?: boolean }) {
   const [draft, setDraft] = useState<Draft | null>(null);
   const [say, setSay] = useState<string | null>(null);
   const [open, setOpen] = useState(!!openAtStart && !!editable);
@@ -91,6 +92,35 @@ export function WorkingOn({ items, all, editable, person, finished, isWitch, ope
                       <Link href={`/post?badge=${b.key.slice(2)}`} className="btn btn-sm btn-purple" style={{ minHeight: 40, alignSelf: "flex-start", display: "inline-flex", alignItems: "center" }}>
                         MAKE THE POST →
                       </Link>
+                    </div>
+                  ) : null}
+                </li>
+              );
+            }
+            // An epic quest that people have to confirm: ask someone, five different yeses finish it.
+            if (editable && b.peer && people) {
+              const open = say === b.key;
+              const pool = people.filter((p) => isKind(p, b.target));
+              return (
+                <li key={b.key} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                  <button type="button" aria-expanded={open} onClick={() => setSay(open ? null : b.key)} style={{ display: "flex", alignItems: "center", gap: 10, padding: 0, background: "none", border: 0, cursor: "pointer", color: "inherit", font: "inherit" }}>
+                    {row}
+                  </button>
+                  {open ? (
+                    <div style={{ paddingLeft: 52, display: "flex", flexDirection: "column", gap: 6 }}>
+                      <div style={{ fontSize: 12, lineHeight: 1.45, color: "var(--muted)" }}>
+                        Pick someone it happened with{b.target ? ` (${targetLabel(b.target)})` : ""}. They get a whisper and say yes or no. Five different yeses finish it.
+                      </div>
+                      <div style={{ maxHeight: 220, overflowY: "auto", display: "flex", flexDirection: "column", gap: 6 }}>
+                        {pool.map((p) => (
+                          <form key={p.id} action={async (fd) => { await claimBadge(fd); setSay(null); }}>
+                            <input type="hidden" name="slug" value={b.key.slice(2)} />
+                            <input type="hidden" name="other_id" value={p.id} />
+                            <button type="submit" className="btn btn-sm btn-block" style={{ minHeight: 40, justifyContent: "flex-start" }}>{p.handle}</button>
+                          </form>
+                        ))}
+                        {pool.length === 0 ? <div className="empty">NOBODY FITS YET</div> : null}
+                      </div>
                     </div>
                   ) : null}
                 </li>

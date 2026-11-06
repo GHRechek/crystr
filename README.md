@@ -476,3 +476,6 @@ Finishing an epic quest (earning a goal badge for the first time) brings a rando
 The Quests page has two tabs at the top, QUESTS and HELD BADGES (your earned and tradable badges, where you also pick the ones to show). The epic quest link reads CHANGE FOCUS. Troll, gnome and tauren are gone (quests and species); new with-someone quests: Brew a Potion, Cast a Spell, Attend a Workshop, Attend a Support Group (`20261108200000_no_troll_gnome_tauren_new_with_quests.sql`).
 
 Tapping the token in the header row says whose it is and how to earn it (and, on your own, links to your token page). Giving your token now happens on the trades page (the exchange button), under GIVE YOUR TOKEN; the token page is only for making it. Under the QUESTS line on the profile the three epic quests you are working on are listed (no heading), with their progress.
+
+### Epic "with" quests
+Epic quests can be peer-confirmed: `make-friends`, `culture-five`, `cast-five-spells`, `brew-five-potions`, `workshops-five`, `support-groups-five` (`kind='goal'`, `peer_approved`, threshold 5). Pick one, tap its row, choose someone, and they get a whisper with YES/NO. Each different person who says yes (after you picked it) counts once; five finish it and bring a tradable badge. First Words and Show and Tell are plain quests now.
