@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { requireMe, getPendingVouches, getTopSixNotices, getTradeNotices, hasAcceptedTerms, claimBirthdayBadge, getUnreadThreadIds } from "@/lib/data";
@@ -87,7 +88,11 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             <div className="mana-count" style={{ color: manaColor(mana) }}>
               {String(mana).padStart(2, "0")}/{cap}
             </div>
-            {welcoming ? null : <InfoMenu />}
+            {welcoming ? null : (
+              <Suspense fallback={null}>
+                <InfoMenu isWitch={profile.is_witch} />
+              </Suspense>
+            )}
           </div>
           {welcoming ? (
             <div className="head-foot">
