@@ -2,19 +2,28 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { GAME_BLURB, LOCATION } from "@/lib/info";
 import { MoreIcon } from "@/components/icons";
 
 /** The three dots at the top right of the header. Opens a sheet over the app with the things
  *  that are about the game rather than about you: what it is, where it is, and the
  *  terms people agreed to. */
-export function InfoMenu() {
+export function InfoMenu({ isWitch = false }: { isWitch?: boolean }) {
   const [open, setOpen] = useState(false);
   const path = usePathname();
+  const q = useSearchParams();
+  const here = q.toString();
 
-  // Following a link, or going back, closes it.
-  useEffect(() => setOpen(false), [path]);
+  // Following a link, or going back, closes it (a change of query counts: the viewing-as
+  // switch only changes that).
+  useEffect(() => setOpen(false), [path, here]);
+
+  // For a witch: the Ball as a witch sees it, or as a player does (a player cannot switch the
+  // other way). It keeps whichever tab of the Ball they were on.
+  const onBall = path === "/ball";
+  const tab = onBall && (q.get("tab") === "oped" || q.get("tab") === "motions") ? q.get("tab") : "news";
+  const asPlayer = onBall && q.get("as") === "player";
 
   useEffect(() => {
     if (!open) return;
@@ -71,6 +80,34 @@ export function InfoMenu() {
                 ✕
               </button>
             </div>
+
+            {isWitch ? (
+              <section>
+                <div className="px" style={{ fontSize: 11, color: "var(--mag)", marginBottom: 8 }}>
+                  VIEWING THE BALL AS
+                </div>
+                <div role="group" aria-label="Viewing the Ball as" style={{ display: "flex", gap: 6 }}>
+                  <Link
+                    href={`/ball?tab=${tab}`}
+                    prefetch={false}
+                    aria-pressed={!asPlayer}
+                    className={`btn${asPlayer ? "" : " btn-purple"}`}
+                    style={{ flex: 1, minHeight: 44 }}
+                  >
+                    WITCH
+                  </Link>
+                  <Link
+                    href={`/ball?tab=${tab}&as=player`}
+                    prefetch={false}
+                    aria-pressed={asPlayer}
+                    className={`btn${asPlayer ? " btn-mag" : ""}`}
+                    style={{ flex: 1, minHeight: 44 }}
+                  >
+                    PLAYER
+                  </Link>
+                </div>
+              </section>
+            ) : null}
 
             <section>
               <div className="px" style={{ fontSize: 11, color: "var(--mag)", marginBottom: 8 }}>

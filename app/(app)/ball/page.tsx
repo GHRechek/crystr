@@ -51,57 +51,6 @@ export default async function BallPage(
         </div>
       </div>
 
-      {profile.is_witch ? (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 7,
-            padding: "7px 9px",
-            borderRadius: "var(--px-r)",
-            background: "var(--inset)",
-            boxShadow: "inset 0 0 0 1px var(--edge)",
-          }}
-        >
-          <span className="px" style={{ fontSize: 11, color: "var(--dim)" }}>
-            VIEWING AS
-          </span>
-          <span className="spacer" />
-          <Link
-            href={`/ball?tab=${tab}`}
-            className="px"
-            style={{
-              minHeight: 40,
-              padding: "0 10px",
-              display: "grid",
-              placeItems: "center",
-              borderRadius: 4,
-              fontSize: 11,
-              background: asWitch ? "rgba(145,132,217,.3)" : "transparent",
-              color: asWitch ? "var(--pur-bright)" : "var(--muted)",
-            }}
-          >
-            WITCH
-          </Link>
-          <Link
-            href={`/ball?tab=${tab}&as=player`}
-            className="px"
-            style={{
-              minHeight: 40,
-              padding: "0 10px",
-              display: "grid",
-              placeItems: "center",
-              borderRadius: 4,
-              fontSize: 11,
-              background: !asWitch ? "rgba(224,57,138,.26)" : "transparent",
-              color: !asWitch ? "var(--mag-pale)" : "var(--muted)",
-            }}
-          >
-            PLAYER
-          </Link>
-        </div>
-      ) : null}
-
       <div className="ball-tabs" role="tablist" aria-label="The Ball">
         {([["news", "CITY NEWS"], ["oped", "OP-EDS"], ["motions", "MOTIONS"]] as const).map(([t, label]) => (
           <Link
