@@ -1,5 +1,6 @@
 "use client";
 
+import { QrScanner } from "@/components/qr-scanner";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { TokenImage } from "@/components/badges";
@@ -21,6 +22,7 @@ export function AboutBadges({
   noPen,
   tradeHref,
   tradeCount,
+  scan,
   compact,
   openAtStart,
   token,
@@ -36,6 +38,8 @@ export function AboutBadges({
   /** A trade icon at the end of the row, to the trade menu, with how many are waiting. */
   tradeHref?: string;
   tradeCount?: number;
+  /** The trade icon opens the camera to scan someone's code instead of going to the trade menu. */
+  scan?: boolean;
   /** The slim version that sits beside the portrait: a small trade icon and a cog at the end. */
   compact?: boolean;
   /** Open the full list of badges, to choose which to show, as soon as it appears. */
@@ -46,6 +50,7 @@ export function AboutBadges({
 }) {
   const [tip, setTip] = useState<{ key: string; x: number; top: number } | null>(null);
   const [choosing, setChoosing] = useState(!!openAtStart && !!editable);
+  const [scanning, setScanning] = useState(false);
   const box = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(300);
 
@@ -123,7 +128,17 @@ export function AboutBadges({
           {editable ? "✎" : <EyeIcon />}
         </button>
       ) : null}
-      {tradeHref ? (
+      {tradeHref && scan ? (
+        <>
+          <button type="button" aria-label="Scan someone's code to trade" title="Scan a code" onClick={() => setScanning(true)} style={{ position: "relative", flex: "none", width: px, height: px, display: "grid", placeItems: "center", background: "none", border: "1px dashed var(--edge)", borderRadius: "var(--px-r)", color: "var(--muted)", cursor: "pointer" }}>
+            <TradeIcon />
+            {tradeCount ? (
+              <span aria-hidden className="px" style={{ position: "absolute", top: -6, right: -6, minWidth: 16, height: 16, display: "grid", placeItems: "center", fontSize: 10, lineHeight: 1, background: "var(--pur)", color: "#fff", borderRadius: 8 }}>{tradeCount}</span>
+            ) : null}
+          </button>
+          {scanning ? <QrScanner onClose={() => setScanning(false)} tradesHref={tradeHref} waiting={tradeCount} /> : null}
+        </>
+      ) : tradeHref ? (
         <Link
           href={tradeHref}
           aria-label={tradeCount ? `Trades, ${tradeCount} waiting` : "Trades"}

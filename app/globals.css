@@ -773,6 +773,7 @@ select {
   top: calc(100% + 9px);
   left: 0;
   z-index: 5;
+  width: 75%;
   min-width: 196px;
   display: flex;
   flex-direction: column;

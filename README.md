@@ -482,3 +482,6 @@ Epic quests can be peer-confirmed: `make-friends`, `culture-five`, `cast-five-sp
 
 ### The Well and sunrise
 Finishing a Well quest, or earning any badge (a quest or an epic quest), fills your mana to your ceiling. Sunrise gives every registered person +10 mana (up to the ceiling).
+
+### Your code
+Everyone has a QR code at the bottom of the profile-picture menu (it points at `/u/<handle>`). The exchange icon on your own profile opens the camera (`components/qr-scanner.tsx`, jsQR); scanning someone's code opens a trade with them. "MY TRADES" is in the scanner's top bar. The menu is three quarters of the row wide.

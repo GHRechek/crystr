@@ -97,6 +97,7 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
       <ProfileHead
         src={faceSrc}
         mood={profile.mood}
+        handle={profile.handle}
         banner={bannerStyle(bannerOf(profile))}
         strip={
           <AboutBadges
@@ -114,6 +115,7 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
             }
             tradeHref="/me/trades"
             tradeCount={waiting}
+            scan
             token={{
               design: token?.design ?? null,
               href: "/me/token",

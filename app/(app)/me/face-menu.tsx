@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useState, type CSSProperties } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import { setMood } from "@/lib/actions";
+import { QrCode } from "@/components/qr";
 
 /** The portrait's size, and how tall the banner is when it carries the shown badges: a row of
  *  badges (63 pixels), a gap, and the thought below them, clear of the portrait. */
@@ -15,11 +16,14 @@ const BANNER_WITH_BADGES = 136;
 export function ProfileHead({
   src,
   mood,
+  handle,
   banner,
   strip,
 }: {
   src: string;
   mood: string | null;
+  /** Their handle: the code on the menu points at their profile. */
+  handle: string;
   /** The banner's CSS, from bannerStyle(). */
   banner: CSSProperties;
   /** Beside the portrait: the token, the badges you show, and the trade and settings buttons. */
@@ -27,6 +31,8 @@ export function ProfileHead({
 }) {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(false);
+  const [origin, setOrigin] = useState("");
+  useEffect(() => setOrigin(window.location.origin), []);
 
   return (
     <>
@@ -114,6 +120,14 @@ export function ProfileHead({
               <Link href="/me/edit" className="face-menu-item" role="menuitem">
                 <span aria-hidden="true">▤</span> EDIT PROFILE
               </Link>
+              {origin ? (
+                <div style={{ padding: "10px 0 8px", display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+                  <div style={{ width: "min(100%, 190px)", borderRadius: 4, overflow: "hidden" }}>
+                    <QrCode text={`${origin}/u/${handle}`} size={190} label="Your code. Someone scans it to trade with you." />
+                  </div>
+                  <div className="px" style={{ fontSize: 10, color: "var(--muted)" }}>YOUR CODE</div>
+                </div>
+              ) : null}
             </div>
           ) : null}
         </div>
