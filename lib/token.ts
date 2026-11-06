@@ -1,10 +1,11 @@
 // A token: the badge a person designs for themselves and gives away, once every six
 // months, for 7 max mana. It is built from parts rather than drawn: a badge shape (a
 // circle, a framed circle, a shield, a diamond...) in a colour of their choosing, with a
-// rim colour for the framed shapes, and up to three items from the uploaded set, placed by
+// rim colour for the framed shapes, and up to five items from the uploaded set, placed by
 // dragging, each of which can be flipped, turned (in steps of 45 degrees), shrunk in steps of
-// fifteen in a hundred, set behind the badge or in front of it, and drawn over or under the
-// others. The shape is drawn small on purpose, so an item at its
+// fifteen in a hundred, set behind the badge or in front of it by where they sit in one stack of layers (the
+// badge shape is a layer too, or absent: a token can have no shape), and drawn over or under
+// the others. The shape is drawn small on purpose, so an item at its
 // drawn size already reaches the rim and one dragged outward hangs over it: crossed swords
 // with hilts and points past the edge. Everything here is shared by the designer (browser)
 // and the compositor (server, lib/token.server.ts); /token/<packed>.png draws one, and the
@@ -46,6 +47,8 @@ export const SHAPES = [
   { key: "square-frame", label: "Framed plate", framed: true },
   { key: "hexagon", label: "Hexagon", framed: false },
   { key: "hexagon-frame", label: "Framed hexagon", framed: true },
+  /** No badge at all: just the icons. */
+  { key: "none", label: "No shape", framed: false },
 ] as const;
 export type ShapeKey = (typeof SHAPES)[number]["key"];
 
@@ -137,8 +140,8 @@ export type ItemSlug = (typeof ITEMS)[number]["slug"];
 
 export const NO_ITEM = "none";
 
-/** The three places an icon can sit. */
-export const SLOTS = ["a", "b", "c"] as const;
+/** The five places an icon can sit. */
+export const SLOTS = ["a", "b", "c", "d", "e"] as const;
 export type Slot = (typeof SLOTS)[number];
 
 /** Turns are in eighths of a full turn, clockwise: 0 is as drawn, 1 is 45 degrees, 2 is a
@@ -147,9 +150,16 @@ export type Slot = (typeof SLOTS)[number];
 export const TURNS = 8;
 export type Turn = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
 
-/** Every order three icons can be drawn in, first to last. */
-export const ORDERS = ["abc", "acb", "bac", "bca", "cab", "cba"] as const;
-export type Order = (typeof ORDERS)[number];
+/** Every order five icons can be drawn in, first to last (120 of them). */
+function permutations(letters: string): string[] {
+  if (letters.length <= 1) return [letters];
+  return [...letters].flatMap((c, i) => permutations(letters.slice(0, i) + letters.slice(i + 1)).map((rest) => c + rest));
+}
+export const ORDERS: readonly string[] = permutations(SLOTS.join("")).sort();
+export type Order = string;
+
+/** How many of the icons, counting from the first drawn, sit under the badge shape. */
+export type Under = 0 | 1 | 2 | 3 | 4 | 5;
 
 export type TokenDesign = {
   shape: ShapeKey;
@@ -159,8 +169,11 @@ export type TokenDesign = {
   fill: TokenColour;
   /** The band inside the edge, on framed shapes. */
   rim: TokenColour;
-  /** Which order the icons are drawn in, first to last: the last is on top of the rest. */
+  /** The order the icons are drawn in, first to last: the last is on top of the rest. */
   order: Order;
+  /** The first this-many icons in `order` are drawn under the badge shape, so only what
+   *  hangs out past its edge shows; the others go over it. */
+  under: Under;
 } & {
   [K in Slot]: ItemSlug | typeof NO_ITEM;
 } & {
@@ -176,9 +189,6 @@ export type TokenDesign = {
   [K in Slot as `${K}_x`]: number;
 } & {
   [K in Slot as `${K}_y`]: number;
-} & {
-  /** Drawn under the badge shape, so only what hangs out past it shows. */
-  [K in Slot as `${K}_behind`]: boolean;
 };
 
 const COLOUR_KEYS: readonly string[] = TOKEN_COLOURS.map((c) => c.key);
@@ -192,15 +202,19 @@ export const colourHex = (key: string): string =>
 export const isFramed = (shape: ShapeKey): boolean => SHAPES.find((s) => s.key === shape)?.framed ?? false;
 
 export function defaultToken(): TokenDesign {
+  const none = { flip: false, turn: 0 as Turn, size: 100 as SizeKey, x: 0, y: 0 };
   return {
     shape: "circle-frame",
     badge_size: 100,
     fill: "blu-dark",
     rim: "gold",
-    order: "abc",
-    a: "sword", a_flip: false, a_turn: 0, a_size: 100, a_x: 0, a_y: 0, a_behind: false,
-    b: "sword", b_flip: true, b_turn: 0, b_size: 100, b_x: 0, b_y: 0, b_behind: false,
-    c: NO_ITEM, c_flip: false, c_turn: 0, c_size: 100, c_x: 0, c_y: 0, c_behind: false,
+    order: SLOTS.join(""),
+    under: 0,
+    a: "sword", a_flip: false, a_turn: 0, a_size: 100, a_x: 0, a_y: 0,
+    b: "sword", b_flip: true, b_turn: 0, b_size: 100, b_x: 0, b_y: 0,
+    c: NO_ITEM, c_flip: none.flip, c_turn: none.turn, c_size: none.size, c_x: none.x, c_y: none.y,
+    d: NO_ITEM, d_flip: none.flip, d_turn: none.turn, d_size: none.size, d_x: none.x, d_y: none.y,
+    e: NO_ITEM, e_flip: none.flip, e_turn: none.turn, e_size: none.size, e_x: none.x, e_y: none.y,
   };
 }
 
@@ -244,6 +258,25 @@ export function itemBounds(slug: string, t: number, sz: SizeKey): { x: number; y
   return { x: Math.floor(C - box.w / 2), y: Math.floor(C - box.h / 2) };
 }
 
+/** The draw order and how many icons sit under the shape, from whatever was saved: this
+ *  version's `order` and `under`; the one before's `order` of three (or two, from `top`) and a
+ *  `_behind` flag on each icon, which becomes "the ones behind come first, under the shape". */
+function layering(c: Record<string, unknown>): { order: string; under: Under } {
+  const all = SLOTS.join("");
+  let order = "";
+  if (typeof c.order === "string" && /^[a-e]{1,5}$/.test(c.order) && new Set(c.order).size === c.order.length) order = c.order;
+  else if (c.top === "a") order = "ba";
+  else order = "ab";
+  // Any icon the saved order left out goes after it, in slot order.
+  order += [...all].filter((k) => !order.includes(k)).join("");
+  if (typeof c.under === "number" && Number.isInteger(c.under) && c.under >= 0 && c.under <= 5 && ORDERS.includes(order)) {
+    return { order, under: c.under as Under };
+  }
+  const behind = [...order].filter((k) => c[`${k}_behind`] === true);
+  const front = [...order].filter((k) => c[`${k}_behind`] !== true);
+  return { order: [...behind, ...front].join(""), under: behind.length as Under };
+}
+
 /** Whatever was saved, as a complete design. Anything unknown falls back to the default. */
 export function normalizeToken(raw: unknown): TokenDesign {
   const d = defaultToken();
@@ -255,8 +288,9 @@ export function normalizeToken(raw: unknown): TokenDesign {
     rim: pick(c.rim, COLOUR_KEYS, d.rim),
   };
   for (const k of SLOTS) {
-    // A third icon is new: a design from before it has none rather than the default's.
-    const slug = pick(c[k], ITEM_KEYS, k === "c" ? NO_ITEM : d[k]);
+    // The icons after the first two are new: a design from before them has none rather
+    // than the default's.
+    const slug = pick(c[k], ITEM_KEYS, k === "a" || k === "b" ? d[k] : NO_ITEM);
     const t = turn(c[`${k}_turn`], c[`${k}_rot`]);
     const sz = size(c[`${k}_size`]);
     const bounds = itemBounds(slug, t, sz);
@@ -266,34 +300,50 @@ export function normalizeToken(raw: unknown): TokenDesign {
     out[`${k}_size`] = sz;
     out[`${k}_x`] = offset(c[`${k}_x`], bounds.x);
     out[`${k}_y`] = offset(c[`${k}_y`], bounds.y);
-    out[`${k}_behind`] = c[`${k}_behind`] === true;
   }
-  // The draw order; the first designs only said which of two was on top.
-  out.order = (ORDERS as readonly string[]).includes(c.order as string)
-    ? (c.order as Order)
-    : c.top === "a"
-      ? "bac"
-      : "abc";
+  Object.assign(out, layering(c));
   return out as TokenDesign;
 }
 
-/** Put one icon last in the order, on top of the others. */
-export function bringToFront(order: Order, slot: Slot): Order {
-  return [...order.replace(slot, ""), slot].join("") as Order;
+// ------------------------------------------------------------ layers
+
+/** The whole stack, bottom to top, with the badge shape as "#" among the icons. */
+export function stackOf(order: string, under: number): string[] {
+  return [...order.slice(0, under), "#", ...order.slice(under)];
+}
+function fromStack(stack: string[]): { order: string; under: Under } {
+  return { order: stack.filter((x) => x !== "#").join(""), under: stack.indexOf("#") as Under };
+}
+
+/** Put an icon on top of everything. */
+export function placeOnTop(d: Pick<TokenDesign, "order" | "under">, slot: Slot): { order: string; under: Under } {
+  return fromStack([...stackOf(d.order, d.under).filter((x) => x !== slot), slot]);
+}
+
+/** Move an icon one layer up (1) or down (-1) past whatever is next to it that is actually
+ *  drawn: another icon, or the badge shape, which puts it behind or in front of the badge.
+ *  Null when it is already at that end. */
+export function moveLayer(d: TokenDesign, slot: Slot, dir: 1 | -1): { order: string; under: Under } | null {
+  const stack = stackOf(d.order, d.under);
+  const drawn = (x: string) => (x === "#" ? d.shape !== "none" : d[x as Slot] !== NO_ITEM);
+  const i = stack.indexOf(slot);
+  let j = i + dir;
+  while (j >= 0 && j < stack.length && !drawn(stack[j])) j += dir;
+  if (j < 0 || j >= stack.length) return null;
+  stack.splice(i, 1);
+  stack.splice(j, 0, slot);
+  return fromStack(stack);
 }
 
 // ------------------------------------------------------------ url packing
 
 /** Bump when the compositor changes: tokens are cached immutably by their packed spec. */
-export const TOKEN_RENDER = "7";
+export const TOKEN_RENDER = "8";
 
-/** behind, flip, size and turn of one icon in one number: behind × 64 + flip × 32 +
- *  size step × 8 + turn, 0–127. */
-const flags = (behind: boolean, flip: boolean, sz: SizeKey, t: number) =>
-  (behind ? 64 : 0) + (flip ? 32 : 0) + SIZE_KEYS.indexOf(sz) * 8 + t;
+/** flip, size and turn of one icon in one number: flip × 32 + size step × 8 + turn, 0–63. */
+const flags = (flip: boolean, sz: SizeKey, t: number) => (flip ? 32 : 0) + SIZE_KEYS.indexOf(sz) * 8 + t;
 const unflags = (n: number) => ({
-  behind: n >= 64,
-  flip: n % 64 >= 32,
+  flip: n >= 32,
   size: SIZE_KEYS[Math.floor((n % 32) / 8)] as SizeKey,
   turn: (n % 8) as Turn,
 });
@@ -308,16 +358,16 @@ export function packToken(design: TokenDesign): string {
     COLOUR_KEYS.indexOf(d.rim),
   ];
   for (const k of SLOTS) {
-    parts.push(ITEM_KEYS.indexOf(d[k]), flags(d[`${k}_behind`], d[`${k}_flip`], d[`${k}_size`], d[`${k}_turn`]), d[`${k}_x`] + OFFSET_MAX, d[`${k}_y`] + OFFSET_MAX);
+    parts.push(ITEM_KEYS.indexOf(d[k]), flags(d[`${k}_flip`], d[`${k}_size`], d[`${k}_turn`]), d[`${k}_x`] + OFFSET_MAX, d[`${k}_y`] + OFFSET_MAX);
   }
-  parts.push(ORDERS.indexOf(d.order));
+  parts.push(ORDERS.indexOf(d.order), d.under);
   return [TOKEN_RENDER, ...parts.map((n) => n.toString(36))].join(".");
 }
 
 export function unpackToken(packed: string): TokenDesign | null {
-  if (packed.length > 80) return null;
+  if (packed.length > 120) return null;
   const parts = packed.split(".");
-  if (parts.length !== 1 + 4 + 4 * SLOTS.length + 1 || parts[0] !== TOKEN_RENDER) return null;
+  if (parts.length !== 1 + 4 + 4 * SLOTS.length + 2 || parts[0] !== TOKEN_RENDER) return null;
   const nums: number[] = [];
   for (const p of parts.slice(1)) {
     const n = parseInt(p, 36);
@@ -330,21 +380,22 @@ export function unpackToken(packed: string): TokenDesign | null {
   const shape = at(SHAPE_KEYS, nShape);
   const fill = at(COLOUR_KEYS, nFill);
   const rim = at(COLOUR_KEYS, nRim);
-  const order = nums[nums.length - 1] < ORDERS.length ? ORDERS[nums[nums.length - 1]] : null;
-  if (!shape || !fill || !rim || !order || nBadge >= BADGE_SIZE_KEYS.length) return null;
-  const raw: Record<string, unknown> = { shape, badge_size: BADGE_SIZE_KEYS[nBadge], fill, rim, order };
+  const nOrder = nums[nums.length - 2];
+  const under = nums[nums.length - 1];
+  const order = nOrder < ORDERS.length ? ORDERS[nOrder] : null;
+  if (!shape || !fill || !rim || !order || nBadge >= BADGE_SIZE_KEYS.length || under > 5) return null;
+  const raw: Record<string, unknown> = { shape, badge_size: BADGE_SIZE_KEYS[nBadge], fill, rim, order, under };
   let i = 4;
   for (const k of SLOTS) {
     const [nItem, f, x, y] = nums.slice(i, i + 4);
     i += 4;
     const slug = at(ITEM_KEYS, nItem);
-    if (!slug || f > 127 || x > 2 * OFFSET_MAX || y > 2 * OFFSET_MAX) return null;
+    if (!slug || f > 63 || x > 2 * OFFSET_MAX || y > 2 * OFFSET_MAX) return null;
     const u = unflags(f);
     raw[k] = slug;
     raw[`${k}_flip`] = u.flip;
     raw[`${k}_turn`] = u.turn;
     raw[`${k}_size`] = u.size;
-    raw[`${k}_behind`] = u.behind;
     raw[`${k}_x`] = x - OFFSET_MAX;
     raw[`${k}_y`] = y - OFFSET_MAX;
   }

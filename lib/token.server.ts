@@ -5,7 +5,7 @@ import { SLOTS, TOKEN_SIZE, colourHex, isFramed, normalizeToken, turnedBox, type
 
 // Drawing a token: one badge shape in three tones of its colour (the outline is the art's
 // own near-black), a band in the rim colour just inside the edge when the shape is framed,
-// then up to three items from the uploaded set, flipped, turned (in 45-degree steps) or
+// then up to five items from the uploaded set, flipped, turned (in 45-degree steps) or
 // shrunk as asked, each centred where it was dragged to. An item set behind the badge is
 // drawn first and the shape over it, so only what hangs out past the edge shows; the rest
 // go on after, in the saved order, the last on top. The shape takes the middle 22 of
@@ -229,29 +229,30 @@ export function composeToken(raw: TokenDesign): Buffer {
   px.fill(0);
 
   // The icons, in the saved order (the last on top), each as the turned, flipped and
-  // shrunk picture it will be.
-  const layers = d.order.split("").flatMap((k) => {
+  // shrunk picture it will be. The first `under` of them go under the badge shape.
+  const layers = d.order.split("").flatMap((k, at) => {
     const key = k as (typeof SLOTS)[number];
     const slug = d[key];
     if (slug === "none") return [];
     const sp = item(slug);
     if (!sp) return [];
-    return [{ behind: d[`${key}_behind`], sp: turned(resized(sp, d[`${key}_size`]), d[`${key}_flip`], d[`${key}_turn`]), x: d[`${key}_x`], y: d[`${key}_y`] }];
+    return [{ behind: at < d.under, sp: turned(resized(sp, d[`${key}_size`]), d[`${key}_flip`], d[`${key}_turn`]), x: d[`${key}_x`], y: d[`${key}_y`] }];
   });
 
-  // Behind the badge first, then the badge over them.
   for (const l of layers) if (l.behind) blendSprite(px, l.sp, l.x, l.y);
 
-  // The shape, and for a framed one the same shape again inside the rim band (thinner on
-  // the smallest badge, where three cells would be most of it).
-  const family = SHAPE[d.shape.replace("-frame", "")] ?? SHAPE.circle;
-  const r = (R * d.badge_size) / 100;
-  const band = d.badge_size === 50 ? 2 : 3;
-  if (isFramed(d.shape)) {
-    paintShape(px, family(r), tones(colourHex(d.rim)));
-    paintShape(px, family(r - band), tones(colourHex(d.fill)));
-  } else {
-    paintShape(px, family(r), tones(colourHex(d.fill)));
+  // The shape (unless there is none), and for a framed one the same shape again inside the
+  // rim band (thinner on the smallest badge, where three cells would be most of it).
+  if (d.shape !== "none") {
+    const family = SHAPE[d.shape.replace("-frame", "")] ?? SHAPE.circle;
+    const r = (R * d.badge_size) / 100;
+    const band = d.badge_size === 50 ? 2 : 3;
+    if (isFramed(d.shape)) {
+      paintShape(px, family(r), tones(colourHex(d.rim)));
+      paintShape(px, family(r - band), tones(colourHex(d.fill)));
+    } else {
+      paintShape(px, family(r), tones(colourHex(d.fill)));
+    }
   }
 
   for (const l of layers) if (!l.behind) blendSprite(px, l.sp, l.x, l.y);

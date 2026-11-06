@@ -179,13 +179,19 @@ badge shape (circle, framed circle, shield, diamond, plate, hexagon, each with
 or without a rim band, at full size or three quarters or half) in their
 colours, and two items from the uploaded set
 (`public/badges/items/`), added from a sheet and placed by dragging them on a
-stage, up to three at a time, each of which can be flipped, turned in steps of 45
+stage, up to five at a time, each of which can be flipped, turned in steps of 45
 degrees (so the diagonals work too), shrunk from 100 to 55 percent in steps of
-fifteen, set behind the badge (only what hangs out past its edge shows) or in front
-of it, and drawn over or under the others. Whole turns move the pixels; a diagonal
-turn is rotated at four times the size and brought back down by each cell's commonest
-colour, so small pixel art stays solid. Designs saved before this (quarter turns, two
-icons, a single \"on top\") are read as they were and render identically. The shape is
+fifteen, and layered. The whole editor is one row of small buttons with no words on
+them: the shape, its two colours (badge over frame), add an icon, the picked icon
+(with an x in its corner to take it off), turn over flip, bigger over smaller, and up
+over down the layers. The badge shape is itself a layer, so moving an icon down past it
+puts it behind the badge (only what hangs out past its edge shows), and a token can have
+no shape at all. In the data this is `order` (the draw order of the five slots) and
+`under` (how many of the first ones sit under the shape). Whole turns move the pixels; a
+diagonal turn is rotated at four times the size and brought back down by each cell's
+commonest colour, so small pixel art stays solid. Designs saved before this (quarter
+turns, two or three icons, "on top" or a behind flag on each icon) are read as they were
+and render identically. The shape is
 drawn small on purpose, the middle 22 of the picture's 32 cells: an item at
 its drawn size already reaches the rim, one dragged outward hangs over it
 (hilts and points past the edge), a shrunk one sits inside like heraldry; an

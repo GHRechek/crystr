@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { setToken } from "@/lib/actions";
+import { ArrowIcon } from "@/components/icons";
 import {
   BADGE_SIZES,
   ITEMS,
@@ -11,10 +12,13 @@ import {
   SLOTS,
   TOKEN_COLOURS,
   TOKEN_SIZE,
-  bringToFront,
+  colourHex,
   isFramed,
   itemBounds,
+  moveLayer,
   normalizeToken,
+  placeOnTop,
+  stackOf,
   tokenSrc,
   type SizeKey,
   type Slot,
@@ -26,7 +30,7 @@ import {
 /** Stage pixels per token cell: the 32-cell token fills a 256px square. */
 const CELL = 8;
 const STAGE = TOKEN_SIZE * CELL;
-type Panel = "icons" | "shape" | "colours" | null;
+type Panel = "icons" | "shape" | "fill" | "rim" | null;
 
 const BADGE_SIZE_LABELS: Record<number, string> = { 50: "Small", 75: "Mid", 100: "Large" };
 
@@ -165,9 +169,9 @@ function Sticker({
         cursor: "grab",
         outline: selected ? "2px dashed var(--pur-bright)" : "none",
         outlineOffset: 4,
-        // Behind the badge sits under the shape's picture (which is layer 0 of the stage),
-        // the rest above it, each group in the saved order.
-        zIndex: (d[`${which}_behind`] ? -3 : 3) + d.order.indexOf(which),
+        // One stack of layers, the badge shape among them (layer 0 of the stage is the shape's
+        // own picture, given the shape's place in the stack).
+        zIndex: stackOf(d.order, d.under).indexOf(which),
         userSelect: "none",
       }}
     >
@@ -185,8 +189,11 @@ function Sticker({
 }
 
 /** Design your token like a post: the badge on a stage, icons added from a drawer and
- *  dragged into place. Pick an icon to flip it, turn it, shrink it, put it on top or take
- *  it off. The small picture by the save button is the real thing, drawn by /token. */
+ *  dragged into place. Everything else is one row of small buttons under the stage, with no
+ *  words on them: the shape, its two colours, add an icon, the picked icon (with an x to take
+ *  it off), turn and flip, bigger and smaller, and up and down the layers (the badge itself is
+ *  a layer, so down far enough is behind it). The small picture by the save button is the real
+ *  thing, drawn by /token. */
 export function TokenDesigner({ start, fresh }: { start: TokenDesign; fresh: boolean }) {
   const [d, setD] = useState<TokenDesign>(() => normalizeToken(start));
   const [selected, setSelected] = useState<Slot | null>(null);
@@ -197,6 +204,8 @@ export function TokenDesigner({ start, fresh }: { start: TokenDesign; fresh: boo
   const free = SLOTS.find((s) => d[s] === NO_ITEM);
   const sel = selected && d[selected] !== NO_ITEM ? selected : null;
   const selItem = sel ? ITEMS.find((i) => i.slug === d[sel]) : null;
+  const up = sel ? moveLayer(d, sel, 1) : null;
+  const down = sel ? moveLayer(d, sel, -1) : null;
 
   function addIcon(slug: string) {
     if (!free) return;
@@ -207,8 +216,7 @@ export function TokenDesigner({ start, fresh }: { start: TokenDesign; fresh: boo
       [`${free}_flip`]: false,
       [`${free}_turn`]: 0,
       [`${free}_size`]: 100,
-      [`${free}_behind`]: false,
-      order: bringToFront(d.order, free),
+      ...placeOnTop(d, free),
     } as Partial<TokenDesign>);
     setSelected(free);
     setPanel(null);
@@ -221,9 +229,17 @@ export function TokenDesigner({ start, fresh }: { start: TokenDesign; fresh: boo
     set({ [`${sel}_size`]: next } as Partial<TokenDesign>);
   }
 
-  const toolbar = { display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "center" } as const;
-  const stageOnly = normalizeToken({ ...d, a: NO_ITEM, b: NO_ITEM, c: NO_ITEM });
-  const turnBy = (n: number) => sel && set({ [`${sel}_turn`]: ((d[`${sel}_turn`] + n + 8) % 8) as Turn } as Partial<TokenDesign>);
+  const turnRight = () => sel && set({ [`${sel}_turn`]: ((d[`${sel}_turn`] + 1) % 8) as Turn } as Partial<TokenDesign>);
+  const flip = () => sel && set({ [`${sel}_flip`]: !d[`${sel}_flip`] } as Partial<TokenDesign>);
+  const remove = () => {
+    if (!sel) return;
+    set({ [sel]: NO_ITEM } as Partial<TokenDesign>);
+    setSelected(null);
+  };
+
+  const stageOnly = normalizeToken({ ...d, a: NO_ITEM, b: NO_ITEM, c: NO_ITEM, d: NO_ITEM, e: NO_ITEM });
+  const shapeLayer = stackOf(d.order, d.under).indexOf("#");
+  const none = d.shape === "none";
 
   return (
     <form action={setToken} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
@@ -281,82 +297,91 @@ export function TokenDesigner({ start, fresh }: { start: TokenDesign; fresh: boo
           width={STAGE}
           height={STAGE}
           draggable={false}
-          style={{ position: "absolute", inset: 0, imageRendering: "pixelated", pointerEvents: "none", zIndex: 0 }}
+          style={{ position: "absolute", inset: 0, imageRendering: "pixelated", pointerEvents: "none", zIndex: shapeLayer }}
         />
         {SLOTS.map((k) => (
           <Sticker key={k} which={k} d={d} selected={sel === k} onSelect={setSelected} onMove={(s, x, y) => set({ [`${s}_x`]: x, [`${s}_y`]: y } as Partial<TokenDesign>)} />
         ))}
       </div>
 
-      {sel && selItem ? (
-        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-          <div className="px" style={{ fontSize: 11, color: "var(--pur-pale)", textAlign: "center" }}>
-            {selItem.label.toUpperCase()} · {d[`${sel}_turn`] * 45}° · DRAG IT TO PLACE IT
-          </div>
-          <div style={toolbar}>
-            <button type="button" className={`btn btn-sm${d[`${sel}_flip`] ? " btn-purple" : ""}`} aria-pressed={d[`${sel}_flip`]} onClick={() => set({ [`${sel}_flip`]: !d[`${sel}_flip`] } as Partial<TokenDesign>)} style={{ minHeight: 40 }}>
-              ⇄ FLIP
-            </button>
-            <button type="button" className="btn btn-sm" onClick={() => turnBy(-1)} aria-label="Turn a little to the left" style={{ minHeight: 40 }}>
-              ↺ 45°
-            </button>
-            <button type="button" className="btn btn-sm" onClick={() => turnBy(1)} aria-label="Turn a little to the right" style={{ minHeight: 40 }}>
-              ↻ 45°
-            </button>
-            <span role="group" aria-label="Size" style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
-              <button type="button" className="btn btn-sm" onClick={() => sizeBy(-1)} disabled={d[`${sel}_size`] === SIZES[0]} aria-label="Smaller" style={{ minHeight: 40, minWidth: 40 }}>
-                −
-              </button>
-              <span className="px" style={{ fontSize: 11, minWidth: 44, textAlign: "center" }}>
-                {d[`${sel}_size`]}%
-              </span>
-              <button type="button" className="btn btn-sm" onClick={() => sizeBy(1)} disabled={d[`${sel}_size`] === 100} aria-label="Bigger, up to as drawn" style={{ minHeight: 40, minWidth: 40 }}>
-                +
-              </button>
-            </span>
-            <button type="button" className={`btn btn-sm${d[`${sel}_behind`] ? " btn-purple" : ""}`} aria-pressed={d[`${sel}_behind`]} onClick={() => set({ [`${sel}_behind`]: !d[`${sel}_behind`] } as Partial<TokenDesign>)} style={{ minHeight: 40 }}>
-              {d[`${sel}_behind`] ? "BEHIND BADGE" : "IN FRONT"}
-            </button>
-            <button type="button" className="btn btn-sm" onClick={() => set({ order: bringToFront(d.order, sel) })} disabled={d.order.endsWith(sel)} style={{ minHeight: 40 }}>
-              {d.order.endsWith(sel) ? "ON TOP" : "PUT ON TOP"}
-            </button>
-            <button
-              type="button"
-              className="btn btn-sm btn-mag"
-              onClick={() => {
-                set({ [sel]: NO_ITEM } as Partial<TokenDesign>);
-                setSelected(null);
-              }}
-              style={{ minHeight: 40 }}
-            >
-              ✕ REMOVE
-            </button>
-          </div>
-        </div>
-      ) : (
-        <div style={{ fontSize: 12, lineHeight: 1.5, color: "var(--muted)", textAlign: "center" }}>
-          {placed.length ? "Tap an icon to flip, turn, shrink or send it behind the badge. Drag it to place it." : "Add up to three icons, then drag them where you want them."}
-        </div>
-      )}
+      {/* Left to right: the shape, its two colours (badge over frame), add an icon, the picked
+          icon, turn over flip, bigger over smaller, up over down the layers. */}
+      <div className="tk-bar" role="toolbar" aria-label="Token tools">
+        <button type="button" className="btn tk-big" style={{ gridColumn: 1, gridRow: "1 / 3" }} onClick={() => setPanel("shape")}>
+          SHAPE
+        </button>
+        <button
+          type="button"
+          className="btn tk-sm tk-swatch"
+          aria-label="Badge colour"
+          title="Badge colour"
+          disabled={none}
+          onClick={() => setPanel("fill")}
+          style={{ gridColumn: 2, gridRow: 1, background: none ? "transparent" : colourHex(d.fill) }}
+        />
+        <button
+          type="button"
+          className="btn tk-sm tk-swatch"
+          aria-label="Frame colour"
+          title="Frame colour"
+          disabled={!isFramed(d.shape)}
+          onClick={() => setPanel("rim")}
+          style={{ gridColumn: 2, gridRow: 2, background: isFramed(d.shape) ? colourHex(d.rim) : "transparent" }}
+        />
+        <button type="button" className="btn btn-purple tk-big" style={{ gridColumn: 3, gridRow: "1 / 3" }} onClick={() => setPanel("icons")} disabled={!free}>
+          ADD ICON {placed.length}/{SLOTS.length}
+        </button>
 
-      <div style={toolbar}>
-        <button type="button" className="btn btn-sm btn-purple" onClick={() => setPanel("icons")} disabled={!free} style={{ minHeight: 40 }}>
-          ✚ ADD ICON {placed.length}/3
+        <div className="tk-cur" style={{ gridColumn: 4, gridRow: "1 / 3" }}>
+          {sel && selItem ? (
+            <>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={`/badges/items/${selItem.slug}.png`}
+                alt={selItem.label}
+                width={selItem.w * 2}
+                height={selItem.h * 2}
+                style={{ imageRendering: "pixelated", maxWidth: "76%", height: "auto" }}
+              />
+              <button type="button" className="tk-x" aria-label={`Take the ${selItem.label} off`} title="Take it off" onClick={remove}>
+                ✕
+              </button>
+            </>
+          ) : null}
+        </div>
+
+        <button type="button" className="btn tk-sm" aria-label="Turn right 45 degrees" title="Turn 45°" disabled={!sel} onClick={turnRight} style={{ gridColumn: 5, gridRow: 1 }}>
+          ↻
         </button>
-        <button type="button" className="btn btn-sm" onClick={() => setPanel("shape")} style={{ minHeight: 40 }}>
-          ◈ SHAPE
+        <button type="button" className={`btn tk-sm${sel && d[`${sel}_flip`] ? " btn-purple" : ""}`} aria-label="Flip" title="Flip" aria-pressed={!!sel && d[`${sel}_flip`]} disabled={!sel} onClick={flip} style={{ gridColumn: 5, gridRow: 2 }}>
+          ⇄
         </button>
-        <button type="button" className="btn btn-sm" onClick={() => setPanel("colours")} style={{ minHeight: 40 }}>
-          ● COLOURS
+        <button type="button" className="btn tk-sm" aria-label="Bigger" title="Bigger" disabled={!sel || d[`${sel}_size`] === 100} onClick={() => sizeBy(1)} style={{ gridColumn: 6, gridRow: 1 }}>
+          +
+        </button>
+        <button type="button" className="btn tk-sm" aria-label="Smaller" title="Smaller" disabled={!sel || d[`${sel}_size`] === SIZES[0]} onClick={() => sizeBy(-1)} style={{ gridColumn: 6, gridRow: 2 }}>
+          −
+        </button>
+        <button type="button" className="btn tk-sm" aria-label="Up a layer" title="Up a layer" disabled={!up} onClick={() => up && set(up)} style={{ gridColumn: 7, gridRow: 1 }}>
+          <ArrowIcon dir="up" />
+        </button>
+        <button type="button" className="btn tk-sm" aria-label="Down a layer" title="Down a layer" disabled={!down} onClick={() => down && set(down)} style={{ gridColumn: 7, gridRow: 2 }}>
+          <ArrowIcon dir="down" />
         </button>
       </div>
+
+      {placed.length === 0 ? (
+        <div style={{ fontSize: 12, lineHeight: 1.5, color: "var(--muted)", textAlign: "center" }}>
+          Add an icon, then drag it where you want it.
+        </div>
+      ) : null}
 
       <button type="submit" className="btn btn-lg btn-purple btn-block">
         KEEP THIS TOKEN
       </button>
 
       {panel === "icons" ? (
-        <Sheet title={`ADD AN ICON · ${placed.length}/3`} onClose={() => setPanel(null)}>
+        <Sheet title={`ADD AN ICON · ${placed.length}/${SLOTS.length}`} onClose={() => setPanel(null)}>
           <div role="listbox" aria-label="Icons" style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 6 }}>
             {ITEMS.map((it) => (
               <button
@@ -395,7 +420,7 @@ export function TokenDesigner({ start, fresh }: { start: TokenDesign; fresh: boo
             {BADGE_SIZES.map((n) => {
               const on = d.badge_size === n;
               return (
-                <button key={n} type="button" role="radio" aria-checked={on} onClick={() => set({ badge_size: n })} className={`btn btn-sm${on ? " btn-purple" : ""}`} style={{ minHeight: 40 }}>
+                <button key={n} type="button" role="radio" aria-checked={on} disabled={none} onClick={() => set({ badge_size: n })} className={`btn btn-sm${on ? " btn-purple" : ""}`} style={{ minHeight: 40 }}>
                   {BADGE_SIZE_LABELS[n].toUpperCase()} · {n}%
                 </button>
               );
@@ -433,8 +458,14 @@ export function TokenDesigner({ start, fresh }: { start: TokenDesign; fresh: boo
                     textAlign: "center",
                   }}
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={tokenSrc(preview)} alt="" width={64} height={64} style={{ imageRendering: "pixelated" }} />
+                  {s.key === "none" ? (
+                    <span aria-hidden style={{ width: 64, height: 64, display: "grid", placeItems: "center", fontSize: 22, border: "1px dashed var(--edge)" }}>
+                      ∅
+                    </span>
+                  ) : (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={tokenSrc(preview)} alt="" width={64} height={64} style={{ imageRendering: "pixelated" }} />
+                  )}
                   <span>{s.label}</span>
                 </button>
               );
@@ -443,22 +474,13 @@ export function TokenDesigner({ start, fresh }: { start: TokenDesign; fresh: boo
         </Sheet>
       ) : null}
 
-      {panel === "colours" ? (
-        <Sheet title="COLOURS" onClose={() => setPanel(null)}>
-          <div className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
-            BADGE
-          </div>
-          <Swatches value={d.fill} onPick={(fill) => set({ fill })} name="Badge colour" />
-          {isFramed(d.shape) ? (
-            <>
-              <div className="px" style={{ fontSize: 11, color: "var(--muted)", marginTop: 6 }}>
-                FRAME
-              </div>
-              <Swatches value={d.rim} onPick={(rim) => set({ rim })} name="Frame colour" />
-            </>
-          ) : (
-            <div style={{ fontSize: 12, color: "var(--muted)" }}>A framed shape also takes a frame colour.</div>
-          )}
+      {panel === "fill" || panel === "rim" ? (
+        <Sheet title={panel === "fill" ? "BADGE COLOUR" : "FRAME COLOUR"} onClose={() => setPanel(null)}>
+          <Swatches
+            value={panel === "fill" ? d.fill : d.rim}
+            onPick={(k) => set(panel === "fill" ? { fill: k } : { rim: k })}
+            name={panel === "fill" ? "Badge colour" : "Frame colour"}
+          />
         </Sheet>
       ) : null}
     </form>
