@@ -1,23 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 import { BadgeFace } from "@/components/badge-chooser";
 import type { ShownBadge } from "@/lib/badges";
-import { targetLabel } from "@/lib/species";
 import { CameraIcon } from "@/components/icons";
-import { ScanRow } from "@/components/scan-quest-button";
-
-/** Where each system badge is done, for the ones that have a place to go. */
-const WHERE: Record<string, [string, string]> = {
-  "top-five-full": ["/me/top-six", "PICK YOUR TOP 5"],
-  "first-bio": ["/me/edit", "EDIT YOUR PROFILE"],
-  "token-made": ["/me/token", "MAKE YOUR TOKEN"],
-  "visit-the-well": ["/well", "GO TO THE WELL"],
-  "vote-on-a-motion": ["/ball?tab=motions", "SEE THE MOTIONS"],
-  "publish-an-op-ed": ["/ball", "GO TO THE BALL"],
-  "first-trade": ["/me/trades", "YOUR TRADES"],
-};
+import { QuestRow } from "@/components/quest-sheet";
 
 const MODES = [
   ["all", "ALL"],
@@ -66,77 +53,26 @@ export function QuestBrowser({
         {list.length === 0 ? <li className="empty">{tab === 0 ? "NOTHING LEFT TO DO HERE" : "NONE YET"}</li> : null}
         {list.map((b) => {
           const slug = b.key.slice(2);
-          const sel = at === b.key;
-          const where = WHERE[slug];
           return (
-            <li key={b.key} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              {b.peer && b.locked ? (
-                <ScanRow
-                  slug={slug}
-                  title={b.title}
-                  how={b.line}
-                  face={<span style={{ display: "block", opacity: 0.85 }}><BadgeFace b={b} size={42} /></span>}
-                  rest={
-                    <>
-                      <span style={{ minWidth: 0, flex: 1, textAlign: "left" }}>
-                        <span className="px" style={{ display: "block", fontSize: 11, color: "var(--text)", lineHeight: 1.5 }}>
-                          {b.title}
-                          <span style={{ marginLeft: 6 }}><CameraIcon /></span>
-                        </span>
-                        <span style={{ display: "block", fontSize: 11, lineHeight: 1.4, color: "var(--muted)" }}>{b.line}</span>
+            <li key={b.key}>
+              <QuestRow
+                b={b}
+                scan={!!b.peer && b.locked}
+                face={<span style={{ display: "block", opacity: b.locked ? 0.85 : 1 }}><BadgeFace b={b} size={42} /></span>}
+                rest={
+                  <>
+                    <span style={{ minWidth: 0, flex: 1, textAlign: "left" }}>
+                      <span className="px" style={{ display: "block", fontSize: 11, color: "var(--text)", lineHeight: 1.5 }}>
+                        {b.title}
+                        {b.peer && b.locked ? <span style={{ marginLeft: 6 }}><CameraIcon /></span> : null}
+                        {b.auto ? <span aria-label="Awarded by the system" title="The system gives this one out itself" style={{ color: "#e8c14b", marginLeft: 6 }}>★</span> : null}
                       </span>
-                      {pending[slug] ? <span className="px" style={{ flex: "none", fontSize: 9.5, color: "var(--pur-pale)", textAlign: "right", maxWidth: 96, lineHeight: 1.4 }}>{pending[slug]}</span> : null}
-                    </>
-                  }
-                />
-              ) : (
-              <button type="button" aria-expanded={sel} onClick={() => setAt(sel ? null : b.key)} style={{ flex: 1, minWidth: 0, display: "flex", alignItems: "center", gap: 10, padding: 0, background: "none", border: 0, cursor: "pointer", color: "inherit", font: "inherit", textAlign: "left" }}>
-                  <span style={{ flex: "none", lineHeight: 0, opacity: b.locked ? 0.85 : 1 }}>
-                    <BadgeFace b={b} size={42} />
-                  </span>
-                <span style={{ minWidth: 0, flex: 1 }}>
-                  <span className="px" style={{ display: "block", fontSize: 11, color: "var(--text)", lineHeight: 1.5 }}>
-                    {b.title}
-                                        {b.auto ? <span aria-label="Awarded by the system" title="The system gives this one out itself" style={{ color: "#e8c14b", marginLeft: 6 }}>★</span> : null}
-                  </span>
-                  <span style={{ display: "block", fontSize: 11, lineHeight: 1.4, color: "var(--muted)" }}>{b.line}</span>
-                </span>
-                {pending[slug] ? (
-                  <span className="px" style={{ flex: "none", fontSize: 9.5, color: "var(--pur-pale)", textAlign: "right", maxWidth: 96, lineHeight: 1.4 }}>{pending[slug]}</span>
-                ) : null}
-              </button>
-              )}
-              </div>
-              {sel && b.locked ? (
-                <div style={{ paddingLeft: 52, display: "flex", flexDirection: "column", gap: 6 }}>
-                  {b.peer ? (
-                    <>
-                      <div style={{ fontSize: 11, lineHeight: 1.45, color: "var(--muted)" }}>
-                        {b.target ? `It has to be ${/^[aeiou]/i.test(targetLabel(b.target)) ? "an" : "a"} ${targetLabel(b.target).toLowerCase()}. ` : ""}Tap the badge and scan {b.target ? `${/^[aeiou]/i.test(targetLabel(b.target)) ? "an" : "a"} ${targetLabel(b.target).toLowerCase()}'s` : "their"} QR code. {b.instant ? "That is all: it completes the moment you scan." : "They get a whisper asking whether it happened, and if they say yes the badge is yours."}
-                      </div>
-                    </>
-                  ) : b.request ? (
-                    <>
-                      <div style={{ fontSize: 11, lineHeight: 1.45, color: "var(--muted)" }}>
-                        Make a post that shows it. It is marked as a badge request, and when a witch likes it, the badge is yours.
-                      </div>
-                      <Link href={`/post?badge=${slug}`} className="btn btn-sm btn-purple" style={{ minHeight: 40, alignSelf: "flex-start", display: "inline-flex", alignItems: "center" }}>
-                        MAKE THE POST →
-                      </Link>
-                    </>
-                  ) : (
-                    <>
-                      <div style={{ fontSize: 11, lineHeight: 1.45, color: "var(--muted)" }}>You get this one on your own, the moment it is true.</div>
-                      {where ? (
-                        <Link href={where[0]} className="btn btn-sm" style={{ minHeight: 40, alignSelf: "flex-start", display: "inline-flex", alignItems: "center" }}>
-                          {where[1]} →
-                        </Link>
-                      ) : null}
-                    </>
-                  )}
-                </div>
-              ) : null}
+                      <span style={{ display: "block", fontSize: 11, lineHeight: 1.4, color: "var(--muted)" }}>{b.line}</span>
+                    </span>
+                    {pending[slug] ? <span className="px" style={{ flex: "none", fontSize: 9.5, color: "var(--pur-pale)", textAlign: "right", maxWidth: 96, lineHeight: 1.4 }}>{pending[slug]}</span> : null}
+                  </>
+                }
+              />
             </li>
           );
         })}

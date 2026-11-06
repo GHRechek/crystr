@@ -8,7 +8,7 @@ import { BadgeEditor, type BadgeDraft as Draft } from "@/components/badge-editor
 import { setWorkingOn, vouchFromProfile } from "@/lib/actions";
 import { WORKING_MAX, type ShownBadge } from "@/lib/badges";
 import { targetLabel } from "@/lib/species";
-import { ScanRow } from "@/components/scan-quest-button";
+import { QuestRow } from "@/components/quest-sheet";
 
 const PER_PAGE = 1000; // every main quest on one scrolling page
 
@@ -118,29 +118,11 @@ export function WorkingOn({ items, all, editable, person, finished, isWitch, ope
                 </li>
               );
             }
-            if (editable && b.request) {
-              const open = say === b.key;
-              return (
-                <li key={b.key} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                  <button type="button" aria-expanded={open} onClick={() => setSay(open ? null : b.key)} style={{ display: "flex", alignItems: "center", gap: 10, padding: 0, background: "none", border: 0, cursor: "pointer", color: "inherit", font: "inherit" }}>
-                    {row}
-                  </button>
-                  {open ? (
-                    <div style={{ paddingLeft: 52, display: "flex", flexDirection: "column", gap: 6 }}>
-                      <div style={{ fontSize: 11, lineHeight: 1.45, color: "var(--muted)" }}>Make a post that shows it. It is marked as a badge request, and when a witch likes it, the badge is yours.</div>
-                      <Link href={`/post?badge=${b.key.slice(2)}`} className="btn btn-sm btn-purple" style={{ minHeight: 40, alignSelf: "flex-start", display: "inline-flex", alignItems: "center" }}>
-                        MAKE THE POST →
-                      </Link>
-                    </div>
-                  ) : null}
-                </li>
-              );
-            }
-            // A quest that needs scanning: the badge and the name both open the camera.
-            if (scan) {
+            // Tap a quest (the badge or the name) for how it is earned, in a tooltip in the middle of the screen.
+            if (!person) {
               return (
                 <li key={b.key}>
-                  <ScanRow slug={b.key.slice(2)} title={b.title} how={b.line} face={face} rest={rest} />
+                  <QuestRow b={b} scan={scan} face={face} rest={rest} />
                 </li>
               );
             }
