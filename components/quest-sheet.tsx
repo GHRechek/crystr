@@ -18,12 +18,42 @@ export const WHERE: Record<string, [string, string]> = {
   "first-trade": ["/me/trades", "YOUR TRADES"],
 };
 
-/** Quests that are earned by doing something else: how to find the thing, and where it is. */
-const CUSTOM: Record<string, { text: string; link: [string, string] }> = {
+/** Quests the system counts for you: how to go about it, and where to go. */
+const CUSTOM: Record<string, { text: string; link?: [string, string] }> = {
   "first-friend": {
     text: "Go to Side Quests, tap WITH SOMEONE, and find a Friend quest, like Human Friend or Elf Friend. Tap it, then scan their QR code from there. Any one of them counts.",
     link: ["/quests?mode=with#side-quests", "GO TO SIDE QUESTS"],
   },
+  "first-words": { text: "Make a post from the Feed. Any post counts.", link: ["/post", "MAKE A POST"] },
+  "show-and-tell": { text: "Make a post with a picture on it.", link: ["/post", "MAKE A POST"] },
+  "a-helping-hand": { text: "Help someone with their problem, then tap Help Someone Else at the top of your Quests and scan their QR to confirm.", link: ["/quests", "GO TO YOUR QUESTS"] },
+  "registered-plaintiff": { text: "Fill in the registration form. It asks who you are, where you live and your species.", link: ["/welcome", "OPEN THE FORM"] },
+  "visit-the-well": { text: "Go to the Mana Well and answer one of its quests.", link: ["/well", "GO TO THE WELL"] },
+  "ask-for-help": { text: "Go to your profile, tap your picture, choose ASK FOR HELP, and say what you need.", link: ["/me", "GO TO YOUR PROFILE"] },
+  "top-five-in": { text: "Nothing to fill in: it happens when someone puts you in their Top 5. Meet people, whisper, make friends.", link: ["/people", "FIND PEOPLE"] },
+  "got-token": { text: "Someone has to give you their token. Ask a friend to give you theirs from their Trades page.", link: ["/people", "FIND PEOPLE"] },
+  "gift-badge": { text: "Offer one of your tradable badges to someone and ask for nothing back.", link: ["/me/trades", "GO TO TRADES"] },
+  "max-fifty": { text: "Your max mana grows with every badge you earn and every tradable you hold. Keep earning.", link: ["/quests", "GO TO YOUR QUESTS"] },
+  "all-eight": { text: "Earn each of the first eight badges: the ones everyone starts with. Check what is still undone in Side Quests.", link: ["/quests#side-quests", "GO TO SIDE QUESTS"] },
+  "tier-three": { text: "Keep going on a badge that has steps, like First Words or Visit the Mana Well, until you reach its third step.", link: ["/quests#side-quests", "GO TO SIDE QUESTS"] },
+  "joined-in": { text: "Reply on posts in the Feed, five different ones. It counts from when you pick it.", link: ["/", "GO TO THE FEED"] },
+  "whisper-web": { text: "Whisper to five different people. It counts from when you pick it.", link: ["/whispers", "GO TO WHISPERS"] },
+  "a-voice-in-council": { text: "Vote on five motions in the Ball. It counts from when you pick it.", link: ["/ball?tab=motions", "SEE THE MOTIONS"] },
+  "three-days": { text: "Post every day for five days in a row. It counts from when you pick it.", link: ["/post", "MAKE A POST"] },
+  "first-like-given": { text: "Like a post every day for five days in a row.", link: ["/", "GO TO THE FEED"] },
+  "first-like-got": { text: "Post something people like: ten likes on a single post.", link: ["/post", "MAKE A POST"] },
+  "got-replied": { text: "Write a post that gets five replies.", link: ["/post", "MAKE A POST"] },
+  "first-spend": { text: "Spend 200 mana in total, on whispers, posts and the like. Mana comes back at sunrise and from the Well.", link: ["/", "GO TO THE FEED"] },
+  "full-well": { text: "Be at full mana when the day starts at 6 am, five days running. Don't spend it all.", link: ["/well", "GO TO THE WELL"] },
+  "picture-wall": { text: "Post a picture on five different days.", link: ["/post", "MAKE A POST"] },
+  "well-regular": { text: "Answer a Well quest on five different days.", link: ["/well", "GO TO THE WELL"] },
+  "daily-whisper": { text: "Send a whisper every day for five days in a row.", link: ["/whispers", "GO TO WHISPERS"] },
+  "pen-pal": { text: "Keep a whisper going with one person until you have traded twenty messages.", link: ["/whispers", "GO TO WHISPERS"] },
+  "open-hand": { text: "Help someone on five different days, and have them say yes by scanning their QR on Help Someone Else.", link: ["/quests", "GO TO YOUR QUESTS"] },
+  "town-talk": { text: "Reply to posts from ten different people.", link: ["/", "GO TO THE FEED"] },
+  "spread-the-love": { text: "Like posts from ten different people.", link: ["/", "GO TO THE FEED"] },
+  "conversation-starter": { text: "Write three posts that each get three replies.", link: ["/post", "MAKE A POST"] },
+  "keep-talking": { text: "Reply to a post every day for five days in a row.", link: ["/", "GO TO THE FEED"] },
 };
 
 const article = (t: string) => (/^[aeiou]/i.test(t) ? "an" : "a");
