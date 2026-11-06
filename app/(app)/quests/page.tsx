@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { requireMe, getBadges, getPeopleKinds, getQuests, getQuestWaiting } from "@/lib/data";
+import { requireMe, getBadges, getPeopleKinds, getQuestWaiting } from "@/lib/data";
 import { createClient } from "@/lib/supabase/server";
 import { answerBadgeClaim } from "@/lib/actions";
-import { untilReady, ago } from "@/lib/crystr";
+import { ago } from "@/lib/crystr";
 import { resolveWorking, finishedWorking, goalGrid, questGrid } from "@/lib/badges";
 import { WorkingOn } from "@/components/working-on";
 import { QuestBrowser } from "@/components/quest-browser";
@@ -27,7 +27,7 @@ export default async function QuestsPage(props: { searchParams: Promise<{ pick?:
   await createClient().rpc("cr_check_badges");
   const { data: progressData } = await createClient().rpc("cr_goal_progress");
   const progress = (progressData ?? {}) as Record<string, number>;
-  const [badges, people, well, items] = await Promise.all([getBadges(userId), getPeopleKinds(userId), getQuests(userId), getBadgeItems(userId)]);
+  const [badges, people, items] = await Promise.all([getBadges(userId), getPeopleKinds(userId), getBadgeItems(userId)]);
   const tradable = items.filter((i) => i.kind === "tradable");
   const shown = resolveShown(profile.shown_badges, badges, items, profile.handle);
   const heldCount = badges.filter((b) => b.earned_at).length + tradable.length;
@@ -77,7 +77,7 @@ export default async function QuestsPage(props: { searchParams: Promise<{ pick?:
 
       {waitingCount ? (
         <div>
-          {head("WAITING", "var(--pur-soft)", <span className="px" style={{ fontSize: 11, color: "var(--muted)" }}>{waitingCount}</span>)}
+          {head("ACTIVE QUESTS", "var(--pur-soft)", <span className="px" style={{ fontSize: 11, color: "var(--muted)" }}>{waitingCount}</span>)}
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {waiting.asked.map((c) => (
               <div key={`in${c.id}`} className="tile" style={{ padding: 12 }}>
@@ -123,32 +123,6 @@ export default async function QuestsPage(props: { searchParams: Promise<{ pick?:
         </div>
       ) : null}
 
-      <div>
-        {head("DAILY", "var(--blu-soft)", <Link href="/well" className="px" style={{ fontSize: 11, color: "var(--pur-pale)" }}>THE WELL →</Link>)}
-        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-          {well.map((q) => {
-            const wait = !!q.ready_at;
-            return (
-              <Link key={q.slug} href={`/well/${q.slug}`} className="rowcard" style={{ padding: 11, minHeight: 56, gap: 11 }}>
-                <div className="avatar" style={{ width: 32, height: 32, background: q.chip, fontSize: 12, opacity: wait ? 0.5 : 1 }}>{q.glyph}</div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 13, fontWeight: 500 }}>{q.title}</div>
-                  <div style={{ fontSize: 11.5, color: "var(--muted)", lineHeight: 1.4 }}>{q.sub}</div>
-                </div>
-                <div className="px" style={{ fontSize: wait ? 9 : 12, color: wait ? "var(--dim)" : "var(--blu-soft)", flex: "none", textAlign: "right" }}>
-                  {wait ? `IN ${untilReady(q.ready_at!)}` : `+${q.reward}`}
-                </div>
-              </Link>
-            );
-          })}
-        </div>
-      </div>
-
-      <div>
-        {head("QUESTS", "var(--mag-soft)", <span className="px" style={{ fontSize: 11, color: "var(--muted)" }}>{quests.filter((b) => !b.locked).length} / {quests.length}</span>)}
-        <QuestBrowser items={quests} people={people} pending={pending} />
-      </div>
-
       {profile.is_witch ? (
         <div>
           {head("BADGE REQUESTS", "var(--mag)", <span className="px" style={{ fontSize: 11, color: "var(--muted)" }}>{waiting.queue.length} WAITING</span>)}
@@ -168,6 +142,12 @@ export default async function QuestsPage(props: { searchParams: Promise<{ pick?:
           )}
         </div>
       ) : null}
+
+      <div>
+        {head("ALL QUESTS", "var(--mag-soft)", <span className="px" style={{ fontSize: 11, color: "var(--muted)" }}>{quests.filter((b) => !b.locked).length} / {quests.length}</span>)}
+        <QuestBrowser items={quests} people={people} pending={pending} />
+      </div>
+
           </>
         }
       />
