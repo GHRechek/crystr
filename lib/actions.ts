@@ -1163,6 +1163,18 @@ export async function answerBadgeClaim(fd: FormData) {
 }
 
 
+/** Help Someone Else, from a scan: ask the person you helped to say yes. */
+export async function claimHelp(fd: FormData) {
+  const r = await call("cr_scan_help", { p_other: str(fd, "other_id") });
+  if (!r.ok) {
+    if (r.code === "already") await setFlash("ALREADY SAID", "That one is already waiting, or already confirmed.", EDGE.purple);
+    else await wentWrong();
+  } else {
+    await setFlash("ASKED", "They will see a note asking whether you helped. If they say yes, it counts: every ten helps earn a tradable badge.", EDGE.blue);
+  }
+  revalidatePath("/", "layout");
+}
+
 export type ScanQuest = { slug: string; title: string; how: string; art: string; tiers: number; tier: number; epic: boolean };
 export type Scanned = { id: string; handle: string; name: string | null; species: string | null; spellcaster: boolean; face: string; quests: ScanQuest[] };
 

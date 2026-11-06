@@ -5,18 +5,19 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import jsQR from "jsqr";
 import { BadgeArt } from "@/components/badges";
-import { claimBadge, scanPerson, vouchFromProfile, type Scanned } from "@/lib/actions";
+import { claimBadge, claimHelp, scanPerson, type Scanned } from "@/lib/actions";
 import { targetLabel } from "@/lib/species";
 
 /** The camera, full screen, looking for another person's CRYSTR code. A code that points at a
  *  profile (…/u/<handle>) opens the trade page with that person. */
-export function QrScanner({ onClose, tradesHref, waiting, mode = "general" }: { onClose: () => void; tradesHref?: string; waiting?: number; /** "general": trade, open a profile, or say they helped you. "quest": only the quests you can do with them. */ mode?: "general" | "quest" }) {
+export function QrScanner({ onClose, tradesHref, waiting, mode = "general", only }: { only?: string; onClose: () => void; tradesHref?: string; waiting?: number; /** "general": trade, open a profile, or say they helped you. "quest": only the quests you can do with them. */ mode?: "general" | "quest" }) {
   const router = useRouter();
   const video = useRef<HTMLVideoElement>(null);
   const [err, setErr] = useState<string | null>(null);
   const [found, setFound] = useState<Scanned | null>(null);
-  const [view, setView] = useState<"pick" | "quests" | "help">(mode === "quest" ? "quests" : "pick");
+  const [view, setView] = useState<"pick" | "quests">(mode === "quest" ? "quests" : "pick");
   const [sent, setSent] = useState<string[]>([]);
+  const shown = (found?.quests ?? []).filter((q) => !only || q.slug === only);
 
   useEffect(() => {
     let stop = false;
@@ -114,7 +115,6 @@ export function QrScanner({ onClose, tradesHref, waiting, mode = "general" }: { 
                 [
                   ["⇄", "TRADE", () => { router.push(`/u/${found.handle}/trade`); onClose(); }],
                   ["☺", "PROFILE", () => { router.push(`/u/${found.handle}`); onClose(); }],
-                  ["✚", "HELP", () => setView("help")],
                 ] as [string, string, () => void][]
               ).map(([icon, label, go]) => (
                 <button key={label} type="button" onClick={go} className="btn" style={{ flex: 1, minHeight: 84, flexDirection: "column", gap: 6, padding: "10px 4px" }}>
@@ -123,32 +123,25 @@ export function QrScanner({ onClose, tradesHref, waiting, mode = "general" }: { 
                 </button>
               ))}
             </div>
-          ) : view === "help" ? (
-            <>
-              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <button type="button" className="btn btn-sm" onClick={() => setView("pick")} style={{ minHeight: 36 }}>← BACK</button>
-                <span className="px" style={{ fontSize: 11, color: "var(--pur-soft)" }}>DID THEY HELP YOU?</span>
-              </div>
-              <div style={{ fontSize: 12.5, lineHeight: 1.5, color: "var(--muted)" }}>If {found.handle} helped you with something, say so. It counts for them right away, and every ten helps brings them a tradable badge.</div>
-              <form action={vouchFromProfile}>
-                <input type="hidden" name="kind" value="helped" />
-                <input type="hidden" name="person_id" value={found.id} />
-                <input type="hidden" name="handle" value={found.handle} />
-                <input type="hidden" name="badge" value="a-helping-hand" />
-                <button type="submit" className="btn btn-purple btn-block" style={{ minHeight: 48 }}>THEY HELPED ME</button>
-              </form>
-            </>
           ) : (
             <>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                 {mode === "quest" ? null : <button type="button" className="btn btn-sm" onClick={() => setView("pick")} style={{ minHeight: 36 }}>← BACK</button>}
                 <span className="px" style={{ fontSize: 11, color: "var(--pur-soft)" }}>WHAT HAPPENED WITH THEM?</span>
               </div>
-              {found.quests.length === 0 ? (
-                <div className="empty">NO QUESTS YOU CAN DO WITH THEM RIGHT NOW</div>
+              {only === "a-helping-hand" ? (
+                <>
+                  <div style={{ fontSize: 12.5, lineHeight: 1.5, color: "var(--muted)" }}>{found.handle} gets a note asking whether you helped them. If they say yes, it counts, and every ten helps brings a tradable badge.</div>
+                  <form action={async (fd) => { await claimHelp(fd); setSent((x) => [...x, "a-helping-hand"]); }}>
+                    <input type="hidden" name="other_id" value={found.id} />
+                    <button type="submit" disabled={sent.includes("a-helping-hand")} className="btn btn-purple btn-block" style={{ minHeight: 48 }}>{sent.includes("a-helping-hand") ? "ASKED" : "I HELPED THEM"}</button>
+                  </form>
+                </>
+              ) : shown.length === 0 ? (
+                <div className="empty">{only ? `${found.handle.toUpperCase()} CANNOT BE PART OF THIS ONE` : "NO QUESTS YOU CAN DO WITH THEM RIGHT NOW"}</div>
               ) : (
                 <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: 6 }}>
-                  {found.quests.map((q) => {
+                  {shown.map((q) => {
                     const done = sent.includes(q.slug);
                     return (
                       <li key={q.slug}>

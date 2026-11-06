@@ -121,6 +121,8 @@ export type ShownBadge = {
   request?: boolean;
   /** Earned by asking someone, who answers in a whisper. */
   peer?: boolean;
+  /** A Main Quest that is finished: it stays in its slot, greyed out and struck through, until it is replaced. */
+  done?: boolean;
   /** How a quest is done: on your own (the system sees it), by showing a post to a witch, or with someone. */
   mode?: "do" | "show" | "with";
   /** For a "with someone" quest: who it has to be. */
@@ -251,13 +253,15 @@ export function resolveWorking(list: string[] | null | undefined, badges: BadgeR
       continue;
     }
     const b = key.startsWith("a:") ? badges.find((x) => x.slug === key.slice(2)) : undefined;
-    if (!b || !stillWorking(b)) continue;
+    if (!b) continue;
+    const finished = !stillWorking(b);
     out.push({
       key,
       badge: { slug: b.slug, art: b.art, tiers: b.tiers, tier: b.tier },
       title: b.earned_at && b.tiers > 1 ? `${b.title} ${ROMAN[b.tier]}` : b.title,
       line: b.how,
       locked: !b.earned_at,
+      done: finished,
       request: !!b.witch_approved && !b.earned_at,
       peer: !!b.peer_approved && !b.earned_at,
       target: b.peer_target ?? undefined,
@@ -322,7 +326,7 @@ export function helpingRow(badges: BadgeRow[], helps: number): ShownBadge | null
     key: "a:a-helping-hand",
     badge: { slug: b.slug, art: b.art, tiers: b.tiers, tier: Math.max(1, b.tier) },
     title: "Help Someone Else",
-    line: "Help someone with a problem and have them say yes. Every 10 brings a tradable badge, again and again.",
+    line: "Help someone with their problem. Scan their QR to confirm!",
     locked: false,
     progress: { n: helps % 10, of: 10 },
   };

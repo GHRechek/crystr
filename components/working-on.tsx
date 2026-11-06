@@ -19,7 +19,7 @@ export function WorkingOn({ items, all, editable, person, finished, isWitch, ope
   const [draft, setDraft] = useState<Draft | null>(null);
   const [say, setSay] = useState<string | null>(null);
   const [open, setOpen] = useState(!!openAtStart && !!editable);
-  const [pick, setPick] = useState<string[]>(items.map((b) => b.key));
+  const [pick, setPick] = useState<string[]>(items.filter((b) => !b.done).map((b) => b.key));
   const [page, setPage] = useState(0);
 
   if (!editable && items.length === 0) return null;
@@ -44,7 +44,7 @@ export function WorkingOn({ items, all, editable, person, finished, isWitch, ope
             type="button"
             className="px"
             onClick={() => {
-              setPick(items.map((b) => b.key));
+              setPick(items.filter((b) => !b.done).map((b) => b.key));
               setPage(0);
               setOpen(true);
             }}
@@ -59,29 +59,49 @@ export function WorkingOn({ items, all, editable, person, finished, isWitch, ope
       {items.length ? (
         <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: 6 }}>
           {items.map((b) => {
+            const done = heading ? !b.locked : !!b.done;
+            const scanBtn = !person && (b.peer || b.key === "a:a-helping-hand") ? <ScanQuestButton slug={b.key.slice(2)} /> : null;
             const row = (
               <>
-                <span style={{ flex: "none", opacity: b.locked ? 0.7 : 1, lineHeight: 0 }}>
+                <span style={{ flex: "none", opacity: done ? 0.4 : b.locked ? 0.7 : 1, lineHeight: 0 }}>
                   <BadgeFace b={b} size={42} />
                 </span>
                 <span style={{ minWidth: 0, textAlign: "left" }}>
-                  <span className="px" style={{ display: "block", fontSize: 11, color: "var(--text)", lineHeight: 1.5 }}>
+                  <span className="px" style={{ display: "block", fontSize: 11, color: done ? "var(--dim)" : "var(--text)", lineHeight: 1.5, textDecoration: done ? "line-through" : "none", textDecorationColor: "var(--dim)" }}>
                     {b.title}
                   </span>
-                  <span style={{ display: "block", fontSize: 12, lineHeight: 1.4, color: "var(--muted)" }}>{b.line}</span>
+                  <span style={{ display: "block", fontSize: 12, lineHeight: 1.4, color: done ? "var(--dim)" : "var(--muted)", textDecoration: done ? "line-through" : "none" }}>{b.line}</span>
                 </span>
-                {b.progress ? (
+                {done ? (
+                  <span aria-label="Done" className="px" style={{ marginLeft: "auto", flex: "none", fontSize: 13, color: "var(--dim)" }}>✓</span>
+                ) : b.progress ? (
                   <span className="px" style={{ marginLeft: "auto", flex: "none", fontSize: 12, color: "var(--pur-pale)" }}>
                     {b.progress.n}/{b.progress.of}
                   </span>
-                ) : heading && !b.locked ? (
-                  <span aria-label="Done" className="px" style={{ marginLeft: "auto", flex: "none", fontSize: 13, color: "var(--blu-soft)" }}>✓</span>
                 ) : null}
               </>
             );
             // On someone else's page a badge they are working on can be tapped to say
             // "they helped me" or "we met up".
             // On your own page, a badge to ask a witch for opens the way to make the post.
+            if (editable && !heading && b.done) {
+              return (
+                <li key={b.key} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPick(items.filter((x) => !x.done).map((x) => x.key));
+                      setPage(0);
+                      setOpen(true);
+                    }}
+                    style={{ flex: 1, minWidth: 0, display: "flex", alignItems: "center", gap: 10, padding: 0, background: "none", border: 0, cursor: "pointer", color: "inherit", font: "inherit" }}
+                  >
+                    {row}
+                  </button>
+                  <span className="px" style={{ flex: "none", fontSize: 10, color: "var(--pur-pale)" }}>REPLACE →</span>
+                </li>
+              );
+            }
             if (editable && b.request) {
               const open = say === b.key;
               return (
@@ -103,15 +123,18 @@ export function WorkingOn({ items, all, editable, person, finished, isWitch, ope
             // A quest that people have to confirm: asking is done by scanning their code.
             if (editable && b.peer) {
               const open = say === b.key;
+              const kind = b.target ? `${/^[aeiou]/i.test(targetLabel(b.target)) ? "an" : "a"} ${targetLabel(b.target).toLowerCase()}` : null;
               return (
                 <li key={b.key} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                  <button type="button" aria-expanded={open} onClick={() => setSay(open ? null : b.key)} style={{ display: "flex", alignItems: "center", gap: 10, padding: 0, background: "none", border: 0, cursor: "pointer", color: "inherit", font: "inherit" }}>
-                    {row}
-                  </button>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <button type="button" aria-expanded={open} onClick={() => setSay(open ? null : b.key)} style={{ flex: 1, minWidth: 0, display: "flex", alignItems: "center", gap: 10, padding: 0, background: "none", border: 0, cursor: "pointer", color: "inherit", font: "inherit" }}>
+                      {row}
+                    </button>
+                    {scanBtn}
+                  </div>
                   {open ? (
                     <div style={{ paddingLeft: 52, fontSize: 12, lineHeight: 1.45, color: "var(--muted)" }}>
-                      {b.target ? `It has to be ${/^[aeiou]/i.test(targetLabel(b.target)) ? "an" : "a"} ${targetLabel(b.target).toLowerCase()}. ` : ""}Scan {b.target ? `${/^[aeiou]/i.test(targetLabel(b.target)) ? "an" : "a"} ${targetLabel(b.target).toLowerCase()}'s` : "their"} QR code. Use the button below to open the camera (the exchange button on your profile is for trades, profiles and thanking helpers). They get a whisper and say yes or no.
-                      <div style={{ marginTop: 8 }}><ScanQuestButton /></div>
+                      {kind ? `It has to be ${kind}. ` : ""}Tap COMPLETE and scan {kind ? `${kind}'s` : "their"} QR code. They get a whisper asking whether it happened, and if they say yes it counts.
                     </div>
                   ) : null}
                 </li>
@@ -119,8 +142,9 @@ export function WorkingOn({ items, all, editable, person, finished, isWitch, ope
             }
             if (!person || !b.key.startsWith("a:")) {
               return (
-                <li key={b.key} style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <li key={b.key} style={{ display: "flex", alignItems: "center", gap: 8 }}>
                   {row}
+                  {scanBtn}
                 </li>
               );
             }

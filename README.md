@@ -496,7 +496,4 @@ After a scan: TRADE, PROFILE or QUEST. QUEST lists only the with-quests that per
 Quests that need someone else are asked only by scanning their code (no person picker in the quest lists). The magnifier left of CRYSTR opens `/people`: search by name plus icon toggles (elf, forsaken, shifter, human, orc, goblin, planar, spellcaster, witch). The phone-mock status bar is gone.
 
 ### Two ways to scan
-The exchange button on your profile opens the camera for general things: TRADE, PROFILE, or HELP ("they helped me", which counts for them). Quests only show up when you scan from a quest's own SCAN A CODE button (`<QrScanner mode="quest">`), and then the result is the list of quests you can do with that person.
-
-### Species is set at registration
-Species and "casts spells" come from the SDC registration form (a trigger copies them to the profile) and can no longer be edited on Edit Profile. Every witch is a spellcaster (trigger).
+The exchange button on your profile opens the camera for general things: after a scan you pick TRADE or PROFILE, nothing quest related. Quests are completed from each quest's own COMPLETE button (`<QrScanner mode="quest" only={slug}>`), which shows only that quest for whoever you scan. Help Someone Else works the same way ("I helped them" asks them to say yes). A finished First Step or Main Quest is greyed out and struck through; a finished Main Quest keeps its slot until you tap it to REPLACE it.
