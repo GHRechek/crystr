@@ -177,7 +177,7 @@ on `/me/edit`; the migration is
 A **token** is the badge a person designs for themselves on `/me/token`: a
 badge shape (circle, framed circle, shield, diamond, plate, hexagon, each with
 or without a rim band, at full size or three quarters or half) in their
-colours, and two items from the uploaded set
+colours, and items from the uploaded set
 (`public/badges/items/`), added from a sheet and placed by dragging them on a
 stage, up to five at a time, each of which can be flipped, turned in steps of 45
 degrees (so the diagonals work too), shrunk from 100 to 55 percent in steps of
