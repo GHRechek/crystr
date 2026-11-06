@@ -111,12 +111,6 @@ export function ProfileHead({
               <Link href="/me?badges=1" className="face-menu-item" role="menuitem">
                 <span aria-hidden="true">◈</span> CHANGE BADGE DISPLAY
               </Link>
-              <Link href="/me?goals=1" className="face-menu-item" role="menuitem">
-                <span aria-hidden="true">★</span> PICK EPIC QUESTS
-              </Link>
-              <Link href="/me?quests=1" className="face-menu-item" role="menuitem">
-                <span aria-hidden="true">◈</span> SEE QUESTS
-              </Link>
               <Link href="/me/edit" className="face-menu-item" role="menuitem">
                 <span aria-hidden="true">▤</span> EDIT PROFILE
               </Link>

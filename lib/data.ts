@@ -1052,3 +1052,77 @@ export async function getPostForSend(id: number): Promise<{ id: number; handle: 
   const r = data as unknown as { id: number; body: string; has_image: boolean; author: { handle: string } | null } | null;
   return r ? { id: r.id, handle: r.author?.handle ?? null, body: r.body, has_image: r.has_image } : null;
 }
+
+// ------------------------------------------------------------ quests waiting
+
+export type QuestWaiting = {
+  /** Questions someone asked me ("did that happen with you?"): answer YES or NO. */
+  asked: { id: number; from: string; title: string }[];
+  /** Questions I asked someone, still unanswered. */
+  askedOut: { id: number; to: string; title: string; slug: string }[];
+  /** Posts I made for a badge, waiting for a witch's like. */
+  requests: { id: number; slug: string; title: string }[];
+  /** "We met up" / "I helped them" I said, still waiting on the other person. */
+  vouches: { id: number; kind: "meetup" | "helped"; to: string }[];
+  /** For witches: badge requests nobody has approved yet. */
+  queue: { id: number; who: string; title: string; slug: string; created_at: string }[];
+};
+
+export async function getQuestWaiting(userId: string, isWitch: boolean, earned: Set<string>): Promise<QuestWaiting> {
+  const supabase = createClient();
+  const [claims, posts, vouches, queueRows] = await Promise.all([
+    supabase
+      .from("badge_claims")
+      .select("id, badge_slug, claimant, other, claimant_p:profiles!badge_claims_claimant_fkey(handle), other_p:profiles!badge_claims_other_fkey(handle), badge:badges!badge_claims_badge_slug_fkey(title)")
+      .eq("status", "pending"),
+    supabase
+      .from("posts")
+      .select("id, badge_slug, badge:badges!posts_badge_slug_fkey(title)")
+      .eq("author_id", userId)
+      .not("badge_slug", "is", null)
+      .order("created_at", { ascending: false })
+      .limit(50),
+    supabase
+      .from("vouches")
+      .select("id, kind, other_p:profiles!vouches_other_fkey(handle)")
+      .eq("claimant", userId)
+      .eq("status", "pending"),
+    isWitch
+      ? supabase
+          .from("posts")
+          .select("id, author_id, badge_slug, created_at, author:profiles!posts_author_id_fkey(handle), badge:badges!posts_badge_slug_fkey(title)")
+          .not("badge_slug", "is", null)
+          .order("created_at", { ascending: false })
+          .limit(60)
+      : Promise.resolve({ data: [] }),
+  ]);
+  type One<T> = T | T[] | null;
+  const one = <T,>(v: One<T>): T | null => (Array.isArray(v) ? (v[0] ?? null) : v);
+  const cl = (claims.data ?? []) as unknown as { id: number; badge_slug: string; claimant: string; other: string; claimant_p: One<{ handle: string }>; other_p: One<{ handle: string }>; badge: One<{ title: string }> }[];
+  const seen = new Set<string>();
+  const requests = ((posts.data ?? []) as unknown as { id: number; badge_slug: string; badge: One<{ title: string }> }[])
+    .filter((p) => !earned.has(p.badge_slug) && !seen.has(p.badge_slug) && !!seen.add(p.badge_slug))
+    .map((p) => ({ id: p.id, slug: p.badge_slug, title: one(p.badge)?.title ?? "a badge" }));
+
+  // Which of those posts have already been approved: the author has the badge.
+  let queue: QuestWaiting["queue"] = [];
+  if (isWitch) {
+    const rows = (queueRows.data ?? []) as unknown as { id: number; author_id: string; badge_slug: string; created_at: string; author: One<{ handle: string }>; badge: One<{ title: string }> }[];
+    const ids = [...new Set(rows.map((r) => r.author_id))];
+    const { data: has } = ids.length
+      ? await supabase.from("user_badges").select("user_id, badge_slug").in("user_id", ids)
+      : { data: [] as { user_id: string; badge_slug: string }[] };
+    const got = new Set(((has ?? []) as { user_id: string; badge_slug: string }[]).map((h) => `${h.user_id}|${h.badge_slug}`));
+    queue = rows
+      .filter((r) => r.author_id !== userId && !got.has(`${r.author_id}|${r.badge_slug}`))
+      .map((r) => ({ id: r.id, who: one(r.author)?.handle ?? "someone", title: one(r.badge)?.title ?? "a badge", slug: r.badge_slug, created_at: r.created_at }));
+  }
+
+  return {
+    asked: cl.filter((c) => c.other === userId).map((c) => ({ id: c.id, from: one(c.claimant_p)?.handle ?? "someone", title: one(c.badge)?.title ?? "a quest" })),
+    askedOut: cl.filter((c) => c.claimant === userId).map((c) => ({ id: c.id, to: one(c.other_p)?.handle ?? "someone", title: one(c.badge)?.title ?? "a quest", slug: c.badge_slug })),
+    requests,
+    vouches: ((vouches.data ?? []) as unknown as { id: number; kind: "meetup" | "helped"; other_p: One<{ handle: string }> }[]).map((v) => ({ id: v.id, kind: v.kind, to: one(v.other_p)?.handle ?? "someone" })),
+    queue,
+  };
+}

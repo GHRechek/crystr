@@ -117,6 +117,8 @@ export type ShownBadge = {
   request?: boolean;
   /** Earned by asking someone, who answers in a whisper. */
   peer?: boolean;
+  /** How a quest is done: on your own (the system sees it), by showing a post to a witch, or with someone. */
+  mode?: "do" | "show" | "with";
   /** How far along a goal is: the count so far, and the count that finishes the next step. */
   progress?: { n: number; of: number };
   /** Handed out by the system itself, not by a witch's like: marked with a star. */
@@ -276,6 +278,7 @@ export const questGrid = (badges: BadgeRow[]): ShownBadge[] => {
     auto: !b.witch_approved && !b.peer_approved,
     request: !!b.witch_approved && !b.earned_at,
     peer: !!b.peer_approved && !b.earned_at,
+    mode: b.peer_approved ? "with" : b.witch_approved ? "show" : "do",
   }));
 };
 

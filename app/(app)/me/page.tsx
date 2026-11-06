@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import {
   requireMe,
@@ -20,7 +21,6 @@ import { BadgeArt, ItemTile, TokenImage } from "@/components/badges";
 import { AboutBadges } from "@/components/about-badges";
 import { ProfileDetails, type DetailKind } from "@/components/profile-details";
 import { WorkingOn } from "@/components/working-on";
-import { Quests } from "@/components/quests";
 import { ProfileHead } from "./face-menu";
 import { bannerOf, bannerStyle } from "@/lib/banner";
 import { portraitFromId, normalizePortrait, packPortrait } from "@/lib/portrait/core";
@@ -33,8 +33,10 @@ const longDate = (d: Date) => d.toLocaleDateString("en-GB", { day: "numeric", mo
 
 export default async function ProfilePage(props: { searchParams: Promise<{ quests?: string; goals?: string; badges?: string }> }) {
   const sp = await props.searchParams;
-  const quests = sp.quests === "1";
-  const goals = sp.goals === "1";
+  // Old links: quests now live on /quests.
+  if (sp.quests === "1") redirect("/quests");
+  if (sp.goals === "1") redirect("/quests?pick=1");
+  const goals = false;
   const badgesOpen = sp.badges === "1";
   const { userId, profile } = await requireMe();
   // Count anything that has come due since you were last here (a day more in the City, a Top 5).
@@ -198,23 +200,16 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
           </div>
         </div>
 
-        {/* Quests: the token, up to four badges you show, and the list of every quest. */}
-        <Quests
-          key={quests ? "open" : "shut"}
-          openAtStart={quests}
-          items={questGrid(badges)}
-          people={people.map((p) => ({ id: p.id, handle: p.handle }))}
-          viewer={{
-            earned: achievementGrid(badges.filter((b) => b.earned_at)),
-            tradable: resolveShown(tradable.map((i) => `i:${i.id}`), badges, items, profile.handle, 10000),
-            current: shown.map((b) => b.key),
-            aside: (
-              <Link href="/me/trades" className="px" style={{ fontSize: 11, color: "var(--pur-pale)", whiteSpace: "nowrap" }}>
-                TRADES{waiting ? ` · ${waiting}` : ""} →
-              </Link>
-            ),
-          }}
-        />
+        {/* Quests live on their own page; this is the way in. */}
+        <div className="px" style={{ fontSize: 12, color: "var(--mag-soft)", minHeight: 24, display: "flex", alignItems: "center", gap: 8 }}>
+          <span>
+            QUESTS <span style={{ fontSize: 11, color: "var(--muted)", marginLeft: 6 }}>· {questGrid(badges).filter((b) => !b.locked).length} / {questGrid(badges).length}</span>
+          </span>
+          <span className="spacer" />
+          <Link href="/quests" className="px" style={{ fontSize: 11, color: "var(--pur-pale)" }}>
+            SEE ALL QUESTS →
+          </Link>
+        </div>
 
         {plaintiffSince ? (
           <div className="tile" style={{ padding: 12, display: "flex", alignItems: "center", gap: 10 }}>
