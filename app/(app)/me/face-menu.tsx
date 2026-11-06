@@ -3,9 +3,6 @@
 import Link from "next/link";
 import { useState, type CSSProperties } from "react";
 import { setMood } from "@/lib/actions";
-import { BadgeChooser } from "@/components/badge-chooser";
-import { ShownBadges } from "@/components/shown-badges";
-import type { ShownBadge } from "@/lib/badges";
 
 /** The portrait's size, and how tall the banner is when it carries the shown badges: a row of
  *  badges (63 pixels), a gap, and the thought below them, clear of the portrait. */
@@ -18,40 +15,22 @@ const BANNER_WITH_BADGES = 136;
 export function ProfileHead({
   src,
   handle,
-  joined,
   mood,
   banner,
-  badgeOptions,
-  shown,
 }: {
   src: string;
   handle: string;
-  joined: string;
   mood: string | null;
   /** The banner's CSS, from bannerStyle(). */
   banner: CSSProperties;
-  /** The badges that could be shown (earned or held), and the ones that are. */
-  badgeOptions: ShownBadge[];
-  shown: ShownBadge[];
 }) {
   const [open, setOpen] = useState(false);
-  const [choosing, setChoosing] = useState(false);
   const [editing, setEditing] = useState(false);
 
   return (
     <>
       <div style={{ position: "relative" }}>
-        {/* Taller when badges are on show, so they sit on the banner with the thought below them. */}
-        <div style={{ height: shown.length ? BANNER_WITH_BADGES : 112, ...banner }} />
-
-        {/* The shown badges, centred on the banner both ways. The thought sits low and may come close. */}
-        {shown.length ? (
-          <div style={{ position: "absolute", inset: 0, padding: "0 16px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <div style={{ width: "100%" }}>
-              <ShownBadges shown={shown} />
-            </div>
-          </div>
-        ) : null}
+                <div style={{ height: 112, ...banner }} />
 
         {/* The thought floats in the banner, tail stepping down to the face. */}
         {!editing ? (
@@ -62,7 +41,7 @@ export function ProfileHead({
               setOpen(true);
               setEditing(true);
             }}
-            style={{ position: "absolute", left: FACE + 28, right: 16, bottom: 3 }}
+            style={{ position: "absolute", left: FACE + 28, right: 16, bottom: 30 }}
           >
             <span>{mood || "…"}</span>
           </button>
@@ -112,10 +91,7 @@ export function ProfileHead({
           </button>
 
           <div style={{ paddingBottom: 4, minWidth: 0, flex: 1 }}>
-            <h1 style={{ fontSize: 19, fontWeight: 500, letterSpacing: "-.02em" }}>{handle}</h1>
-            <div className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
-              {joined}
-            </div>
+            <h1 className="px" style={{ fontSize: 16, fontWeight: 400, lineHeight: 1.5, overflowWrap: "anywhere" }}>{handle}</h1>
           </div>
 
           {/* Hangs off the portrait rather than sitting in the flow, so
@@ -133,17 +109,6 @@ export function ProfileHead({
               >
                 <span aria-hidden="true">◔</span> CHANGE YOUR STATUS
               </button>
-              <button
-                type="button"
-                className="face-menu-item"
-                role="menuitem"
-                onClick={() => {
-                  setOpen(false);
-                  setChoosing(true);
-                }}
-              >
-                <span aria-hidden="true">◈</span> DISPLAY BADGES
-              </button>
               <Link href="/me/edit" className="face-menu-item" role="menuitem">
                 <span aria-hidden="true">▤</span> EDIT PROFILE
               </Link>
@@ -151,7 +116,6 @@ export function ProfileHead({
           ) : null}
         </div>
 
-        {choosing ? <BadgeChooser options={badgeOptions} current={shown.map((b) => b.key)} onClose={() => setChoosing(false)} /> : null}
 
         {editing ? (
           <form action={setMood} style={{ display: "flex", gap: 7, alignItems: "center" }}>

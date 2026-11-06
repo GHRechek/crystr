@@ -20,7 +20,7 @@ Supabase and Vercel.
 | `/whispers`, `/whispers/[id]`, `/whispers/new` | DMs at 2 mana a message. A conversation with something new in it shows as unread, and the WHISPER tab wears a small bubble with how many such conversations there are; opening one reads it (`dm_reads`, `cr_mark_thread_read`, `cr_unread_whispers`; migration `20261105010000_whisper_reads.sql`). |
 | `/thread/[id]/send` | Send a post to someone in a whisper, with a note if you like, for the price of a whisper (2 mana). Reached from SEND IN A WHISPER in the three-dot menu on a post, beside REPORT (which opens the detailed form in place). The post arrives in the whisper as a quoted card (`dm_messages.post_id`, `cr_send_post`; the migration is `20261105000000_send_post_in_whisper.sql`). Unsending drops the post from the message. |
 | `/welcome` | The registry: a face, your info (your own name, username, character name), birthday, district and species codes. Until it is done the tab bar is REGISTRY and WIKI, nothing else. |
-| `/me`, `/me/edit`, `/me/avatar`, `/me/top-six` | MySpace-shaped profile: a banner carrying up to four chosen badges, centred (tap one for its name and what its owner did, in the past tense; DISPLAY BADGES in the menu on your portrait picks them from the badges you have earned and the tradable ones you hold), the thought and a bigger portrait below them, about, Top 6 (picked on its own page), the badge collection as a grid of small icons, thirty to a page, HAVE or ALL (the ones you lack dimmed; tap for how to earn them), max mana, the mana ledger, and the portrait builder. |
+| `/me`, `/me/edit`, `/me/avatar`, `/me/top-six` | MySpace-shaped profile: a plain banner with the thought and a bigger portrait, the username in the pixel font, a blank `?` tile for your token beside About Me (tap it to open the token), Top 5 on one line (picked on its own page), the badge collection as tight icons, WORKING ON, max mana, the mana ledger, and the portrait builder. |
 | `/me/token`, `/me/trades`, `/u/[handle]/trade` | Badges: design your token, see offers waiting, offer someone a trade. |
 | `/me/override`, `/override/[code]`, `/breach` | The override (witches only on the first): a witch's key as a QR code, the address it points at, and the break-in that lets someone past the registry. See below. |
 | `/ball?tab=motions`, `/vote/new` | The motion board (open / decided) is the MOTIONS tab of the Ball, beside CITY NEWS and OP-EDS; `/vote` redirects there. `/vote/new` is the witch-only two-step composer. |
@@ -143,7 +143,7 @@ on the column (`profiles_shown_badges_guard`) drops anything the person has not 
 not hold, so a badge traded away disappears from the display; migration
 `20261106010000_shown_badges.sql` (four, not five, from `20261106020000_shown_badges_four.sql`).
 
-On a profile the shown badges sit centred, both ways, in the striped banner. Below the banner the
+Shown badges are no longer displayed on profiles (the column and RPC remain). The
 collections (BADGES, TRADABLE BADGES, WHAT THEY HOLD) are icons only, packed tight, three rows to
 a page with the count and the page arrows on the header line; tapping one gives its tooltip. It
 is built to hold hundreds. WORKING ON lists up to five badges a person is going after, one to a

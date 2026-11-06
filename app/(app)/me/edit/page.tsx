@@ -28,7 +28,7 @@ export default async function EditProfilePage() {
       </Link>
 
       <Link href="/me/top-six" className="btn btn-block">
-        ☻☻ CHANGE YOUR TOP 6
+        ☻☻ CHANGE YOUR TOP 5
       </Link>
 
       <BannerPicker current={bannerOf(profile)} />

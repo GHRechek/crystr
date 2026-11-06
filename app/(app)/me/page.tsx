@@ -48,7 +48,6 @@ export default async function ProfilePage() {
   const fromBadges = earnedCount * BADGE_MANA.achievement + tradable.length * BADGE_MANA.tradable + tokens.length * BADGE_MANA.token;
   const tokenReady = tokenReadyAt(token?.last_given_at);
   const waiting = trades.incoming.length;
-  const shown = resolveShown(profile.shown_badges, badges, items, profile.handle);
 
   const days = Math.max(
     1,
@@ -68,7 +67,7 @@ export default async function ProfilePage() {
   ).flatMap(([label, value]) => (value?.trim() ? [[label, value.trim()] as [string, string]] : []));
 
   const decay = decayLevel(profile.mana);
-  const slots = [...top, ...Array(Math.max(0, 6 - top.length)).fill(null)].slice(0, 6);
+  const slots = [...top, ...Array(Math.max(0, 5 - top.length)).fill(null)].slice(0, 5);
 
   const heading = (text: string, colour: string, aside?: React.ReactNode) => (
     <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 8 }}>
@@ -85,17 +84,8 @@ export default async function ProfilePage() {
       <ProfileHead
         src={faceSrc}
         handle={profile.handle}
-        joined={`JOINED THE NEW WORLD · ${days} ${days === 1 ? "DAY" : "DAYS"}`}
         mood={profile.mood}
         banner={bannerStyle(bannerOf(profile))}
-        badgeOptions={resolveShown(
-          [...badges.filter((b) => b.earned_at).map((b) => `a:${b.slug}`), ...items.filter((i) => i.kind === "tradable").map((i) => `i:${i.id}`)],
-          badges,
-          items,
-          profile.handle,
-          100,
-        )}
-        shown={shown}
       />
 
       <div
@@ -106,7 +96,16 @@ export default async function ProfilePage() {
           gap: 12,
         }}
       >
-        <div className="tile" style={{ padding: 12 }}>
+        <div style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
+        {/* Your own token: a blank with a ? until you tap it, which opens it. */}
+        <Link
+          href="/me/token"
+          aria-label="Your token"
+          style={{ width: 64, height: 64, flex: "none", display: "grid", placeItems: "center", color: "var(--dim)", border: "1px dashed var(--edge)", borderRadius: "var(--px-r)", textDecoration: "none" }}
+        >
+          <span className="px" style={{ fontSize: 16 }}>?</span>
+        </Link>
+        <div className="tile" style={{ padding: 12, flex: 1, minWidth: 0 }}>
           <div
             className="px"
             style={{ fontSize: 11, color: "var(--mag)", letterSpacing: ".07em", marginBottom: 7 }}
@@ -118,6 +117,7 @@ export default async function ProfilePage() {
           >
             {corrupt(profile.bio || "Nothing written here yet. The City will assume the worst.", decay)}
           </div>
+        </div>
         </div>
 
         {details.length ? (
@@ -148,13 +148,13 @@ export default async function ProfilePage() {
 
         <div>
           {heading(
-            "TOP 6",
+            "TOP 5",
             "var(--blu-soft)",
             <Link href="/me/top-six" className="px" style={{ fontSize: 11, color: "var(--pur-pale)" }}>
               {top.length ? "CHANGE →" : "PICK SOMEONE →"}
             </Link>,
           )}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 8 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(5,minmax(0,1fr))", gap: 6 }}>
             {slots.map((f, i) => (
               <Link
                 key={f?.id ?? `empty-${i}`}
@@ -163,13 +163,13 @@ export default async function ProfilePage() {
                 style={{ display: "flex", flexDirection: "column", gap: 5, alignItems: "center", color: "inherit", textDecoration: "none" }}
               >
                 {f ? (
-                  <div style={{ width: "60%" }}>
+                  <div style={{ width: "100%" }}>
                     <Avatar person={f} size={72} fill />
                   </div>
                 ) : (
                   <div
                     className="avatar"
-                    style={{ width: "60%", height: "auto", aspectRatio: "1", fontSize: 14, background: "var(--edge)" }}
+                    style={{ width: "100%", height: "auto", aspectRatio: "1", fontSize: 14, background: "var(--edge)" }}
                   >
                     ?
                   </div>
@@ -250,37 +250,6 @@ export default async function ProfilePage() {
           ) : (
             <BadgeGrid title="TRADABLE BADGES" count={`${tradable.length} · +${BADGE_MANA.tradable} EACH`} items={resolveShown(tradable.map((i) => `i:${i.id}`), badges, items, profile.handle, 10000)} />
           )}
-        </div>
-
-        <div>
-          {heading("YOUR TOKEN", "var(--pur-soft)")}
-          <div className="tile" style={{ padding: 12, display: "flex", gap: 12, alignItems: "center" }}>
-            {token ? (
-              <TokenImage design={token.design} size={96} />
-            ) : (
-              <div
-                aria-hidden
-                style={{ width: 96, height: 96, flex: "none", display: "grid", placeItems: "center", color: "var(--dim)", border: "1px dashed var(--edge)", borderRadius: "var(--px-r)" }}
-              >
-                ?
-              </div>
-            )}
-            <div style={{ minWidth: 0, flex: 1 }}>
-              <div className="px" style={{ fontSize: 11, color: "var(--text)", lineHeight: 1.5 }}>
-                {tokenTitle(profile.display_name, profile.handle).toUpperCase()}
-              </div>
-              <div style={{ fontSize: 11, lineHeight: 1.45, color: "var(--muted)", marginTop: 3 }}>
-                {!token
-                  ? `A badge of your own making. Give it and they hold ${BADGE_MANA.token} more max mana. Once every ${TOKEN_GIFT_MONTHS} months.`
-                  : tokenReady
-                    ? `Given. You can give it again on ${longDate(tokenReady)}.`
-                    : `Ready to give, from somebody's page. Worth ${BADGE_MANA.token} max mana to whoever holds it.`}
-              </div>
-              <Link href="/me/token" className="btn btn-sm" style={{ minHeight: 40, marginTop: 8, display: "inline-flex" }}>
-                {token ? "CHANGE OR GIVE IT" : "MAKE YOUR TOKEN"}
-              </Link>
-            </div>
-          </div>
         </div>
 
         {tokens.length ? (

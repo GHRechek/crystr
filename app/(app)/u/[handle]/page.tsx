@@ -6,7 +6,6 @@ import { Avatar } from "@/components/bits";
 import { TokenImage } from "@/components/badges";
 import { BadgeGrid } from "@/components/badge-grid";
 import { WorkingOn } from "@/components/working-on";
-import { ShownBadges } from "@/components/shown-badges";
 import { achievementGrid, resolveShown, resolveWorking } from "@/lib/badges";
 import { ago, corrupt, decayLevel, BADGE_MANA } from "@/lib/crystr";
 import { bannerOf, bannerStyle } from "@/lib/banner";
@@ -40,7 +39,6 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
     getPlaintiffSince(person.id),
   ]);
   const earned = badges.filter((b) => b.earned_at);
-  const shown = resolveShown(person.shown_badges, badges, items, person.handle);
   const decay = decayLevel(me.mana);
 
   const days = Math.max(1, Math.round((Date.now() - new Date(person.created_at).getTime()) / 86_400_000));
@@ -55,16 +53,7 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
 
   return (
     <div style={{ paddingBottom: 24 }}>
-      {/* The banner, taller when they have badges on show, which sit centred on it. */}
-      <div style={{ position: "relative", height: shown.length ? 124 : 96, ...bannerStyle(bannerOf(person)) }}>
-        {shown.length ? (
-          <div style={{ position: "absolute", inset: 0, padding: "0 16px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <div style={{ width: "100%" }}>
-              <ShownBadges shown={shown} />
-            </div>
-          </div>
-        ) : null}
-      </div>
+      <div style={{ height: 96, ...bannerStyle(bannerOf(person)) }} />
 
       <div style={{ padding: "0 16px", marginTop: -44, position: "relative", display: "flex", flexDirection: "column", gap: 12 }}>
         <div style={{ display: "flex", alignItems: "flex-end", gap: 12 }}>
@@ -72,12 +61,9 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
             <Avatar person={person} size={104} />
           </div>
           <div style={{ minWidth: 0, paddingBottom: 4 }}>
-            <h1 style={{ fontSize: 20, fontWeight: 500, letterSpacing: "-.01em", overflowWrap: "anywhere" }}>
+            <h1 className="px" style={{ fontSize: 16, fontWeight: 400, lineHeight: 1.5, overflowWrap: "anywhere" }}>
               {person.handle}
             </h1>
-            <div className="px" style={{ fontSize: 11, color: "var(--muted)", marginTop: 4 }}>
-              JOINED THE NEW WORLD · {days} {days === 1 ? "DAY" : "DAYS"}
-            </div>
           </div>
         </div>
 
@@ -132,16 +118,16 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
         {top.length ? (
           <div>
             <div className="px" style={{ fontSize: 12, color: "var(--blu-soft)", marginBottom: 8 }}>
-              TOP 6
+              TOP 5
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 8 }}>
-              {top.map((f) => (
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(5,minmax(0,1fr))", gap: 6 }}>
+              {top.slice(0, 5).map((f) => (
                 <Link
                   key={f.id}
                   href={`/u/${f.handle}`}
                   style={{ display: "flex", flexDirection: "column", gap: 5, alignItems: "center", color: "inherit", textDecoration: "none" }}
                 >
-                  <div style={{ width: "60%" }}>
+                  <div style={{ width: "100%" }}>
                     <Avatar person={f} size={72} fill />
                   </div>
                   <div style={{ fontSize: 11, color: "var(--muted)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: "100%" }}>

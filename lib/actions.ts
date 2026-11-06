@@ -578,7 +578,7 @@ export async function resolveBug(fd: FormData) {
   revalidatePath("/bugs");
 }
 
-/** Dismiss the "someone put you in their Top 6" banner. */
+/** Dismiss the "someone put you in their Top 5" banner. */
 export async function seeTopSix() {
   const supabase = createClient();
   const { error } = await supabase.rpc("cr_seen_top_six");
@@ -953,9 +953,9 @@ export async function setTopFriends(fd: FormData) {
 
   if (!r.ok) {
     if (r.code === "insufficient") {
-      await broke(r, `Rearranging the Top 6 takes ${COSTS.topSix}, and you have {have}. The Well will help.`);
+      await broke(r, `Rearranging the Top 5 takes ${COSTS.topSix}, and you have {have}. The Well will help.`);
     } else if (r.code === "too_many") {
-      await setFlash("SIX", "The Top 6 holds six, no more.", EDGE.mag);
+      await setFlash("SIX", "The Top 5 holds five, no more.", EDGE.mag);
     } else {
       await wentWrong();
     }
@@ -965,7 +965,7 @@ export async function setTopFriends(fd: FormData) {
   if (r.unchanged) {
     await setFlash("UNCHANGED", "Nothing changed, so nothing was used.", EDGE.purple);
   } else {
-    await setFlash("REARRANGED", "Your Top 6 is rearranged.", EDGE.mag);
+    await setFlash("REARRANGED", "Your Top 5 is rearranged.", EDGE.mag);
   }
   revalidatePath("/me");
   redirect("/me");

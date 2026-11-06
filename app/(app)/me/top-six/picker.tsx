@@ -25,7 +25,7 @@ export function TopSixPicker({
 
   function toggle(id: string) {
     setPicked((p) =>
-      p.includes(id) ? p.filter((x) => x !== id) : p.length >= 6 ? p : [...p, id],
+      p.includes(id) ? p.filter((x) => x !== id) : p.length >= 5 ? p : [...p, id],
     );
   }
 
@@ -46,7 +46,7 @@ export function TopSixPicker({
           PICKED
         </div>
         <div style={{ fontSize: 11, color: "var(--muted)" }}>
-          {picked.length}/6
+          {picked.length}/5
         </div>
       </div>
       {chosen.length ? (
@@ -127,10 +127,10 @@ export function TopSixPicker({
         >
           {changed ? (
             <>
-              SAVE THE TOP 6 <Cost n={COSTS.topSix} />
+              SAVE THE TOP 5 <Cost n={COSTS.topSix} />
             </>
           ) : (
-            "TOP 6 UNCHANGED"
+            "TOP 5 UNCHANGED"
           )}
         </button>
       ) : null}
