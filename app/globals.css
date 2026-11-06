@@ -1505,3 +1505,17 @@ select {
   justify-content: flex-start;
   white-space: nowrap;
 }
+
+/* A badge that wants scanning shakes a little, now and then. */
+@keyframes tremble {
+  0%, 82%, 100% { transform: none; }
+  84% { transform: translate(-1px, 0) rotate(-4deg); }
+  87% { transform: translate(1px, 0) rotate(4deg); }
+  90% { transform: translate(-1px, 0) rotate(-3deg); }
+  93% { transform: translate(1px, 0) rotate(3deg); }
+  96% { transform: translate(0, 0) rotate(-1deg); }
+}
+.tremble { animation: tremble 6s ease-in-out infinite; transform-origin: 50% 60%; }
+@media (prefers-reduced-motion: reduce) {
+  .tremble { animation: none; }
+}

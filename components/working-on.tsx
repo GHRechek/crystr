@@ -62,10 +62,9 @@ export function WorkingOn({ items, all, editable, person, finished, isWitch, ope
             const done = heading ? !b.locked : !!b.done;
             // Help Someone Else keeps its count inside the heart.
             const onBadge = b.key === "a:a-helping-hand";
-            const scanBtn = !person && (b.peer || b.key === "a:a-helping-hand") ? <ScanQuestButton slug={b.key.slice(2)} /> : null;
-            const row = (
-              <>
-                <span style={{ flex: "none", opacity: done ? 0.4 : b.locked ? 0.7 : 1, lineHeight: 0, position: "relative" }}>
+            const scan = !person && (b.peer || b.key === "a:a-helping-hand");
+            const face = (
+                <span style={{ flex: "none", opacity: done ? 0.4 : b.locked ? 0.7 : 1, lineHeight: 0, position: "relative", display: "block" }}>
                   <BadgeFace b={b} size={42} />
                   {onBadge && b.progress ? (
                     <span className="px" aria-label={`${b.progress.n} of ${b.progress.of}`} style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", fontSize: 9, lineHeight: 1, color: "#fff", textShadow: "0 1px 0 #000, 1px 0 0 #000, -1px 0 0 #000, 0 -1px 0 #000" }}>
@@ -73,6 +72,9 @@ export function WorkingOn({ items, all, editable, person, finished, isWitch, ope
                     </span>
                   ) : null}
                 </span>
+            );
+            const rest = (
+              <>
                 <span style={{ minWidth: 0, textAlign: "left" }}>
                   <span className="px" style={{ display: "block", fontSize: 11, color: done ? "var(--dim)" : "var(--text)", lineHeight: 1.5, textDecoration: done ? "line-through" : "none", textDecorationColor: "var(--dim)" }}>
                     {b.title}
@@ -86,6 +88,12 @@ export function WorkingOn({ items, all, editable, person, finished, isWitch, ope
                     {b.progress.n}/{b.progress.of}
                   </span>
                 ) : null}
+              </>
+            );
+            const row = (
+              <>
+                {face}
+                {rest}
               </>
             );
             // On someone else's page a badge they are working on can be tapped to say
@@ -134,14 +142,14 @@ export function WorkingOn({ items, all, editable, person, finished, isWitch, ope
               return (
                 <li key={b.key} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    {scan ? <ScanQuestButton slug={b.key.slice(2)}>{face}</ScanQuestButton> : null}
                     <button type="button" aria-expanded={open} onClick={() => setSay(open ? null : b.key)} style={{ flex: 1, minWidth: 0, display: "flex", alignItems: "center", gap: 10, padding: 0, background: "none", border: 0, cursor: "pointer", color: "inherit", font: "inherit" }}>
-                      {row}
+                      {scan ? rest : row}
                     </button>
-                    {scanBtn}
                   </div>
                   {open ? (
                     <div style={{ paddingLeft: 52, fontSize: 11, lineHeight: 1.45, color: "var(--muted)" }}>
-                      {kind ? `It has to be ${kind}. ` : ""}Tap the ! and scan {kind ? `${kind}'s` : "their"} QR code. {b.instant ? "That is all: it completes the moment you scan." : "They get a whisper asking whether it happened, and if they say yes it counts."}
+                      {kind ? `It has to be ${kind}. ` : ""}Tap the badge and scan {kind ? `${kind}'s` : "their"} QR code. {b.instant ? "That is all: it completes the moment you scan." : "They get a whisper asking whether it happened, and if they say yes it counts."}
                     </div>
                   ) : null}
                 </li>
@@ -150,8 +158,8 @@ export function WorkingOn({ items, all, editable, person, finished, isWitch, ope
             if (!person || !b.key.startsWith("a:")) {
               return (
                 <li key={b.key} style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  {row}
-                  {scanBtn}
+                  {scan ? <ScanQuestButton slug={b.key.slice(2)}>{face}</ScanQuestButton> : face}
+                  {rest}
                 </li>
               );
             }

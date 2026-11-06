@@ -70,10 +70,17 @@ export function QuestBrowser({
           return (
             <li key={b.key} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              {b.peer && b.locked ? (
+                <ScanQuestButton slug={slug}>
+                  <span style={{ display: "block", opacity: 0.85 }}><BadgeFace b={b} size={42} /></span>
+                </ScanQuestButton>
+              ) : null}
               <button type="button" aria-expanded={sel} onClick={() => setAt(sel ? null : b.key)} style={{ flex: 1, minWidth: 0, display: "flex", alignItems: "center", gap: 10, padding: 0, background: "none", border: 0, cursor: "pointer", color: "inherit", font: "inherit", textAlign: "left" }}>
-                <span style={{ flex: "none", lineHeight: 0, opacity: b.locked ? 0.85 : 1 }}>
-                  <BadgeFace b={b} size={42} />
-                </span>
+                {b.peer && b.locked ? null : (
+                  <span style={{ flex: "none", lineHeight: 0, opacity: b.locked ? 0.85 : 1 }}>
+                    <BadgeFace b={b} size={42} />
+                  </span>
+                )}
                 <span style={{ minWidth: 0, flex: 1 }}>
                   <span className="px" style={{ display: "block", fontSize: 11, color: "var(--text)", lineHeight: 1.5 }}>
                     {b.title}
@@ -85,14 +92,13 @@ export function QuestBrowser({
                   <span className="px" style={{ flex: "none", fontSize: 9.5, color: "var(--pur-pale)", textAlign: "right", maxWidth: 96, lineHeight: 1.4 }}>{pending[slug]}</span>
                 ) : null}
               </button>
-              {b.peer && b.locked ? <ScanQuestButton slug={slug} /> : null}
               </div>
               {sel && b.locked ? (
                 <div style={{ paddingLeft: 52, display: "flex", flexDirection: "column", gap: 6 }}>
                   {b.peer ? (
                     <>
                       <div style={{ fontSize: 11, lineHeight: 1.45, color: "var(--muted)" }}>
-                        {b.target ? `It has to be ${/^[aeiou]/i.test(targetLabel(b.target)) ? "an" : "a"} ${targetLabel(b.target).toLowerCase()}. ` : ""}Tap the ! and scan {b.target ? `${/^[aeiou]/i.test(targetLabel(b.target)) ? "an" : "a"} ${targetLabel(b.target).toLowerCase()}'s` : "their"} QR code. {b.instant ? "That is all: it completes the moment you scan." : "They get a whisper asking whether it happened, and if they say yes the badge is yours."}
+                        {b.target ? `It has to be ${/^[aeiou]/i.test(targetLabel(b.target)) ? "an" : "a"} ${targetLabel(b.target).toLowerCase()}. ` : ""}Tap the badge and scan {b.target ? `${/^[aeiou]/i.test(targetLabel(b.target)) ? "an" : "a"} ${targetLabel(b.target).toLowerCase()}'s` : "their"} QR code. {b.instant ? "That is all: it completes the moment you scan." : "They get a whisper asking whether it happened, and if they say yes the badge is yours."}
                       </div>
                     </>
                   ) : b.request ? (

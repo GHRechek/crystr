@@ -3,13 +3,22 @@
 import { useState } from "react";
 import { QrScanner } from "@/components/qr-scanner";
 
-/** A little ! on the right of a quest that needs scanning, for a quest that needs scanning: opens the camera, and shows only this quest for whoever they scan. */
-export function ScanQuestButton({ slug }: { slug: string }) {
+/** A quest's badge, for a quest that needs scanning: it trembles gently every so often, and tapping it opens the camera. */
+export function ScanQuestButton({ slug, children }: { slug: string; children: React.ReactNode }) {
   const [on, setOn] = useState(false);
+  // So a list of them does not all shake at the same moment.
+  const delay = (Array.from(slug).reduce((n, c) => n + c.charCodeAt(0), 0) % 7) * 0.9;
   return (
     <>
-      <button type="button" className="btn btn-sm btn-purple" onClick={() => setOn(true)} aria-label="Complete this quest: scan a code" title="Complete: scan a code" style={{ flex: "none", width: 32, height: 32, minHeight: 32, padding: 0, display: "grid", placeItems: "center", fontSize: 15, lineHeight: 1 }}>
-        <span className="px" aria-hidden>!</span>
+      <button
+        type="button"
+        onClick={() => setOn(true)}
+        aria-label="Complete this quest: scan a code"
+        title="Scan a code to complete this"
+        className="tremble"
+        style={{ flex: "none", padding: 0, border: 0, background: "none", cursor: "pointer", lineHeight: 0, animationDelay: `${delay}s` }}
+      >
+        {children}
       </button>
       {on ? <QrScanner mode="quest" only={slug} onClose={() => setOn(false)} /> : null}
     </>
