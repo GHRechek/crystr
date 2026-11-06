@@ -73,13 +73,7 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
                     OFFER A TRADE →
                   </Link>
                 }
-              >
-                {token ? (
-                  <span title={tokenTitle(person.display_name, person.handle)} style={{ lineHeight: 0, flex: "none" }}>
-                    <TokenImage design={token.design} size={64} />
-                  </span>
-                ) : null}
-              </AboutBadges>
+              />
           </div>
         </div>
 
@@ -102,15 +96,22 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
           </Link>
         </div>
 
-        <div>
-          <h1 className="px" style={{ fontSize: 16, fontWeight: 400, lineHeight: 1.5, overflowWrap: "anywhere" }}>
-            {person.handle}
-          </h1>
-          {person.display_name ? (
-            <div className="px" style={{ fontSize: 11, color: "var(--muted)", lineHeight: 1.5, overflowWrap: "anywhere" }}>
-              {person.display_name}
-            </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          {token ? (
+            <span title={tokenTitle(person.display_name, person.handle)} style={{ lineHeight: 0, flex: "none" }}>
+              <TokenImage design={token.design} size={64} />
+            </span>
           ) : null}
+          <div style={{ minWidth: 0 }}>
+            <h1 className="px" style={{ fontSize: 16, fontWeight: 400, lineHeight: 1.5, overflowWrap: "anywhere" }}>
+              {person.handle}
+            </h1>
+            {person.display_name ? (
+              <div className="px" style={{ fontSize: 11, color: "var(--muted)", lineHeight: 1.5, overflowWrap: "anywhere" }}>
+                {person.display_name}
+              </div>
+            ) : null}
+          </div>
         </div>
 
         <div className="tile" style={{ padding: 12 }}>

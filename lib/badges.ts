@@ -139,7 +139,7 @@ const DID: Record<string, string> = {
 };
 
 /** How many badges a person can have on show. */
-export const SHOW_MAX = 3;
+export const SHOW_MAX = 4;
 
 /** What a person's saved list of shown badges means, from their earned badges and the
  *  tradable badges they hold. Anything no longer theirs is skipped. */

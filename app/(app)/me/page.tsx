@@ -108,15 +108,7 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
                 TRADES{waiting ? ` · ${waiting}` : ""} →
               </Link>
             }
-          >
-            <Link
-              href="/me/token"
-              aria-label="Your token"
-              style={{ width: 64, height: 64, flex: "none", display: "grid", placeItems: "center", color: "var(--dim)", border: token ? 0 : "1px dashed var(--edge)", borderRadius: "var(--px-r)", textDecoration: "none", lineHeight: 0 }}
-            >
-              {token ? <TokenImage design={token.design} size={64} /> : <span className="px" style={{ fontSize: 16 }}>?</span>}
-            </Link>
-          </AboutBadges>
+          />
         }
       />
 
@@ -129,15 +121,24 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
         }}
       >
         {/* Who you are: the username, and under it the character name, smaller. */}
-        <div>
-          <h1 className="px" style={{ fontSize: 16, fontWeight: 400, lineHeight: 1.5, overflowWrap: "anywhere" }}>
-            {profile.handle}
-          </h1>
-          {profile.display_name ? (
-            <div className="px" style={{ fontSize: 11, color: "var(--muted)", lineHeight: 1.5, overflowWrap: "anywhere" }}>
-              {profile.display_name}
-            </div>
-          ) : null}
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <Link
+            href="/me/token"
+            aria-label="Your token"
+            style={{ width: 64, height: 64, flex: "none", display: "grid", placeItems: "center", color: "var(--dim)", border: token ? 0 : "1px dashed var(--edge)", borderRadius: "var(--px-r)", textDecoration: "none", lineHeight: 0 }}
+          >
+            {token ? <TokenImage design={token.design} size={64} /> : <span className="px" style={{ fontSize: 16 }}>?</span>}
+          </Link>
+          <div style={{ minWidth: 0 }}>
+            <h1 className="px" style={{ fontSize: 16, fontWeight: 400, lineHeight: 1.5, overflowWrap: "anywhere" }}>
+              {profile.handle}
+            </h1>
+            {profile.display_name ? (
+              <div className="px" style={{ fontSize: 11, color: "var(--muted)", lineHeight: 1.5, overflowWrap: "anywhere" }}>
+                {profile.display_name}
+              </div>
+            ) : null}
+          </div>
         </div>
 
         <div className="tile" style={{ padding: 12 }}>
