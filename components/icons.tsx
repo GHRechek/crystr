@@ -82,7 +82,14 @@ export function SearchIcon() {
 
 export function CameraIcon() {
   return (
-    <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" shapeRendering="crispEdges" aria-hidden="true" style={{ display: "inline-block", verticalAlign: "-1px" }}>
+    <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="url(#crystr-grad)" strokeWidth="1.7" shapeRendering="crispEdges" aria-hidden="true" style={{ display: "inline-block", verticalAlign: "-2px" }}>
+      <defs>
+        <linearGradient id="crystr-grad" x1="0" y1="0" x2="16" y2="0" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#e0398a" />
+          <stop offset="0.52" stopColor="#9184d9" />
+          <stop offset="1" stopColor="#4c7df0" />
+        </linearGradient>
+      </defs>
       <path d="M1.5 5h3l1.2-2h4.6l1.2 2h3v8h-13z" />
       <circle cx="8" cy="8.8" r="2.3" />
     </svg>

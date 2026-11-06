@@ -82,7 +82,7 @@ export function QuestBrowser({
                       <span style={{ minWidth: 0, flex: 1, textAlign: "left" }}>
                         <span className="px" style={{ display: "block", fontSize: 11, color: "var(--text)", lineHeight: 1.5 }}>
                           {b.title}
-                          <span style={{ marginLeft: 6, color: "var(--pur-pale)" }}><CameraIcon /></span>
+                          <span style={{ marginLeft: 6 }}><CameraIcon /></span>
                         </span>
                         <span style={{ display: "block", fontSize: 11, lineHeight: 1.4, color: "var(--muted)" }}>{b.line}</span>
                       </span>
