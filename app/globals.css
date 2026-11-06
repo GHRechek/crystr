@@ -329,7 +329,7 @@ select {
 .tab-badge {
   position: absolute;
   top: 2px;
-  left: calc(50% + 9px);
+  left: calc(50% + 10px);
   min-width: 16px;
   height: 16px;
   padding: 0 4px;
@@ -346,10 +346,21 @@ select {
   line-height: 1;
   pointer-events: none;
 }
-.tab .label {
-  font-family: var(--px-font);
-  font-size: 11px;
-  letter-spacing: 0.05em;
+/* The icons are masks, so they take the tab's colour; a whisper waiting turns its icon CRYSTR-coloured. */
+.tab .tab-icon {
+  display: block;
+  width: 28px;
+  height: 28px;
+  background: currentColor;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+}
+.tab .tab-icon[data-unread="true"] {
+  background: linear-gradient(90deg, var(--mag) 0%, var(--pur) 52%, var(--blu) 100%);
 }
 
 /* ----------------------------------------------------------- primitives */

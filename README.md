@@ -501,3 +501,6 @@ The exchange button on your profile opens the camera for general things: after a
 ### Pronouns
 `profiles.pronouns` (free text, max 30): set on Edit Profile, shown under the character name on profiles. Species and spellcaster are now also protected by `guard_profile_economy` (the table-wide UPDATE grant meant the earlier column revoke did nothing).
 Support Group (`badges.scan_instant`) completes the moment you scan a witch's code: no whisper.
+
+### Bottom bar
+Icons only (no words), from `public/tabs/*.png` used as CSS masks so they take the tab colour: scroll and quill (Feed), crystal ball (Ball), book with a question mark (Wiki), conversation with an eye (Whisper), galaxy (Me). The Whisper icon turns CRYSTR-gradient with the unread count when whispers are waiting.

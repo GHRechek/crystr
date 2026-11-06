@@ -30,17 +30,17 @@ export function Clock() {
 // Posting is not a place to go, so it is not a tab: the NEW POST button sits at the top of
 // the feed instead, and the bar has room to breathe.
 const TABS = [
-  { href: "/", glyph: "▤", label: "FEED" },
-  { href: "/ball", glyph: "◉", label: "BALL" },
-  { href: "/wiki", glyph: "☰", label: "WIKI" },
-  { href: "/whispers", glyph: "✉", label: "WHISPER" },
-  { href: "/me", glyph: "☻", label: "ME" },
+  { href: "/", glyph: "", icon: "feed", label: "FEED" },
+  { href: "/ball", glyph: "", icon: "ball", label: "BALL" },
+  { href: "/wiki", glyph: "", icon: "wiki", label: "WIKI" },
+  { href: "/whispers", glyph: "", icon: "whisper", label: "WHISPER" },
+  { href: "/me", glyph: "", icon: "me", label: "ME" },
 ];
 
 /** Until someone has registered there are two places to be: the registry and the wiki. */
 const WELCOME_TABS = [
   { href: "/welcome", glyph: "✎", label: "REGISTRY", alert: true },
-  { href: "/wiki", glyph: "☰", label: "WIKI" },
+  { href: "/wiki", glyph: "", icon: "wiki", label: "WIKI" },
 ];
 
 /** A five-by-eight pixel glyph, drawn two screen pixels to the cell. */
@@ -79,7 +79,7 @@ function RegistryMark() {
 
 export function TabBar({ welcoming = false, unreadWhispers = 0 }: { welcoming?: boolean; unreadWhispers?: number }) {
   const path = usePathname();
-  const tabs: { href: string; glyph: string; label: string; alert?: boolean }[] = welcoming ? WELCOME_TABS : TABS;
+  const tabs: { href: string; glyph: string; label: string; icon?: string; alert?: boolean }[] = welcoming ? WELCOME_TABS : TABS;
 
   return (
     <nav className="tabbar">
@@ -96,22 +96,26 @@ export function TabBar({ welcoming = false, unreadWhispers = 0 }: { welcoming?: 
             className="tab"
             data-active={active}
             aria-current={active ? "page" : undefined}
+            aria-label={t.label}
+            title={t.label}
           >
             {t.alert ? (
               <span className="glyph">
                 <RegistryMark />
               </span>
             ) : (
-              <span className="glyph" aria-hidden>
-                {t.glyph}
-              </span>
+              <span
+                className="tab-icon"
+                aria-hidden
+                data-unread={t.href === "/whispers" && unreadWhispers > 0}
+                style={{ WebkitMaskImage: `url(/tabs/${t.icon}.png)`, maskImage: `url(/tabs/${t.icon}.png)` }}
+              />
             )}
             {t.href === "/whispers" && unreadWhispers > 0 ? (
               <span className="tab-badge" role="status" aria-label={`${unreadWhispers} unread ${unreadWhispers === 1 ? "whisper" : "whispers"}`}>
                 {unreadWhispers > 9 ? "9+" : unreadWhispers}
               </span>
             ) : null}
-            <span className="label">{t.label}</span>
           </Link>
         );
       })}
