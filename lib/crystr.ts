@@ -3,7 +3,7 @@
 // functions), so nothing in this file is load-bearing for the economy.
 
 /** What a registered person can hold before badges. Until they register it is 10. */
-export const BASE_CAP = 40;
+export const BASE_CAP = 15;
 export const WELCOME_CAP = 10;
 export const OPENING_GRANT = 5;
 

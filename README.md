@@ -159,7 +159,7 @@ Badges are two kinds (`badges.kind`, `20261108000000_goals_and_quests.sql`). **G
 ## Max mana and badges
 
 Nobody has a flat ceiling any more. `profiles.mana_cap` is each person's own:
-10 until they register, then **40**, plus what their badges carry:
+10 until they register, then **15** (`BASE_CAP`, `20261108100000_base_cap_15.sql`), plus what their badges carry:
 
 | Kind | Worth | How you get one |
 | --- | --- | --- |
