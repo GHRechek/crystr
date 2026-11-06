@@ -98,7 +98,7 @@ export function QrScanner({ onClose, tradesHref, waiting }: { onClose: () => voi
         </button>
       </div>
       {found ? (
-        <div style={{ flex: 1, minHeight: 0, overflowY: "auto", background: "var(--device)", padding: "4px 16px 24px", display: "flex", flexDirection: "column", gap: 12 }}>
+        <div style={{ flex: 1, minHeight: 0, overflowY: "auto", background: "var(--device)", padding: "4px 16px calc(24px + env(safe-area-inset-bottom))", display: "flex", flexDirection: "column", gap: 12, justifyContent: view === "pick" ? "flex-end" : "flex-start" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={found.face} alt="" width={56} height={56} style={{ imageRendering: "pixelated", borderRadius: "var(--px-r)" }} />
