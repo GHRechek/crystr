@@ -41,7 +41,7 @@ export function AboutBadges({
   /** Open the full list of badges, to choose which to show, as soon as it appears. */
   openAtStart?: boolean;
   /** The person's token, always the first badge in the row. `design` is null when they have none yet. */
-  token?: { design: unknown | null; href?: string; title?: string };
+  token?: { design: unknown | null; href?: string; title?: string; line?: string; actionLabel?: string };
   editable?: boolean;
 }) {
   const [tip, setTip] = useState<{ key: string; x: number; top: number } | null>(null);
@@ -82,15 +82,19 @@ export function AboutBadges({
   return (
     <div ref={box} style={{ position: "relative", display: "flex", flexWrap: compact ? "nowrap" : "wrap", alignItems: compact ? "flex-end" : "center", gap: compact ? gap : 6 }}>
       {token ? (
-        token.href ? (
-          <Link href={token.href} aria-label="Your token" title={token.title} style={{ flex: "none", width: px, height: px, display: "grid", placeItems: "center", textDecoration: "none", lineHeight: 0, color: "var(--dim)", border: token.design ? 0 : "1px dashed var(--edge)", borderRadius: "var(--px-r)" }}>
-            {token.design ? <TokenImage design={token.design} size={px} /> : <span className="px" style={{ fontSize: 12 }}>?</span>}
-          </Link>
-        ) : token.design ? (
-          <span title={token.title} style={{ flex: "none", lineHeight: 0 }}>
-            <TokenImage design={token.design} size={px} />
-          </span>
-        ) : null
+        <button
+          type="button"
+          data-about-badge
+          aria-label={token.title ? `${token.title}. ${token.line ?? ""}` : "Token"}
+          aria-expanded={tip?.key === "__token"}
+          onClick={(e) => {
+            const r = e.currentTarget;
+            setTip((t) => (t?.key === "__token" ? null : { key: "__token", x: r.offsetLeft + r.offsetWidth / 2, top: r.offsetTop + r.offsetHeight + 6 }));
+          }}
+          style={{ flex: "none", width: px, height: px, display: "grid", placeItems: "center", padding: 0, background: "none", cursor: "pointer", lineHeight: 0, color: "var(--dim)", border: token.design ? 0 : "1px dashed var(--edge)", borderRadius: "var(--px-r)" }}
+        >
+          {token.design ? <TokenImage design={token.design} size={px} /> : <span className="px" style={{ fontSize: 12 }}>?</span>}
+        </button>
       ) : null}
       {children}
       {shown.slice(0, SHOW_MAX).map((b) => (
@@ -144,7 +148,24 @@ export function AboutBadges({
           <EyeIcon />
         </button>
       ) : null}
-      {tipBadge && tip ? <BadgeTip x={tip.x} top={tip.top} width={width} title={tipBadge.title} line={tipBadge.line} /> : null}
+      {tip?.key === "__token" && token ? (
+        <BadgeTip
+          x={tip.x}
+          top={tip.top}
+          width={width}
+          title={token.title ?? "TOKEN"}
+          line={token.line ?? ""}
+          action={
+            token.href ? (
+              <Link href={token.href} className="px" style={{ fontSize: 11, color: "var(--pur-pale)" }}>
+                {token.actionLabel ?? "OPEN →"}
+              </Link>
+            ) : null
+          }
+        />
+      ) : tipBadge && tip ? (
+        <BadgeTip x={tip.x} top={tip.top} width={width} title={tipBadge.title} line={tipBadge.line} />
+      ) : null}
       {choosing ? <BadgeViewer earned={earned} tradable={tradable} current={shown.map((b) => b.key)} editable={editable} aside={aside} onClose={() => setChoosing(false)} /> : null}
     </div>
   );

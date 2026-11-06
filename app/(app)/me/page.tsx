@@ -19,6 +19,7 @@ import { ROMAN, tokenReadyAt, resolveShown, resolveWorking, finishedWorking, goa
 import { Avatar } from "@/components/bits";
 import { BadgeArt, ItemTile, TokenImage } from "@/components/badges";
 import { AboutBadges } from "@/components/about-badges";
+import { WorkingOn } from "@/components/working-on";
 import { ProfileDetails, type DetailKind } from "@/components/profile-details";
 import { ProfileHead } from "./face-menu";
 import { bannerOf, bannerStyle } from "@/lib/banner";
@@ -114,7 +115,13 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
             }
             tradeHref="/me/trades"
             tradeCount={waiting}
-            token={{ design: token?.design ?? null, href: "/me/token" }}
+            token={{
+              design: token?.design ?? null,
+              href: "/me/token",
+              title: tokenTitle(profile.display_name, profile.handle).toUpperCase(),
+              line: token ? token.how?.trim() || "Nobody has been told how to earn it yet. Write it on your token page." : "You have not made your token yet.",
+              actionLabel: token ? "OPEN YOUR TOKEN →" : "MAKE YOUR TOKEN →",
+            }}
           />
         }
       />
@@ -201,6 +208,7 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
             SEE ALL QUESTS →
           </Link>
         </div>
+        <WorkingOn bare items={resolveWorking(profile.working_on, badges, [], progress)} />
 
         {plaintiffSince ? (
           <div className="tile" style={{ padding: 12, display: "flex", alignItems: "center", gap: 10 }}>

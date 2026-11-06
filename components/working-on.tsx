@@ -13,7 +13,7 @@ const PER_PAGE = 20; // rows to a page, scrolling
 /** "Working on": the badges a person is going after, as a plain list, one to a row, each with
  *  what it takes. On your own profile a button opens every badge there is, to pick up to five
  *  (tap to pick, tap again to put back; the order you pick them is the order they are listed in). */
-export function WorkingOn({ items, all, editable, person, finished, isWitch, openAtStart }: { items: ShownBadge[]; all?: ShownBadge[]; editable?: boolean; person?: { id: string; handle: string }; finished?: string[]; isWitch?: boolean; openAtStart?: boolean }) {
+export function WorkingOn({ items, all, editable, person, finished, isWitch, openAtStart, bare }: { items: ShownBadge[]; all?: ShownBadge[]; editable?: boolean; person?: { id: string; handle: string }; finished?: string[]; isWitch?: boolean; openAtStart?: boolean; /** Just the rows: no heading, no change link. */ bare?: boolean }) {
   const [draft, setDraft] = useState<Draft | null>(null);
   const [say, setSay] = useState<string | null>(null);
   const [open, setOpen] = useState(!!openAtStart && !!editable);
@@ -31,6 +31,7 @@ export function WorkingOn({ items, all, editable, person, finished, isWitch, ope
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+      {bare ? null : (
       <div className="px" style={{ fontSize: 12, color: "var(--blu-soft)", minHeight: 24, display: "flex", alignItems: "center", gap: 8 }}>
         <span>
           EPIC QUESTS <span style={{ fontSize: 11, color: "var(--muted)", marginLeft: 6 }}>· {items.length}/{WORKING_MAX}</span>
@@ -51,6 +52,7 @@ export function WorkingOn({ items, all, editable, person, finished, isWitch, ope
           </button>
         ) : null}
       </div>
+      )}
 
       {items.length ? (
         <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: 6 }}>

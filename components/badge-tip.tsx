@@ -1,7 +1,7 @@
 /** The bubble that says what a badge is and how it is earned: below the thing tapped, as wide
  *  as the box it hangs in, with a small point at the badge. `x` is the badge's middle across the
  *  box and `top` where the bubble starts down it. */
-export function BadgeTip({ x, top, width, title, line }: { x: number; top: number; width: number; title: string; line: string }) {
+export function BadgeTip({ x, top, width, title, line, action }: { x: number; top: number; width: number; title: string; line: string; action?: React.ReactNode }) {
   return (
     <div
       data-badge-tip
@@ -23,6 +23,7 @@ export function BadgeTip({ x, top, width, title, line }: { x: number; top: numbe
         {title}
       </div>
       <div style={{ fontSize: 12, lineHeight: 1.45, color: "var(--muted)", marginTop: 3 }}>{line}</div>
+      {action ? <div style={{ marginTop: 6 }}>{action}</div> : null}
     </div>
   );
 }

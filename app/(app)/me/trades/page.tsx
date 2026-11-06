@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { requireMe, getPendingTrades, getTokensOf } from "@/lib/data";
+import { requireMe, getPendingTrades, getTokensOf, getToken, getPeople } from "@/lib/data";
+import { Avatar } from "@/components/bits";
 import { answerTrade, cancelTrade } from "@/lib/actions";
 import { ItemArt, TokenImage } from "@/components/badges";
-import { itemTitle, type Trade, type TradeItem } from "@/lib/badges";
-import { BADGE_MANA } from "@/lib/crystr";
+import { itemTitle, tokenReadyAt, type Trade, type TradeItem } from "@/lib/badges";
+import { BADGE_MANA, TOKEN_GIFT_MONTHS } from "@/lib/crystr";
 import { tokenTitle } from "@/lib/token";
 import { ago } from "@/lib/crystr";
 
@@ -108,7 +109,8 @@ function Offer({ t, mine, tokens }: { t: Trade; mine: boolean; tokens: Map<strin
 /** Offers waiting on you, and offers of yours waiting on others. */
 export default async function TradesPage() {
   const { userId } = await requireMe();
-  const { incoming, outgoing } = await getPendingTrades(userId);
+  const [{ incoming, outgoing }, myToken, people] = await Promise.all([getPendingTrades(userId), getToken(userId), getPeople(userId)]);
+  const ready = tokenReadyAt(myToken?.last_given_at);
   const tokens = await getTokensOf([...new Set([...incoming, ...outgoing].filter((t) => t.give_token).map((t) => t.from_user))]);
 
   return (
@@ -125,6 +127,40 @@ export default async function TradesPage() {
           A badge for a badge, or a badge for nothing. Nothing moves until the other person says yes, and
           both ceilings are worked out again when it does.
         </div>
+      </div>
+
+      <div id="give-token" className="tile" style={{ padding: 12, display: "flex", flexDirection: "column", gap: 10, scrollMarginTop: 80 }}>
+        <div className="px" style={{ fontSize: 11, color: "var(--blu-soft)" }}>
+          GIVE YOUR TOKEN
+        </div>
+        {!myToken ? (
+          <div style={{ fontSize: 12, lineHeight: 1.5, color: "var(--muted)" }}>
+            You have not made one yet. <Link href="/me/token" style={{ color: "var(--pur-pale)" }}>Make your token</Link>, then pick who gets it here.
+          </div>
+        ) : ready ? (
+          <div style={{ fontSize: 12, lineHeight: 1.5, color: "var(--muted)" }}>
+            Given. You can give it again on {ready.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}.
+          </div>
+        ) : (
+          <>
+            <div style={{ fontSize: 12, lineHeight: 1.5, color: "var(--muted)" }}>
+              Pick who gets it. They say yes before anything moves, and then the next one is {TOKEN_GIFT_MONTHS} months away.
+            </div>
+            {people.length === 0 ? (
+              <div className="empty">THERE IS NOBODY ELSE IN THE CITY YET</div>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                {people.map((p) => (
+                  <Link key={p.id} href={`/u/${p.handle}/trade?give=token`} className="rowcard" style={{ minHeight: 48, padding: "8px 11px" }}>
+                    <Avatar person={p} size={28} />
+                    <div style={{ flex: 1, minWidth: 0, fontSize: 13 }}>{p.handle}</div>
+                    <span className="px" style={{ fontSize: 11, color: "var(--dim)" }}>→</span>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </>
+        )}
       </div>
 
       <div className="px" style={{ fontSize: 12, color: "var(--mag-soft)" }}>

@@ -325,7 +325,7 @@ export function TokenDesigner({ start, fresh, how = "", canGive = false, onUse }
           {fresh ? "Nobody has seen this yet." : "Changing it changes what you give next; tokens already given keep their look."}
         </div>
         {canGive && !onUse ? (
-          <a href="#give" className="btn btn-sm btn-purple" style={{ minHeight: 40, flex: "none", display: "inline-flex", alignItems: "center", textAlign: "center" }}>
+          <a href="/me/trades#give-token" className="btn btn-sm btn-purple" style={{ minHeight: 40, flex: "none", display: "inline-flex", alignItems: "center", textAlign: "center" }}>
             GIVE IT TO SOMEONE
           </a>
         ) : null}

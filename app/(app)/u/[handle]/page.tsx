@@ -67,7 +67,7 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
           <div style={{ minWidth: 0, flex: 1, paddingBottom: 6 }}>
             <AboutBadges
                 compact
-                token={token ? { design: token.design, title: tokenTitle(person.display_name, person.handle) } : undefined}
+                token={token ? { design: token.design, title: tokenTitle(person.display_name, person.handle).toUpperCase(), line: token.how?.trim() || `Ask ${person.handle} how to earn it.` } : undefined}
                 shown={shown}
                 earned={achievementGrid(earned)}
                 tradable={resolveShown(items.filter((i) => i.kind === "tradable").map((i) => `i:${i.id}`), badges, items, person.handle, 10000)}
