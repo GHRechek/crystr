@@ -15,6 +15,7 @@ import {
   colourHex,
   isFramed,
   itemBounds,
+  itemBox,
   moveLayer,
   normalizeToken,
   placeOnTop,
@@ -282,9 +283,6 @@ export function TokenDesigner({ start, fresh }: { start: TokenDesign; fresh: boo
           height: STAGE,
           maxWidth: "100%",
           margin: "0 auto",
-          borderRadius: "var(--px-r)",
-          background: "var(--inset)",
-          boxShadow: "0 0 0 1px var(--edge)",
           touchAction: "none",
           overflow: "hidden",
           isolation: "isolate",
@@ -302,10 +300,31 @@ export function TokenDesigner({ start, fresh }: { start: TokenDesign; fresh: boo
         {SLOTS.map((k) => (
           <Sticker key={k} which={k} d={d} selected={sel === k} onSelect={setSelected} onMove={(s, x, y) => set({ [`${s}_x`]: x, [`${s}_y`]: y } as Partial<TokenDesign>)} />
         ))}
+        {/* The x to take the picked icon off sits on its own top-right corner. It is not part of
+            the icon, so it does not turn or shrink with it. */}
+        {sel && selItem ? (
+          <button
+            type="button"
+            className="tk-x"
+            aria-label={`Take the ${selItem.label} off`}
+            title="Take it off"
+            onPointerDown={(e) => e.stopPropagation()}
+            onClick={remove}
+            style={(() => {
+              const box = itemBox(d[sel], d[`${sel}_turn`], d[`${sel}_size`]);
+              const right = (TOKEN_SIZE / 2 + d[`${sel}_x`] + box.w / 2) * CELL;
+              const top = (TOKEN_SIZE / 2 + d[`${sel}_y`] - box.h / 2) * CELL;
+              // Level with the corner, kept inside the stage so it can always be reached.
+              return { left: Math.min(STAGE - 24, Math.max(0, right - 12)), top: Math.min(STAGE - 24, Math.max(0, top - 12)) };
+            })()}
+          >
+            ✕
+          </button>
+        ) : null}
       </div>
 
-      {/* Left to right: the shape, its two colours (badge over frame), add an icon, the picked
-          icon, turn over flip, bigger over smaller, up over down the layers. */}
+      {/* Left to right: the shape, its two colours (badge over frame), add an icon, turn over
+          flip, bigger over smaller, up over down the layers. */}
       <div className="tk-bar" role="toolbar" aria-label="Token tools">
         <button type="button" className="btn tk-big" style={{ gridColumn: 1, gridRow: "1 / 3" }} onClick={() => setPanel("shape")}>
           SHAPE
@@ -332,40 +351,22 @@ export function TokenDesigner({ start, fresh }: { start: TokenDesign; fresh: boo
           ADD ICON {placed.length}/{SLOTS.length}
         </button>
 
-        <div className="tk-cur" style={{ gridColumn: 4, gridRow: "1 / 3" }}>
-          {sel && selItem ? (
-            <>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={`/badges/items/${selItem.slug}.png`}
-                alt={selItem.label}
-                width={selItem.w * 2}
-                height={selItem.h * 2}
-                style={{ imageRendering: "pixelated", maxWidth: "76%", height: "auto" }}
-              />
-              <button type="button" className="tk-x" aria-label={`Take the ${selItem.label} off`} title="Take it off" onClick={remove}>
-                ✕
-              </button>
-            </>
-          ) : null}
-        </div>
-
-        <button type="button" className="btn tk-sm" aria-label="Turn right 45 degrees" title="Turn 45°" disabled={!sel} onClick={turnRight} style={{ gridColumn: 5, gridRow: 1 }}>
+        <button type="button" className="btn tk-sm" aria-label="Turn right 45 degrees" title="Turn 45°" disabled={!sel} onClick={turnRight} style={{ gridColumn: 4, gridRow: 1 }}>
           ↻
         </button>
-        <button type="button" className={`btn tk-sm${sel && d[`${sel}_flip`] ? " btn-purple" : ""}`} aria-label="Flip" title="Flip" aria-pressed={!!sel && d[`${sel}_flip`]} disabled={!sel} onClick={flip} style={{ gridColumn: 5, gridRow: 2 }}>
+        <button type="button" className={`btn tk-sm${sel && d[`${sel}_flip`] ? " btn-purple" : ""}`} aria-label="Flip" title="Flip" aria-pressed={!!sel && d[`${sel}_flip`]} disabled={!sel} onClick={flip} style={{ gridColumn: 4, gridRow: 2 }}>
           ⇄
         </button>
-        <button type="button" className="btn tk-sm" aria-label="Bigger" title="Bigger" disabled={!sel || d[`${sel}_size`] === 100} onClick={() => sizeBy(1)} style={{ gridColumn: 6, gridRow: 1 }}>
+        <button type="button" className="btn tk-sm" aria-label="Bigger" title="Bigger" disabled={!sel || d[`${sel}_size`] === 100} onClick={() => sizeBy(1)} style={{ gridColumn: 5, gridRow: 1 }}>
           +
         </button>
-        <button type="button" className="btn tk-sm" aria-label="Smaller" title="Smaller" disabled={!sel || d[`${sel}_size`] === SIZES[0]} onClick={() => sizeBy(-1)} style={{ gridColumn: 6, gridRow: 2 }}>
+        <button type="button" className="btn tk-sm" aria-label="Smaller" title="Smaller" disabled={!sel || d[`${sel}_size`] === SIZES[0]} onClick={() => sizeBy(-1)} style={{ gridColumn: 5, gridRow: 2 }}>
           −
         </button>
-        <button type="button" className="btn tk-sm" aria-label="Up a layer" title="Up a layer" disabled={!up} onClick={() => up && set(up)} style={{ gridColumn: 7, gridRow: 1 }}>
+        <button type="button" className="btn tk-sm" aria-label="Up a layer" title="Up a layer" disabled={!up} onClick={() => up && set(up)} style={{ gridColumn: 6, gridRow: 1 }}>
           <ArrowIcon dir="up" />
         </button>
-        <button type="button" className="btn tk-sm" aria-label="Down a layer" title="Down a layer" disabled={!down} onClick={() => down && set(down)} style={{ gridColumn: 7, gridRow: 2 }}>
+        <button type="button" className="btn tk-sm" aria-label="Down a layer" title="Down a layer" disabled={!down} onClick={() => down && set(down)} style={{ gridColumn: 6, gridRow: 2 }}>
           <ArrowIcon dir="down" />
         </button>
       </div>

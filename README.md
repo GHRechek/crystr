@@ -182,9 +182,10 @@ colours, and items from the uploaded set
 stage, up to five at a time, each of which can be flipped, turned in steps of 45
 degrees (so the diagonals work too), shrunk from 100 to 55 percent in steps of
 fifteen, and layered. The whole editor is one row of small buttons with no words on
-them: the shape, its two colours (badge over frame), add an icon, the picked icon
-(with an x in its corner to take it off), turn over flip, bigger over smaller, and up
-over down the layers. The badge shape is itself a layer, so moving an icon down past it
+them: the shape, its two colours (badge over frame), add an icon, turn over flip,
+bigger over smaller, and up over down the layers. The picked icon wears a small x on
+its own top-right corner on the stage to take it off, and the stage has no card behind
+it: the badge sits on the app's background. The badge shape is itself a layer, so moving an icon down past it
 puts it behind the badge (only what hangs out past its edge shows), and a token can have
 no shape at all. In the data this is `order` (the draw order of the five slots) and
 `under` (how many of the first ones sit under the shape). Whole turns move the pixels; a

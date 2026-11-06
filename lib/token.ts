@@ -247,13 +247,16 @@ export function turnedBox(w: number, h: number, t: number): { w: number; h: numb
 
 /** How far an item's centre may sit from the middle and still be wholly in the picture,
  *  given its turn and size (the compositor scales and turns it the same way). */
-export function itemBounds(slug: string, t: number, sz: SizeKey): { x: number; y: number } {
+export function itemBox(slug: string, t: number, sz: SizeKey): { w: number; h: number } {
   const it = ITEMS.find((i) => i.slug === slug);
-  if (!it) return { x: 0, y: 0 };
+  if (!it) return { w: 0, h: 0 };
   const f = sz / 100;
-  const sw = Math.max(1, Math.round(it.w * f));
-  const sh = Math.max(1, Math.round(it.h * f));
-  const box = turnedBox(sw, sh, t);
+  return turnedBox(Math.max(1, Math.round(it.w * f)), Math.max(1, Math.round(it.h * f)), t);
+}
+
+export function itemBounds(slug: string, t: number, sz: SizeKey): { x: number; y: number } {
+  if (!ITEMS.some((i) => i.slug === slug)) return { x: 0, y: 0 };
+  const box = itemBox(slug, t, sz);
   const C = TOKEN_SIZE / 2;
   return { x: Math.floor(C - box.w / 2), y: Math.floor(C - box.h / 2) };
 }
