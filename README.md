@@ -179,8 +179,13 @@ badge shape (circle, framed circle, shield, diamond, plate, hexagon, each with
 or without a rim band, at full size or three quarters or half) in their
 colours, and two items from the uploaded set
 (`public/badges/items/`), added from a sheet and placed by dragging them on a
-stage, each of which can be flipped, turned in quarters, shrunk from 100 to 55
-percent in steps of fifteen, and sit over or under the other. The shape is
+stage, up to three at a time, each of which can be flipped, turned in steps of 45
+degrees (so the diagonals work too), shrunk from 100 to 55 percent in steps of
+fifteen, set behind the badge (only what hangs out past its edge shows) or in front
+of it, and drawn over or under the others. Whole turns move the pixels; a diagonal
+turn is rotated at four times the size and brought back down by each cell's commonest
+colour, so small pixel art stays solid. Designs saved before this (quarter turns, two
+icons, a single \"on top\") are read as they were and render identically. The shape is
 drawn small on purpose, the middle 22 of the picture's 32 cells: an item at
 its drawn size already reaches the rim, one dragged outward hangs over it
 (hilts and points past the edge), a shrunk one sits inside like heraldry; an
