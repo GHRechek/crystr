@@ -33,7 +33,7 @@ const SET: [number, number, number][] = [[100,20,21],[1,23,23],[2,23,23],[3,23,2
 const nice = (s: string) => s.replace(/-/g, " ").replace(/^./, (c) => c.toUpperCase());
 
 export const ARTICLE_PICTURES: readonly ArticlePicture[] = [
-  ...ITEMS.filter((i) => !i.slug.startsWith("t-")).map((i) => ({ slug: i.slug as string, label: i.label, src: `/badges/items/${i.slug}.png`, w: i.w, h: i.h, group: "icons" as const })),
+  ...ITEMS.filter((i) => !i.slug.startsWith("t-") && !i.slug.startsWith("s-")).map((i) => ({ slug: i.slug as string, label: i.label, src: `/badges/items/${i.slug}.png`, w: i.w, h: i.h, group: "icons" as const })),
   ...ACHIEVEMENTS.map(([n, w, h]) => ({ slug: `badge-${n}`, label: nice(n), src: `/badges/${n}.png`, w, h, group: "badges" as const })),
   ...TRADABLE.map(([n, w, h]) => ({ slug: `tradable-${n}`, label: nice(n), src: `/badges/tradable/${n}.png`, w, h, group: "badges" as const })),
   ...SET.map(([n, w, h]) => ({ slug: `set-${n}`, label: `Badge ${n}`, src: `/badges/set/${n}.png`, w, h, group: "set" as const })),
