@@ -106,6 +106,9 @@ export function InfoMenu({ isWitch = false }: { isWitch?: boolean }) {
                     PLAYER
                   </Link>
                 </div>
+                <Link href="/me/badges" className="btn btn-block" style={{ minHeight: 44, marginTop: 8 }}>
+                  EDIT BADGES
+                </Link>
               </section>
             ) : null}
 

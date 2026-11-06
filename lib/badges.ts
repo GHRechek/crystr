@@ -148,7 +148,7 @@ export function resolveShown(
         key,
         badge: { slug: b.slug, art: b.art, tiers: b.tiers, tier: b.tier },
         title: `${b.title}${b.tiers > 1 ? ` ${ROMAN[b.tier]}` : ""}`,
-        line: DID[b.slug] ?? b.blurb ?? b.how,
+        line: b.blurb || DID[b.slug] || b.how,
       });
     } else if (key.startsWith("i:")) {
       const it = items.find((x) => x.kind === "tradable" && String(x.id) === key.slice(2));
@@ -174,12 +174,10 @@ export function achievementGrid(badges: BadgeRow[]): ShownBadge[] {
     key: `a:${b.slug}`,
     badge: { slug: b.slug, art: b.art, tiers: b.tiers, tier: b.tier },
     title: b.earned_at ? `${b.title}${b.tiers > 1 ? ` ${ROMAN[b.tier]}` : ""}` : b.title,
-    line: b.earned_at ? (DID[b.slug] ?? b.blurb ?? b.how) : b.how,
+    line: b.earned_at ? (b.blurb || DID[b.slug] || b.how) : b.how,
     locked: !b.earned_at,
     auto: !b.witch_approved,
-    edit: b.witch_approved
-      ? { slug: b.slug, title: b.title, how: b.how, blurb: b.blurb, art: Number(/(\d+)\.png$/.exec(b.art ?? "")?.[1] ?? 1) }
-      : undefined,
+    edit: { slug: b.slug, title: b.title, how: b.how, blurb: b.blurb, art: Number(/(\d+)\.png$/.exec(b.art ?? "")?.[1] ?? 1) },
   });
   return [...badges.filter((b) => b.earned_at), ...badges.filter((b) => !b.earned_at)].map(cell);
 }
