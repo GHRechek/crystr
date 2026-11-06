@@ -77,7 +77,7 @@ export function WorkingOn({ items, all, editable, person, finished, isWitch, ope
                   <span className="px" style={{ display: "block", fontSize: 11, color: done ? "var(--dim)" : "var(--text)", lineHeight: 1.5, textDecoration: done ? "line-through" : "none", textDecorationColor: "var(--dim)" }}>
                     {b.title}
                   </span>
-                  <span style={{ display: "block", fontSize: 12, lineHeight: 1.4, color: done ? "var(--dim)" : "var(--muted)", textDecoration: done ? "line-through" : "none" }}>{b.line}</span>
+                  <span style={{ display: "block", fontSize: 11, lineHeight: 1.4, color: done ? "var(--dim)" : "var(--muted)", textDecoration: done ? "line-through" : "none" }}>{b.line}</span>
                 </span>
                 {done ? (
                   <span aria-label="Done" className="px" style={{ marginLeft: "auto", flex: "none", fontSize: 13, color: "var(--dim)" }}>✓</span>
@@ -118,7 +118,7 @@ export function WorkingOn({ items, all, editable, person, finished, isWitch, ope
                   </button>
                   {open ? (
                     <div style={{ paddingLeft: 52, display: "flex", flexDirection: "column", gap: 6 }}>
-                      <div style={{ fontSize: 12, lineHeight: 1.45, color: "var(--muted)" }}>Make a post that shows it. It is marked as a badge request, and when a witch likes it, the badge is yours.</div>
+                      <div style={{ fontSize: 11, lineHeight: 1.45, color: "var(--muted)" }}>Make a post that shows it. It is marked as a badge request, and when a witch likes it, the badge is yours.</div>
                       <Link href={`/post?badge=${b.key.slice(2)}`} className="btn btn-sm btn-purple" style={{ minHeight: 40, alignSelf: "flex-start", display: "inline-flex", alignItems: "center" }}>
                         MAKE THE POST →
                       </Link>
@@ -140,7 +140,7 @@ export function WorkingOn({ items, all, editable, person, finished, isWitch, ope
                     {scanBtn}
                   </div>
                   {open ? (
-                    <div style={{ paddingLeft: 52, fontSize: 12, lineHeight: 1.45, color: "var(--muted)" }}>
+                    <div style={{ paddingLeft: 52, fontSize: 11, lineHeight: 1.45, color: "var(--muted)" }}>
                       {kind ? `It has to be ${kind}. ` : ""}Tap the ! and scan {kind ? `${kind}'s` : "their"} QR code. {b.instant ? "That is all: it completes the moment you scan." : "They get a whisper asking whether it happened, and if they say yes it counts."}
                     </div>
                   ) : null}
@@ -256,7 +256,7 @@ export function WorkingOn({ items, all, editable, person, finished, isWitch, ope
                         {b.title}
                         {b.auto ? <span title="The system awards this one itself" aria-label="Awarded by the system" style={{ color: "#e8c14b", marginLeft: 6 }}>★</span> : null}
                       </span>
-                      <span style={{ display: "block", fontSize: 12, lineHeight: 1.4, color: "var(--muted)" }}>{b.line}</span>
+                      <span style={{ display: "block", fontSize: 11, lineHeight: 1.4, color: "var(--muted)" }}>{b.line}</span>
                     </span>
                     {b.progress ? <span className="px" style={{ flex: "none", fontSize: 11, color: "var(--pur-pale)" }}>{b.progress.n}/{b.progress.of}</span> : null}
                     {isWitch && b.edit ? (

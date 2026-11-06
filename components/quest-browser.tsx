@@ -79,7 +79,7 @@ export function QuestBrowser({
                     {b.title}
                     {b.auto ? <span aria-label="Awarded by the system" title="The system gives this one out itself" style={{ color: "#e8c14b", marginLeft: 6 }}>★</span> : null}
                   </span>
-                  <span style={{ display: "block", fontSize: 12, lineHeight: 1.4, color: "var(--muted)" }}>{b.line}</span>
+                  <span style={{ display: "block", fontSize: 11, lineHeight: 1.4, color: "var(--muted)" }}>{b.line}</span>
                 </span>
                 {pending[slug] ? (
                   <span className="px" style={{ flex: "none", fontSize: 9.5, color: "var(--pur-pale)", textAlign: "right", maxWidth: 96, lineHeight: 1.4 }}>{pending[slug]}</span>
@@ -91,13 +91,13 @@ export function QuestBrowser({
                 <div style={{ paddingLeft: 52, display: "flex", flexDirection: "column", gap: 6 }}>
                   {b.peer ? (
                     <>
-                      <div style={{ fontSize: 12, lineHeight: 1.45, color: "var(--muted)" }}>
+                      <div style={{ fontSize: 11, lineHeight: 1.45, color: "var(--muted)" }}>
                         {b.target ? `It has to be ${/^[aeiou]/i.test(targetLabel(b.target)) ? "an" : "a"} ${targetLabel(b.target).toLowerCase()}. ` : ""}Tap the ! and scan {b.target ? `${/^[aeiou]/i.test(targetLabel(b.target)) ? "an" : "a"} ${targetLabel(b.target).toLowerCase()}'s` : "their"} QR code. {b.instant ? "That is all: it completes the moment you scan." : "They get a whisper asking whether it happened, and if they say yes the badge is yours."}
                       </div>
                     </>
                   ) : b.request ? (
                     <>
-                      <div style={{ fontSize: 12, lineHeight: 1.45, color: "var(--muted)" }}>
+                      <div style={{ fontSize: 11, lineHeight: 1.45, color: "var(--muted)" }}>
                         Make a post that shows it. It is marked as a badge request, and when a witch likes it, the badge is yours.
                       </div>
                       <Link href={`/post?badge=${slug}`} className="btn btn-sm btn-purple" style={{ minHeight: 40, alignSelf: "flex-start", display: "inline-flex", alignItems: "center" }}>
@@ -106,7 +106,7 @@ export function QuestBrowser({
                     </>
                   ) : (
                     <>
-                      <div style={{ fontSize: 12, lineHeight: 1.45, color: "var(--muted)" }}>You get this one on your own, the moment it is true.</div>
+                      <div style={{ fontSize: 11, lineHeight: 1.45, color: "var(--muted)" }}>You get this one on your own, the moment it is true.</div>
                       {where ? (
                         <Link href={where[0]} className="btn btn-sm" style={{ minHeight: 40, alignSelf: "flex-start", display: "inline-flex", alignItems: "center" }}>
                           {where[1]} →
