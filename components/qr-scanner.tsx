@@ -51,7 +51,7 @@ export function QrScanner({ onClose, tradesHref, waiting, mode = "general", only
           if (h) {
             stop = true;
             stream?.getTracks().forEach((t) => t.stop());
-            scanPerson(h, mode === "quest").then((p) => (p ? setFound(p) : setErr("That person is not in the City. Close this and scan again.")));
+            scanPerson(h, mode === "quest").then((p) => (p === "self" ? setErr("That is your own code. Scan someone else's. Close this and try again.") : p ? setFound(p) : setErr("That person is not in the City. Close this and scan again.")));
             return;
           }
           setErr("That code is not a CRYSTR person.");
