@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { BadgeFace } from "@/components/badge-chooser";
 import { BadgeViewer } from "@/components/badge-viewer";
 import { BadgeTip } from "@/components/badge-tip";
@@ -17,6 +18,8 @@ export function AboutBadges({
   aside,
   editable,
   noPen,
+  tradeHref,
+  tradeCount,
 }: {
   children?: React.ReactNode;
   shown: ShownBadge[];
@@ -26,6 +29,9 @@ export function AboutBadges({
   aside?: React.ReactNode;
   /** No pen or eye: the page puts its own way to the full list beside this row. */
   noPen?: boolean;
+  /** A trade icon at the end of the row, to the trade menu, with how many are waiting. */
+  tradeHref?: string;
+  tradeCount?: number;
   editable?: boolean;
 }) {
   const [tip, setTip] = useState<{ key: string; x: number; top: number } | null>(null);
@@ -88,6 +94,21 @@ export function AboutBadges({
           {editable ? "✎" : <EyeIcon />}
         </button>
       ) : null}
+      {tradeHref ? (
+        <Link
+          href={tradeHref}
+          aria-label={tradeCount ? `Trades, ${tradeCount} waiting` : "Trades"}
+          title="Trades"
+          style={{ position: "relative", flex: "none", width: 42, height: 42, display: "grid", placeItems: "center", border: "1px dashed var(--edge)", borderRadius: "var(--px-r)", color: "var(--muted)", textDecoration: "none" }}
+        >
+          <TradeIcon />
+          {tradeCount ? (
+            <span aria-hidden className="px" style={{ position: "absolute", top: -6, right: -6, minWidth: 16, height: 16, display: "grid", placeItems: "center", fontSize: 10, lineHeight: 1, background: "var(--pur)", color: "#fff", borderRadius: 8 }}>
+              {tradeCount}
+            </span>
+          ) : null}
+        </Link>
+      ) : null}
       {tipBadge && tip ? <BadgeTip x={tip.x} top={tip.top} width={width} title={tipBadge.title} line={tipBadge.line} /> : null}
       {choosing ? <BadgeViewer earned={earned} tradable={tradable} current={shown.map((b) => b.key)} editable={editable} aside={aside} onClose={() => setChoosing(false)} /> : null}
     </div>
@@ -100,6 +121,17 @@ function EyeIcon() {
   return (
     <svg width={18} height={14} viewBox="0 0 9 7" shapeRendering="crispEdges" aria-hidden>
       {rows.flatMap((r, y) => [...r].map((c, x) => (c === "#" ? <rect key={`${x}${y}`} x={x} y={y} width={1} height={1} fill="currentColor" /> : null)))}
+    </svg>
+  );
+}
+
+/** Two pixel arrows passing each other: a trade. */
+function TradeIcon() {
+  const rows = ["......#..", ".......#.", "#########", ".......#.", "......#..", ".........", "..#......", ".#.......", "#########", ".#.......", "..#......"];
+  const on = (r: number, c: number) => rows[r][c] === "#";
+  return (
+    <svg width={20} height={22} viewBox="0 0 9 11" shapeRendering="crispEdges" aria-hidden>
+      {rows.flatMap((r, y) => [...r].map((_, x) => (on(y, x) ? <rect key={`${x}${y}`} x={x} y={y} width={1} height={1} fill="currentColor" /> : null)))}
     </svg>
   );
 }

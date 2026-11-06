@@ -204,7 +204,7 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
             ),
           }}
         >
-          <AboutBadges noPen earned={[]} tradable={[]} shown={shown}>
+          <AboutBadges noPen earned={[]} tradable={[]} shown={shown} tradeHref="/me/trades" tradeCount={waiting}>
             <Link
               href="/me/token"
               aria-label="Your token"
