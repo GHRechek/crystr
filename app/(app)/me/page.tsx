@@ -30,10 +30,11 @@ import { tokenTitle } from "@/lib/token";
 const longDate = (d: Date) => d.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
 
 
-export default async function ProfilePage(props: { searchParams: Promise<{ quests?: string; goals?: string }> }) {
+export default async function ProfilePage(props: { searchParams: Promise<{ quests?: string; goals?: string; badges?: string }> }) {
   const sp = await props.searchParams;
   const quests = sp.quests === "1";
   const goals = sp.goals === "1";
+  const badgesOpen = sp.badges === "1";
   const { userId, profile } = await requireMe();
   // Count anything that has come due since you were last here (a day more in the City, a Top 5).
   await createClient().rpc("cr_check_badges");
@@ -98,6 +99,8 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
         banner={bannerStyle(bannerOf(profile))}
         strip={
           <AboutBadges
+            key={badgesOpen ? "choose" : "view"}
+            openAtStart={badgesOpen}
             compact
             editable
             shown={shown}
@@ -108,6 +111,8 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
                 TRADES{waiting ? ` · ${waiting}` : ""} →
               </Link>
             }
+            tradeHref="/me/trades"
+            tradeCount={waiting}
           />
         }
       />
