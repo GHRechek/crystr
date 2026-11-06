@@ -1515,7 +1515,7 @@ select {
   93% { transform: translate(1px, 0) rotate(3deg); }
   96% { transform: translate(0, 0) rotate(-1deg); }
 }
-.tremble { animation: tremble 6s ease-in-out infinite; transform-origin: 50% 60%; }
+.tremble { animation: tremble 3s ease-in-out infinite; transform-origin: 50% 60%; }
 @media (prefers-reduced-motion: reduce) {
   .tremble { animation: none; }
 }

@@ -79,3 +79,12 @@ export function SearchIcon() {
     </svg>
   );
 }
+
+export function CameraIcon() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" shapeRendering="crispEdges" aria-hidden="true" style={{ display: "inline-block", verticalAlign: "-1px" }}>
+      <path d="M1.5 5h3l1.2-2h4.6l1.2 2h3v8h-13z" />
+      <circle cx="8" cy="8.8" r="2.3" />
+    </svg>
+  );
+}

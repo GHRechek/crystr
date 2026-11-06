@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { BadgeFace } from "@/components/badge-chooser";
-import { ArrowIcon } from "@/components/icons";
+import { ArrowIcon, CameraIcon } from "@/components/icons";
 import { BadgeEditor, type BadgeDraft as Draft } from "@/components/badge-editor";
 import { setWorkingOn, vouchFromProfile } from "@/lib/actions";
 import { WORKING_MAX, type ShownBadge } from "@/lib/badges";
@@ -78,6 +78,7 @@ export function WorkingOn({ items, all, editable, person, finished, isWitch, ope
                 <span style={{ minWidth: 0, textAlign: "left" }}>
                   <span className="px" style={{ display: "block", fontSize: 11, color: done ? "var(--dim)" : "var(--text)", lineHeight: 1.5, textDecoration: done ? "line-through" : "none", textDecorationColor: "var(--dim)" }}>
                     {b.title}
+                    {scan ? <span style={{ marginLeft: 6, color: "var(--pur-pale)" }}><CameraIcon /></span> : null}
                   </span>
                   <span style={{ display: "block", fontSize: 11, lineHeight: 1.4, color: done ? "var(--dim)" : "var(--muted)", textDecoration: done ? "line-through" : "none" }}>{b.line}</span>
                 </span>
