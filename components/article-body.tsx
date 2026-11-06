@@ -1,16 +1,16 @@
 import { corrupt } from "@/lib/crystr";
-import { ITEMS } from "@/lib/token";
+import { pictureFor } from "@/lib/article-icons";
 
 /** An article's body. A picture, if it has one, comes first: half the width, on the left, with
  *  the words starting level with its top and wrapping round it. `paras` are already split. */
 export function ArticleBody({ icon, paras, decay }: { icon: string | null | undefined; paras: string[]; decay: number }) {
-  const has = !!icon && ITEMS.some((i) => i.slug === icon);
+  const pic = pictureFor(icon);
   return (
     <div style={{ display: "flow-root" }}>
-      {has ? (
+      {pic ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
-          src={`/badges/items/${icon}.png`}
+          src={pic.src}
           alt=""
           style={{ float: "left", width: "50%", height: "auto", margin: "2px 14px 8px 0", imageRendering: "pixelated" }}
         />
