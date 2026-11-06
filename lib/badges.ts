@@ -118,7 +118,7 @@ export type ShownBadge = {
   /** Handed out by the system itself, not by a witch's like: marked with a star. */
   auto?: boolean;
   /** A witch-approved badge's own fields, for a witch to edit. */
-  edit?: { slug: string; title: string; how: string; blurb: string; art: number; custom?: string };
+  edit?: { slug: string; title: string; how: string; blurb: string; art: number; custom?: string; /** A long-term goal: only its name and picture may change. */ fixed?: boolean };
 };
 
 /** How each achievement reads once it is on show: what its owner did, in the past tense (the
@@ -184,7 +184,7 @@ export function achievementGrid(badges: BadgeRow[]): ShownBadge[] {
     line: b.earned_at ? (b.blurb || DID[b.slug] || b.how) : b.how,
     locked: !b.earned_at,
     auto: !b.witch_approved,
-    edit: { slug: b.slug, title: b.title, how: b.how, blurb: b.blurb, art: Number(/(\d+)\.png$/.exec(b.art ?? "")?.[1] ?? 1), custom: b.art?.startsWith("token:") ? b.art.slice(6) : undefined },
+    edit: { slug: b.slug, title: b.title, how: b.how, blurb: b.blurb, art: Number(/(\d+)\.png$/.exec(b.art ?? "")?.[1] ?? 1), custom: b.art?.startsWith("token:") ? b.art.slice(6) : undefined, fixed: b.kind === "goal" },
   });
   return [...badges.filter((b) => b.earned_at), ...badges.filter((b) => !b.earned_at)].map(cell);
 }
@@ -257,7 +257,7 @@ export function resolveWorking(list: string[] | null | undefined, badges: BadgeR
 export const goalGrid = (badges: BadgeRow[], progress?: Record<string, number>): ShownBadge[] =>
   achievementGrid(badges.filter((b) => b.kind === "goal" && stillWorking(b))).map((c) => {
     const b = badges.find((x) => `a:${x.slug}` === c.key)!;
-    return progress ? { ...c, progress: { n: progress[b.slug] ?? 0, of: goalTarget(b, progress[b.slug] ?? 0) } } : c;
+    return progress && b.slug in progress ? { ...c, progress: { n: progress[b.slug] ?? 0, of: goalTarget(b, progress[b.slug] ?? 0) } } : c;
   });
 
 /** Every other badge, as the quests list shows them: what is still to do first. */

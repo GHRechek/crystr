@@ -5,7 +5,7 @@ import { TokenDesigner } from "@/app/(app)/me/token/designer";
 import { defaultToken } from "@/lib/token";
 import { deleteBadge, saveBadge } from "@/lib/actions";
 
-export type BadgeDraft = { slug?: string; title: string; how: string; blurb: string; art: number; /** A picture made in the token maker, as its packed design. */ custom?: string };
+export type BadgeDraft = { slug?: string; title: string; how: string; blurb: string; art: number; /** A picture made in the token maker, as its packed design. */ custom?: string; /** A long-term goal: only its name and picture may change. */ fixed?: boolean };
 
 /** The form a witch edits a badge in: its title, how to earn it, the line once earned, and its
  *  picture. It covers whatever it sits in. A new badge has no slug. Delete asks first. */
@@ -21,7 +21,18 @@ export function BadgeEditor({ draft, setDraft, used = [] }: { draft: BadgeDraft;
         <span className="spacer" />
         <button type="button" className="btn btn-sm" onClick={() => setDraft(null)} style={{ minHeight: 40, padding: "0 9px" }}>✕</button>
       </div>
-      <form action={saveBadge} style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+      {draft.fixed ? (
+        <div style={{ fontSize: 12, lineHeight: 1.5, color: "var(--muted)" }}>
+          This is a long-term goal, so how it is earned is fixed. You can change its name and picture.
+        </div>
+      ) : null}
+      <form
+        action={async (fd) => {
+          await saveBadge(fd);
+          setDraft(null);
+        }}
+        style={{ display: "flex", flexDirection: "column", gap: 10 }}
+      >
         {draft.slug ? <input type="hidden" name="slug" value={draft.slug} /> : null}
         <label className="field">
           <span className="px" style={{ fontSize: 11, color: "var(--blu-soft)" }}>TITLE</span>
@@ -29,11 +40,11 @@ export function BadgeEditor({ draft, setDraft, used = [] }: { draft: BadgeDraft;
         </label>
         <label className="field">
           <span className="px" style={{ fontSize: 11, color: "var(--blu-soft)" }}>HOW TO EARN IT</span>
-          <textarea name="how" className="textarea" rows={3} value={draft.how} maxLength={200} required onChange={(e) => setDraft({ ...draft, how: e.target.value })} />
+          <textarea name="how" className="textarea" rows={3} value={draft.how} maxLength={200} required readOnly={draft.fixed} style={draft.fixed ? { opacity: 0.55 } : undefined} onChange={(e) => setDraft({ ...draft, how: e.target.value })} />
         </label>
         <label className="field">
           <span className="px" style={{ fontSize: 11, color: "var(--blu-soft)" }}>ONCE EARNED (PAST TENSE)</span>
-          <input name="blurb" className="input" value={draft.blurb} maxLength={120} required onChange={(e) => setDraft({ ...draft, blurb: e.target.value })} />
+          <input name="blurb" className="input" value={draft.blurb} maxLength={120} required readOnly={draft.fixed} style={draft.fixed ? { opacity: 0.55 } : undefined} onChange={(e) => setDraft({ ...draft, blurb: e.target.value })} />
         </label>
         <div className="field">
           <span className="px" style={{ fontSize: 11, color: "var(--blu-soft)" }}>PICTURE</span>
@@ -48,7 +59,12 @@ export function BadgeEditor({ draft, setDraft, used = [] }: { draft: BadgeDraft;
         <button type="submit" className="btn btn-lg btn-purple btn-block">SAVE BADGE</button>
       </form>
       {draft.slug ? (
-        <form action={deleteBadge} onSubmit={(e) => { if (!confirm("Delete this badge? Anyone who earned it loses it too.")) e.preventDefault(); }}>
+        <form
+          action={async (fd) => {
+            await deleteBadge(fd);
+            setDraft(null);
+          }}
+          onSubmit={(e) => { if (!confirm("Delete this badge? Anyone who earned it loses it too.")) e.preventDefault(); }}>
           <input type="hidden" name="slug" value={draft.slug} />
           <button type="submit" className="btn btn-block" style={{ color: "var(--mag-soft)" }}>DELETE THIS BADGE</button>
         </form>
