@@ -497,3 +497,6 @@ Quests that need someone else are asked only by scanning their code (no person p
 
 ### Two ways to scan
 The exchange button on your profile opens the camera for general things: after a scan you pick TRADE or PROFILE, nothing quest related. Quests are completed from each quest's own COMPLETE button (`<QrScanner mode="quest" only={slug}>`), which shows only that quest for whoever you scan. Help Someone Else works the same way ("I helped them" asks them to say yes). A finished First Step or Main Quest is greyed out and struck through; a finished Main Quest keeps its slot until you tap it to REPLACE it.
+
+### Pronouns
+`profiles.pronouns` (free text, max 30): set on Edit Profile, shown under the character name on profiles. Species and spellcaster are now also protected by `guard_profile_economy` (the table-wide UPDATE grant meant the earlier column revoke did nothing).

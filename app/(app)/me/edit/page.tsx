@@ -60,6 +60,11 @@ export default async function EditProfilePage() {
           />
         </div>
 
+        <div className="field">
+          <label htmlFor="pronouns">PRONOUNS</label>
+          <input id="pronouns" name="pronouns" className="input" defaultValue={profile.pronouns ?? ""} maxLength={30} placeholder="she/her, he/him, they/them…" />
+        </div>
+
         <BirthdayPicker value={profile.birthday ?? null} label="BIRTHDAY" />
 
         <div className="field">

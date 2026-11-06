@@ -824,6 +824,7 @@ export async function updateProfile(fd: FormData) {
     .update({
       handle,
       display_name: field(fd, "display_name"),
+      pronouns: field(fd, "pronouns", 30),
       bio: field(fd, "bio", BIO_MAX),
       // Left out when the boxes are empty, so a birthday is never cleared by accident.
       ...(birthday ? { birthday } : {}),

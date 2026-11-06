@@ -16,6 +16,8 @@ export type Profile = {
   dislikes: string | null;
   food: string | null;
   obsession: string | null;
+  /** Free text, shown under the character name. */
+  pronouns?: string | null;
   mana: number;
   spent_total: number;
   is_witch: boolean;
