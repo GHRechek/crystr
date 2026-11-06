@@ -1434,6 +1434,15 @@ select {
 .subpages > summary::-webkit-details-marker {
   display: none;
 }
+/* On the card: the fold sits flush with the page's name, and pages inside it are cards a shade
+   darker than the one they are on. */
+.subpages-in > summary {
+  padding-left: 0;
+  min-height: 36px;
+}
+.card .card {
+  background: var(--inset);
+}
 .subpages > summary .caret {
   display: inline-block;
   transition: transform 0.15s;
