@@ -13,11 +13,10 @@ import {
   countOpenBugs,
   getOverride,
 } from "@/lib/data";
-import { ROMAN, tokenReadyAt, resolveShown } from "@/lib/badges";
+import { ROMAN, tokenReadyAt, resolveShown, achievementGrid } from "@/lib/badges";
 import { Avatar } from "@/components/bits";
 import { BadgeArt, ItemTile, TokenImage } from "@/components/badges";
-import { TilePager } from "@/components/pager";
-import { ShownBadges } from "@/components/shown-badges";
+import { BadgeGrid } from "@/components/badge-grid";
 import { ProfileHead } from "./face-menu";
 import { bannerOf, bannerStyle } from "@/lib/banner";
 import { portraitFromId, normalizePortrait, packPortrait } from "@/lib/portrait/core";
@@ -95,7 +94,7 @@ export default async function ProfilePage() {
           profile.handle,
           100,
         )}
-        shownKeys={shown.map((b) => b.key)}
+        shown={shown}
       />
 
       <div
@@ -106,9 +105,6 @@ export default async function ProfilePage() {
           gap: 12,
         }}
       >
-        {/* The badges you chose to show (from the menu on your portrait), on the page's own background. */}
-        <ShownBadges shown={shown} />
-
         <div className="tile" style={{ padding: 12 }}>
           <div
             className="px"
@@ -242,36 +238,8 @@ export default async function ProfilePage() {
                 {earnedCount} OF {badges.length}
               </div>,
             )}
-            {/* Earned ones first, six to a page. */}
-            <TilePager
-              label="Badges"
-              tiles={[...badges]
-                .sort((a, b) => Number(!!b.earned_at) - Number(!!a.earned_at))
-                .map((b) => {
-                  const got = !!b.earned_at;
-                  return (
-                    <div
-                      key={b.slug}
-                      style={{ padding: 4, display: "flex", gap: 9, alignItems: "flex-start", opacity: got ? 1 : 0.5 }}
-                    >
-                      <BadgeArt b={b} got={got} tier={b.tier} progress={b.slug === "a-helping-hand" ? helps % HELPS_PER_BADGE : undefined} />
-                      <div style={{ minWidth: 0 }}>
-                        <div className="px" style={{ fontSize: 11, color: got ? "var(--text)" : "var(--muted)", lineHeight: 1.5 }}>
-                          {b.title}
-                          {got && b.tiers > 1 ? ` ${ROMAN[b.tier]}` : ""}
-                        </div>
-                        <div style={{ fontSize: 11, lineHeight: 1.45, color: "var(--muted)", marginTop: 3 }}>
-                          {b.slug === "a-helping-hand"
-                            ? `${got ? b.blurb : b.how} ${helps % HELPS_PER_BADGE} of ${HELPS_PER_BADGE} towards a tradable badge.`
-                            : got
-                              ? b.blurb
-                              : b.how}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-            />
+            {/* Small icons, thirty to a page, tap for the tooltip: made to stay usable at hundreds. */}
+            <BadgeGrid label="Badges" filter items={achievementGrid(badges)} />
           </div>
         ) : null}
 
@@ -289,7 +257,7 @@ export default async function ProfilePage() {
               one is drawn for you. They can be traded from anybody&apos;s page, badge for badge or badge for nothing.
             </div>
           ) : (
-            <TilePager label="Tradable badges" tiles={tradable.map((it) => <ItemTile key={it.id} item={it} plain />)} />
+            <BadgeGrid label="Tradable badges" items={resolveShown(tradable.map((i) => `i:${i.id}`), badges, items, profile.handle, 10000)} />
           )}
         </div>
 

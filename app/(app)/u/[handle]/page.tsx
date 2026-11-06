@@ -3,10 +3,10 @@ import { notFound, redirect } from "next/navigation";
 import { requireMe, getTopFriends, getBadges, getBadgeItems, getToken, getPlaintiffSince, getProfileByHandle } from "@/lib/data";
 import { openThread } from "@/lib/actions";
 import { Avatar } from "@/components/bits";
-import { BadgeArt, ItemTile, TokenImage } from "@/components/badges";
-import { TilePager } from "@/components/pager";
+import { TokenImage } from "@/components/badges";
+import { BadgeGrid } from "@/components/badge-grid";
 import { ShownBadges } from "@/components/shown-badges";
-import { ROMAN, resolveShown } from "@/lib/badges";
+import { achievementGrid, resolveShown } from "@/lib/badges";
 import { ago, corrupt, decayLevel, BADGE_MANA } from "@/lib/crystr";
 import { bannerOf, bannerStyle } from "@/lib/banner";
 import { tokenTitle } from "@/lib/token";
@@ -39,6 +39,7 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
     getPlaintiffSince(person.id),
   ]);
   const earned = badges.filter((b) => b.earned_at);
+  const shown = resolveShown(person.shown_badges, badges, items, person.handle);
   const decay = decayLevel(me.mana);
 
   const days = Math.max(1, Math.round((Date.now() - new Date(person.created_at).getTime()) / 86_400_000));
@@ -53,12 +54,19 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
 
   return (
     <div style={{ paddingBottom: 24 }}>
-      <div style={{ height: 96, ...bannerStyle(bannerOf(person)) }} />
+      {/* The banner, taller when they have badges on show, which sit centred on it. */}
+      <div style={{ position: "relative", height: shown.length ? 150 : 96, ...bannerStyle(bannerOf(person)) }}>
+        {shown.length ? (
+          <div style={{ position: "absolute", top: 18, left: 16, right: 16 }}>
+            <ShownBadges shown={shown} />
+          </div>
+        ) : null}
+      </div>
 
-      <div style={{ padding: "0 16px", marginTop: -40, position: "relative", display: "flex", flexDirection: "column", gap: 12 }}>
+      <div style={{ padding: "0 16px", marginTop: -44, position: "relative", display: "flex", flexDirection: "column", gap: 12 }}>
         <div style={{ display: "flex", alignItems: "flex-end", gap: 12 }}>
-          <div style={{ width: 88, height: 88, flex: "none" }}>
-            <Avatar person={person} size={88} />
+          <div style={{ width: 104, height: 104, flex: "none" }}>
+            <Avatar person={person} size={104} />
           </div>
           <div style={{ minWidth: 0, paddingBottom: 4 }}>
             <h1 style={{ fontSize: 20, fontWeight: 500, letterSpacing: "-.01em", overflowWrap: "anywhere" }}>
@@ -88,8 +96,6 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
             TRADE BADGES
           </Link>
         </div>
-
-        <ShownBadges shown={resolveShown(person.shown_badges, badges, items, person.handle)} />
 
         <div className="tile" style={{ padding: 12 }}>
           <div className="px" style={{ fontSize: 11, color: "var(--mag)", letterSpacing: ".07em", marginBottom: 7 }}>
@@ -181,21 +187,7 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
                 {earned.length} OF {badges.length}
               </div>
             </div>
-            <TilePager
-              label="Badges"
-              tiles={earned.map((b) => (
-                <div key={b.slug} style={{ padding: 4, display: "flex", gap: 9, alignItems: "flex-start" }}>
-                  <BadgeArt b={b} got tier={b.tier} />
-                  <div style={{ minWidth: 0 }}>
-                    <div className="px" style={{ fontSize: 11, color: "var(--text)", lineHeight: 1.5 }}>
-                      {b.title.toUpperCase()}
-                      {b.tiers > 1 ? ` ${ROMAN[b.tier]}` : ""}
-                    </div>
-                    <div style={{ fontSize: 11, lineHeight: 1.4, color: "var(--muted)", marginTop: 3 }}>{b.how}</div>
-                  </div>
-                </div>
-              ))}
-            />
+            <BadgeGrid label="Badges" items={achievementGrid(earned)} />
           </div>
         ) : null}
 
@@ -210,7 +202,7 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
                 OFFER A TRADE →
               </Link>
             </div>
-            <TilePager label="What they hold" tiles={items.map((it) => <ItemTile key={it.id} item={it} plain />)} />
+            <BadgeGrid label="What they hold" items={resolveShown(items.filter((i) => i.kind === "tradable").map((i) => `i:${i.id}`), badges, items, person.handle, 10000)} />
           </div>
         ) : null}
       </div>

@@ -3,9 +3,9 @@
 import { useState } from "react";
 import { BadgeArt } from "@/components/badges";
 import { setShownBadges } from "@/lib/actions";
-import type { ShownBadge } from "@/lib/badges";
+import { SHOW_MAX, type ShownBadge } from "@/lib/badges";
 
-const SHOW = 5;
+const SHOW = SHOW_MAX;
 
 /** One badge's picture. */
 export function BadgeFace({ b, size }: { b: ShownBadge; size: number }) {
