@@ -8,18 +8,7 @@ import type { Author } from "@/lib/data";
 
 type Row = { person: Author; species: string | null; spellcaster: boolean; witch: boolean };
 
-/** The toggles: a picture under /kinds where there is one, an emoji until then. */
-const KINDS: [string, string][] = [
-  ["elf", "img:elf"],
-  ["forsaken", "img:forsaken"],
-  ["shifter", "img:shifter"],
-  ["human", "img:human"],
-  ["orc", "👹"],
-  ["goblin", "👺"],
-  ["planar", "🌀"],
-  ["spellcaster", "✨"],
-  ["witch", "🔮"],
-];
+const KINDS = ["elf", "forsaken", "shifter", "human", "orc", "goblin", "planar", "spellcaster", "witch"];
 
 const matches = (r: Row, k: string) => (k === "spellcaster" ? r.spellcaster : k === "witch" ? r.witch : r.species === k);
 
@@ -36,26 +25,14 @@ export function PeopleSearch({ rows }: { rows: Row[] }) {
   return (
     <>
       <input className="input" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search by name" aria-label="Search people" style={{ width: "100%", fontSize: 12.5 }} />
-      <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-        {KINDS.map(([k, icon]) => {
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: "6px 10px" }}>
+        {KINDS.map((k) => {
           const active = on.includes(k);
           return (
-            <button
-              key={k}
-              type="button"
-              aria-pressed={active}
-              aria-label={targetLabel(k)}
-              title={targetLabel(k)}
-              onClick={() => setOn((x) => (active ? x.filter((y) => y !== k) : [...x, k]))}
-              className={`btn btn-sm${active ? " btn-purple" : ""}`}
-              style={{ minHeight: 44, minWidth: 44, padding: 0, fontSize: 20, lineHeight: 1, display: "grid", placeItems: "center" }}
-            >
-              {icon.startsWith("img:") ? (
-                <span aria-hidden style={{ display: "block", width: 24, height: 24, background: "currentColor", WebkitMaskImage: `url(/kinds/${icon.slice(4)}.png)`, maskImage: `url(/kinds/${icon.slice(4)}.png)`, WebkitMaskSize: "contain", maskSize: "contain", WebkitMaskRepeat: "no-repeat", maskRepeat: "no-repeat", WebkitMaskPosition: "center", maskPosition: "center" }} />
-              ) : (
-                <span aria-hidden>{icon}</span>
-              )}
-            </button>
+            <label key={k} style={{ display: "flex", alignItems: "center", gap: 8, minHeight: 36, fontSize: 12.5, cursor: "pointer" }}>
+              <input type="checkbox" checked={active} onChange={() => setOn((x) => (active ? x.filter((y) => y !== k) : [...x, k]))} style={{ width: 18, height: 18, accentColor: "var(--pur)" }} />
+              {targetLabel(k)}
+            </label>
           );
         })}
       </div>
