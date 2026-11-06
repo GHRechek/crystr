@@ -73,7 +73,7 @@ export function BadgeViewer({
 
         <div style={{ flex: 1, minHeight: 0, overflowY: "auto", padding: "8px 16px 16px" }}>
           {list.length ? (
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "14px 10px" }}>
               {list.map((b) => {
                 const n = pick.indexOf(b.key);
                 return (
@@ -83,11 +83,16 @@ export function BadgeViewer({
                     aria-label={`${b.title}. ${b.line}`}
                     aria-pressed={editable ? n >= 0 : undefined}
                     onClick={() => tap(b)}
-                    style={{ position: "relative", flex: "none", padding: 0, background: "none", border: 0, cursor: "pointer", lineHeight: 0, outline: n >= 0 ? "2px solid var(--pur)" : last?.key === b.key ? "2px solid var(--edge)" : "none", outlineOffset: 3 }}
+                    style={{ position: "relative", flex: "none", width: 80, padding: "4px 0 0", background: "none", border: 0, cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: 6, color: "inherit" }}
                   >
-                    <BadgeFace b={b} size={42} />
+                    <span style={{ lineHeight: 0, outline: n >= 0 ? "2px solid var(--pur)" : last?.key === b.key ? "2px solid var(--edge)" : "none", outlineOffset: 3 }}>
+                      <BadgeFace b={b} size={63} />
+                    </span>
+                    <span className="px" style={{ fontSize: 10, lineHeight: 1.35, color: n >= 0 ? "var(--text)" : "var(--muted)", textAlign: "center", overflowWrap: "anywhere" }}>
+                      {b.title}
+                    </span>
                     {n >= 0 ? (
-                      <span aria-hidden className="px" style={{ position: "absolute", top: -6, right: -6, minWidth: 16, height: 16, display: "grid", placeItems: "center", fontSize: 10, lineHeight: 1, background: "var(--pur)", color: "#fff", borderRadius: 8 }}>
+                      <span aria-hidden className="px" style={{ position: "absolute", top: -2, right: 4, minWidth: 16, height: 16, display: "grid", placeItems: "center", fontSize: 10, lineHeight: 1, background: "var(--pur)", color: "#fff", borderRadius: 8 }}>
                         {n + 1}
                       </span>
                     ) : null}
