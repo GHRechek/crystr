@@ -23,7 +23,7 @@ export default async function PickPage({ searchParams }: { searchParams: Promise
         A gift: any Historikal you like, legendaries too. Tap one to look, then take it.
       </p>
       {chosen ? (
-        <div style={{ padding: 16, background: "#2a1c06", boxShadow: "0 0 0 3px #f2b544", display: "flex", flexDirection: "column", alignItems: "center", gap: 10 }}>
+        <div style={{ padding: 16, display: "flex", flexDirection: "column", alignItems: "center", gap: 10 }}>
           <Creature slug={chosen.slug} size={96} />
           <div className="px" style={{ fontSize: 14 }}>{chosen.name.toUpperCase()}</div>
           <Stats h={{ ...chosen, id: 0, hp: chosen.hearts }} />
@@ -40,7 +40,7 @@ export default async function PickPage({ searchParams }: { searchParams: Promise
           <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(104px, 1fr))", gap: 6 }}>
             {HISTORIKALS.filter((h) => h.rarity === r).map((h) => (
               <li key={h.slug}>
-                <Link href={`/me/historikals/pick?s=${h.slug}`} scroll aria-current={chosen?.slug === h.slug ? "true" : undefined} style={{ textDecoration: "none", color: "inherit", padding: "10px 4px", display: "flex", flexDirection: "column", alignItems: "center", gap: 6, boxShadow: chosen?.slug === h.slug ? "0 0 0 3px #f2b544" : undefined }}>
+                <Link href={`/me/historikals/pick?s=${h.slug}`} scroll aria-current={chosen?.slug === h.slug ? "true" : undefined} style={{ textDecoration: "none", color: "inherit", padding: "10px 4px", display: "flex", flexDirection: "column", alignItems: "center", gap: 6, filter: chosen?.slug === h.slug ? "drop-shadow(0 0 6px #f2b544)" : undefined }}>
                     <Creature slug={h.slug} size={56} />
                     <span className="px" style={{ fontSize: 9.5, textAlign: "center", lineHeight: 1.4 }}>{h.name}</span>
                     <Stats h={{ ...h, id: 0, hp: h.hearts }} k={2} />

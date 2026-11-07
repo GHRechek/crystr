@@ -1907,8 +1907,8 @@ select.input { border: 0; }
 .en-closed b { font-weight: 400; font-size: 16px; color: #ff5a7a; }
 /* team of three */
 .en-grid { position: absolute; left: 0; right: 0; top: calc(66px + env(safe-area-inset-top)); bottom: calc(150px + env(safe-area-inset-bottom)); z-index: 4; overflow-y: auto; display: flex; flex-wrap: wrap; justify-content: center; align-content: flex-start; gap: 10px 8px; padding: 6px 12px; }
-.en-pickc { position: relative; width: 84px; display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 8px 2px; border: 0; background: rgba(10, 4, 20, .45); cursor: pointer; }
-.en-pickc.on { background: #5a1f6e; box-shadow: 0 0 0 3px #e0398a; }
+.en-pickc { position: relative; width: 84px; display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 8px 2px; border: 0; background: none; cursor: pointer; color: inherit; }
+.en-pickc.on img { filter: drop-shadow(2px 0 0 #e0398a) drop-shadow(-2px 0 0 #e0398a) drop-shadow(0 2px 0 #e0398a) drop-shadow(0 -2px 0 #e0398a); }
 .en-pickc:focus-visible { outline: 2px solid #ffe38b; outline-offset: 2px; }
 .en-pickc.out { opacity: .55; cursor: default; } .en-pickc.out img { filter: grayscale(1) brightness(.6); }
 .en-ko { font-size: 8px; color: #ff5a7a; }
@@ -1919,8 +1919,8 @@ select.input { border: 0; }
 .en-tag-sm { bottom: calc(136px + env(safe-area-inset-bottom)); }
 .en-bench { position: absolute; left: 0; right: 0; bottom: calc(10px + env(safe-area-inset-bottom)); z-index: 6; display: flex; flex-direction: column; align-items: center; gap: 8px; }
 .en-benchrow { display: flex; gap: 12px; align-items: center; }
-.en-benchrow button { display: flex; flex-direction: column; align-items: center; gap: 4px; border: 0; padding: 4px; background: rgba(10, 4, 20, .45); cursor: pointer; }
-.en-benchrow button:hover, .en-benchrow button:focus-visible { background: #5a1f6e; outline: none; }
+.en-benchrow button { display: flex; flex-direction: column; align-items: center; gap: 4px; border: 0; padding: 4px; background: none; cursor: pointer; color: inherit; }
+.en-benchrow button:hover img, .en-benchrow button:focus-visible img { filter: drop-shadow(2px 0 0 #e0398a) drop-shadow(-2px 0 0 #e0398a) drop-shadow(0 2px 0 #e0398a) drop-shadow(0 -2px 0 #e0398a); } .en-benchrow button:focus-visible { outline: none; }
 .en-back { background: none !important; color: #d2cefd; font-size: 10px; }
 /* the fight */
 .en-them { position: absolute; left: 50%; top: calc(24% - 51px); margin-left: -51px; z-index: 3; transition: transform .25s cubic-bezier(.3,.7,.3,1); }

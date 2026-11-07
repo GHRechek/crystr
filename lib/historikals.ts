@@ -8,6 +8,8 @@ export type Move = { name: string; kind: MoveKind };
 export type Historikal = { slug: string; name: string; rarity: Rarity; element: Element; hearts: number; moves: Move[] };
 
 export const RARITY_COLOR: Record<Rarity, string> = { common: "#b8c0d6", uncommon: "#4c7df0", rare: "#e0398a", legendary: "#f2b544" };
+/** Each type's icon in a colour that says what it is. */
+export const ELEMENT_COLOR: Record<Element, string> = { fire: "#ff6a3d", water: "#3fa9f5", grass: "#5cc85a", rock: "#b8935a", dark: "#8a6fd9", light: "#ffd84a" };
 
 /** Sword cuts Spell, Spell breaks Armor, Armor blocks Sword. */
 export const BEATS: Record<MoveKind, MoveKind> = { sword: "spell", spell: "armor", armor: "sword" };

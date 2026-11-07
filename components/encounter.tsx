@@ -3,8 +3,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Rays, playBuildUp, playClick, playFanfare, playLidOpen, playWhoosh } from "@/components/ask-scene";
-import { RARITY_COLOR, historikalSrc, type Element, type MoveKind, type Rarity } from "@/lib/historikals";
+import { ELEMENT_COLOR, historikalSrc, type Element, type MoveKind, type Rarity } from "@/lib/historikals";
 import { normalizeToken, tokenSrc } from "@/lib/token";
+import { RarityGlow } from "@/components/rarity-glow";
 
 /* Face to face, after a scan: a trade or a battle on both phones at once. The server holds the whole thing
    (supabase/migrations/20261108390000_encounters.sql) and tells each phone only its own side; this draws it.
@@ -141,7 +142,7 @@ export function Stats({ h, hp, k = 3, known = true }: { h: HK; hp?: number; k?: 
   const left = hp ?? h.hearts;
   return (
     <span className="en-stats">
-      {known && h.element ? <Pix rows={TYPE[h.element]} k={k} fill={RARITY_COLOR[h.rarity]} /> : <Pix rows={QMARK} k={k} fill="#d2cefd" />}
+      {known && h.element ? <Pix rows={TYPE[h.element]} k={k} fill={ELEMENT_COLOR[h.element]} /> : <Pix rows={QMARK} k={k} fill="#d2cefd" />}
       {Array.from({ length: h.hearts }, (_, i) => <Pix key={i} rows={HEART} k={k} fill="#fff" dim={i >= left} />)}
     </span>
   );
@@ -156,7 +157,8 @@ export function Creature({ slug, size, shadow }: { slug: string; size: number; s
     return () => window.clearInterval(t);
   }, [shadow]);
   // eslint-disable-next-line @next/next/no-img-element
-  return <img src={shadow ? `/creatures/${slug}-s.png` : historikalSrc(slug, f)} alt="" width={size} height={size} draggable={false} style={{ display: "block", imageRendering: "pixelated", pointerEvents: "none" }} />;
+  const img = <img src={shadow ? `/creatures/${slug}-s.png` : historikalSrc(slug, f)} alt="" width={size} height={size} draggable={false} style={{ display: "block", imageRendering: "pixelated", pointerEvents: "none" }} />;
+  return shadow ? img : <RarityGlow slug={slug} size={size}>{img}</RarityGlow>;
 }
 
 /** Drag a creature: up into the target (or anywhere above it) or back down. A tap does nothing. */
