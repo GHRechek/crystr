@@ -32,7 +32,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   if (!agreed) redirect("/terms");
 
   // Until they have registered, the registry, the wiki (to look up codes), the face maker
-  // (registering needs a face) and the breach (a witch's key, scanned) are all there is. A
+  // (registering needs a face), the Well (to restore mana, so the wiki is readable) and the breach
+  // (a witch's key, scanned) are all there is. A
   // scanned key waits in a cookie through the sign-in and the terms, so someone holding one
   // lands on the breach and not the form. A missing flag means a database from before it:
   // let them in.
@@ -49,7 +50,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const unreadWhispers = welcoming ? 0 : (await getUnreadThreadIds()).filter((n) => String(n) !== openWhisper).length;
   if (welcoming) {
     const path = here;
-    const open = ["/welcome", "/wiki", "/me/avatar", "/breach"].some((p) => path === p || path.startsWith(`${p}/`));
+    const open = ["/welcome", "/wiki", "/me/avatar", "/breach", "/well"].some((p) => path === p || path.startsWith(`${p}/`));
     if (!open && !fromAction) {
       const jar = await cookies();
       const key = jar.get(BREACH_COOKIE)?.value || jar.get(SCAN_COOKIE)?.value;
@@ -69,8 +70,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       ? { k: "HAPPY BIRTHDAY", t: "The City gives you a Historikal draw for the day. Open it from the monster button beside your portrait: FIND ONE!", e: EDGE.mag }
       : null);
   const mana = profile.mana;
-  // Running low (a quarter or less): the potion opens a restore sheet with the Well's tasks.
-  const restoreTasks = !welcoming && mana <= cap * 0.25
+  // Running low (a quarter or less), or signing up and not yet full: the potion opens a restore
+  // sheet with the Well's tasks.
+  const restoreTasks = (welcoming ? mana < cap : mana <= cap * 0.25)
     ? (await getQuests(userId)).map(({ slug, glyph, chip, title, sub, reward, ready_at }) => ({ slug, glyph, chip, title, sub, reward, ready_at }))
     : undefined;
 
@@ -96,7 +98,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             >
               <i style={{ width: `${Math.max(2, (mana / cap) * 100)}%` }} />
             </div>
-            <ManaButton mana={mana} cap={cap} closed={welcoming} tasks={restoreTasks} />
+            <ManaButton mana={mana} cap={cap} tasks={restoreTasks} />
             <div className="mana-count" style={{ color: manaColor(mana) }}>
               {String(mana).padStart(2, "0")}/{cap}
             </div>

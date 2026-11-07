@@ -135,7 +135,7 @@ function RestoreSheet({ mana, cap, tasks, onClose }: { mana: number; cap: number
           <img src="/mana.png" alt="" width={34} height={34} style={{ imageRendering: "pixelated", flex: "none" }} />
           <div style={{ flex: 1, minWidth: 0 }}>
             <div className="px" style={{ fontSize: 13, color: "#fff" }}>RESTORE MANA</div>
-            <div className="px" style={{ fontSize: 10, color: "var(--mag-soft)", marginTop: 3 }}>RUNNING LOW · {mana}/{cap}</div>
+            <div className="px" style={{ fontSize: 10, color: "var(--mag-soft)", marginTop: 3 }}>{mana <= cap * 0.25 ? "RUNNING LOW" : "TOP UP"} · {mana}/{cap}</div>
           </div>
           <button type="button" className="btn btn-sm" onClick={onClose} aria-label="Close" style={{ minHeight: 40, padding: "0 10px" }}>✕</button>
         </div>
