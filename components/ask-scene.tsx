@@ -186,7 +186,7 @@ function Rays() {
     let t = 0;
     // Each pixel is worked out on its own, so every edge is a hard step with no in-between colours.
     const img = ctx.createImageData(W, H), d = img.data;
-    const BG = [42, 22, 80], RAY = [74, 29, 104];
+    const BG = [30, 50, 128], RAY = [124, 100, 204]; // a darker blue, and a lighter purple
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const draw = () => {
       t += 1;
