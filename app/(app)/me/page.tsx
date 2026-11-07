@@ -119,7 +119,7 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
               design: token?.design ?? null,
               href: "/me/token",
               title: tokenTitle(profile.display_name, profile.handle).toUpperCase(),
-              line: token ? token.how?.trim() || "Nobody has been told how to earn it yet. Write it on your Proof page." : "You have not made your Proof yet.",
+              line: token ? token.how?.trim() || "You have not said what would make you risk it. Write it on your Proof page." : "You have not made your Proof yet.",
               actionLabel: token ? "OPEN YOUR PROOF →" : "MAKE YOUR PROOF →",
             }}
           />

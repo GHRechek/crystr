@@ -298,16 +298,16 @@ export function TokenDesigner({ start, fresh, how = "", canGive = false, onUse }
     >
       <input type="hidden" name="design" value={JSON.stringify(d)} />
 
-      {/* Written by you: what someone must do to be given it. Shown when they list it under Working On. */}
+      {/* Written by you: what would make you put it up in a battle. Shown on your profile and under Working On. */}
       {onUse ? null : (
       <label className="field">
-        <span className="px" style={{ fontSize: 11, color: "var(--blu-soft)" }}>HOW DO PEOPLE EARN IT?</span>
+        <span className="px" style={{ fontSize: 11, color: "var(--blu-soft)" }}>WHAT MAKES YOU WILLING TO RISK IT?</span>
         <input
           name="how"
           className="input"
           defaultValue={how}
           maxLength={140}
-          placeholder="Make me a good cup of tea, or tell me a better ghost story"
+          placeholder="Bring a legendary, or catch me after my second coffee"
           style={{ fontSize: 12.5 }}
         />
       </label>

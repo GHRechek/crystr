@@ -221,7 +221,7 @@ export function tokenAsWorking(t: TokenRef): ShownBadge {
     key: `t:${t.user_id}`,
     src: tokenSrc(normalizeToken(t.design)),
     title: tokenTitle(t.display_name, t.handle).toUpperCase(),
-    line: t.how?.trim() || `Ask ${t.handle} how to earn it.`,
+    line: t.how?.trim() || `Ask ${t.handle} what would make them risk it.`,
     locked: true,
   };
 }
