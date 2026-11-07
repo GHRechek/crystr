@@ -1839,7 +1839,7 @@ select.input { border: 0; }
 .ask-result.is-no { color: #ff5a7a; }
 .ask-close { background: none; border: 0; color: #d2cefd; font-size: 11px; cursor: pointer; }
 /* Once it is open: a solid block to leave by. */
-.ask-close.is-done { background: #9184d9; color: #fff; font-size: 13px; padding: 12px 34px; box-shadow: 3px 3px 0 #160b2e; animation: pix-in 240ms steps(4) 2.7s both; }
+.ask-close.is-done { background: #3a64cc; color: #fff; font-size: 13px; padding: 12px 34px; box-shadow: 3px 3px 0 #160b2e; animation: pix-in 240ms steps(4) 2.7s both; }
 @media (prefers-reduced-motion: reduce) {
   .ask-badge, .ask-hint, .ask-hint b, .ask-hint span, .ask-glint, .ask-dots i, .ask-key img, .ask-shut, .ask-drop, .ask-spark { animation: none; }
   .ask-badge { transform: translateY(var(--rise, -144px)); } /* already up, out of the chest */
