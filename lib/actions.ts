@@ -1225,3 +1225,36 @@ export async function scanPerson(handle: string, withQuests = false): Promise<Sc
   const face = `/face/${packPortrait(p.avatar_config ? normalizePortrait(p.avatar_config) : portraitFromId(String(p.id)))}.png`;
   return { id: String(p.id), handle: String(p.handle), name: p.display_name ?? null, species: p.species ?? null, spellcaster: !!p.spellcaster, face, quests };
 }
+
+
+/** Change a post's words: your own, or anyone's if you are a witch. */
+export async function editPost(fd: FormData) {
+  const back = str(fd, "back");
+  const r = await call("cr_edit_post", { p_id: Number(fd.get("post_id")), p_body: str(fd, "body") });
+  if (!r.ok) {
+    if (r.code === "forbidden") await setFlash("NOT YOURS", "Only its writer or a witch can change that.", EDGE.mag);
+    else if (r.code === "bad_body") await setFlash("NOTHING LEFT", "A post needs some words. Delete it instead if you want it gone.", EDGE.purple);
+    else await wentWrong();
+  } else {
+    await setFlash("EDITED", "The post says the new thing now.", EDGE.blue);
+  }
+  revalidatePath("/");
+  if (back.startsWith("/") && !back.startsWith("//")) revalidatePath(back);
+}
+
+/** Delete a post, its replies and its likes: your own, or anyone's if you are a witch. */
+export async function deletePost(fd: FormData) {
+  const back = str(fd, "back");
+  const r = await call("cr_delete_post", { p_id: Number(fd.get("post_id")) });
+  if (!r.ok) {
+    if (r.code === "forbidden") await setFlash("NOT YOURS", "Only its writer or a witch can delete that.", EDGE.mag);
+    else await wentWrong();
+    return;
+  }
+  await setFlash("DELETED", "It is gone, replies and all.", EDGE.purple);
+  revalidatePath("/");
+  // Deleting the top of a thread leaves nothing to come back to.
+  const target = Number(fd.get("post_id"));
+  if (back === `/thread/${target}`) redirect("/");
+  if (back.startsWith("/") && !back.startsWith("//")) revalidatePath(back);
+}

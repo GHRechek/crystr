@@ -38,13 +38,13 @@ export default async function ThreadPage(
         </div>
       </div>
 
-      <PostCard post={post} me={userId} decay={decay} inThread thread={post.id} line={replies.length > 0} />
+      <PostCard post={post} me={userId} decay={decay} inThread thread={post.id} line={replies.length > 0} witch={profile.is_witch} />
 
       {replies.length ? (
         <div className="tchain-end">
           {replies.map((r) => (
             <div key={r.id} className="treply">
-              <PostCard post={r} me={userId} decay={decay} inThread thread={post.id} />
+              <PostCard post={r} me={userId} decay={decay} inThread thread={post.id} witch={profile.is_witch} />
             </div>
           ))}
         </div>

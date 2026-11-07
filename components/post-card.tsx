@@ -17,7 +17,10 @@ export function PostCard({
   inThread,
   thread,
   line,
+  witch,
 }: {
+  /** The viewer is a witch: they may edit or delete anyone's post. */
+  witch?: boolean;
   post: FeedPost;
   me: string;
   decay?: number;
@@ -68,7 +71,7 @@ export function PostCard({
             </span>
           </Link>
           <div className="spacer" />
-          <PostMenu kind="post" target={post.id} mine={mine} back={inThread && thread ? `/thread/${thread}` : "/"} />
+          <PostMenu kind="post" target={post.id} mine={mine} manage={mine || !!witch} body={post.body} back={inThread && thread ? `/thread/${thread}` : "/"} />
         </div>
 
         {post.badge_title ? (

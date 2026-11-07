@@ -2,7 +2,7 @@ import Link from "next/link";
 import { MoreIcon } from "@/components/icons";
 import { Cost } from "@/components/mana";
 import { COSTS } from "@/lib/crystr";
-import { submitReport } from "@/lib/actions";
+import { deletePost, editPost, submitReport } from "@/lib/actions";
 import { REPORT_REASONS } from "@/lib/terms";
 
 /** A small "report" under a post or at the top of a whisper thread. Opens in place;
@@ -58,7 +58,7 @@ export function ReportButton({ label = "REPORT", ...props }: ReportProps & { lab
 
 /** The little menu at the top right of a post: send it to someone in a whisper, or report it.
  *  SEND goes to a page where you pick who; REPORT opens the detailed form in place. */
-export function PostMenu({ mine, ...props }: ReportProps & { mine?: boolean }) {
+export function PostMenu({ mine, manage, body, ...props }: ReportProps & { mine?: boolean; /** Its writer or a witch: edit and delete. */ manage?: boolean; body?: string }) {
   return (
     <details className="post-menu">
       <summary aria-label="More options" className="btn btn-sm post-menu-btn dots-btn">
@@ -69,6 +69,28 @@ export function PostMenu({ mine, ...props }: ReportProps & { mine?: boolean }) {
           <span>SEND IN A WHISPER</span>
           <Cost n={COSTS.report} />
         </Link>
+        {manage ? (
+          <details className="post-menu-report">
+            <summary className="post-menu-item">EDIT</summary>
+            <form action={editPost} style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 8, minWidth: 240 }}>
+              <input type="hidden" name="post_id" value={props.target} />
+              <input type="hidden" name="back" value={props.back} />
+              <textarea name="body" className="textarea" rows={4} maxLength={2000} defaultValue={body ?? ""} aria-label="The post" style={{ fontSize: 13 }} />
+              <button type="submit" className="btn btn-sm btn-purple" style={{ minHeight: 40 }}>SAVE</button>
+            </form>
+          </details>
+        ) : null}
+        {manage ? (
+          <details className="post-menu-report">
+            <summary className="post-menu-item" style={{ color: "var(--mag-soft)" }}>DELETE</summary>
+            <form action={deletePost} style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 8 }}>
+              <input type="hidden" name="post_id" value={props.target} />
+              <input type="hidden" name="back" value={props.back} />
+              <div style={{ fontSize: 12, color: "var(--muted)" }}>{mine ? "Delete it, with its replies?" : "Delete this post, with its replies? You are doing this as a witch."}</div>
+              <button type="submit" className="btn btn-sm btn-mag" style={{ minHeight: 40 }}>YES, DELETE IT</button>
+            </form>
+          </details>
+        ) : null}
         {mine ? null : (
         <details className="post-menu-report">
           <summary className="post-menu-item">REPORT</summary>

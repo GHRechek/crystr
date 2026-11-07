@@ -38,7 +38,7 @@ export default async function FeedPage() {
         </Link>
 
         {items.map((item) => (
-          <Card key={`${item.kind}-${item.id}`} item={item} decay={decay} me={userId} />
+          <Card key={`${item.kind}-${item.id}`} item={item} decay={decay} me={userId} witch={profile.is_witch} />
         ))}
 
         {items.length === 0 ? (
@@ -60,7 +60,7 @@ export default async function FeedPage() {
   );
 }
 
-function Card({ item, decay, me }: { item: FeedItem; decay: number; me: string }) {
+function Card({ item, decay, me, witch }: { item: FeedItem; decay: number; me: string; witch?: boolean }) {
   if (item.kind === "ball") {
     // Laid out like a post: the quill where a face would be, and everything else indented beside it.
     return (
@@ -126,5 +126,5 @@ function Card({ item, decay, me }: { item: FeedItem; decay: number; me: string }
     );
   }
 
-  return <PostCard post={item} me={me} decay={decay} />;
+  return <PostCard post={item} me={me} decay={decay} witch={witch} />;
 }
