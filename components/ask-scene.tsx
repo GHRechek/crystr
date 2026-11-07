@@ -362,7 +362,7 @@ export function AskScene({
             </div>
           </Chest>
         </div>
-        <div className="px ask-title">{state === "open" && side === "ask" ? title.toUpperCase() : ""}</div>
+        
       </div>
 
       <div className="ask-bottom">
@@ -392,13 +392,8 @@ export function AskScene({
         ) : null}
 
         {state === "open" ? (
-          <div className="px ask-result is-yes">{side === "wait" ? (
-              <>
-                YOU EARNED THE<span className="ask-earned">{title.toUpperCase()}</span>BADGE!
-              </>
-            ) : (
-              "UNLOCKED!"
-            )}</div>
+          <div className="px ask-result is-yes">{side === "wait" ? "YOU EARNED THE" : `YOU HELPED ${who.toUpperCase()} EARN THE`}
+            <span className="ask-earned">{title.toUpperCase()}</span>BADGE!</div>
         ) : state === "thrown" || state === "unlocking" ? null : side === "wait" ? (
           null
         ) : (
