@@ -8,9 +8,10 @@ export const WELCOME_CAP = 10;
 export const OPENING_GRANT = 5;
 
 /** Max mana each kind of badge carries. The database adds these up (cr_recount_cap). */
-export const BADGE_MANA = { achievement: 1, tradable: 2, token: 7 } as const;
-/** Confirmed "I helped them" vouches per tradable badge. */
-export const HELPS_PER_BADGE = 5;
+/** Max mana each kind adds. Historikals are creatures, not badges: they add none. */
+export const BADGE_MANA = { achievement: 1, tradable: 0, token: 7 } as const;
+/** Confirmed "I helped them" vouches per Historikal. */
+export const HELPS_PER_BADGE = 3;
 /** How often a token can be given. */
 export const TOKEN_GIFT_MONTHS = 6;
 

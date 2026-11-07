@@ -33,7 +33,7 @@ const CUSTOM: Record<string, { text: string; link?: [string, string] }> = {
   "top-five-in": { text: "Nothing to fill in: it happens when someone puts you in their Top 5. Meet people, whisper, make friends.", link: ["/people", "FIND PEOPLE"] },
   "got-token": { text: "Someone has to give you their token. Ask a friend to give you theirs from their Trades page.", link: ["/people", "FIND PEOPLE"] },
   "gift-badge": { text: "Offer one of your Historikals to someone and ask for nothing back.", link: ["/me/trades", "GO TO TRADES"] },
-  "max-fifty": { text: "Your max mana grows with every badge you earn and every Historikal you hold. Keep earning.", link: ["/quests", "GO TO YOUR QUESTS"] },
+  "max-fifty": { text: "Your max mana grows with every badge you earn. Keep earning.", link: ["/quests", "GO TO YOUR QUESTS"] },
   "all-eight": { text: "Earn each of the first eight badges: the ones everyone starts with. Check what is still undone in Side Quests.", link: ["/quests#side-quests", "GO TO SIDE QUESTS"] },
   "tier-three": { text: "Keep going on a badge that has steps, like First Words or Visit the Mana Well, until you reach its third step.", link: ["/quests#side-quests", "GO TO SIDE QUESTS"] },
   "joined-in": { text: "Reply on posts in the Feed, five different ones. It counts from when you pick it.", link: ["/", "GO TO THE FEED"] },
@@ -92,7 +92,7 @@ export function QuestRow({ b, face, rest, scan, bare }: { b: ShownBadge; face: R
               <div style={{ fontSize: 12, lineHeight: 1.5, color: "var(--muted)" }}>
                 {scan
                   ? b.key === "a:a-helping-hand"
-                    ? "Scan the QR of the person you helped. They get a note asking whether you did, and if they say yes it counts. Every ten helps brings a Historikal."
+                    ? "Scan the QR of the person you helped. They get a note asking whether you did, and if they say yes it counts. Every three helps bring a Historikal."
                     : `${kind ? `It has to be ${kind}. ` : ""}Scan ${kind ? `${kind}'s` : "their"} QR code. ${b.instant ? "That is all: it completes the moment you scan." : "They get a whisper asking whether it happened, and if they say yes it counts."}`
                   : b.request
                     ? "Make a post that shows it. It is marked as a badge request, and when a witch likes it, the badge is yours."

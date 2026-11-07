@@ -110,9 +110,14 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
             earned={achievementGrid(badges.filter((b) => b.earned_at))}
             tradable={resolveShown(tradable.map((i) => `i:${i.id}`), badges, items, profile.handle, 10000)}
             aside={
-              <Link href="/me/trades" className="px" style={{ fontSize: 11, color: "var(--pur-pale)", whiteSpace: "nowrap" }}>
-                TRADES{waiting ? ` · ${waiting}` : ""} →
-              </Link>
+              <span style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 6 }}>
+                <Link href="/me/historikals" className="px" style={{ fontSize: 11, color: "var(--pur-pale)", whiteSpace: "nowrap" }}>
+                  HISTORIKALS →
+                </Link>
+                <Link href="/me/trades" className="px" style={{ fontSize: 11, color: "var(--pur-pale)", whiteSpace: "nowrap" }}>
+                  TRADES{waiting ? ` · ${waiting}` : ""} →
+                </Link>
+              </span>
             }
             tradeHref="/me/trades"
             tradeCount={waiting}

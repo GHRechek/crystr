@@ -196,7 +196,7 @@ export function ItemTile({ item, note, plain }: { item: BadgeItem | TradeItem; n
           {itemTitle(item).toUpperCase()}
         </div>
         <div style={{ fontSize: 11, lineHeight: 1.45, color: "var(--muted)", marginTop: 3 }}>
-          {note ?? (item.kind === "token" ? `${maker ? `From ${maker}. ` : ""}Worth ${worth} max mana.` : `${birthday}${item.kindRow?.blurb ?? ""} Worth ${worth} max mana.`)}
+          {note ?? (item.kind === "token" ? `${maker ? `From ${maker}. ` : ""}Worth ${worth} max mana.` : `${birthday}${item.kindRow?.blurb ?? ""}`)}
         </div>
       </div>
     </div>

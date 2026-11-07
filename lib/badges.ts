@@ -336,7 +336,7 @@ export function helpingRow(badges: BadgeRow[], helps: number): ShownBadge | null
     title: "I'm a Helper",
     line: "Help someone with their problem. Scan their QR to confirm!",
     locked: false,
-    progress: { n: helps % 10, of: 10 },
+    progress: { n: helps % 3, of: 3 },
   };
 }
 

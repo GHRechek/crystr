@@ -10,7 +10,7 @@ import { RARITY_COLOR, historikalSrc, type Element, type MoveKind, type Rarity }
    The host sits in the app's layout: it notices when someone starts one with you, opens the screen on both
    phones, and keeps it fresh about once a second while it is open. */
 
-type HK = { id: number; slug: string; name: string; rarity: Rarity; element?: Element; hearts: number; moves?: { name: string; kind: MoveKind }[]; hp?: number; seen?: string[] };
+export type HK = { id: number; slug: string; name: string; rarity: Rarity; element?: Element; hearts: number; moves?: { name: string; kind: MoveKind }[]; hp?: number; seen?: string[] };
 type Side = { swap: boolean; from: string; to: string; move: string | null; hit: number };
 type View = {
   ok: boolean; id: number; kind: "trade" | "battle"; stage: string; seq: number; me: "a" | "b";
@@ -116,7 +116,7 @@ const UNDO = ["..#.......", ".##.......", "#######...", ".##....#..", "..#.....#
 const SWAP = ["...#...", "....#..", "#######", "....#..", "..#.#..", ".#.....", "#######"];
 
 /** Element (in its rarity's colour, or ? until you know it) then white hearts. */
-function Stats({ h, hp, k = 3, known = true }: { h: HK; hp?: number; k?: number; known?: boolean }) {
+export function Stats({ h, hp, k = 3, known = true }: { h: HK; hp?: number; k?: number; known?: boolean }) {
   const left = hp ?? h.hearts;
   return (
     <span className="en-stats">
@@ -127,7 +127,7 @@ function Stats({ h, hp, k = 3, known = true }: { h: HK; hp?: number; k?: number;
 }
 
 /** A creature, idling between its two frames. */
-function Creature({ slug, size, shadow }: { slug: string; size: number; shadow?: boolean }) {
+export function Creature({ slug, size, shadow }: { slug: string; size: number; shadow?: boolean }) {
   const [f, setF] = useState<1 | 2>(1);
   useEffect(() => {
     if (shadow) return;
@@ -332,16 +332,17 @@ export function BattleScreen({ v, act, close }: { v: View; act: (a: Record<strin
       {v.stage === "team" ? (
         v.ready ? (
           <><div className="px en-q">WAITING ON {up(v.them.handle)}<Dots /></div><div className="px en-big">{up(v.them.handle)}<b>IS PICKING A TEAM</b></div></>
-        ) : (v.mine ?? []).length < 3 ? (
-          <><div className="px en-q">PICK YOUR TEAM OF 3</div><div className="px en-big">YOU NEED<b>3 HISTORIKALS</b>TO BATTLE</div><div className="en-bottom"><Nevermind onClick={() => act({ do: "leave" })} /></div></>
+        ) : (v.mine ?? []).filter((h) => (h.hp ?? h.hearts) > 0).length < 3 ? (
+          <><div className="px en-q">PICK YOUR TEAM OF 3</div><div className="px en-big">YOU NEED<b>3 HISTORIKALS</b>WITH HEARTS LEFT</div>
+          <div className="en-bottom"><a href="/me/historikals" className="px en-btn" style={{ textDecoration: "none" }} onClick={() => act({ do: "leave" })}>HEAL YOURS</a><Nevermind onClick={() => act({ do: "leave" })} /></div></>
         ) : (
           <>
             <div className="px en-q">PICK YOUR TEAM OF 3</div>
             <div className="en-grid">
-              {(v.mine ?? []).map((h) => { const n = team.indexOf(h.id); return (
-                <button key={h.id} type="button" className={`en-pickc${n >= 0 ? " on" : ""}`} aria-pressed={n >= 0} aria-label={h.name}
+              {(v.mine ?? []).map((h) => { const n = team.indexOf(h.id), out = (h.hp ?? h.hearts) <= 0; return (
+                <button key={h.id} type="button" className={`en-pickc${n >= 0 ? " on" : ""}${out ? " out" : ""}`} aria-pressed={n >= 0} disabled={out} aria-label={out ? `${h.name}, knocked out: heal it first` : h.name}
                   onClick={() => { playClick(); setTeam((t) => (n >= 0 ? t.filter((x) => x !== h.id) : t.length < 3 ? [...t, h.id] : t)); }}>
-                  <Creature slug={h.slug} size={56} /><span className="en-mini"><Stats h={h} k={2} /></span>{n >= 0 ? <b className="px en-num">{n + 1}</b> : null}
+                  <Creature slug={h.slug} size={56} /><span className="en-mini"><Stats h={h} hp={h.hp} k={2} /></span>{out ? <span className="px en-ko">NEEDS HEALING</span> : null}{n >= 0 ? <b className="px en-num">{n + 1}</b> : null}
                 </button>); })}
             </div>
             <div className="en-bottom">

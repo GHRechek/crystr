@@ -1910,6 +1910,8 @@ select.input { border: 0; }
 .en-pickc { position: relative; width: 84px; display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 8px 2px; border: 0; background: rgba(10, 4, 20, .45); cursor: pointer; }
 .en-pickc.on { background: #5a1f6e; box-shadow: 0 0 0 3px #e0398a; }
 .en-pickc:focus-visible { outline: 2px solid #ffe38b; outline-offset: 2px; }
+.en-pickc.out { opacity: .55; cursor: default; } .en-pickc.out img { filter: grayscale(1) brightness(.6); }
+.en-ko { font-size: 8px; color: #ff5a7a; }
 .en-num { position: absolute; top: -8px; right: -6px; width: 22px; height: 22px; display: grid; place-items: center; background: #e0398a; font-weight: 400; font-size: 12px; box-shadow: 2px 2px 0 #160b2e; }
 /* the swap window */
 .en-count { position: absolute; left: 0; right: 0; top: calc(38% + 62px); z-index: 4; text-align: center; font-size: 34px; text-shadow: 3px 3px 0 #160b2e; }

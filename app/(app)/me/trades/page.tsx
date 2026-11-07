@@ -29,7 +29,7 @@ function Side({
           <div className="px" style={{ fontSize: 11, lineHeight: 1.5 }}>
             {itemTitle(item).toUpperCase()}
           </div>
-          <div style={{ fontSize: 11, color: "var(--muted)" }}>+{worth} max mana</div>
+          {item.kind === "token" ? <div style={{ fontSize: 11, color: "var(--muted)" }}>+{worth} max mana</div> : null}
         </div>
       </div>
     );
@@ -124,8 +124,9 @@ export default async function TradesPage() {
       <div>
         <h1 className="screen-title">HISTORIKALS EXCHANGE</h1>
         <div className="screen-intro">
-          A badge for a badge, or a badge for nothing. Nothing moves until the other person says yes, and
-          both ceilings are worked out again when it does.
+          Historikals are traded face to face: open the exchange button on your profile, scan their code and
+          choose TRADE. You each pick one, and drag yours into theirs to swap.{" "}
+          <Link href="/me/historikals" style={{ color: "var(--pur-pale)" }}>Your Historikals and their hearts →</Link>
         </div>
       </div>
 

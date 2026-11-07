@@ -457,7 +457,7 @@ export async function claimVouch(fd: FormData) {
       "ASKED",
       kind === "meetup"
         ? "They will see a note asking whether you met up. If they say yes, you both earn a badge."
-        : "They will see a note asking whether you helped. If they say yes, it counts: every ten helps earn a Historikal.",
+        : "They will see a note asking whether you helped. If they say yes, it counts: every three helps earn a Historikal.",
       EDGE.blue,
     );
   }
@@ -1114,7 +1114,7 @@ export async function vouchFromProfile(fd: FormData) {
     if (r.code === "already") await setFlash("ALREADY SAID", "That one is already counted, or already waiting.", EDGE.purple);
     else await wentWrong();
   } else if (kind === "helped") {
-    await setFlash("THANK YOU", `Counted. Every ten helps earn them a Historikal.${await newBadges()}`, EDGE.blue);
+    await setFlash("THANK YOU", `Counted. Every three helps earn them a Historikal.${await newBadges()}`, EDGE.blue);
   } else {
     await setFlash("ASKED", "They will see a note asking whether you met up. If they say yes, you both earn a badge.", EDGE.blue);
   }
@@ -1211,7 +1211,7 @@ export async function claimHelp(fd: FormData) {
     if (r.code === "already") await setFlash("ALREADY SAID", "That one is already waiting, or already confirmed.", EDGE.purple);
     else await wentWrong();
   } else {
-    await setFlash("ASKED", "They will see a note asking whether you helped. If they say yes, it counts: every ten helps earn a Historikal.", EDGE.blue);
+    await setFlash("ASKED", "They will see a note asking whether you helped. If they say yes, it counts: every three helps earn a Historikal.", EDGE.blue);
   }
   revalidatePath("/", "layout");
 }
@@ -1270,4 +1270,20 @@ export async function deletePost(fd: FormData) {
   const target = Number(fd.get("post_id"));
   if (back === `/thread/${target}`) redirect("/");
   if (back.startsWith("/") && !back.startsWith("//")) revalidatePath(back);
+}
+
+/** Heal a hurt Historikal back to full, with your own mana: two for each heart it has lost. */
+export async function healHistorikal(fd: FormData) {
+  const r = await call("cr_heal", { p_item: Number(fd.get("item")) });
+  if (!r.ok) {
+    if (r.code === "insufficient") await broke(r, "Healing costs two a heart, and you are {short} short. A little time at the Well will help.");
+    else if (r.code === "full") await setFlash("ALREADY WELL", "Every heart is there already.", EDGE.purple);
+    else if (r.code === "in_battle") await setFlash("IN A BATTLE", "Not while it is fighting. Heal it after.", EDGE.purple);
+    else if (r.code === "not_yours") await setFlash("NOT YOURS", "That Historikal has moved on.", EDGE.purple);
+    else await wentWrong();
+  } else {
+    await setFlash("HEALED", `Back to full, for ${r.cost ?? 0} mana.`, EDGE.blue);
+  }
+  revalidatePath("/me/historikals");
+  revalidatePath("/", "layout");
 }

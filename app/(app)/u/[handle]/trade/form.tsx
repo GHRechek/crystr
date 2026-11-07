@@ -53,7 +53,7 @@ function ItemRow({ item }: { item: BadgeItem }) {
         <div className="px" style={{ fontSize: 11 }}>
           {itemTitle(item).toUpperCase()}
         </div>
-        <div style={{ fontSize: 11, color: "var(--muted)" }}>+{item.kind === "token" ? BADGE_MANA.token : BADGE_MANA.tradable} max mana</div>
+        {item.kind === "token" ? <div style={{ fontSize: 11, color: "var(--muted)" }}>+{BADGE_MANA.token} max mana</div> : null}
       </div>
     </>
   );

@@ -847,6 +847,23 @@ export async function getBadgeItems(userId: string): Promise<BadgeItem[]> {
   return (data ?? []) as unknown as BadgeItem[];
 }
 
+/** Someone's Historikals, with how many hearts each has right now. */
+export type HeldHistorikal = { id: number; slug: string; name: string; rarity: "common" | "uncommon" | "rare" | "legendary"; element: "fire" | "water" | "grass" | "rock" | "dark" | "light"; hearts: number; hp: number };
+export async function getHistorikals(userId: string): Promise<HeldHistorikal[]> {
+  const supabase = createClient();
+  const { data } = await supabase
+    .from("badge_items")
+    .select("id, hp, kind_slug, k:badge_kinds(title, rarity, element, hearts, sort)")
+    .eq("owner_id", userId)
+    .eq("kind", "tradable")
+    .limit(500);
+  type Row = { id: number; hp: number | null; kind_slug: string; k: { title: string; rarity: HeldHistorikal["rarity"]; element: HeldHistorikal["element"] | null; hearts: number | null; sort: number } | null };
+  return ((data ?? []) as unknown as Row[])
+    .flatMap((r) => (r.k?.element && r.k.hearts ? [{ id: r.id, slug: r.kind_slug, name: r.k.title, rarity: r.k.rarity, element: r.k.element, hearts: r.k.hearts, hp: Math.min(r.k.hearts, r.hp ?? r.k.hearts), sort: r.k.sort }] : []))
+    .sort((a, b) => a.hp / a.hearts - b.hp / b.hearts || a.sort - b.sort)
+    .map(({ sort: _s, ...h }) => h);
+}
+
 /** This person's own token design, or null if they have not made one. */
 export async function getToken(userId: string): Promise<TokenRow | null> {
   const supabase = createClient();
