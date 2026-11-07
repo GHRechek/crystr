@@ -99,7 +99,7 @@ function Tally({ motion, height }: { motion: Motion; height: number }) {
   );
 }
 
-function Open({ motion, mana, decay }: { motion: Motion; mana: number; decay: number }) {
+export function Open({ motion, mana, decay }: { motion: Motion; mana: number; decay: number }) {
   const total = motion.votes_for + motion.votes_against;
   const pct = total ? Math.round((motion.votes_for / total) * 100) : 0;
   const closes = closesIn(motion.closes_at);
@@ -162,12 +162,12 @@ function Open({ motion, mana, decay }: { motion: Motion; mana: number; decay: nu
           className="px"
           style={{ display: "flex", justifyContent: "space-between", fontSize: 11 }}
         >
-          <span style={{ color: "var(--mag-soft)" }}>FOR {total ? `${pct}%` : "—"}</span>
+          <span style={{ color: "var(--mag-soft)" }}>YAY {total ? `${pct}%` : "—"}</span>
           <span style={{ color: "var(--muted)" }}>
             {total ? `${total} CAST` : "NO VOTES YET"}
           </span>
           <span style={{ color: "var(--blu-mid)" }}>
-            {total ? `${100 - pct}%` : "—"} AGAINST
+            {total ? `${100 - pct}%` : "—"} NAY
           </span>
         </div>
       </div>
@@ -190,7 +190,7 @@ function Open({ motion, mana, decay }: { motion: Motion; mana: number; decay: nu
             color: motion.my_side === "for" ? "var(--mag-pale)" : "var(--blu-pale)",
           }}
         >
-          YOU VOTED {motion.my_side.toUpperCase()} <Cost n={COSTS.vote} />
+          YOU SAID {motion.my_side === "for" ? "YAY" : "NAY"} <Cost n={COSTS.vote} />
         </div>
       ) : (
         <div style={{ display: "flex", gap: 8 }}>
@@ -203,7 +203,7 @@ function Open({ motion, mana, decay }: { motion: Motion; mana: number; decay: nu
                 className={`btn btn-block ${side === "for" ? "btn-mag" : "btn-blue"}`}
                 style={{ minHeight: 44, fontSize: 11, opacity: mana >= COSTS.vote ? 1 : 0.5 }}
               >
-                {side.toUpperCase()} <Cost n={COSTS.vote} />
+                {side === "for" ? "YAY" : "NAY"} <Cost n={COSTS.vote} />
               </button>
             </form>
           ))}
@@ -246,7 +246,7 @@ function Decided({ motion, decay }: { motion: Motion; decay: number }) {
         </span>
         <span className="spacer" />
         <span style={{ color: motion.my_side ? "var(--pur-pale)" : "var(--muted)" }}>
-          {motion.my_side ? `YOU VOTED ${motion.my_side.toUpperCase()}` : "DID NOT VOTE"}
+          {motion.my_side ? `YOU SAID ${motion.my_side === "for" ? "YAY" : "NAY"}` : "DID NOT VOTE"}
         </span>
         <span style={{ color: "var(--dim)" }}>{ago(motion.closes_at)}</span>
       </div>

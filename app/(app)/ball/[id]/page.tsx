@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { requireMe, getArticle } from "@/lib/data";
+import { requireMe, getArticle, getMotionForBriefing } from "@/lib/data";
+import { Open as MotionVote } from "@/components/motion-board";
 import { setArticleStatus } from "@/lib/actions";
 import { byline, corrupt, decayLevel, paragraphs, readTime } from "@/lib/crystr";
 import { ArticleBody } from "@/components/article-body";
@@ -13,6 +14,9 @@ export default async function ArticlePage(props: { params: Promise<{ id: string 
 
   const article = await getArticle(id);
   if (!article) notFound();
+  // A briefing carries its motion: YAY or NAY right under it while it is open.
+  const motion = await getMotionForBriefing(id);
+  const motionOpen = motion && new Date(motion.closes_at).getTime() > Date.now();
 
   const isWitch = profile.is_witch;
   const decay = decayLevel(profile.mana);
@@ -33,6 +37,8 @@ export default async function ArticlePage(props: { params: Promise<{ id: string 
         <Link href="/ball" className="btn btn-sm" style={{ alignSelf: "flex-start" }}>
           ← CRYSTR BALL
         </Link>
+
+        {motion && motionOpen ? <MotionVote motion={{ ...motion, briefing_id: null }} mana={profile.mana} decay={decay} /> : null}
 
         <div>
           <div className="kicker" style={{ display: "block", marginBottom: 9, fontSize: 11 }}>

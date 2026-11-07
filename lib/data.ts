@@ -521,6 +521,12 @@ export async function getMotions(): Promise<{ open: Motion[]; past: Motion[] }> 
   };
 }
 
+/** The open or closed motion a briefing explains, if it is one. */
+export async function getMotionForBriefing(briefingId: number): Promise<Motion | null> {
+  const { open, past } = await getMotions();
+  return [...open, ...past].find((m) => m.briefing_id === briefingId) ?? null;
+}
+
 /** One post and the replies under it, oldest first. Null if there is no such
  *  post — or it's a reply, which has no page of its own: its thread does. */
 export async function getPostThread(
