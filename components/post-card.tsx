@@ -69,7 +69,7 @@ export function PostCard({
             href={`/u/${post.author.handle}`}
             style={{ display: "flex", alignItems: "baseline", gap: 8, minWidth: 0, color: "inherit", textDecoration: "none" }}
           >
-            <span style={{ fontSize: 13.5, fontWeight: 600, letterSpacing: "-.01em" }}>{post.author.handle}</span>
+            <span className="px" style={{ fontSize: 12.5, color: "var(--text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{post.author.handle}</span>
             <span className="px" style={{ fontSize: 11, color: "var(--muted)", whiteSpace: "nowrap" }}>
               {mine ? "YOU · " : ""}
               {ago(post.created_at)}
@@ -131,7 +131,7 @@ export function PostCard({
           </div>
           <Link href={`/thread/${post.id}`} className="tpost-main tpost-reply">
             <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
-              <span style={{ fontSize: 13, fontWeight: 600 }}>{post.latest_reply.author.handle}</span>
+              <span className="px" style={{ fontSize: 12, color: "var(--text)" }}>{post.latest_reply.author.handle}</span>
               <span className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
                 {ago(post.latest_reply.created_at)}
               </span>

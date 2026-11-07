@@ -32,7 +32,7 @@ export default async function FeedPage() {
         >
           <Avatar person={profile} size={40} />
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: 13.5, fontWeight: 600, color: "var(--text)" }}>{profile.handle}</div>
+            <div className="px" style={{ fontSize: 12.5, color: "var(--text)" }}>{profile.handle}</div>
             <div style={{ fontSize: 13.5, color: "var(--dim)" }}>What&apos;s new?</div>
           </div>
           <Cost n={COSTS.post} />
@@ -100,7 +100,7 @@ function Card({ item, decay, me, witch }: { item: FeedItem; decay: number; me: s
         <div className="tpost-main">
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <div style={{ display: "flex", flexDirection: "column", gap: 1, minWidth: 0 }}>
-              <div style={{ fontSize: 13.5, fontWeight: 500 }}>{motion ? "the city" : item.byline_name?.trim().toLowerCase() || "crystr ball"}</div>
+              <div className="px" style={{ fontSize: 12.5, color: "var(--text)" }}>{motion ? "the city" : item.byline_name?.trim().toLowerCase() || "crystr ball"}</div>
               <div className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
                 {item.kicker} · {ago(item.published_at || item.created_at)}
               </div>
