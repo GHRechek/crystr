@@ -32,6 +32,30 @@ export function playFanfare() {
   }
 }
 
+/** A lock turning over, for the key going in: a sharp noise tick, then a lower clunk. */
+function playClick() {
+  try {
+    const AC = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    if (!AC) return;
+    const ctx = new AC();
+    const tick = (at: number, freq: number, len: number, vol: number) => {
+      const n = Math.floor(ctx.sampleRate * len), buf = ctx.createBuffer(1, n, ctx.sampleRate), d = buf.getChannelData(0);
+      for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 3);
+      const src = ctx.createBufferSource(), f = ctx.createBiquadFilter(), g = ctx.createGain();
+      src.buffer = buf;
+      f.type = "bandpass";
+      f.frequency.value = freq;
+      f.Q.value = 4;
+      g.gain.value = vol;
+      src.connect(f).connect(g).connect(ctx.destination);
+      src.start(ctx.currentTime + at);
+    };
+    tick(0, 3200, 0.03, 0.9);
+    tick(0.07, 900, 0.06, 0.8);
+    window.setTimeout(() => void ctx.close(), 600);
+  } catch {}
+}
+
 /** A whoosh, for a key thrown away. */
 function playWhoosh() {
   try {
@@ -73,7 +97,7 @@ function Chest({ open, children }: { open: boolean; children?: React.ReactNode }
 /** The key, the same silver as the chest, drawn upright. */
 function Key() {
   // eslint-disable-next-line @next/next/no-img-element
-  return <img src="/ask/key.png" alt="" width={49} height={98} draggable={false} style={{ display: "block", imageRendering: "pixelated", pointerEvents: "none" }} />;
+  return <img src="/ask/key.png" alt="" width={63} height={112} draggable={false} style={{ display: "block", imageRendering: "pixelated", pointerEvents: "none" }} />;
 }
 
 /** The background: wide pixel-edged rays in the CRYSTR colours, drawn small and scaled up, turning slowly
@@ -94,10 +118,10 @@ function Rays() {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const draw = () => {
       t += 1;
-      const pulse = reduce ? 1 : 0.78 + 0.22 * Math.sin(t / 6), spin = reduce ? 0 : t * 0.025, step = Math.PI / 8;
+      const pulse = reduce ? 1 : 0.78 + 0.22 * Math.sin(t / 9), spin = reduce ? 0 : t * 0.016, step = Math.PI / 8;
       for (let y = 0; y < H; y++) {
         for (let x = 0; x < W; x++) {
-          let a = Math.atan2(y + 0.5 - H / 2, x + 0.5 - W / 2) - spin;
+          let a = Math.atan2(y + 0.5 - H * 0.42, x + 0.5 - W / 2) - spin;
           a = ((a % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
           const i = Math.floor(a / step), o = (y * W + x) * 4;
           const col = i % 2 ? BG : RAY[(i / 2) % 2], m = i % 2 ? 1 : pulse;
@@ -163,7 +187,10 @@ export function AskScene({
   }, [result, state]);
 
   useEffect(() => {
-    if (state === "open" && sound) window.setTimeout(playFanfare, 500);
+    if (state === "open" && sound) {
+      playClick();
+      window.setTimeout(playFanfare, 500);
+    }
     if (state === "thrown") {
       if (sound) playWhoosh();
       const id = window.setTimeout(() => onClose?.(), 900);
@@ -265,7 +292,7 @@ export function AskScene({
         ) : (
           <div className="ask-hints" aria-hidden="true">
             <div className="px ask-hint ask-yes"><b>YES!</b><span>UNLOCK IT!</span></div>
-            <div className="px ask-hint ask-no"><b>NO!</b><span>TOSS THE KEY!</span></div>
+            <div className="px ask-hint ask-no"><b>NO!</b><span>TOSS</span><span style={{ marginTop: 0 }}>THE KEY!</span></div>
           </div>
         )}
         {onClose && (state === "open" || side === "wait") ? (
