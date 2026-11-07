@@ -99,9 +99,8 @@ function Card({ item, decay, me }: { item: FeedItem; decay: number; me: string }
               // A motion's briefing wears a pixel "!" on the CRYSTR colours.
               <div aria-hidden style={{ width: 56, height: 56, flex: "none", display: "grid", placeItems: "center", background: "linear-gradient(135deg,#e0398a,#9184d9 52%,#4c7df0)" }}>
                 <svg width="28" height="28" viewBox="0 0 7 7" shapeRendering="crispEdges" fill="#fff">
-                  <rect x="3" y="0" width="1" height="1" />
-                  <rect x="2" y="1" width="3" height="3" />
-                  <rect x="3" y="4" width="1" height="1" />
+                  <rect x="2" y="0" width="3" height="3" />
+                  <rect x="3" y="3" width="1" height="1" />
                   <rect x="2" y="5" width="3" height="2" />
                 </svg>
               </div>
