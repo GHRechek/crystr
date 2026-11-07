@@ -6,6 +6,8 @@ import { Cost } from "@/components/mana";
 import { ReplyIcon } from "@/components/icons";
 import { COSTS, ago, corrupt } from "@/lib/crystr";
 import type { FeedPost } from "@/lib/data";
+import { EmojiText } from "@/components/emoji-text";
+import { skinOf } from "@/lib/emoji-skin";
 
 /** Edit and delete stay hidden until the database has them (migration 20261108370000_edit_delete_posts). */
 const EDIT_POSTS_ON = false;
@@ -48,7 +50,7 @@ export function PostCard({
         whiteSpace: "pre-wrap",
       }}
     >
-      {corrupt(post.body, decay)}
+      <EmojiText text={corrupt(post.body, decay)} skin={skinOf(post.author)} />
     </div>
   );
 

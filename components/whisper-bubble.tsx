@@ -2,6 +2,7 @@ import Link from "next/link";
 import { answerBadgeClaim } from "@/lib/actions";
 import { HoldMenu } from "@/components/hold-menu";
 import { EmojiImg } from "@/components/emoji-img";
+import { EmojiText } from "@/components/emoji-text";
 import { TOO_MUCH, isPixelEmoji } from "@/lib/whisper";
 import { corrupt } from "@/lib/crystr";
 import type { Message } from "@/lib/data";
@@ -135,7 +136,7 @@ export function Bubble({
               A POST WAS SENT HERE. IT HAS BEEN DELETED.
             </div>
           ) : null}
-          {m.body ? <div>{corrupt(m.body, decay)}</div> : null}
+          {m.body ? <div><EmojiText text={corrupt(m.body, decay)} skin={mine ? mySkin : otherSkin} /></div> : null}
           {m.claim ? (
             m.claim.status === "pending" && m.claim.forMe ? (
               <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
