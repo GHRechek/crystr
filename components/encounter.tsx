@@ -158,8 +158,9 @@ export function Creature({ slug, size, shadow, ko }: { slug: string; size: numbe
     const t = window.setInterval(() => setF((x) => (x === 1 ? 2 : 1)), 500);
     return () => window.clearInterval(t);
   }, [shadow]);
-  // Knocked out: a solid black silhouette, still.
-  if (ko) return <span className="en-ko-sil" aria-hidden style={{ display: "block", width: size, height: size, flex: "none", background: "#000", WebkitMaskImage: `url(${historikalSrc(slug, 1)})`, maskImage: `url(${historikalSrc(slug, 1)})`, WebkitMaskSize: "100% 100%", maskSize: "100% 100%" }} />;
+  // Knocked out: greyed out and still, but solid (not see-through).
+  // eslint-disable-next-line @next/next/no-img-element
+  if (ko) return <img className="en-ko-sil" src={historikalSrc(slug, 1)} alt="" width={size} height={size} draggable={false} style={{ display: "block", imageRendering: "pixelated", pointerEvents: "none", filter: "grayscale(1) brightness(.6)" }} />;
   // eslint-disable-next-line @next/next/no-img-element
   const img = <img src={shadow ? `/creatures/${slug}-s.png` : historikalSrc(slug, f)} alt="" width={size} height={size} draggable={false} style={{ display: "block", imageRendering: "pixelated", pointerEvents: "none" }} />;
   return shadow ? img : <RarityGlow slug={slug} size={size}>{img}</RarityGlow>;
