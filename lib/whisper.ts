@@ -4,6 +4,9 @@ export const REACTIONS = ["❤️", "😂", "😮", "😢", "👍", "🔥"] as c
 /** The safety word on a whisper: "this caused off-game discomfort". Stored as a reaction. */
 export const TOO_MUCH = "too-much";
 
+/** Off until the database accepts it (migration 20261108340000_too_much.sql). */
+export const TOO_MUCH_ON = false;
+
 /** Largest picture a whisper can carry, in bytes (the bucket enforces the same). */
 export const WHISPER_IMAGE_MAX = 5 * 1024 * 1024;
 export const WHISPER_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];

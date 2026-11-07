@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRef, useState } from "react";
 import { reactToMessage, submitReport, unsendMessage } from "@/lib/actions";
 import { REPORT_REASONS } from "@/lib/terms";
-import { REACTIONS, TOO_MUCH } from "@/lib/whisper";
+import { REACTIONS, TOO_MUCH, TOO_MUCH_ON } from "@/lib/whisper";
 
 const HOLD_MS = 450;
 
@@ -85,6 +85,7 @@ export function HoldMenu({
         >
           <div onClick={(e) => e.stopPropagation()} style={{ background: "var(--surface)", borderRadius: 22, boxShadow: "0 0 0 1px var(--edge), 0 10px 30px rgba(0,0,0,.5)", padding: "4px 8px 6px" }}>
           {/* The safety word, first and on its own row. */}
+          {TOO_MUCH_ON ? (
           <form action={reactToMessage} onSubmit={() => setOpen(false)}>
             <input type="hidden" name="thread_id" value={thread} />
             <input type="hidden" name="message_id" value={id} />
@@ -94,6 +95,7 @@ export function HoldMenu({
               <span style={{ fontSize: 11, color: "var(--muted)", textAlign: "right" }}>{myTooMuch ? "Tap to take it back" : "This caused off-game discomfort."}</span>
             </button>
           </form>
+          ) : null}
           <div style={{ display: "flex", gap: 4, paddingTop: 2 }}>
             {REACTIONS.map((e) => (
               <form key={e} action={reactToMessage} onSubmit={() => setOpen(false)}>
