@@ -10,6 +10,7 @@ import { BadgeTip } from "@/components/badge-tip";
 import { SHOW_MAX, type ShownBadge } from "@/lib/badges";
 import type { Stake } from "@/components/encounter";
 import { DrawScene, type DrawKind } from "@/components/draw-scene";
+import { HistorikalCard } from "@/components/historikal-card";
 import { useRouter } from "next/navigation";
 
 /** The strip under the About Me text: the person's token (passed in as children), then up to five
@@ -60,6 +61,9 @@ export function AboutBadges({
   const [menu, setMenu] = useState(false);
   const [staking, setStaking] = useState(false);
   const [drawing, setDrawing] = useState<DrawKind | null>(null);
+  // A Historikal tapped in the row opens its card (moves shown on your own, hidden on someone else's).
+  const [card, setCard] = useState<ShownBadge | null>(null);
+  const lineupKeys = shown.filter((b) => b.key.startsWith("i:")).map((b) => b.key);
   const router = useRouter();
   const [camera, setScan] = useState<{ intent?: "trade" | "battle"; stake?: Stake } | null>(null);
   const box = useRef<HTMLDivElement>(null);
@@ -110,7 +114,7 @@ export function AboutBadges({
   const tokPx = leads ? shared : compact ? Math.round(px * 1.35) : px;
   const badgePx = leads
     ? shared
-    : compact ? Math.max(22, Math.min(Math.round(px * 0.82), Math.floor((width - gap * (Math.max(4, nBadges) + 1) - endPx - tokPx) / Math.max(4, nBadges)))) : px;
+    : compact ? Math.max(22, Math.min(Math.round(px * 0.82), Math.floor((width - gap * (Math.max(4, nBadges) + 1) - endPx - (token ? tokPx : 0)) / Math.max(4, nBadges)))) : px;
   const endBtn: React.CSSProperties = compact
     ? // Its bottom sits on the portrait's (the row is lowered 6px, so it rises 6px back), and the space after
       // it matches the 11px between it and the portrait.
@@ -220,6 +224,7 @@ export function AboutBadges({
           aria-label={`${b.title}. ${b.line}`}
           aria-expanded={tip?.key === b.key}
           onClick={(e) => {
+            if (b.hk) { setTip(null); setCard(b); return; }
             const r = e.currentTarget;
             setTip((t) => (t?.key === b.key ? null : { key: b.key, x: r.offsetLeft + r.offsetWidth / 2, top: r.offsetTop + r.offsetHeight + 6 }));
           }}
@@ -267,6 +272,7 @@ export function AboutBadges({
       ) : tipBadge && tip ? (
         <BadgeTip x={tip.x} top={tip.top} width={width} title={tipBadge.title} line={tipBadge.line} />
       ) : null}
+      {card?.hk ? <HistorikalCard hk={card.hk} line={card.line} own={!!editable} lineupPos={lineupKeys.indexOf(card.key)} onEditLineup={editable ? () => setChoosing(true) : undefined} onClose={() => setCard(null)} /> : null}
       {choosing ? <BadgeViewer earned={earned} tradable={tradable} current={shown.map((b) => b.key)} editable={editable} aside={aside} onClose={() => setChoosing(false)} /> : null}
     </div>
   );

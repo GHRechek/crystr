@@ -5,6 +5,7 @@ import { openThread } from "@/lib/actions";
 import { Avatar } from "@/components/bits";
 import { TokenImage } from "@/components/badges";
 import { AboutBadges } from "@/components/about-badges";
+import { ProofMark } from "@/components/proof-mark";
 import { ProfileDetails, type DetailKind } from "@/components/profile-details";
 import { WorkingOn } from "@/components/working-on";
 import { achievementGrid, resolveShown, resolveWorking, helpingRow, questGrid, firstStepGrid, firstStepsDone } from "@/lib/badges";
@@ -74,7 +75,6 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
           <div style={{ minWidth: 0, flex: 1, marginBottom: -6 }}>
             <AboutBadges
                 compact
-                token={token ? { design: token.design, title: tokenTitle(person.display_name, person.handle).toUpperCase(), line: token.how?.trim() || `Ask ${person.handle} what would make them risk it.` } : undefined}
                 shown={shown}
                 earned={achievementGrid(earned)}
                 tradable={resolveShown(items.filter((i) => i.kind === "tradable").map((i) => `i:${i.id}`), badges, items, person.handle, 10000)}
@@ -99,9 +99,15 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
         </div>
 
         <div>
-          <h1 className="px" style={{ fontSize: 16, fontWeight: 400, lineHeight: 1.5, overflowWrap: "anywhere" }}>
-            {person.handle}
-          </h1>
+          {/* Their name, then their Proof beside it, as on your own profile. */}
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <h1 className="px" style={{ fontSize: 21, fontWeight: 400, lineHeight: 1.4, overflowWrap: "anywhere", minWidth: 0 }}>
+              {person.handle}
+            </h1>
+            {token?.design ? (
+              <ProofMark design={token.design} title={tokenTitle(person.display_name, person.handle).toUpperCase()} line={token.how?.trim() || `Ask ${person.handle} what would make them risk it.`} />
+            ) : null}
+          </div>
           {person.display_name ? (
             <div className="px" style={{ fontSize: 11, color: "var(--muted)", lineHeight: 1.5, overflowWrap: "anywhere" }}>
               {person.display_name}

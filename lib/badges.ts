@@ -55,7 +55,9 @@ export type BadgeItem = {
   minted_at: string;
   acquired_at: string;
   /** Why a tradable badge was minted: for helping, or for a birthday. Null on tokens. */
-  occasion: "helped" | "birthday" | null;
+  occasion: "helped" | "birthday" | "battle" | "epic" | "pick" | "quest" | null;
+  /** A Historikal's hearts left (null = all of them). */
+  hp?: number | null;
   kindRow: { title: string; blurb: string; art: string } | null;
   maker: { handle: string } | null;
 };
@@ -115,6 +117,8 @@ export type ShownBadge = {
   badge?: { slug: string; art: string | null; tiers: number; tier: number };
   /** A tradable badge: just its picture. */
   src?: string;
+  /** A Historikal: which creature, and its hearts left (for its card). */
+  hk?: { id: number; slug: string; hp: number };
   title: string;
   /** How it is earned, for the tooltip. */
   line: string;
@@ -187,7 +191,8 @@ export function resolveShown(
           ? `Came from ${it.maker?.handle ?? "someone"}.`
           : ({ birthday: "Found on a birthday.", battle: "Won in battle.", epic: "Summoned for a main quest.", helped: "Summoned for helping.", quest: "Found on a quest.", pick: "A gift." } as Record<string, string>)[it.occasion ?? ""] ?? "";
       const line = `${what}${from ? ` ${from}` : ""}`;
-      out.push({ key, src: kindArtSrc(it.kindRow.art), title: it.kindRow.title.toUpperCase(), line });
+      out.push({ key, src: kindArtSrc(it.kindRow.art), title: it.kindRow.title.toUpperCase(), line,
+        hk: hk && it.kind_slug ? { id: it.id, slug: it.kind_slug, hp: Math.min(hk.hearts, it.hp ?? hk.hearts) } : undefined });
     }
   }
   return out.slice(0, limit);

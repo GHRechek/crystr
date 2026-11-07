@@ -1035,7 +1035,7 @@ export async function setToken(fd: FormData) {
     await wentWrong();
     return;
   }
-  await setFlash("YOUR PROOF", "Saved. Put it up in a battle when you pick your team.", EDGE.purple);
+  await setFlash("YOUR PROOF", "Saved. Put it up from EPIC BATTLE in the Historikals menu.", EDGE.purple);
   revalidatePath("/me");
   revalidatePath("/me/token");
   redirect("/me");
@@ -1043,56 +1043,6 @@ export async function setToken(fd: FormData) {
 
 const longDate = (iso: string) =>
   new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
-
-/** A trade starts with a scan: scanning someone's code from the exchange button lets you trade with them
- *  for the next fifteen minutes. */
-export async function allowTrade(handle: string) {
-  const h = handle.toLowerCase();
-  if (!/^[a-z0-9_.-]{1,40}$/.test(h)) return;
-  (await cookies()).set("crystr.trade", h, { path: "/", maxAge: 15 * 60, httpOnly: true, sameSite: "lax" });
-}
-
-/** Offer someone a badge of yours, or your token, for one of theirs or for nothing. */
-export async function offerTrade(fd: FormData) {
-  const to = str(fd, "to_id");
-  const handle = str(fd, "to_handle").toLowerCase().replace(/[^a-z0-9_.-]/g, "");
-  if ((await cookies()).get("crystr.trade")?.value !== handle) {
-    await setFlash("SCAN FIRST", "Trades start by scanning their code with the exchange button on your profile.", EDGE.mag);
-    redirect(`/u/${handle}`);
-  }
-  const give = str(fd, "give");
-  const want = str(fd, "want");
-  const back = `/u/${handle}`;
-  const giveItem = give.startsWith("item:") ? Number(give.slice(5)) || null : null;
-  const giveToken = give === "token";
-  const wantItem = want.startsWith("item:") ? Number(want.slice(5)) || null : null;
-  if (!giveItem && !giveToken) {
-    await setFlash("NOTHING OFFERED", "Pick a badge of yours to give, or your Proof.", EDGE.mag);
-    redirect(`${back}/trade`);
-  }
-
-  const r = await call("cr_offer_trade", { p_to: to, p_give: giveItem, p_give_token: giveToken, p_want: wantItem });
-  if (!r.ok) {
-    if (r.code === "too_soon") {
-      await setFlash("NOT YET", `Your Proof can be given again on ${r.ready_at ? longDate(r.ready_at) : "a later day"}.`, EDGE.purple);
-    } else if (r.code === "already") {
-      await setFlash("ALREADY WAITING", "They already have an offer from you waiting. Let them answer that one first.", EDGE.purple);
-    } else if (r.code === "not_yours" || r.code === "not_theirs") {
-      await setFlash("NOT THERE", "That badge has moved on since the page was drawn. Have another look.", EDGE.purple);
-    } else if (r.code === "own_token") {
-      await setFlash("THEIR OWN", "You cannot hand someone their own Proof.", EDGE.purple);
-    } else if (r.code === "no_design") {
-      await setFlash("NO PROOF YET", "Design your Proof first, from your profile.", EDGE.purple);
-    } else {
-      await wentWrong();
-    }
-    redirect(`${back}/trade`);
-  }
-
-  await setFlash("OFFERED", "They will see it at the top of their screen. Nothing moves until they say yes.", EDGE.blue);
-  revalidatePath("/", "layout");
-  redirect(back);
-}
 
 /** The other person says yes, or no. Yes moves the badges and recounts both ceilings. */
 export async function answerTrade(fd: FormData) {
