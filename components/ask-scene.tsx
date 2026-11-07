@@ -75,6 +75,35 @@ function playBuildUp() {
   } catch {}
 }
 
+/** The lid giving way: a low wooden clack, then a short upward pop. Deeper and rounder than the lock's click. */
+function playLidOpen() {
+  try {
+    const AC = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    if (!AC) return;
+    const ctx = new AC();
+    const n = Math.floor(ctx.sampleRate * 0.09), buf = ctx.createBuffer(1, n, ctx.sampleRate), d = buf.getChannelData(0);
+    for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 2);
+    const src = ctx.createBufferSource(), f = ctx.createBiquadFilter(), g = ctx.createGain();
+    src.buffer = buf;
+    f.type = "lowpass";
+    f.frequency.value = 700;
+    g.gain.value = 1.2;
+    src.connect(f).connect(g).connect(ctx.destination);
+    src.start();
+    const o = ctx.createOscillator(), og = ctx.createGain(), t = ctx.currentTime;
+    o.type = "square";
+    o.frequency.setValueAtTime(160, t + 0.03);
+    o.frequency.exponentialRampToValueAtTime(420, t + 0.13);
+    og.gain.setValueAtTime(0.0001, t + 0.03);
+    og.gain.exponentialRampToValueAtTime(0.06, t + 0.04);
+    og.gain.exponentialRampToValueAtTime(0.0001, t + 0.16);
+    o.connect(og).connect(ctx.destination);
+    o.start(t + 0.03);
+    o.stop(t + 0.2);
+    window.setTimeout(() => void ctx.close(), 500);
+  } catch {}
+}
+
 /** A lock turning over, for the key going in: a sharp noise tick, then a lower clunk. */
 function playClick() {
   try {
@@ -242,7 +271,10 @@ export function AskScene({
       const id = window.setTimeout(() => setState("open"), 1850);
       return () => window.clearTimeout(id);
     }
-    if (state === "open" && sound) window.setTimeout(playFanfare, 120);
+    if (state === "open" && sound) {
+      playLidOpen();
+      window.setTimeout(playFanfare, 200);
+    }
     if (state === "thrown") {
       if (sound) playWhoosh();
       const id = window.setTimeout(() => onClose?.(), 900);
