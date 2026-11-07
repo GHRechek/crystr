@@ -1004,6 +1004,9 @@ select {
 .wiki-word {
   position: relative;
   display: inline-block;
+  /* A word longer than the line (a link, a long name) breaks rather than running off the page. */
+  max-width: 100%;
+  overflow-wrap: anywhere;
   animation: cr-float 10s ease-in-out infinite;
 }
 

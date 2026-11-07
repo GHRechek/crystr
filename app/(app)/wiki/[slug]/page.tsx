@@ -168,9 +168,20 @@ export default async function WikiPageView(props: { params: Promise<{ slug: stri
                 >
                   {/* A link drifts as one piece, arrow and all, and only a little: it is a way
                       out of the page, not a word floating in it. */}
-                  <span className="wiki-word" style={{ ...floatOf(piece.page.id * 101), ["--dx" as string]: "0.6px", ["--dy" as string]: "0.6px", animationDuration: "16s", whiteSpace: "nowrap", display: "inline-flex", alignItems: "center", gap: 5 }}>
-                    {mask(piece.page.title)}
-                    <ArrowIcon />
+                  {/* A long name wraps like the words around it; the arrow stays with its last word. */}
+                  <span className="wiki-word" style={{ ...floatOf(piece.page.id * 101), ["--dx" as string]: "0.6px", ["--dy" as string]: "0.6px", animationDuration: "16s", display: "inline" }}>
+                    {(() => {
+                      const words = mask(piece.page.title).split(" ");
+                      const last = words.pop();
+                      return (
+                        <>
+                          {words.length ? `${words.join(" ")} ` : ""}
+                          <span style={{ whiteSpace: "nowrap" }}>
+                            {last} <ArrowIcon />
+                          </span>
+                        </>
+                      );
+                    })()}
                   </span>
                 </Link>
               ) : piece.fact.status === "pending" ? (
