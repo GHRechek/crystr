@@ -8,6 +8,11 @@
 
 export const BREACH_COOKIE = "crystr.breach";
 
+/** The last profile scanned (/u/<handle>), kept for half an hour. A witch's profile QR is a key:
+ *  someone not yet registered who scans one goes to the breach, not the form. */
+export const SCAN_COOKIE = "crystr.scan";
+export const HANDLE_PATTERN = /^[a-z0-9_.-]{1,40}$/;
+
 /** What a key looks like: 32 hex characters from the database. */
 export const KEY_PATTERN = /^[0-9a-f]{32}$/;
 

@@ -274,9 +274,6 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
             <Link href="/me/plaintiff" className="btn btn-sm" style={{ minHeight: 40 }}>
               THE BOOKS
             </Link>
-            <Link href="/me/override" className="btn btn-sm" style={{ minHeight: 40 }}>
-              THE OVERRIDE
-            </Link>
           </div>
         ) : null}
 

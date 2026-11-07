@@ -59,6 +59,11 @@ export async function proxy(request: NextRequest) {
 
   await supabase.auth.getUser();
 
+  // A profile opened from a QR code is remembered for a while: a witch's profile is the key past the
+  // registry, and this carries it through the sign-in.
+  const scanned = /^\/u\/([a-z0-9_.-]{1,40})$/i.exec(request.nextUrl.pathname)?.[1];
+  if (scanned) response.cookies.set("crystr.scan", scanned.toLowerCase(), { path: "/", maxAge: 30 * 60, httpOnly: true, sameSite: "lax" });
+
   return response;
 }
 

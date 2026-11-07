@@ -16,7 +16,7 @@ import { VouchBanner } from "@/components/vouch-banner";
 import { TopSixBanner } from "@/components/top-six-banner";
 import { TradeBanner } from "@/components/trade-banner";
 import { BADGE_MANA, BASE_CAP, WELCOME_CAP, hasStarterHandle, manaColor } from "@/lib/crystr";
-import { BREACH_COOKIE } from "@/lib/breach";
+import { BREACH_COOKIE, SCAN_COOKIE } from "@/lib/breach";
 
 export const dynamic = "force-dynamic";
 
@@ -45,7 +45,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     const path = here;
     const open = ["/welcome", "/wiki", "/me/avatar", "/breach"].some((p) => path === p || path.startsWith(`${p}/`));
     if (!open) {
-      const key = (await cookies()).get(BREACH_COOKIE)?.value;
+      const jar = await cookies();
+      const key = jar.get(BREACH_COOKIE)?.value || jar.get(SCAN_COOKIE)?.value;
       redirect(key ? "/breach" : "/welcome");
     }
   }

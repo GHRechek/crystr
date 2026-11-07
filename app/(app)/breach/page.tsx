@@ -2,7 +2,8 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { requireMe, peekOverride } from "@/lib/data";
-import { BREACH_COOKIE, KEY_PATTERN } from "@/lib/breach";
+import { BREACH_COOKIE, HANDLE_PATTERN, KEY_PATTERN, SCAN_COOKIE } from "@/lib/breach";
+import { createClient } from "@/lib/supabase/server";
 import { Breach } from "./breach";
 
 /** Where a scanned override key ends up, once the person is signed in. A witch's key plays
@@ -10,9 +11,17 @@ import { Breach } from "./breach";
  *  key at all sends them to the form. */
 export default async function BreachPage() {
   const { profile } = await requireMe();
-  const code = (await cookies()).get(BREACH_COOKIE)?.value ?? "";
+  const jar = await cookies();
+  const code = jar.get(BREACH_COOKIE)?.value ?? "";
   const welcoming = profile.onboarded === false;
-  if (!KEY_PATTERN.test(code)) redirect(welcoming ? "/welcome" : "/");
+  if (!KEY_PATTERN.test(code)) {
+    // No old-style key: a witch's profile, scanned, is one.
+    const handle = jar.get(SCAN_COOKIE)?.value ?? "";
+    if (!welcoming || !HANDLE_PATTERN.test(handle)) redirect(welcoming ? "/welcome" : "/");
+    const { data: w } = await createClient().from("profiles").select("handle").eq("handle", handle).eq("is_witch", true).maybeSingle();
+    if (!w) redirect("/welcome");
+    return <Breach witch={String(w.handle)} />;
+  }
 
   if (!welcoming) {
     return (

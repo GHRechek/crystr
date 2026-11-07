@@ -498,8 +498,9 @@ export async function acceptTerms(fd: FormData) {
 export async function breachRegistry(): Promise<{ ok: boolean; message?: string }> {
   const jar = await cookies();
   const code = jar.get(BREACH_COOKIE)?.value ?? "";
-  if (!KEY_PATTERN.test(code)) return { ok: false, message: "No key here. Scan it again." };
-  const r = await call("cr_override_onboard", { p_code: code });
+  const handle = jar.get("crystr.scan")?.value ?? "";
+  if (!KEY_PATTERN.test(code) && !/^[a-z0-9_.-]{1,40}$/.test(handle)) return { ok: false, message: "No key here. Scan it again." };
+  const r = KEY_PATTERN.test(code) ? await call("cr_override_onboard", { p_code: code }) : await call("cr_override_witch", { p_handle: handle });
   if (!r.ok) {
     return {
       ok: false,
@@ -510,6 +511,7 @@ export async function breachRegistry(): Promise<{ ok: boolean; message?: string 
     };
   }
   jar.delete(BREACH_COOKIE);
+  jar.delete("crystr.scan");
   await setFlash("ACCESS GRANTED", "The registry never saw you. You are in the City.", EDGE.mag);
   revalidatePath("/", "layout");
   redirect("/");
