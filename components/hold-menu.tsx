@@ -96,30 +96,28 @@ export function HoldMenu({
           style={{ position: "fixed", inset: 0, zIndex: 95, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: side, gap: 10, padding: "24px 16px", maxWidth: 480, margin: "0 auto", pointerEvents: ready ? "auto" : "none" }}
         >
           <div onClick={(e) => e.stopPropagation()} className="pix-block pix-in" style={{ padding: "4px 6px 6px" }}>
-          {/* The safety word, first and on its own row. */}
-          {TOO_MUCH_ON ? (
-          <form action={reactToMessage} onSubmit={() => setOpen(false)}>
-            <input type="hidden" name="thread_id" value={thread} />
-            <input type="hidden" name="message_id" value={id} />
-            <input type="hidden" name="emoji" value={TOO_MUCH} />
-            <button type="submit" aria-pressed={!!myTooMuch} style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "9px 10px", border: 0, borderBottom: "2px solid #0b0814", background: myTooMuch ? "#4a1218" : "none", cursor: "pointer", font: "inherit", textAlign: "left" }}>
-              <span className="px too-much-text" style={{ fontSize: 12, whiteSpace: "nowrap" }}>too much</span>
-              <span style={{ fontSize: 11, color: "var(--muted)", textAlign: "right" }}>{myTooMuch ? "Tap to take it back" : "This caused off-game discomfort."}</span>
-            </button>
-          </form>
-          ) : null}
-          <div style={{ display: "flex", gap: 2, paddingTop: 2, alignItems: "center" }}>
+          <div className="no-scrollbar" style={{ display: "flex", gap: 2, alignItems: "center", overflowX: "auto", maxWidth: "calc(100vw - 48px)" }}>
+            {TOO_MUCH_ON ? (
+              <form action={reactToMessage} onSubmit={() => setOpen(false)} style={{ flex: "none" }}>
+                <input type="hidden" name="thread_id" value={thread} />
+                <input type="hidden" name="message_id" value={id} />
+                <input type="hidden" name="emoji" value={TOO_MUCH} />
+                <button type="submit" aria-pressed={!!myTooMuch} title={myTooMuch ? "Tap to take it back" : "This caused off-game discomfort."} className="px too-much-text" style={{ height: 40, padding: "0 10px", border: 0, background: myTooMuch ? "#5a1420" : "#3a0f18", fontSize: 11, whiteSpace: "nowrap", cursor: "pointer" }}>
+                  too much
+                </button>
+              </form>
+            ) : null}
             {(PIXEL_REACTS_ON ? QUICK_PIXEL : REACTIONS).map((e) => (
               <PixelReact key={e} e={e} thread={thread} id={id} done={() => setOpen(false)} />
             ))}
             {PIXEL_REACTS_ON ? (
-            <button type="button" aria-label="More reactions" aria-expanded={more} onClick={() => setMore((m) => !m)} className="px" style={{ width: 40, height: 40, border: "2px solid #9184d9", background: more ? "#4a1a3a" : "#1d1636", color: "var(--pur-pale)", fontSize: 18, cursor: "pointer", lineHeight: 1 }}>
+            <button type="button" aria-label="More reactions" aria-expanded={more} onClick={() => setMore((m) => !m)} className="px" style={{ flex: "none", width: 40, height: 40, border: 0, background: more ? "#5a1f47" : "#3b2c66", color: "var(--pur-pale)", fontSize: 18, cursor: "pointer", lineHeight: 1 }}>
               {more ? "−" : "+"}
             </button>
             ) : null}
           </div>
           {more ? (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 40px)", gap: 2, maxHeight: 220, overflowY: "auto", paddingTop: 6, borderTop: "2px solid #0b0814", marginTop: 4 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 40px)", gap: 2, maxHeight: 220, overflowY: "auto", paddingTop: 6, marginTop: 4, background: "#1a1330" }}>
               {PIXEL_EMOJI.map((e) => (
                 <PixelReact key={e} e={e} thread={thread} id={id} done={() => setOpen(false)} />
               ))}
@@ -132,7 +130,7 @@ export function HoldMenu({
           </div>
 
           <div onClick={(e) => e.stopPropagation()} className="pix-block pix-in pix-in-late" style={{ minWidth: 220, padding: "4px 0", display: "flex", flexDirection: "column" }}>
-            <div className="px" style={{ padding: "8px 16px", fontSize: 10, color: "var(--pur-pale)", background: "#1d1636", borderBottom: "2px solid #0b0814" }}>{when.toUpperCase()}</div>
+            <div className="px" style={{ padding: "8px 16px", fontSize: 10, color: "var(--pur-pale)", background: "#1a1330" }}>{when.toUpperCase()}</div>
             <Link href={`/whispers/${thread}?reply=${id}`} onClick={() => setOpen(false)} className="hold-item">
               <span aria-hidden>↩</span> Reply
             </Link>
@@ -220,11 +218,11 @@ export function HoldMenu({
 /** One pixel emoji in the reaction picker. */
 function PixelReact({ e, thread, id, done }: { e: string; thread: number; id: number; done: () => void }) {
   return (
-    <form action={reactToMessage} onSubmit={done}>
+    <form action={reactToMessage} onSubmit={done} style={{ flex: "none" }}>
       <input type="hidden" name="thread_id" value={thread} />
       <input type="hidden" name="message_id" value={id} />
       <input type="hidden" name="emoji" value={e} />
-      <button type="submit" aria-label={`React ${e}`} style={{ width: 40, height: 40, border: 0, background: "none", cursor: "pointer", padding: 0, display: "grid", placeItems: "center" }}>
+      <button type="submit" aria-label={`React ${e}`} style={{ flex: "none", width: 40, height: 40, border: 0, background: "none", cursor: "pointer", padding: 0, display: "grid", placeItems: "center" }}>
         {e.startsWith("pm-") ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={`/emoji/${e}.png`} alt="" width={22} height={24} style={{ imageRendering: "pixelated", objectFit: "contain" }} />

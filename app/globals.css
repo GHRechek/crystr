@@ -1573,11 +1573,13 @@ select {
   -webkit-touch-callout: none;
 }
 .pix-block {
-  background: #241a40;
-  border: 2px solid #9184d9;
+  background: #2b1f4f;
+  border: 0;
   border-radius: 0;
-  box-shadow: 4px 4px 0 #0b0814, inset 0 2px 0 #3b2c66;
+  box-shadow: 4px 4px 0 #0b0814;
 }
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
 .pix-in { animation: pix-in 200ms steps(4) both; }
 .pix-in-late { animation-delay: 60ms; }
 @keyframes pix-in {

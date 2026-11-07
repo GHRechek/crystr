@@ -4,7 +4,6 @@ import { useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { sendWhisper } from "@/lib/actions";
 import { WHISPER_IMAGE_MAX, WHISPER_IMAGE_TYPES } from "@/lib/whisper";
-import { Cost } from "@/components/mana";
 
 /** The box at the bottom of a conversation: words, an optional picture, and, when
  *  you are answering something, which message that is. The picture goes straight to
@@ -131,24 +130,29 @@ export function WhisperComposer({
         />
         <button
           type="button"
-          className="btn"
           aria-label="Add a picture"
           onClick={() => fileRef.current?.click()}
           disabled={busy}
-          style={{ minHeight: 44, minWidth: 44, padding: 0 }}
+          className="px"
+          style={{ minHeight: 44, minWidth: 44, padding: 0, border: 0, borderRadius: 0, background: "#2b1f4f", color: "var(--pur-pale)", fontSize: 16, cursor: "pointer" }}
         >
           {busy ? "…" : "▣"}
         </button>
         <input
           name="body" aria-label="Your whisper"
           className="input"
-          style={{ flex: 1, fontSize: 13.5 }}
+          style={{ flex: 1, fontSize: 13.5, border: 0, borderRadius: 0, background: "#1a1330", boxShadow: "none", minHeight: 44 }}
           placeholder="whisper"
           autoComplete="off"
           maxLength={2000}
         />
-        <button type="submit" className="btn btn-blue" disabled={busy} style={{ minHeight: 44, minWidth: 56 }}>
-          SEND <Cost n={cost} />
+        <button type="submit" disabled={busy} aria-label={`Send (costs ${cost} mana)`} title={`Send · ${cost} mana`} style={{ minHeight: 44, minWidth: 48, padding: 0, border: 0, borderRadius: 0, background: "#3a5bd9", color: "#fff", cursor: "pointer", display: "grid", placeItems: "center" }}>
+          <svg width="18" height="18" viewBox="0 0 9 9" shapeRendering="crispEdges" aria-hidden="true" fill="currentColor">
+            <rect x="4" y="0" width="1" height="9" />
+            <rect x="3" y="1" width="3" height="1" />
+            <rect x="2" y="2" width="5" height="1" />
+            <rect x="1" y="3" width="7" height="1" />
+          </svg>
         </button>
       </div>
     </form>

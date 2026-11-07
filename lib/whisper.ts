@@ -11,10 +11,10 @@ export const isPixelEmoji = (e: string) => /^pm-([1-9]|[1-6][0-9]|70)$/.test(e);
 export const TOO_MUCH = "too-much";
 
 /** Off until the database accepts it (migration 20261108340000_too_much.sql). */
-export const TOO_MUCH_ON = false;
+export const TOO_MUCH_ON = true;
 
 /** Pixel reactions are off until the database accepts them (migration 20261108360000). Until then the old six show. */
-export const PIXEL_REACTS_ON = false;
+export const PIXEL_REACTS_ON = true;
 
 /** Largest picture a whisper can carry, in bytes (the bucket enforces the same). */
 export const WHISPER_IMAGE_MAX = 5 * 1024 * 1024;

@@ -47,7 +47,7 @@ export function Bubble({
           fontSize: 12,
           fontStyle: "italic",
           color: "var(--dim)",
-          boxShadow: "0 0 0 1px var(--edge)",
+          background: "#1a1626",
         }}
       >
         {mine ? "You unsent this." : `${other} unsent this.`}
@@ -62,12 +62,12 @@ export function Bubble({
         <div
           style={{
             padding: "9px 11px",
-            borderRadius: "var(--px-r)",
-            background: mine ? "rgba(76,125,240,.18)" : "var(--surface)",
-            boxShadow: tooMuch ? "0 0 0 2px #ef4444, 0 0 0 4px rgba(239,68,68,.35), 0 0 0 6px rgba(239,68,68,.12)" : mine ? "0 0 0 1px var(--blu-edge)" : "0 0 0 1px var(--edge)",
+            borderRadius: 0,
+            background: mine ? "#1e3270" : "#2b1f4f",
+            boxShadow: tooMuch ? "0 0 0 2px #ef4444, 0 0 0 4px rgba(239,68,68,.35), 0 0 0 6px rgba(239,68,68,.12)" : "none",
             fontSize: 13,
             lineHeight: 1.5,
-            color: mine ? "var(--blu-pale)" : "var(--text-2)",
+            color: mine ? "#dbe5ff" : "#e6e0f5",
             whiteSpace: "pre-wrap",
             overflowWrap: "anywhere",
             display: "flex",
@@ -82,8 +82,9 @@ export function Bubble({
                 fontSize: 12,
                 lineHeight: 1.4,
                 color: "var(--muted)",
-                paddingLeft: 8,
-                borderLeft: "2px solid var(--edge-hover)",
+                padding: "4px 8px",
+                background: mine ? "#16245a" : "#1f1640",
+                borderLeft: "3px solid #9184d9",
               }}
             >
               {quoted ? `${quotedWho(quoted)}: ${snippet(quoted)}` : "an earlier message"}
@@ -96,7 +97,7 @@ export function Bubble({
                 src={m.image_url}
                 alt="A picture in this whisper"
                 loading="lazy"
-                style={{ display: "block", maxWidth: "100%", maxHeight: 280, borderRadius: 4 }}
+                style={{ display: "block", maxWidth: "100%", maxHeight: 280, borderRadius: 0 }}
               />
             </a>
           ) : null}
@@ -106,8 +107,7 @@ export function Bubble({
               style={{
                 display: "block",
                 padding: "8px 10px",
-                background: "var(--inset)",
-                boxShadow: "0 0 0 1px var(--edge)",
+                background: mine ? "#16245a" : "#1f1640",
                 color: "var(--text-2)",
                 textDecoration: "none",
                 fontSize: 12.5,
@@ -158,7 +158,7 @@ export function Bubble({
       {m.reactions.length ? (
         <div style={{ display: "flex", gap: 4, flexWrap: "wrap", justifyContent: side }}>
           {tooMuchR ? (
-            <span className="px too-much-text" style={{ fontSize: 11, padding: "2px 7px", boxShadow: "0 0 0 2px #ef4444, 0 0 0 4px rgba(239,68,68,.3)", background: "var(--surface)" }}>
+            <span className="px too-much-text" style={{ fontSize: 11, padding: "2px 7px", background: "#3a0f18" }}>
               too much{tooMuchR.count > 1 ? ` ${tooMuchR.count}` : ""}
             </span>
           ) : null}
@@ -168,8 +168,7 @@ export function Bubble({
               style={{
                 fontSize: 12,
                 padding: "1px 6px",
-                boxShadow: `0 0 0 1px ${r.mine ? "var(--pur)" : "var(--edge)"}`,
-                background: r.mine ? "rgba(145,132,217,.14)" : "var(--surface)",
+                background: r.mine ? "#4a2f86" : "#2b1f4f",
               }}
             >
               {isPixelEmoji(r.emoji) ? (
