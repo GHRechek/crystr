@@ -1,7 +1,7 @@
 "use client";
 
 import { QrScanner } from "@/components/qr-scanner";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useId } from "react";
 import Link from "next/link";
 import { TokenImage } from "@/components/badges";
 import { BadgeFace } from "@/components/badge-chooser";
@@ -212,9 +212,11 @@ function EyeIcon() {
 function TradeIcon() {
   const rows = ["#.........#", "##.......##", ".#########.", "###########", "##..###..##", "##..###..##", "###########", "##.#.#.#.##", "##.......##", "###########", ".#########."];
   const on = (r: number, c: number) => rows[r][c] === "#";
+  const id = `mf${useId().replace(/:/g, "")}`;
   return (
     <svg width={22} height={22} viewBox="0 0 11 11" shapeRendering="crispEdges" aria-hidden>
-      {rows.flatMap((r, y) => [...r].map((_, x) => (on(y, x) ? <rect key={`${x}${y}`} x={x} y={y} width={1} height={1} fill="currentColor" /> : null)))}
+      <defs><linearGradient id={id} x1="0" y1="0" x2="11" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stopColor="#e0398a" /><stop offset=".52" stopColor="#9184d9" /><stop offset="1" stopColor="#4c7df0" /></linearGradient></defs>
+      {rows.flatMap((r, y) => [...r].map((_, x) => (on(y, x) ? <rect key={`${x}${y}`} x={x} y={y} width={1} height={1} fill={`url(#${id})`} /> : null)))}
     </svg>
   );
 }
