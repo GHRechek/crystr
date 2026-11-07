@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireMe } from "@/lib/data";
 import { getWikiChildren, getWikiFacts, getWikiPage, getWikiPageById, getWikiPages, SLUG, touchWikiPage, type WikiFact } from "@/lib/wiki";
-import { moderateWikiPage, moveFact, movePage, removeFact, setParent } from "@/lib/wiki-actions";
+import { moderateWikiPage, moveFact, movePage, removeFact, renameWikiPage, setParent } from "@/lib/wiki-actions";
 import { layoutPage } from "@/lib/wiki-layout";
 import { wikiText } from "@/lib/wiki-mask";
 import { WellHint } from "@/components/well-hint";
@@ -330,6 +330,13 @@ export default async function WikiPageView(props: { params: Promise<{ slug: stri
           <span className="spacer" />
           <Moderate id={page.id} slug={page.slug} act={page.locked ? "unlock" : "lock"} label={page.locked ? "UNPAUSE" : "PAUSE"} />
           <Moderate id={page.id} slug={page.slug} act={page.archived ? "restore" : "archive"} label={page.archived ? "RESTORE" : "ARCHIVE"} />
+          {/* A new name; the address stays the same. */}
+          <form action={renameWikiPage} style={{ display: "flex", gap: 8, flexBasis: "100%" }}>
+            <input type="hidden" name="id" value={page.id} />
+            <input type="hidden" name="slug" value={page.slug} />
+            <input name="title" className="input" defaultValue={page.title} maxLength={120} required aria-label="New name for this page" style={{ flex: 1, minWidth: 0 }} />
+            <button type="submit" className="btn btn-sm btn-purple" style={{ minHeight: 40 }}>RENAME</button>
+          </form>
         </div>
       ) : null}
     </div>

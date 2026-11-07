@@ -239,6 +239,19 @@ export async function setParent(fd: FormData) {
   revalidatePath("/wiki");
 }
 
+/** Witches: give a page a new name. Its address stays, so links keep working. */
+export async function renameWikiPage(fd: FormData) {
+  const slug = str(fd, "slug");
+  const r = await call("cr_wiki_rename", { p_id: Number(fd.get("id")), p_title: str(fd, "title") });
+  if (!r.ok) {
+    await setFlash(r.code === "forbidden" ? "NOT YOURS" : "NO NAME", r.code === "forbidden" ? "Only witches rename wiki pages." : "A page needs a name, up to 120 letters.", EDGE.mag);
+  } else {
+    await setFlash("RENAMED", "The page has its new name.", EDGE.purple);
+  }
+  revalidatePath(`/wiki/${slug}`);
+  revalidatePath("/wiki");
+}
+
 /** Witches: lock or unlock, archive or restore. */
 export async function moderateWikiPage(fd: FormData) {
   const id = Number(fd.get("id"));
