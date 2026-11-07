@@ -1,13 +1,14 @@
 import { HISTORIKAL, RARITY_COLOR } from "@/lib/historikals";
 
-/** A Historikal's picture with its rarity as a tight glow hugging its outline: no square, no haze. */
+/** A Historikal's picture with a hard outline in its rarity colour, one sprite pixel wide, just past its
+ *  black border: no square, no haze. */
 export function RarityGlow({ slug, size, children }: { slug: string; size: number; children: React.ReactNode }) {
   const h = HISTORIKAL.get(slug);
   if (!h) return <>{children}</>;
   const c = RARITY_COLOR[h.rarity];
-  const r = Math.max(2, Math.round(size * 0.035));
+  const k = Math.max(1, Math.round(size / 34));
   return (
-    <span style={{ display: "block", width: size, height: size, flex: "none", filter: `drop-shadow(0 0 ${r}px ${c}) drop-shadow(0 0 ${Math.max(1, r / 2)}px ${c})` }}>
+    <span style={{ display: "block", width: size, height: size, flex: "none", filter: `drop-shadow(${k}px 0 0 ${c}) drop-shadow(-${k}px 0 0 ${c}) drop-shadow(0 ${k}px 0 ${c}) drop-shadow(0 -${k}px 0 ${c})` }}>
       {children}
     </span>
   );
