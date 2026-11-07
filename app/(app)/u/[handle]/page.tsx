@@ -10,7 +10,7 @@ import { ProfileDetails, type DetailKind } from "@/components/profile-details";
 import { WorkingOn } from "@/components/working-on";
 import { achievementGrid, resolveShown, resolveWorking, helpingRow, questGrid, firstStepGrid, firstStepsDone } from "@/lib/badges";
 import { WitchFace } from "@/components/witch-face";
-import { ago, corrupt, decayLevel, BADGE_MANA } from "@/lib/crystr";
+import { ago, corrupt, decayLevel, capOf, BADGE_MANA } from "@/lib/crystr";
 import { bannerOf, bannerStyle } from "@/lib/banner";
 import { formatBirthday } from "@/lib/birthday";
 import { tokenTitle } from "@/lib/token";
@@ -46,7 +46,7 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
   ]);
   const earned = badges.filter((b) => b.earned_at);
   const shown = resolveShown(person.shown_badges, badges, items, person.handle);
-  const decay = decayLevel(me.mana);
+  const decay = decayLevel(me.mana, capOf(me));
 
   const days = Math.max(1, Math.round((Date.now() - new Date(person.created_at).getTime()) / 86_400_000));
   const details: { kind: DetailKind; value: string }[] = (

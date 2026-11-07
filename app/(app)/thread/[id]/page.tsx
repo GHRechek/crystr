@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireMe, getPostThread } from "@/lib/data";
 import { PostCard } from "@/components/post-card";
-import { decayLevel } from "@/lib/crystr";
+import { decayLevel, capOf } from "@/lib/crystr";
 import { ReplyForm } from "./reply-form";
 
 export default async function ThreadPage(
@@ -21,7 +21,7 @@ export default async function ThreadPage(
   if (!thread) notFound();
 
   const { post, replies } = thread;
-  const decay = decayLevel(profile.mana);
+  const decay = decayLevel(profile.mana, capOf(profile));
 
   return (
     <div className="pad" style={{ gap: 0, padding: "16px 0 24px" }}>

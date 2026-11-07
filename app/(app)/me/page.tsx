@@ -26,7 +26,7 @@ import { ProfileDetails, type DetailKind } from "@/components/profile-details";
 import { ProfileHead } from "./face-menu";
 import { bannerOf, bannerStyle } from "@/lib/banner";
 import { portraitFromId, normalizePortrait, packPortrait } from "@/lib/portrait/core";
-import { ago, corrupt, decayLevel, BADGE_MANA, BASE_CAP, HELPS_PER_BADGE, TOKEN_GIFT_MONTHS } from "@/lib/crystr";
+import { ago, corrupt, decayLevel, capOf, BADGE_MANA, BASE_CAP, HELPS_PER_BADGE, TOKEN_GIFT_MONTHS } from "@/lib/crystr";
 import { formatBirthday } from "@/lib/birthday";
 import { tokenTitle } from "@/lib/token";
 
@@ -85,7 +85,7 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
   ).flatMap(([kind, value]) => (value?.trim() ? [{ kind, value: value.trim() }] : []));
 
   const shown = resolveShown(profile.shown_badges, badges, items, profile.handle);
-  const decay = decayLevel(profile.mana);
+  const decay = decayLevel(profile.mana, capOf(profile));
   const slots = [...top, ...Array(Math.max(0, 5 - top.length)).fill(null)].slice(0, 5);
 
   const heading = (text: string, colour: string, aside?: React.ReactNode) => (

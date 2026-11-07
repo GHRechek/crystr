@@ -10,7 +10,7 @@ import { runePosition } from "@/lib/wiki-runes";
 import { ArrowIcon } from "@/components/icons";
 import { COSTS } from "@/lib/crystr";
 import { Cost } from "@/components/mana";
-import { ago, decayLevel } from "@/lib/crystr";
+import { ago, decayLevel, capOf } from "@/lib/crystr";
 
 const TEXT = { fontSize: 16, lineHeight: 1.4 } as const;
 
@@ -75,7 +75,7 @@ export default async function WikiPageView(props: { params: Promise<{ slug: stri
   }
   const homes = shelf.filter((p) => !below.has(p.id) && !p.archived).sort((a, b) => a.title.localeCompare(b.title, undefined, { sensitivity: "base" }));
   const witch = profile.is_witch;
-  const decay = decayLevel(profile.mana);
+  const decay = decayLevel(profile.mana, capOf(profile));
   const paused = page.locked && !witch;
   // Low on mana, numbers break first, then letters; witches read everything (lib/wiki-mask.ts).
   const mask = (t: string) => wikiText(t, decay, witch);

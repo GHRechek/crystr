@@ -19,8 +19,8 @@ const DISMISSED = "crystr.signal-dismissed";
  *  the scanlines still come, but not the card: before registering the Well is
  *  closed, so RECOVER would lead nowhere, and a new arrival's 5 of 10 would
  *  otherwise put the card over the registry and over the breach. */
-export function DecayFrame({ mana, card = true, children }: { mana: number; card?: boolean; children: ReactNode }) {
-  const level = decayLevel(mana);
+export function DecayFrame({ mana, cap, card = true, children }: { mana: number; cap?: number; card?: boolean; children: ReactNode }) {
+  const level = decayLevel(mana, cap);
   // Hidden until we know it was not already put away, so it never flashes on.
   const [shown, setShown] = useState(false);
 

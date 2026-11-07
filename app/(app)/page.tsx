@@ -9,14 +9,14 @@ import {
   ago,
   corrupt,
   COSTS,
-  decayLevel,
+  decayLevel, capOf,
 } from "@/lib/crystr";
 
 export default async function FeedPage() {
   const { userId, profile } = await requireMe();
   const items = await getFeed(userId);
 
-  const decay = decayLevel(profile.mana);
+  const decay = decayLevel(profile.mana, capOf(profile));
   const posts = items.filter((i) => i.kind === "post").length;
 
   return (

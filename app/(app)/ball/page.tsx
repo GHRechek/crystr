@@ -4,7 +4,7 @@ import { MotionBoard } from "@/components/motion-board";
 import { ArticleIcon } from "@/components/article-icon";
 import { requireMe, getArticles, type Article } from "@/lib/data";
 import { setArticleStatus } from "@/lib/actions";
-import { byline, corrupt, COSTS, decayLevel } from "@/lib/crystr";
+import { byline, corrupt, COSTS, decayLevel, capOf } from "@/lib/crystr";
 
 export default async function BallPage(
   props: {
@@ -14,7 +14,7 @@ export default async function BallPage(
   const searchParams = await props.searchParams;
   const { userId, profile } = await requireMe();
   const all = await getArticles();
-  const decay = decayLevel(profile.mana);
+  const decay = decayLevel(profile.mana, capOf(profile));
 
   // A witch can look at the Ball as a player sees it — the prototype's
   // VIEWING AS switch, kept honest: a player cannot switch the other way.

@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { requireMe, getThreads } from "@/lib/data";
 import { Avatar } from "@/components/bits";
-import { ago, corrupt, COSTS, decayLevel } from "@/lib/crystr";
+import { ago, corrupt, COSTS, decayLevel, capOf } from "@/lib/crystr";
 
 export default async function WhispersPage() {
   const { userId, profile } = await requireMe();
   const threads = await getThreads(userId);
-  const decay = decayLevel(profile.mana);
+  const decay = decayLevel(profile.mana, capOf(profile));
 
   return (
     <div className="pad" style={{ padding: "14px 16px 24px", gap: 8 }}>

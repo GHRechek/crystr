@@ -4,7 +4,7 @@ import { getWikiPages, nestPages, searchWikiPages, type PageTree, type WikiHit, 
 import { cleanQuery } from "@/lib/wiki-search";
 import { wikiText } from "@/lib/wiki-mask";
 import { WellHint } from "@/components/well-hint";
-import { ago, COSTS, decayLevel } from "@/lib/crystr";
+import { ago, COSTS, decayLevel, capOf } from "@/lib/crystr";
 
 // The low-mana wash is applied by the app layout; this page only has to break the
 // numbers, then the letters, in the words it shows (wikiText).
@@ -12,7 +12,7 @@ export default async function WikiIndex(props: { searchParams: Promise<{ q?: str
   const searchParams = await props.searchParams;
   const { profile, userId } = await requireMe();
   const witch = profile.is_witch;
-  const decay = decayLevel(profile.mana);
+  const decay = decayLevel(profile.mana, capOf(profile));
   const q = cleanQuery(searchParams.q);
   const hits = q ? await searchWikiPages(q) : null;
   const pages = hits ? [] : await getWikiPages(witch);

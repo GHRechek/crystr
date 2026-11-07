@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { requireMe, getArticle, getMotionForBriefing } from "@/lib/data";
 import { Open as MotionVote } from "@/components/motion-board";
 import { setArticleStatus } from "@/lib/actions";
-import { byline, corrupt, decayLevel, paragraphs, readTime } from "@/lib/crystr";
+import { byline, corrupt, decayLevel, capOf, paragraphs, readTime } from "@/lib/crystr";
 import { ArticleBody } from "@/components/article-body";
 
 export default async function ArticlePage(props: { params: Promise<{ id: string }> }) {
@@ -19,7 +19,7 @@ export default async function ArticlePage(props: { params: Promise<{ id: string 
   const motionOpen = motion && new Date(motion.closes_at).getTime() > Date.now();
 
   const isWitch = profile.is_witch;
-  const decay = decayLevel(profile.mana);
+  const decay = decayLevel(profile.mana, capOf(profile));
   const pending = article.status === "pending";
   const nextStatus =
     pending || article.status === "draft" || article.status === "returned"

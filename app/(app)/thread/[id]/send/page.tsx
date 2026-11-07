@@ -4,7 +4,7 @@ import { requireMe, getPeople, getPostForSend } from "@/lib/data";
 import { Avatar } from "@/components/bits";
 import { Cost } from "@/components/mana";
 import { sendPost } from "@/lib/actions";
-import { COSTS, corrupt, decayLevel } from "@/lib/crystr";
+import { COSTS, corrupt, decayLevel, capOf } from "@/lib/crystr";
 
 /** Send a post to someone in a whisper: the post, a note if you like, and who. Picking a
  *  person sends it (a whisper's price) and takes you to the conversation. */
@@ -15,7 +15,7 @@ export default async function SendPostPage(props: { params: Promise<{ id: string
   const { userId, profile } = await requireMe();
   const [post, people] = await Promise.all([getPostForSend(id), getPeople(userId)]);
   if (!post) notFound();
-  const decay = decayLevel(profile.mana);
+  const decay = decayLevel(profile.mana, capOf(profile));
 
   return (
     <div className="pad" style={{ gap: 10 }}>

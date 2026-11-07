@@ -34,13 +34,19 @@ export const COSTS = {
   wikiSubpage: 40,
 } as const;
 
-/** Below eleven the feed starts to smear; at zero it is barely legible. */
-export function decayLevel(mana: number): 0 | 1 | 2 | 3 {
-  if (mana === 0) return 3;
-  if (mana < 5) return 2;
-  if (mana < 11) return 1;
+/** Below eleven the feed starts to smear; at zero it is barely legible. A smaller meter (ten while
+ *  signing up) scales those down, so a full meter is always clear: 10 of 10 reads clean, and the
+ *  smear starts below 7. Meters of fifteen and up keep the plain numbers. */
+export function decayLevel(mana: number, cap: number = BASE_CAP): 0 | 1 | 2 | 3 {
+  const k = Math.min(1, cap / BASE_CAP);
+  if (mana <= 0) return 3;
+  if (mana < 5 * k) return 2;
+  if (mana < 11 * k) return 1;
   return 0;
 }
+
+/** Someone's mana ceiling: their own, or the flat one for before registering and after. */
+export const capOf = (p: { mana_cap?: number | null; onboarded?: boolean | null }) => p.mana_cap ?? (p.onboarded === false ? WELCOME_CAP : BASE_CAP);
 
 export const DECAY_FILTER = [
   "none",

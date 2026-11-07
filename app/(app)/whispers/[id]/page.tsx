@@ -5,7 +5,7 @@ import { Avatar } from "@/components/bits";
 import { Bubble, snippet } from "@/components/whisper-bubble";
 import { skinOf } from "@/lib/emoji-skin";
 import { WhisperComposer } from "./composer";
-import { corrupt, COSTS, decayLevel } from "@/lib/crystr";
+import { corrupt, COSTS, decayLevel, capOf } from "@/lib/crystr";
 
 export default async function ThreadPage(props: {
   params: Promise<{ id: string }>;
@@ -21,7 +21,7 @@ export default async function ThreadPage(props: {
   if (!thread) notFound();
 
   const broke = profile.mana < COSTS.whisper;
-  const decay = decayLevel(profile.mana);
+  const decay = decayLevel(profile.mana, capOf(profile));
   const wanted = Number(query?.reply);
   const replyTarget = Number.isFinite(wanted) ? thread.messages.find((m) => m.id === wanted && !m.unsent) : undefined;
 
