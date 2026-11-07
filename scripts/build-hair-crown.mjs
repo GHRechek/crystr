@@ -158,8 +158,20 @@ const ids = readdirSync(`${ROOT}/HairBack`)
   .map((f) => f.replace(/\.png$/, ""))
   .filter((id) => !EXCLUDE.includes(id))
   .sort();
+/** Extra sides cut from an artist's style, with no top of their own: id ->
+ *  the style they come from and how they are trimmed. 28 and 29 are the
+ *  updo's sides (08) without its long back — the bun mass behind the head and
+ *  the tail behind the ear — for short tops: 28 trimmed, 29 close to the head.
+ *  minX is how far back the hair may reach (rounded off toward the crown), cut
+ *  the row the tail stops at. */
+const VARIANTS = {
+  "28": { from: "08", minX: 30, cut: 82 },
+  "29": { from: "08", minX: 36, cut: 74 },
+};
+const sideIds = [...ids, ...Object.keys(VARIANTS)];
 for (const dir of ["HairCrown", "HairSides", "HairFrontTop", "HairFrontSides"]) {
-  for (const f of readdirSync(`${ROOT}/${dir}`)) if (!ids.includes(f.replace(/\.png$/, ""))) rmSync(`${ROOT}/${dir}/${f}`);
+  const keep = dir === "HairSides" || dir === "HairFrontSides" ? sideIds : ids;
+  for (const f of readdirSync(`${ROOT}/${dir}`)) if (!keep.includes(f.replace(/\.png$/, ""))) rmSync(`${ROOT}/${dir}/${f}`);
 }
 const cut = {};
 for (const id of ids) {
@@ -185,6 +197,24 @@ for (const id of ids) {
   writeFileSync(`${ROOT}/HairFrontTop/${id}.png`, PNG.sync.write(front.top));
   writeFileSync(`${ROOT}/HairFrontSides/${id}.png`, PNG.sync.write(front.sides));
 }
+
+// The trimmed sides: the back of the head only (x < CORE[0]) is cut, and the
+// new edge gets the style's own darkest shade as an outline.
+for (const [id, { from, minX, cut: tail }] of Object.entries(VARIANTS)) {
+  const sides = PNG.sync.read(PNG.sync.write(cut[from].sides));
+  for (let y = 0; y < SIZE; y++) for (let x = 0; x < CORE[0]; x++) {
+    if (y >= tail || x < minX + Math.max(0, Math.round((52 - y) / 3))) sides.data[at(sides, x, y) + 3] = 0;
+  }
+  const edge = [];
+  for (let y = 0; y < SIZE; y++) for (let x = 0; x < CORE[0]; x++) {
+    if (opaque(sides, x, y) && (!opaque(sides, x - 1, y) || !opaque(sides, x, y + 1))) edge.push([x, y]);
+  }
+  for (const [x, y] of edge) sides.data.set([50, 35, 29, 255], at(sides, x, y));
+  cut[id] = { top: cut[from].top, sides };
+  writeFileSync(`${ROOT}/HairSides/${id}.png`, PNG.sync.write(sides));
+  writeFileSync(`${ROOT}/HairFrontSides/${id}.png`, readFileSync(`${ROOT}/HairFrontSides/${from}.png`));
+}
+writeFileSync(`${ROOT}/_sides-own.json`, JSON.stringify(Object.fromEntries(Object.entries(VARIANTS).map(([id, v]) => [id, v.from]))) + "\n");
 
 const fits = ({ shelf, air }) => shelf <= MAX_SHELF && air <= MAX_AIR;
 
@@ -215,10 +245,11 @@ const fits = ({ shelf, air }) => shelf <= MAX_SHELF && air <= MAX_AIR;
 // no sides: the tops that can sit on a shaved head.
 const pairs = {};
 let extra = 0;
-for (const s of ids) {
-  pairs[s] = [s];
+for (const s of sideIds) {
+  const own = VARIANTS[s]?.from ?? s;
+  pairs[s] = [own];
   for (const t of ids) {
-    if (t === s) continue;
+    if (t === own) continue;
     if (fits(seam(cut[t].top, cut[s].sides))) { pairs[s].push(t); extra++; }
   }
 }
@@ -231,11 +262,11 @@ writeFileSync(`${ROOT}/_crown-pairs.json`, JSON.stringify(pairs, null, 2) + "\n"
 // the builder can find the nearest sides that will take a top you picked.
 // "none" lists them smallest first.
 const mask = (png) => { const m = new Uint8Array(SIZE * SIZE); for (let i = 0; i < m.length; i++) m[i] = png.data[i * 4 + 3] > 0 ? 1 : 0; return m; };
-const masks = Object.fromEntries(ids.map((id) => [id, mask(cut[id].sides)]));
+const masks = Object.fromEntries(sideIds.map((id) => [id, mask(cut[id].sides)]));
 const area = (m) => m.reduce((n, v) => n + v, 0);
 const iou = (a, b) => { let i = 0, u = 0; for (let k = 0; k < a.length; k++) { i += a[k] & b[k]; u += a[k] | b[k]; } return u ? i / u : 1; };
-const near = { none: [...ids].sort((a, b) => area(masks[a]) - area(masks[b])) };
-for (const s of ids) near[s] = ids.filter((o) => o !== s).sort((a, b) => iou(masks[s], masks[b]) - iou(masks[s], masks[a]));
+const near = { none: [...sideIds].sort((a, b) => area(masks[a]) - area(masks[b])) };
+for (const s of sideIds) near[s] = sideIds.filter((o) => o !== s).sort((a, b) => iou(masks[s], masks[b]) - iou(masks[s], masks[a]));
 writeFileSync(`${ROOT}/_sides-near.json`, JSON.stringify(near) + "\n");
 
 if (process.argv.includes("--matrix")) {

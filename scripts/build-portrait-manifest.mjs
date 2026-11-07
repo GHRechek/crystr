@@ -53,6 +53,8 @@ const GROUPS = {
 const TOPS = JSON.parse(readFileSync(join(ROOT, "_crown-pairs.json"), "utf8"));
 /** sides id -> the other sides, most alike first. */
 const SIDES_NEAR = JSON.parse(readFileSync(join(ROOT, "_sides-near.json"), "utf8"));
+/** Extra sides cut from a style -> the style (and top) they come from. */
+const SIDES_OWN = JSON.parse(readFileSync(join(ROOT, "_sides-own.json"), "utf8"));
 
 /** Earrings hang from the lobe, and the lobe moves with the ear shape, so
  *  scripts/build-earrings.mjs draws one cell per (design, metal, ear). The
@@ -167,6 +169,10 @@ export const TOPS: Record<string, string[]> = ${JSON.stringify(TOPS)};
 /** For each hair back, the other backs most alike first ("none": smallest
  *  first). Picking a top these sides won't take moves to the nearest that will. */
 export const SIDES_NEAR: Record<string, string[]> = ${JSON.stringify(SIDES_NEAR)};
+
+/** Sides cut from another style, with no top of their own: id -> that style,
+ *  whose top is theirs. scripts/build-hair-crown.mjs makes them. */
+export const SIDES_OWN: Record<string, string> = ${JSON.stringify(SIDES_OWN)};
 `;
 
 writeFileSync("lib/portrait/manifest.ts", body);
