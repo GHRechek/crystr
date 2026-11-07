@@ -32,8 +32,8 @@ export default async function HistorikalsPage() {
           {list.map((h) => {
             const cost = 2 * (h.hearts - h.hp);
             return (
-              <li key={h.id} style={{ padding: "12px 8px", display: "flex", flexDirection: "column", alignItems: "center", gap: 8, opacity: h.hp === 0 ? 0.85 : 1 }}>
-                <div style={{ filter: h.hp === 0 ? "grayscale(1) brightness(.6)" : undefined }}><Creature slug={h.slug} size={68} /></div>
+              <li key={h.id} style={{ padding: "12px 8px", display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
+                <Creature slug={h.slug} size={68} ko={h.hp === 0} />
                 <div className="px" style={{ fontSize: 11, textAlign: "center", lineHeight: 1.4 }}>{h.name}</div>
                 <Stats h={h} hp={h.hp} k={2} />
                 {cost > 0 ? (

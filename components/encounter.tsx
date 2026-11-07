@@ -118,6 +118,8 @@ function Pix({ rows, k, fill, dim }: { rows: string[]; k: number; fill: string; 
   );
 }
 const HEART = [".##.##.", "#######", "#######", ".#####.", "..###..", "...#..."];
+/** A lost heart: just its outline. */
+const HEART_LOST = [".##.##.", "#..#..#", "#.....#", ".#...#.", "..#.#..", "...#..."];
 const MOVE: Record<MoveKind, string[]> = {
   sword: ["......#", ".....##", "....##.", "#..##..", ".###...", "..#....", ".#.#..."],
   spell: ["...#...", "...#...", "..###..", "#######", "..###..", "...#...", "...#..."],
@@ -143,19 +145,21 @@ export function Stats({ h, hp, k = 3, known = true, only }: { h: HK; hp?: number
   return (
     <span className="en-stats">
       {only === "hearts" ? null : known && h.element ? <Pix rows={TYPE[h.element]} k={k} fill={ELEMENT_COLOR[h.element]} /> : <Pix rows={QMARK} k={k} fill="#d2cefd" />}
-      {only === "type" ? null : Array.from({ length: h.hearts }, (_, i) => <Pix key={i} rows={HEART} k={k} fill="#fff" dim={i >= left} />)}
+      {only === "type" ? null : Array.from({ length: h.hearts }, (_, i) => <Pix key={i} rows={i >= left ? HEART_LOST : HEART} k={k} fill="#fff" />)}
     </span>
   );
 }
 
 /** A creature, idling between its two frames. */
-export function Creature({ slug, size, shadow }: { slug: string; size: number; shadow?: boolean }) {
+export function Creature({ slug, size, shadow, ko }: { slug: string; size: number; shadow?: boolean; ko?: boolean }) {
   const [f, setF] = useState<1 | 2>(1);
   useEffect(() => {
     if (shadow) return;
     const t = window.setInterval(() => setF((x) => (x === 1 ? 2 : 1)), 500);
     return () => window.clearInterval(t);
   }, [shadow]);
+  // Knocked out: a solid near-black red silhouette, still.
+  if (ko) return <span className="en-ko-sil" aria-hidden style={{ display: "block", width: size, height: size, flex: "none", background: "#3a0c16", WebkitMaskImage: `url(${historikalSrc(slug, 1)})`, maskImage: `url(${historikalSrc(slug, 1)})`, WebkitMaskSize: "100% 100%", maskSize: "100% 100%" }} />;
   // eslint-disable-next-line @next/next/no-img-element
   const img = <img src={shadow ? `/creatures/${slug}-s.png` : historikalSrc(slug, f)} alt="" width={size} height={size} draggable={false} style={{ display: "block", imageRendering: "pixelated", pointerEvents: "none" }} />;
   return shadow ? img : <RarityGlow slug={slug} size={size}>{img}</RarityGlow>;
@@ -320,7 +324,7 @@ function TeamPicker({ v, act }: { v: View; act: (a: Record<string, unknown>) => 
             const out = (h.hp ?? h.hearts) <= 0;
             return (
               <button key={h.id} type="button" className={`${used(h.id) ? "used" : ""}${out ? " out" : ""}`} disabled={out} onPointerDown={out ? undefined : down({ item: h.id })} onClick={out ? undefined : tap({ item: h.id })} aria-label={out ? `${h.name}, knocked out: heal it first` : `${h.name}, ${h.rarity}`}>
-                <Creature slug={h.slug} size={64} />
+                <Creature slug={h.slug} size={64} ko={out} />
                 <span className="en-mini"><Stats h={h} hp={h.hp} k={2} /></span>
                 {out ? <span className="px en-ko">NEEDS HEALING</span> : null}
               </button>
@@ -532,7 +536,7 @@ export function BattleScreen({ v, act, close }: { v: View; act: (a: Record<strin
       {fighting && me && v.theirs ? (
         <>
           <div className="px en-q">{v.stage === "end" ? "" : v.stage === "replace" ? "KNOCKED OUT!" : `TURN ${v.turn}`}</div>
-          <div className={`en-them${(v.theirs.hp ?? 0) <= 0 ? " down" : ""}`} style={lunge ? { transform: "translateY(110px)" } : undefined}><Creature slug={v.theirs.slug} size={102} /></div>
+          <div className={`en-them${(v.theirs.hp ?? 0) <= 0 ? " down" : ""}`} style={lunge ? { transform: "translateY(110px)" } : undefined}><Creature slug={v.theirs.slug} size={102} ko={(v.theirs.hp ?? 0) <= 0} /></div>
           <div className="en-tag en-tag-them">
             <span className="px en-name">{up(v.theirs.name)}</span>
             <Stats h={v.theirs} hp={v.theirs.hp} known={!!v.theirs.element} />
@@ -545,13 +549,14 @@ export function BattleScreen({ v, act, close }: { v: View; act: (a: Record<strin
               <span>{v.last.line}</span>{v.last.extra ? <b>{v.last.extra}</b> : null}
             </div>
           ) : null}
-          <div className={`en-me${(me.hp ?? 0) <= 0 ? " down" : ""}`} style={lunge ? { transform: "translateY(-110px)" } : undefined}><Creature slug={me.slug} size={84} /></div>
+          <div className={`en-me${(me.hp ?? 0) <= 0 ? " down" : ""}`} style={lunge ? { transform: "translateY(-110px)" } : undefined}><Creature slug={me.slug} size={84} ko={(me.hp ?? 0) <= 0} /></div>
           <div className="en-tag en-tag-fme">
             <span className="px en-name">{up(me.name)}</span>
             <Stats h={me} hp={me.hp} />
             <span className="en-heads">{(v.team ?? []).map((h) => (
               // eslint-disable-next-line @next/next/no-img-element
-              <img key={h.id} src={historikalSrc(h.slug)} alt={h.name} className={`${(h.hp ?? 0) <= 0 ? "ko" : ""}${h.id === v.pick ? " cur" : ""}`} />
+              (h.hp ?? 0) <= 0 ? <span key={h.id} className="en-headko" title={h.name}><Creature slug={h.slug} size={28} ko /></span>
+                : <img key={h.id} src={historikalSrc(h.slug)} alt={h.name} className={h.id === v.pick ? "cur" : ""} />
             ))}</span>
           </div>
 

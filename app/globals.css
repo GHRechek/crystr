@@ -1925,7 +1925,7 @@ select.input { border: 0; }
 /* the fight */
 .en-them { position: absolute; left: 50%; top: calc(24% - 51px); margin-left: -51px; z-index: 3; transition: transform .25s cubic-bezier(.3,.7,.3,1); }
 .en-me { position: absolute; left: 50%; bottom: calc(196px + env(safe-area-inset-bottom)); margin-left: -42px; z-index: 3; transition: transform .25s cubic-bezier(.3,.7,.3,1); }
-.en-them.down img, .en-me.down img { filter: grayscale(1) brightness(.5); opacity: .5; transform: rotate(90deg) translateY(10px); transition: all .4s; }
+.en-them.down .en-ko-sil, .en-me.down .en-ko-sil { transform: rotate(90deg) translateY(10px); transition: transform .4s; }
 .en-tag-them { top: calc(24% + 56px); }
 .en-tag-fme { bottom: calc(104px + env(safe-area-inset-bottom)); }
 .en-seen { font-size: 9px; color: #b9aee0; text-shadow: 2px 2px 0 #160b2e; }
@@ -1934,7 +1934,7 @@ select.input { border: 0; }
 .en-pips i.ko { background: #5a3a6a; } .en-pips i.cur { outline: 2px solid #e0398a; outline-offset: 1px; }
 .en-heads { display: flex; gap: 6px; }
 .en-heads img { width: 28px; height: 28px; image-rendering: pixelated; }
-.en-heads img.ko { filter: grayscale(1) brightness(.45); opacity: .6; } .en-heads img.cur { outline: 2px solid #e0398a; outline-offset: 1px; }
+.en-heads img.cur { outline: 2px solid #e0398a; outline-offset: 1px; }
 .en-say-big { position: absolute; left: 0; right: 0; top: 47%; z-index: 5; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; font-size: 16px; text-shadow: 3px 3px 0 #160b2e; pointer-events: none; animation: pix-in 200ms steps(4) both; }
 .en-say-big .en-vs { font-size: 11px; color: #d2cefd; } .en-say-big .en-vs i { font-style: normal; color: #e0398a; }
 .en-say-big b { font-weight: 400; color: #e0398a; }
@@ -1975,7 +1975,7 @@ select.input { border: 0; }
 .en-slotlabel { position: absolute; bottom: -15px; left: -40px; right: -40px; white-space: nowrap; font-size: 9px; font-weight: 400; color: #f2b544; text-align: center; }
 .en-teamshelf { bottom: calc(110px + env(safe-area-inset-bottom)); }
 .en-row button.used { opacity: .3; }
-.en-row button.out { opacity: .5; cursor: default; } .en-row button.out img { filter: grayscale(1) brightness(.6); }
+.en-row button.out { cursor: default; }
 .en-row button { user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
 .en-tokenitem { justify-content: center; }
 .en-ghost { position: fixed; z-index: 90; transform: translate(-50%, -60%) scale(1.1); pointer-events: none; }
