@@ -87,10 +87,12 @@ export function AboutBadges({
   const tokPx = compact ? Math.round(px * 1.35) : px;
   // The trade (or eye) button matches the token, and the badges spread evenly between the two, so the
   // row runs from the portrait to the edge of the page's text column.
-  const endPx = compact ? tokPx : px;
+  // A size smaller than the token, sitting on the same bottom line as the token and the portrait (the row is
+  // lowered 6px under the portrait to make up for the space under the token's drawing, so it rises 6px back).
+  const endPx = px;
   const badgePx = compact ? Math.max(22, Math.min(Math.round(px * 0.82), Math.floor((width - gap * 5 - endPx - tokPx) / 4))) : px;
   const endBtn: React.CSSProperties = compact
-    ? { position: "relative", flex: "none", width: endPx, height: endPx, display: "grid", placeItems: "center", background: "var(--blk-pur)", border: 0, borderRadius: 0, color: "#fff", cursor: "pointer", textDecoration: "none" }
+    ? { position: "relative", flex: "none", alignSelf: "flex-end", marginBottom: 6, width: endPx, height: endPx, display: "grid", placeItems: "center", background: "var(--blk-pur)", border: 0, borderRadius: 0, color: "#fff", cursor: "pointer", textDecoration: "none" }
     : { position: "relative", flex: "none", width: px, height: px, display: "grid", placeItems: "center", background: "none", border: 0, borderRadius: "var(--px-r)", color: "var(--muted)", cursor: "pointer", textDecoration: "none" };
   const tipBadge = tip ? shown.find((b) => b.key === tip.key) : undefined;
 
