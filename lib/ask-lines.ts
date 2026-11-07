@@ -18,7 +18,7 @@ const SPECIES: Record<string, string> = {
 export function askLines(slug: string, them: string): AskLines {
   const s = slug.toLowerCase();
   if (s === "trade") return { question: `Trade with ${them}?`, waiting: `${them} is deciding on your trade` };
-  if (s === "a-helping-hand") return { question: `Did ${them} help you?`, waiting: `They're deciding if you helped them` };
+  if (s === "a-helping-hand") return { question: `Did ${them} help with the problem you put on your profile?`, waiting: `They're deciding if you helped with their problem` };
   if (s === "make-friends" || s.endsWith("-friend") || s === "meet-witch")
     return { question: `Would you call ${them} a friend?`, waiting: `They're deciding if you're a friend` };
   if (s === "orcish-philosophy") return { question: `Was that a fun conversation about philosophy?`, waiting: `They're deciding if it was a fun conversation` };
@@ -35,6 +35,6 @@ export function askLines(slug: string, them: string): AskLines {
   if (s.includes("workshop")) return { question: `Was ${them} at the workshop?`, waiting: `They're deciding if you were at the workshop` };
   if (s.includes("support-group")) return { question: `Was ${them} at the support group?`, waiting: `They're deciding if you were at the support group` };
   if (s === "first-timer") return { question: `Did ${them} bring someone new to the café?`, waiting: `They're deciding if you brought someone new` };
-  if (s === "learn-leylines") return { question: `Did you teach ${them} about leylines?`, waiting: `They're deciding if they taught you leylines` };
+  if (s === "learn-leylines") return { question: `Does ${them} know about leylines now?`, waiting: `They're deciding if you know about leylines now` };
   return { question: `Did ${them} do this with you?`, waiting: `They're deciding` };
 }
