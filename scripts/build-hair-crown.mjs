@@ -188,6 +188,29 @@ for (const id of ids) {
 
 const fits = ({ shelf, air }) => shelf <= MAX_SHELF && air <= MAX_AIR;
 
+// The hair base: a rim around the skull, BASE px at the crown, narrowing to
+// nothing just above the ear (no straight cut), in a hair shade a step darker
+// than the main tone so it reads as hair in shadow. Drawn under every style
+// that has hair, it rounds the head out and fills the gaps between a mixed
+// top and sides. Bald heads don't get it, so a skull keeps its own shape.
+{
+  const BASE = 4, FULL_TO = 48, GONE_AT = 64;
+  const skull = read("Cranium/00");
+  const base = new PNG({ width: SIZE, height: SIZE });
+  base.data.fill(0);
+  for (let y = 0; y < SIZE; y++) {
+    const k = y <= FULL_TO ? BASE : y >= GONE_AT ? 0 : (BASE * (GONE_AT - y)) / (GONE_AT - FULL_TO);
+    for (let x = 0; x < SIZE; x++) {
+      if (opaque(skull, x, y)) continue;
+      let hit = false;
+      for (let dy = -BASE; dy <= BASE && !hit; dy++) for (let dx = -BASE; dx <= BASE && !hit; dx++) if (dx * dx + dy * dy <= k * k + 0.5 && opaque(skull, x + dx, y + dy)) hit = true;
+      if (hit) base.data.set([0x58, 0x39, 0x1a, 255], at(base, x, y));
+    }
+  }
+  mkdirSync(`${ROOT}/HairBase`, { recursive: true });
+  writeFileSync(`${ROOT}/HairBase/00.png`, PNG.sync.write(base));
+}
+
 // sides id -> the top ids that sit on it cleanly, its own first. "none" is
 // no sides: the tops that can sit on a shaved head.
 const pairs = {};

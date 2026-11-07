@@ -201,6 +201,8 @@ export const SHEET_ORDER = [
   // The scalp is the back of the skull, so it goes under everything — draw it
   // after the back hair and it sits on top of the hair.
   "Cranium",
+  // A rim of hair round the skull, under every style with hair.
+  "HairBase",
   // The back sheet, cut in two: the sides and length, then the top. They
   // never overlap, so the order between them is moot.
   "HairSides",
@@ -469,6 +471,9 @@ export function drawPlan(config: PortraitConfig): string[] {
 
   // The scalp is a single shape with no choice behind it.
   want("Cranium/00");
+  // Any hair gets the base under it: rounder heads, no gaps between a mixed
+  // top and sides. Bald (and buzzed) heads keep the skull's own outline.
+  if (c.hair_back !== NONE || c.top !== NONE) want("HairBase/00");
 
   // Matched hair draws the artist's own front cell. Split, the top's half and
   // the sides' half overlap over the hairline (so a mix leaves no bare skin),
@@ -492,7 +497,7 @@ const PACK_ORDER = Object.keys(ALLOWED).sort();
  *  the crop, the art. Faces are cached immutably for a year, and the packed
  *  spec only describes the config, so without this a fixed renderer keeps
  *  serving the broken picture out of everyone's browser cache. */
-export const RENDER = "28";
+export const RENDER = "29";
 
 export function packPortrait(config: PortraitConfig): string {
   const c = normalizePortrait(config);
