@@ -159,14 +159,13 @@ const ids = readdirSync(`${ROOT}/HairBack`)
   .filter((id) => !EXCLUDE.includes(id))
   .sort();
 /** Extra sides cut from an artist's style, with no top of their own: id ->
- *  the style they come from and how they are trimmed. 28 and 29 are the
- *  updo's sides (08) without its long back — the bun mass behind the head and
- *  the tail behind the ear — for short tops: 28 trimmed, 29 close to the head.
+ *  the style they come from and how they are trimmed. 28 is the updo's sides
+ *  (08) without its long back — the bun mass behind the head and the tail
+ *  behind the ear — for short tops.
  *  minX is how far back the hair may reach (rounded off toward the crown), cut
  *  the row the tail stops at. */
 const VARIANTS = {
   "28": { from: "08", minX: 30, cut: 82 },
-  "29": { from: "08", minX: 36, cut: 74 },
 };
 const sideIds = [...ids, ...Object.keys(VARIANTS)];
 for (const dir of ["HairCrown", "HairSides", "HairFrontTop", "HairFrontSides"]) {
