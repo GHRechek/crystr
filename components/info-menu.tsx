@@ -112,6 +112,24 @@ export function InfoMenu({ isWitch = false }: { isWitch?: boolean }) {
               </section>
             ) : null}
 
+            {/* The two calls everyone should know, first: how to ease things off, and how to bring magic in. */}
+            <section>
+              <div className="px" style={{ fontSize: 11, color: "var(--mag)", marginBottom: 8 }}>
+                SAY IT OUT LOUD
+              </div>
+              {(
+                [
+                  ["TOO MUCH!", "If things get too intense, say “Too much!” and they’ll ease up. No questions asked."],
+                  ["REALLY REALLY", "Someone suggesting story or using magic says “Really really.” Lean into it, or ease it with “Too much!”"],
+                ] as [string, string][]
+              ).map(([k, t]) => (
+                <div key={k} style={{ marginBottom: 10 }}>
+                  <div className="px" style={{ fontSize: 12, color: "var(--text)" }}>{k}</div>
+                  <div style={{ fontSize: 13, lineHeight: 1.55, color: "var(--text-2)", textWrap: "pretty" }}>{t}</div>
+                </div>
+              ))}
+            </section>
+
             <section>
               <div className="px" style={{ fontSize: 11, color: "var(--mag)", marginBottom: 8 }}>
                 ABOUT
