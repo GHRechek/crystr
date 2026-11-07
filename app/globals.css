@@ -1532,13 +1532,17 @@ select {
   border: 0;
   background: none;
   color: var(--text);
-  font: inherit;
-  font-size: 15px;
+  font-family: var(--px-font);
+  letter-spacing: 0.05em;
+  font-size: 12px;
+  text-transform: uppercase;
+  user-select: none;
+  -webkit-user-select: none;
   text-align: left;
   text-decoration: none;
   cursor: pointer;
 }
-.hold-item:hover { background: rgba(233, 233, 237, 0.06); }
+.hold-item:hover, .hold-item:active { background: #4a1a3a; }
 .hold-item > span { width: 20px; text-align: center; font-size: 17px; }
 
 /* "too much": the safety word's red, with a stepped pixel glow rather than a soft one. */
@@ -1555,4 +1559,38 @@ select {
 .cassette-spin { animation: cassette-spin 1.2s steps(8) infinite; }
 @media (prefers-reduced-motion: reduce) {
   .cassette-spin { animation: none; }
+}
+
+/* Held-whisper menu: hard pixel blocks in darkened CRYSTR colours, a dithered (not blurred) backdrop,
+   and a stepped fade in, like sprites arriving. */
+.hold-overlay {
+  background-color: rgba(9, 7, 18, 0.55);
+  background-image: repeating-conic-gradient(#090712 0% 25%, transparent 0% 50%);
+  background-size: 4px 4px;
+  animation: pix-dither 160ms steps(3) both;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+.pix-block {
+  background: #241a40;
+  border: 2px solid #9184d9;
+  border-radius: 0;
+  box-shadow: 4px 4px 0 #0b0814, inset 0 2px 0 #3b2c66;
+}
+.pix-in { animation: pix-in 200ms steps(4) both; }
+.pix-in-late { animation-delay: 60ms; }
+@keyframes pix-in {
+  0% { opacity: 0; transform: translateY(6px); }
+  100% { opacity: 1; transform: none; }
+}
+@keyframes pix-dither {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+/* A whisper being held sinks one step, so the press is felt before the menu opens. */
+.hold-sink { transform: scale(0.97); transition: transform 300ms steps(3); }
+@media (prefers-reduced-motion: reduce) {
+  .pix-in, .hold-overlay { animation: none; }
+  .hold-sink { transition: none; }
 }

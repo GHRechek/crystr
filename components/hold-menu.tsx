@@ -37,10 +37,15 @@ export function HoldMenu({
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const [reporting, setReporting] = useState(false);
+  // While a finger is down the bubble sinks a step; the menu ignores taps for a moment after it opens, so the
+  // lifting finger does not land on (or select) one of its options.
+  const [holding, setHolding] = useState(false);
+  const [ready, setReady] = useState(false);
   const timer = useRef<number | null>(null);
   const start = useRef<{ x: number; y: number } | null>(null);
 
   const cancel = () => {
+    setHolding(false);
     if (timer.current) window.clearTimeout(timer.current);
     timer.current = null;
     start.current = null;
@@ -54,7 +59,10 @@ export function HoldMenu({
         onPointerDown={(e) => {
           if (e.button !== 0) return;
           start.current = { x: e.clientX, y: e.clientY };
+          setHolding(true);
           timer.current = window.setTimeout(() => {
+            setReady(false);
+            window.setTimeout(() => setReady(true), 380);
             setOpen(true);
             if ("vibrate" in navigator) navigator.vibrate?.(10);
             cancel();
@@ -69,8 +77,10 @@ export function HoldMenu({
         onContextMenu={(e) => {
           e.preventDefault();
           cancel();
+          setReady(true);
           setOpen(true);
         }}
+        className={holding ? "hold-sink" : undefined}
         style={{ userSelect: "none", WebkitUserSelect: "none", WebkitTouchCallout: "none", touchAction: "manipulation" }}
       >
         {children}
@@ -81,16 +91,17 @@ export function HoldMenu({
           role="dialog"
           aria-label="Message options"
           onClick={() => setOpen(false)}
-          style={{ position: "fixed", inset: 0, zIndex: 95, background: "rgba(8,8,16,.55)", backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: side, gap: 10, padding: "24px 16px", maxWidth: 480, margin: "0 auto" }}
+          className="hold-overlay"
+          style={{ position: "fixed", inset: 0, zIndex: 95, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: side, gap: 10, padding: "24px 16px", maxWidth: 480, margin: "0 auto", pointerEvents: ready ? "auto" : "none" }}
         >
-          <div onClick={(e) => e.stopPropagation()} style={{ background: "var(--surface)", borderRadius: 22, boxShadow: "0 0 0 1px var(--edge), 0 10px 30px rgba(0,0,0,.5)", padding: "4px 8px 6px" }}>
+          <div onClick={(e) => e.stopPropagation()} className="pix-block pix-in" style={{ padding: "4px 6px 6px" }}>
           {/* The safety word, first and on its own row. */}
           {TOO_MUCH_ON ? (
           <form action={reactToMessage} onSubmit={() => setOpen(false)}>
             <input type="hidden" name="thread_id" value={thread} />
             <input type="hidden" name="message_id" value={id} />
             <input type="hidden" name="emoji" value={TOO_MUCH} />
-            <button type="submit" aria-pressed={!!myTooMuch} style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "9px 10px", border: 0, borderBottom: "1px solid var(--edge)", background: myTooMuch ? "rgba(239,68,68,.15)" : "none", cursor: "pointer", font: "inherit", textAlign: "left" }}>
+            <button type="submit" aria-pressed={!!myTooMuch} style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "9px 10px", border: 0, borderBottom: "2px solid #0b0814", background: myTooMuch ? "#4a1218" : "none", cursor: "pointer", font: "inherit", textAlign: "left" }}>
               <span className="px too-much-text" style={{ fontSize: 12, whiteSpace: "nowrap" }}>too much</span>
               <span style={{ fontSize: 11, color: "var(--muted)", textAlign: "right" }}>{myTooMuch ? "Tap to take it back" : "This caused off-game discomfort."}</span>
             </button>
@@ -110,12 +121,12 @@ export function HoldMenu({
           </div>
           </div>
 
-          <div onClick={(e) => e.stopPropagation()} style={{ maxWidth: "90%", pointerEvents: "none" }}>
+          <div onClick={(e) => e.stopPropagation()} className="pix-in" style={{ maxWidth: "90%", pointerEvents: "none" }}>
             {children}
           </div>
 
-          <div onClick={(e) => e.stopPropagation()} style={{ minWidth: 220, background: "var(--surface)", borderRadius: 14, boxShadow: "0 0 0 1px var(--edge), 0 10px 30px rgba(0,0,0,.5)", padding: "6px 0", display: "flex", flexDirection: "column" }}>
-            <div style={{ padding: "8px 16px", fontSize: 12, color: "var(--muted)" }}>{when}</div>
+          <div onClick={(e) => e.stopPropagation()} className="pix-block pix-in pix-in-late" style={{ minWidth: 220, padding: "4px 0", display: "flex", flexDirection: "column" }}>
+            <div className="px" style={{ padding: "8px 16px", fontSize: 10, color: "var(--pur-pale)", background: "#1d1636", borderBottom: "2px solid #0b0814" }}>{when.toUpperCase()}</div>
             <Link href={`/whispers/${thread}?reply=${id}`} onClick={() => setOpen(false)} className="hold-item">
               <span aria-hidden>↩</span> Reply
             </Link>
@@ -140,7 +151,7 @@ export function HoldMenu({
               <form action={unsendMessage} onSubmit={() => setOpen(false)}>
                 <input type="hidden" name="thread_id" value={thread} />
                 <input type="hidden" name="message_id" value={id} />
-                <button type="submit" className="hold-item" style={{ color: "var(--mag)" }}>
+                <button type="submit" className="hold-item" style={{ color: "#ff5fae" }}>
                   <span aria-hidden>✕</span> Unsend
                 </button>
               </form>
@@ -155,11 +166,11 @@ export function HoldMenu({
       ) : null}
 
       {reporting ? (
-        <div role="dialog" aria-label="Report misconduct" onClick={() => setReporting(false)} style={{ position: "fixed", inset: 0, zIndex: 96, background: "rgba(8,8,16,.6)", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
+        <div role="dialog" aria-label="Report misconduct" onClick={() => setReporting(false)} className="hold-overlay" style={{ position: "fixed", inset: 0, zIndex: 96, display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
           <form
             action={submitReport}
             onClick={(e) => e.stopPropagation()}
-            style={{ width: "100%", maxWidth: 480, background: "var(--device)", borderTop: "1px solid var(--edge)", borderRadius: "16px 16px 0 0", padding: "16px 16px calc(20px + env(safe-area-inset-bottom))", display: "flex", flexDirection: "column", gap: 10, userSelect: "text" }}
+            className="pix-block pix-in" style={{ width: "100%", maxWidth: 480, padding: "16px 16px calc(20px + env(safe-area-inset-bottom))", display: "flex", flexDirection: "column", gap: 10, userSelect: "text" }}
           >
             <input type="hidden" name="kind" value="whisper" />
             <input type="hidden" name="target" value={thread} />
