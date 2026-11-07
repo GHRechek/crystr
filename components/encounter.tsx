@@ -295,7 +295,7 @@ function TeamPicker({ v, act }: { v: View; act: (a: Record<string, unknown>) => 
       <div className="en-dock">
         <button type="button" data-slot="stake" className={`en-slot en-slot-stake${stake ? " full" : ""}`} onClick={() => { if (stake) { playClick(); setStake(null); } }} aria-label={stake ? "Your stake: tap to take it back" : "Stake: drag your token or a Historikal here for an epic fight"}>
           {stake ? ("token" in stake ? <TokenPic design={v.my_token} size={52} /> : <Creature slug={hkOf(stake.item)?.slug ?? ""} size={56} />) : <span className="px">STAKE</span>}
-          <b className="px en-slotlabel">{stake ? ("token" in stake ? "EPIC" : "STAKED") : "EPIC?"}</b>
+          <b className="px en-slotlabel">{stake ? ("token" in stake ? "TOKEN · EPIC" : "HISTORIKAL STAKED") : "TOKEN / HISTORIKAL"}</b>
         </button>
         {team.map((id, i) => (
           <button key={i} type="button" data-slot={`t${i}`} className={`en-slot en-slot-${["c", "l", "r"][i]}${id !== null ? " full" : ""}`} onClick={() => { if (id !== null) { playClick(); setTeam((t) => t.map((x, j) => (j === i ? null : x))); } }} aria-label={id !== null ? `${hkOf(id)?.name}: tap to take it out` : `Team slot ${i + 1}`}>

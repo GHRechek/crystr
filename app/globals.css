@@ -1972,7 +1972,7 @@ select.input { border: 0; }
   outline: 2px dashed rgba(224, 57, 138, .7); outline-offset: -2px; }
 .en-slot.full { outline: none; }
 .en-slot-stake { color: #f2b544; outline-color: rgba(242, 181, 68, .8); font-size: 11px; }
-.en-slotlabel { position: absolute; bottom: -18px; left: 0; right: 0; font-size: 9px; font-weight: 400; color: #f2b544; text-align: center; }
+.en-slotlabel { position: absolute; bottom: -18px; left: -40px; right: -40px; white-space: nowrap; font-size: 9px; font-weight: 400; color: #f2b544; text-align: center; }
 .en-teamshelf { bottom: calc(110px + env(safe-area-inset-bottom)); }
 .en-row button.used { opacity: .3; }
 .en-row button.out { opacity: .5; cursor: default; } .en-row button.out img { filter: grayscale(1) brightness(.6); }
