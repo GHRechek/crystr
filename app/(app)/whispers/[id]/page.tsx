@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { requireMe, getThread } from "@/lib/data";
 import { Avatar } from "@/components/bits";
 import { Bubble, snippet } from "@/components/whisper-bubble";
+import { skinOf } from "@/lib/emoji-skin";
 import { WhisperComposer } from "./composer";
 import { corrupt, COSTS, decayLevel } from "@/lib/crystr";
 
@@ -72,6 +73,8 @@ export default async function ThreadPage(props: {
             other={thread.other.handle}
             quoted={m.reply_to ? thread.messages.find((x) => x.id === m.reply_to) : undefined}
             quotedWho={(q) => (q.sender_id === userId ? "you" : thread.other.handle)}
+            mySkin={skinOf({ id: userId, avatar_config: profile.avatar_config })}
+            otherSkin={skinOf(thread.other)}
           />
         ))}
 

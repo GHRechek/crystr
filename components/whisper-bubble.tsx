@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { answerBadgeClaim } from "@/lib/actions";
 import { HoldMenu } from "@/components/hold-menu";
+import { EmojiImg } from "@/components/emoji-img";
 import { TOO_MUCH, isPixelEmoji } from "@/lib/whisper";
 import { corrupt } from "@/lib/crystr";
 import type { Message } from "@/lib/data";
@@ -23,7 +24,12 @@ export function Bubble({
   other,
   quoted,
   quotedWho,
+  mySkin,
+  otherSkin,
 }: {
+  /** Face-maker skin colours, for the yellow emoji: yours, and theirs. */
+  mySkin?: string | null;
+  otherSkin?: string | null;
   m: Message;
   mine: boolean;
   thread: number;
@@ -57,7 +63,7 @@ export function Bubble({
 
   return (
     <div style={{ maxWidth: "78%", alignSelf: side, display: "flex", flexDirection: "column", alignItems: side, gap: 4 }}>
-      <HoldMenu thread={thread} id={m.id} mine={mine} text={m.body} sentAt={m.created_at} tooMuch={tooMuch} myTooMuch={!!tooMuchR?.mine} who={mine ? undefined : other}>
+      <HoldMenu thread={thread} id={m.id} mine={mine} text={m.body} sentAt={m.created_at} tooMuch={tooMuch} myTooMuch={!!tooMuchR?.mine} who={mine ? undefined : other} skin={mySkin}>
       <div style={{ display: "flex", flexDirection: mine ? "row-reverse" : "row", alignItems: "flex-end", gap: 6 }}>
         <div
           style={{
@@ -172,8 +178,8 @@ export function Bubble({
               }}
             >
               {isPixelEmoji(r.emoji) ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={`/emoji/${r.emoji}.png`} alt="" width={16} height={16} style={{ imageRendering: "pixelated", verticalAlign: "-3px" }} />
+                // A reaction wears the skin of whoever made it (yours, if you both did).
+                <EmojiImg e={r.emoji} skin={r.mine ? mySkin : otherSkin} size={16} style={{ verticalAlign: "-3px" }} />
               ) : (
                 r.emoji
               )}

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRef, useState } from "react";
 import { reactToMessage, submitReport, unsendMessage } from "@/lib/actions";
+import { EmojiImg } from "@/components/emoji-img";
 import { REPORT_REASONS } from "@/lib/terms";
 import { PIXEL_EMOJI, PIXEL_NAMES, PIXEL_REACTS_ON, QUICK_PIXEL, REACTIONS, TOO_MUCH, TOO_MUCH_ON } from "@/lib/whisper";
 
@@ -19,8 +20,11 @@ export function HoldMenu({
   tooMuch,
   myTooMuch,
   who,
+  skin,
   children,
 }: {
+  /** Your face-maker skin colour: the yellow emoji wear it. */
+  skin?: string | null;
   /** The sender's handle, for a report. */
   who?: string;
   /** Somebody has called this message too much: it can no longer be unsent. */
@@ -108,7 +112,7 @@ export function HoldMenu({
               </form>
             ) : null}
             {(PIXEL_REACTS_ON ? QUICK_PIXEL : REACTIONS).map((e) => (
-              <PixelReact key={e} e={e} thread={thread} id={id} done={() => setOpen(false)} />
+              <PixelReact key={e} e={e} thread={thread} id={id} skin={skin} done={() => setOpen(false)} />
             ))}
             {PIXEL_REACTS_ON ? (
             <button type="button" aria-label="More reactions" aria-expanded={more} onClick={() => setMore((m) => !m)} className="px" style={{ flex: "none", width: 40, height: 40, border: 0, background: more ? "#5a1f47" : "#3b2c66", color: "var(--pur-pale)", fontSize: 18, cursor: "pointer", lineHeight: 1 }}>
@@ -119,7 +123,7 @@ export function HoldMenu({
           {more ? (
             <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 40px)", gap: 2, maxHeight: 220, overflowY: "auto", paddingTop: 6, marginTop: 4, background: "#1a1330" }}>
               {PIXEL_EMOJI.map((e) => (
-                <PixelReact key={e} e={e} thread={thread} id={id} done={() => setOpen(false)} />
+                <PixelReact key={e} e={e} thread={thread} id={id} skin={skin} done={() => setOpen(false)} />
               ))}
             </div>
           ) : null}
@@ -216,7 +220,7 @@ export function HoldMenu({
 }
 
 /** One pixel emoji in the reaction picker. */
-function PixelReact({ e, thread, id, done }: { e: string; thread: number; id: number; done: () => void }) {
+function PixelReact({ e, thread, id, done, skin }: { e: string; thread: number; id: number; done: () => void; skin?: string | null }) {
   return (
     <form action={reactToMessage} onSubmit={done} style={{ flex: "none" }}>
       <input type="hidden" name="thread_id" value={thread} />
@@ -224,8 +228,7 @@ function PixelReact({ e, thread, id, done }: { e: string; thread: number; id: nu
       <input type="hidden" name="emoji" value={e} />
       <button type="submit" aria-label={`React ${e.startsWith("pm-") ? PIXEL_NAMES[Number(e.slice(3)) - 1] : e}`} title={e.startsWith("pm-") ? PIXEL_NAMES[Number(e.slice(3)) - 1] : undefined} style={{ flex: "none", width: 40, height: 40, border: 0, background: "none", cursor: "pointer", padding: 0, display: "grid", placeItems: "center" }}>
         {e.startsWith("pm-") ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={`/emoji/${e}.png`} alt="" width={24} height={24} style={{ imageRendering: "pixelated" }} />
+          <EmojiImg e={e} skin={skin} size={24} />
         ) : (
           <span style={{ fontSize: 22, lineHeight: 1 }}>{e}</span>
         )}

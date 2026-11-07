@@ -132,7 +132,7 @@ function hslToHex(h: number, s: number, l: number): string {
  *  hair step sits a long way above its base, so a light blond asked for the
  *  full offset would blow the highlight out to cream and put a beige cap on
  *  every head. Squeezing keeps the highlight a highlight. */
-function reramp(
+export function reramp(
   src: string[],
   anchor: string,
   target: string,
