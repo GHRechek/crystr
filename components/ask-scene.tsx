@@ -114,17 +114,17 @@ function Rays() {
     let t = 0;
     // Each pixel is worked out on its own, so every edge is a hard step with no in-between colours.
     const img = ctx.createImageData(W, H), d = img.data;
-    const BG = [42, 22, 80], RAY = [[90, 31, 110], [45, 47, 138]];
+    const BG = [42, 22, 80], RAY = [74, 29, 104];
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const draw = () => {
       t += 1;
-      const pulse = reduce ? 1 : 0.78 + 0.22 * Math.sin(t / 9), spin = reduce ? 0 : t * 0.006, step = Math.PI / 8;
+      const pulse = reduce ? 1 : 0.88 + 0.12 * Math.sin(t / 9), spin = reduce ? 0 : t * 0.006, step = Math.PI / 6;
       for (let y = 0; y < H; y++) {
         for (let x = 0; x < W; x++) {
           let a = Math.atan2(y + 0.5 - H * 0.42, x + 0.5 - W / 2) - spin;
           a = ((a % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
           const i = Math.floor(a / step), o = (y * W + x) * 4;
-          const col = i % 2 ? BG : RAY[(i / 2) % 2], m = i % 2 ? 1 : pulse;
+          const col = i % 2 ? BG : RAY, m = i % 2 ? 1 : pulse;
           d[o] = Math.round(BG[0] + (col[0] - BG[0]) * m);
           d[o + 1] = Math.round(BG[1] + (col[1] - BG[1]) * m);
           d[o + 2] = Math.round(BG[2] + (col[2] - BG[2]) * m);
@@ -151,6 +151,7 @@ export function AskScene({
   badge,
   title,
   question,
+  waiting,
   who,
   result,
   onYes,
@@ -162,6 +163,8 @@ export function AskScene({
   badge: { art: string | null; slug: string; tiers?: number };
   title: string;
   question: string;
+  /** What the asker sees on top while the other person decides, e.g. "They're deciding if you're a friend". */
+  waiting?: string;
   who: string;
   /** The answer, once there is one (the asker learns it this way). */
   result?: "yes" | "no" | null;
@@ -241,7 +244,16 @@ export function AskScene({
   return (
     <div role="dialog" aria-label={question} className="ask-scene">
       <Rays />
-      <div className="px ask-question">{question}</div>
+      <div className="px ask-question">
+        {side === "wait" && state === "idle" ? (
+          <>
+            {waiting ?? `${who} is deciding`}
+            <span className="ask-dots" aria-hidden><i>.</i><i>.</i><i>.</i></span>
+          </>
+        ) : (
+          question
+        )}
+      </div>
 
       <div className="ask-stage">
         <div ref={chestRef}>
@@ -286,9 +298,7 @@ export function AskScene({
         {state === "open" ? (
           <div className="px ask-result is-yes">{side === "wait" ? `${who.toUpperCase()} SAID YES!` : "UNLOCKED!"}</div>
         ) : state === "thrown" ? null : side === "wait" ? (
-          <div className="px ask-waiting">
-            WAITING ON {who.toUpperCase()}<span className="ask-dots" aria-hidden><i>.</i><i>.</i><i>.</i></span>
-          </div>
+          null
         ) : (
           <div className="ask-hints" aria-hidden="true">
             <div className="px ask-hint ask-yes"><b>YES!</b><span>UNLOCK</span><span style={{ marginTop: 0 }}>THE CHEST!</span></div>

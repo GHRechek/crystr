@@ -1749,7 +1749,7 @@ select.input { border: 0; }
   position: relative; z-index: 3; text-align: center; font-size: 18px; line-height: 1.45; color: #fff;
   text-shadow: 2px 2px 0 #160b2e; max-width: 340px; margin-top: 8px;
 }
-.ask-stage { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; margin-top: 10px; }
+.ask-stage { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; margin-top: 10px; transform: translateY(22px); }
 .ask-badge {
   /* Starts sunk below the chest's front rim (105px down), hidden by the front wall drawn over it,
      then climbs out of the mouth, in front of the lid, overshoots and settles. */
