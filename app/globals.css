@@ -1711,3 +1711,15 @@ select.input { border: 0; }
   background: #463c75;
 }
 .card .input, .card .textarea, .tile .input, .tile .textarea { background: var(--blk-deep); }
+/* Not everything is a block: list rows (whispers, people, trades…) sit straight on the page, and only
+   light up a block when pressed. Buttons, tabs and cards stay solid. */
+.pad > .rowcard,
+.rowcard {
+  background: transparent;
+}
+.pad > .rowcard:hover,
+.rowcard:hover,
+.rowcard:active {
+  background: var(--blk);
+}
+.pad > .rowcard + .rowcard { margin-top: -12px; }
