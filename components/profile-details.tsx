@@ -10,7 +10,7 @@ const KINDS: Record<string, { art?: number; emoji?: string; crystr?: boolean; ti
   birthday: { art: 130, crystr: true, title: "BIRTHDAY", line: "Their birthday." },
   likes: { emoji: "pm-54", crystr: true, title: "LIKES", line: "What they like." },
   dislikes: { emoji: "pm-53", crystr: true, title: "DISLIKES", line: "What they don't." },
-  food: { emoji: "pm-69", crystr: true, title: "FAVOURITE FOOD", line: "Their favourite food." },
+  food: { emoji: "pm-41", crystr: true, title: "FAVOURITE FOOD", line: "Their favourite food." },
   obsession: { emoji: "pm-59", title: "OBSESSED WITH", line: "What they are obsessed with right now." },
 };
 

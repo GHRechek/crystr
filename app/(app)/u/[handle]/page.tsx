@@ -7,7 +7,7 @@ import { TokenImage } from "@/components/badges";
 import { AboutBadges } from "@/components/about-badges";
 import { ProfileDetails, type DetailKind } from "@/components/profile-details";
 import { WorkingOn } from "@/components/working-on";
-import { achievementGrid, resolveShown, resolveWorking, helpingRow, questGrid } from "@/lib/badges";
+import { achievementGrid, resolveShown, resolveWorking, helpingRow, questGrid, firstStepGrid, firstStepsDone } from "@/lib/badges";
 import { WitchFace } from "@/components/witch-face";
 import { ago, corrupt, decayLevel, BADGE_MANA } from "@/lib/crystr";
 import { bannerOf, bannerStyle } from "@/lib/banner";
@@ -161,7 +161,12 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
         ) : null}
 
         {helpingRow(badges, helps) ? <WorkingOn bare person={{ id: person.id, handle: person.handle }} items={[helpingRow(badges, helps)!]} /> : null}
-        <WorkingOn person={{ id: person.id, handle: person.handle }} items={resolveWorking(person.working_on, badges, person.working_on?.some((k) => k.startsWith("t:")) ? await getAllTokens(person.id) : [])} />
+        {firstStepsDone(badges) ? (
+          <WorkingOn person={{ id: person.id, handle: person.handle }} items={resolveWorking(person.working_on, badges, person.working_on?.some((k) => k.startsWith("t:")) ? await getAllTokens(person.id) : [])} />
+        ) : (
+          // Still on their first steps: that is what they are working on.
+          <WorkingOn heading="FIRST STEPS" total={firstStepGrid(badges).length} items={firstStepGrid(badges)} />
+        )}
 
       </div>
     </div>

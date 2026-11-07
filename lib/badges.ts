@@ -257,7 +257,7 @@ export function resolveWorking(list: string[] | null | undefined, badges: BadgeR
       continue;
     }
     const b = key.startsWith("a:") ? badges.find((x) => x.slug === key.slice(2)) : undefined;
-    if (!b) continue;
+    if (!b || (b.kind && b.kind !== "goal")) continue;
     const finished = !stillWorking(b);
     out.push({
       key,
