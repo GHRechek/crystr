@@ -6,7 +6,7 @@ import { setShownBadges } from "@/lib/actions";
 import { SHOW_MAX, type ShownBadge } from "@/lib/badges";
 
 /** Every badge a person has, full screen: no cards, just the pictures on the background, in two
- *  tabs, earned and tradable. Tap one to read what it is and how it was earned. On your own
+ *  tabs, earned and Historikals. Tap one to read what it is and how it was earned. On your own
  *  page (`editable`) tapping also picks up to five to show on the profile, numbered in the order
  *  you tap, and SAVE keeps them; on someone else's page it is only for looking. */
 export function BadgeViewer({
@@ -59,7 +59,7 @@ export function BadgeViewer({
             EARNED · {earned.length}
           </button>
           <button type="button" data-on={tab === 1} onClick={() => setTab(1)}>
-            TRADABLE · {tradable.length}
+            HISTORIKALS · {tradable.length}
           </button>
         </div>
 
