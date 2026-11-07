@@ -82,10 +82,14 @@ export function AboutBadges({
   // and the trade (or eye) button share the width.
   const gap = 4;
   const px = compact ? Math.max(28, Math.min(48, Math.floor((width - gap * 5) / 6))) : 42;
+  // Beside the portrait the token leads, a size up, and the badges after it step down to fit; the
+  // trade button keeps the plain size. All of them sit on one centre line.
+  const tokPx = compact ? Math.round(px * 1.35) : px;
+  const badgePx = compact ? Math.max(22, Math.min(Math.round(px * 0.82), Math.floor((width - gap * 5 - px - tokPx) / 4))) : px;
   const tipBadge = tip ? shown.find((b) => b.key === tip.key) : undefined;
 
   return (
-    <div ref={box} style={{ position: "relative", display: "flex", flexWrap: compact ? "nowrap" : "wrap", alignItems: compact ? "flex-end" : "center", gap: compact ? gap : 6 }}>
+    <div ref={box} style={{ position: "relative", display: "flex", flexWrap: compact ? "nowrap" : "wrap", alignItems: "center", gap: compact ? gap : 6 }}>
       {token ? (
         <button
           type="button"
@@ -96,9 +100,9 @@ export function AboutBadges({
             const r = e.currentTarget;
             setTip((t) => (t?.key === "__token" ? null : { key: "__token", x: r.offsetLeft + r.offsetWidth / 2, top: r.offsetTop + r.offsetHeight + 6 }));
           }}
-          style={{ flex: "none", width: px, height: px, display: "grid", placeItems: "center", padding: 0, background: "none", cursor: "pointer", lineHeight: 0, color: "var(--dim)", border: token.design ? 0 : "1px dashed var(--edge)", borderRadius: "var(--px-r)" }}
+          style={{ flex: "none", width: tokPx, height: tokPx, display: "grid", placeItems: "center", padding: 0, background: "none", cursor: "pointer", lineHeight: 0, color: "var(--dim)", border: token.design ? 0 : "1px dashed var(--edge)", borderRadius: "var(--px-r)" }}
         >
-          {token.design ? <TokenImage design={token.design} size={px} /> : <span className="px" style={{ fontSize: 12 }}>?</span>}
+          {token.design ? <TokenImage design={token.design} size={tokPx} /> : <span className="px" style={{ fontSize: 12 }}>?</span>}
         </button>
       ) : null}
       {children}
@@ -115,7 +119,7 @@ export function AboutBadges({
           }}
           style={{ flex: "none", padding: 0, background: "none", border: 0, cursor: "pointer", lineHeight: 0 }}
         >
-          <BadgeFace b={b} size={px} />
+          <BadgeFace b={b} size={badgePx} />
         </button>
       ))}
       {!noPen && !compact && (earned.length || tradable.length || editable) ? (
