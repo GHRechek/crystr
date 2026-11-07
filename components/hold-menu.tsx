@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRef, useState } from "react";
 import { reactToMessage, unsendMessage } from "@/lib/actions";
-import { REACTIONS } from "@/lib/whisper";
+import { REACTIONS, TOO_MUCH } from "@/lib/whisper";
 
 const HOLD_MS = 450;
 
@@ -15,8 +15,14 @@ export function HoldMenu({
   mine,
   text,
   sentAt,
+  tooMuch,
+  myTooMuch,
   children,
 }: {
+  /** Somebody has called this message too much: it can no longer be unsent. */
+  tooMuch?: boolean;
+  /** You are the one who said so (tap again to take it back). */
+  myTooMuch?: boolean;
   thread: number;
   id: number;
   mine: boolean;
@@ -72,7 +78,18 @@ export function HoldMenu({
           onClick={() => setOpen(false)}
           style={{ position: "fixed", inset: 0, zIndex: 95, background: "rgba(8,8,16,.55)", backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: side, gap: 10, padding: "24px 16px", maxWidth: 480, margin: "0 auto" }}
         >
-          <div onClick={(e) => e.stopPropagation()} style={{ display: "flex", gap: 4, padding: "6px 8px", background: "var(--surface)", borderRadius: 999, boxShadow: "0 0 0 1px var(--edge), 0 10px 30px rgba(0,0,0,.5)" }}>
+          <div onClick={(e) => e.stopPropagation()} style={{ background: "var(--surface)", borderRadius: 22, boxShadow: "0 0 0 1px var(--edge), 0 10px 30px rgba(0,0,0,.5)", padding: "4px 8px 6px" }}>
+          {/* The safety word, first and on its own row. */}
+          <form action={reactToMessage} onSubmit={() => setOpen(false)}>
+            <input type="hidden" name="thread_id" value={thread} />
+            <input type="hidden" name="message_id" value={id} />
+            <input type="hidden" name="emoji" value={TOO_MUCH} />
+            <button type="submit" aria-pressed={!!myTooMuch} style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "9px 10px", border: 0, borderBottom: "1px solid var(--edge)", background: myTooMuch ? "rgba(239,68,68,.15)" : "none", cursor: "pointer", font: "inherit", textAlign: "left" }}>
+              <span className="px too-much-text" style={{ fontSize: 12, whiteSpace: "nowrap" }}>too much</span>
+              <span style={{ fontSize: 11, color: "var(--muted)", textAlign: "right" }}>{myTooMuch ? "Tap to take it back" : "This caused off-game discomfort."}</span>
+            </button>
+          </form>
+          <div style={{ display: "flex", gap: 4, paddingTop: 2 }}>
             {REACTIONS.map((e) => (
               <form key={e} action={reactToMessage} onSubmit={() => setOpen(false)}>
                 <input type="hidden" name="thread_id" value={thread} />
@@ -83,6 +100,7 @@ export function HoldMenu({
                 </button>
               </form>
             ))}
+          </div>
           </div>
 
           <div onClick={(e) => e.stopPropagation()} style={{ maxWidth: "90%", pointerEvents: "none" }}>
@@ -111,7 +129,7 @@ export function HoldMenu({
                 <span aria-hidden>⧉</span> {copied ? "Copied" : "Copy"}
               </button>
             ) : null}
-            {mine ? (
+            {mine && !tooMuch ? (
               <form action={unsendMessage} onSubmit={() => setOpen(false)}>
                 <input type="hidden" name="thread_id" value={thread} />
                 <input type="hidden" name="message_id" value={id} />

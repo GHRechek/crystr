@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { answerBadgeClaim } from "@/lib/actions";
 import { HoldMenu } from "@/components/hold-menu";
+import { TOO_MUCH } from "@/lib/whisper";
 import { corrupt } from "@/lib/crystr";
 import type { Message } from "@/lib/data";
 
@@ -32,6 +33,9 @@ export function Bubble({
   quotedWho: (q: Message) => string;
 }) {
   const side = mine ? "flex-end" : "flex-start";
+  // Somebody called this one too much: it wears a red pixel outline, and its own pill.
+  const tooMuchR = m.reactions.find((r) => r.emoji === TOO_MUCH);
+  const tooMuch = !!tooMuchR;
 
   if (m.unsent) {
     return (
@@ -53,14 +57,14 @@ export function Bubble({
 
   return (
     <div style={{ maxWidth: "78%", alignSelf: side, display: "flex", flexDirection: "column", alignItems: side, gap: 4 }}>
-      <HoldMenu thread={thread} id={m.id} mine={mine} text={m.body} sentAt={m.created_at}>
+      <HoldMenu thread={thread} id={m.id} mine={mine} text={m.body} sentAt={m.created_at} tooMuch={tooMuch} myTooMuch={!!tooMuchR?.mine}>
       <div style={{ display: "flex", flexDirection: mine ? "row-reverse" : "row", alignItems: "flex-end", gap: 6 }}>
         <div
           style={{
             padding: "9px 11px",
             borderRadius: "var(--px-r)",
             background: mine ? "rgba(76,125,240,.18)" : "var(--surface)",
-            boxShadow: mine ? "0 0 0 1px var(--blu-edge)" : "0 0 0 1px var(--edge)",
+            boxShadow: tooMuch ? "0 0 0 2px #ef4444, 0 0 0 4px rgba(239,68,68,.35), 0 0 0 6px rgba(239,68,68,.12)" : mine ? "0 0 0 1px var(--blu-edge)" : "0 0 0 1px var(--edge)",
             fontSize: 13,
             lineHeight: 1.5,
             color: mine ? "var(--blu-pale)" : "var(--text-2)",
@@ -153,7 +157,12 @@ export function Bubble({
 
       {m.reactions.length ? (
         <div style={{ display: "flex", gap: 4, flexWrap: "wrap", justifyContent: side }}>
-          {m.reactions.map((r) => (
+          {tooMuchR ? (
+            <span className="px too-much-text" style={{ fontSize: 11, padding: "2px 7px", boxShadow: "0 0 0 2px #ef4444, 0 0 0 4px rgba(239,68,68,.3)", background: "var(--surface)" }}>
+              too much{tooMuchR.count > 1 ? ` ${tooMuchR.count}` : ""}
+            </span>
+          ) : null}
+          {m.reactions.filter((r) => r.emoji !== TOO_MUCH).map((r) => (
             <span
               key={r.emoji}
               style={{
