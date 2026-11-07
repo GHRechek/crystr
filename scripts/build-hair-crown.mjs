@@ -91,7 +91,36 @@ for (let y = MID; y < UNDER; y++) {
 for (let x = CORE[0]; x <= CORE[1]; x++) SEAM.push([[x, UNDER - 1], [x, UNDER]]);
 const VISIBLE = SEAM.filter(([t, s]) => !opaque(cover, ...t) && !opaque(cover, ...s));
 
-function split(png) {
+/** The front sheet is cut by columns, not rows: a lock is one strand from the
+ *  hairline to its tip, and cutting it anywhere leaves a notch where another
+ *  style's hair meets it. A column whose hair hangs past LOCK (below the eyes)
+ *  is a lock, the whole of it the sides'; a column that stops above is fringe,
+ *  the top's. */
+const LOCK = 60;
+const MIN_LOCK = 3;
+const frontSidesOf = (png) => {
+  const lock = new Set();
+  for (let x = 0; x < SIZE; x++) for (let y = LOCK; y < SIZE; y++) if (opaque(png, x, y)) { lock.add(x); break; }
+  // A wisp a pixel or two wide is part of the fringe, not a lock: alone on
+  // another top it reads as a stray line down the forehead.
+  for (let x = 0; x < SIZE; x++) {
+    if (!lock.has(x) || lock.has(x - 1)) continue;
+    let w = 0;
+    while (lock.has(x + w)) w++;
+    if (w < MIN_LOCK) for (let k = 0; k < w; k++) lock.delete(x + k);
+  }
+  // A lock tapers: its edge columns stop short of LOCK. Take in the columns
+  // beside it that still hang below the skull's curve, or the taper stays
+  // behind with the top as a thin line.
+  const hangs = (x) => { for (let y = MID; y < SIZE; y++) if (opaque(png, x, y)) return true; return false; };
+  for (const x of [...lock]) {
+    for (let d = -1; !lock.has(x + d) && hangs(x + d); d--) lock.add(x + d);
+    for (let d = 1; !lock.has(x + d) && hangs(x + d); d++) lock.add(x + d);
+  }
+  return (x) => lock.has(x);
+};
+
+function split(png, sidesAt = isSides) {
   const top = new PNG({ width: SIZE, height: SIZE });
   const sides = new PNG({ width: SIZE, height: SIZE });
   top.data.fill(0);
@@ -100,7 +129,7 @@ function split(png) {
     for (let x = 0; x < SIZE; x++) {
       const i = at(png, x, y);
       if (!png.data[i + 3]) continue;
-      (isSides(x, y) ? sides : top).data.set(png.data.subarray(i, i + 4), i);
+      (sidesAt(x, y) ? sides : top).data.set(png.data.subarray(i, i + 4), i);
     }
   }
   return { top, sides };
@@ -121,13 +150,15 @@ function seam(top, sides) {
 
 mkdirSync(`${ROOT}/HairCrown`, { recursive: true });
 mkdirSync(`${ROOT}/HairSides`, { recursive: true });
+mkdirSync(`${ROOT}/HairFrontTop`, { recursive: true });
+mkdirSync(`${ROOT}/HairFrontSides`, { recursive: true });
 
 const ids = readdirSync(`${ROOT}/HairBack`)
   .filter((f) => f.endsWith(".png"))
   .map((f) => f.replace(/\.png$/, ""))
   .filter((id) => !EXCLUDE.includes(id))
   .sort();
-for (const dir of ["HairCrown", "HairSides"]) {
+for (const dir of ["HairCrown", "HairSides", "HairFrontTop", "HairFrontSides"]) {
   for (const f of readdirSync(`${ROOT}/${dir}`)) if (!ids.includes(f.replace(/\.png$/, ""))) rmSync(`${ROOT}/${dir}/${f}`);
 }
 const cut = {};
@@ -135,6 +166,15 @@ for (const id of ids) {
   cut[id] = split(read(`HairBack/${id}`));
   writeFileSync(`${ROOT}/HairCrown/${id}.png`, PNG.sync.write(cut[id].top));
   writeFileSync(`${ROOT}/HairSides/${id}.png`, PNG.sync.write(cut[id].sides));
+  // The front sheet (drawn over the face), cut into locks and fringe. The fringe is
+  // the top's; the long locks that hang in front — the straight styles carry
+  // hundreds of pixels of them — go with the sides, so a long top on short
+  // sides doesn't leave locks floating, and long sides keep theirs.
+  const frontPng = read(`HairFront/${id}`);
+  const isLock = frontSidesOf(frontPng);
+  const front = split(frontPng, (x) => isLock(x));
+  writeFileSync(`${ROOT}/HairFrontTop/${id}.png`, PNG.sync.write(front.top));
+  writeFileSync(`${ROOT}/HairFrontSides/${id}.png`, PNG.sync.write(front.sides));
 }
 
 const fits = ({ shelf, air }) => shelf <= MAX_SHELF && air <= MAX_AIR;

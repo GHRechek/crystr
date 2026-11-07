@@ -220,7 +220,10 @@ export const SHEET_ORDER = [
   "Mouths",
   "AccessoriesBelowBeard",
   "Beards",
-  "HairFront",
+  // The front sheet, cut like the back: the locks that hang past the cut go
+  // with the sides, the fringe with the top over them.
+  "HairFrontSides",
+  "HairFrontTop",
   "LayeredAccessories",
 ];
 
@@ -478,7 +481,7 @@ const PACK_ORDER = Object.keys(ALLOWED).sort();
  *  the crop, the art. Faces are cached immutably for a year, and the packed
  *  spec only describes the config, so without this a fixed renderer keeps
  *  serving the broken picture out of everyone's browser cache. */
-export const RENDER = "26";
+export const RENDER = "27";
 
 export function packPortrait(config: PortraitConfig): string {
   const c = normalizePortrait(config);

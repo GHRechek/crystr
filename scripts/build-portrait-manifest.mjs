@@ -44,8 +44,8 @@ const GROUPS = {
   // and fringe, paired by index as drawn. Which tops sit on which sides
   // without a seam is decided there too. The tool paired all of it by
   // index; the builder still steps them together until you split them.
-  hair_back: { lead: "HairSides", also: [] },
-  top: { lead: "HairCrown", also: ["HairFront"] },
+  hair_back: { lead: "HairSides", also: ["HairFrontSides"] },
+  top: { lead: "HairCrown", also: ["HairFrontTop"] },
 };
 
 /** sides id -> the top ids that sit on it cleanly (its own first); "none"

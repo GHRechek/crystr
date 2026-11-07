@@ -883,157 +883,183 @@ export const OPTIONS: Record<string, PortraitOption[]> = {
     {
       "id": "01",
       "cells": [
-        "HairSides/01"
+        "HairSides/01",
+        "HairFrontSides/01"
       ]
     },
     {
       "id": "02",
       "cells": [
-        "HairSides/02"
+        "HairSides/02",
+        "HairFrontSides/02"
       ]
     },
     {
       "id": "03",
       "cells": [
-        "HairSides/03"
+        "HairSides/03",
+        "HairFrontSides/03"
       ]
     },
     {
       "id": "04",
       "cells": [
-        "HairSides/04"
+        "HairSides/04",
+        "HairFrontSides/04"
       ]
     },
     {
       "id": "05",
       "cells": [
-        "HairSides/05"
+        "HairSides/05",
+        "HairFrontSides/05"
       ]
     },
     {
       "id": "06",
       "cells": [
-        "HairSides/06"
+        "HairSides/06",
+        "HairFrontSides/06"
       ]
     },
     {
       "id": "08",
       "cells": [
-        "HairSides/08"
+        "HairSides/08",
+        "HairFrontSides/08"
       ]
     },
     {
       "id": "09",
       "cells": [
-        "HairSides/09"
+        "HairSides/09",
+        "HairFrontSides/09"
       ]
     },
     {
       "id": "10",
       "cells": [
-        "HairSides/10"
+        "HairSides/10",
+        "HairFrontSides/10"
       ]
     },
     {
       "id": "11",
       "cells": [
-        "HairSides/11"
+        "HairSides/11",
+        "HairFrontSides/11"
       ]
     },
     {
       "id": "12",
       "cells": [
-        "HairSides/12"
+        "HairSides/12",
+        "HairFrontSides/12"
       ]
     },
     {
       "id": "13",
       "cells": [
-        "HairSides/13"
+        "HairSides/13",
+        "HairFrontSides/13"
       ]
     },
     {
       "id": "14",
       "cells": [
-        "HairSides/14"
+        "HairSides/14",
+        "HairFrontSides/14"
       ]
     },
     {
       "id": "15",
       "cells": [
-        "HairSides/15"
+        "HairSides/15",
+        "HairFrontSides/15"
       ]
     },
     {
       "id": "16",
       "cells": [
-        "HairSides/16"
+        "HairSides/16",
+        "HairFrontSides/16"
       ]
     },
     {
       "id": "17",
       "cells": [
-        "HairSides/17"
+        "HairSides/17",
+        "HairFrontSides/17"
       ]
     },
     {
       "id": "18",
       "cells": [
-        "HairSides/18"
+        "HairSides/18",
+        "HairFrontSides/18"
       ]
     },
     {
       "id": "19",
       "cells": [
-        "HairSides/19"
+        "HairSides/19",
+        "HairFrontSides/19"
       ]
     },
     {
       "id": "20",
       "cells": [
-        "HairSides/20"
+        "HairSides/20",
+        "HairFrontSides/20"
       ]
     },
     {
       "id": "21",
       "cells": [
-        "HairSides/21"
+        "HairSides/21",
+        "HairFrontSides/21"
       ]
     },
     {
       "id": "22",
       "cells": [
-        "HairSides/22"
+        "HairSides/22",
+        "HairFrontSides/22"
       ]
     },
     {
       "id": "23",
       "cells": [
-        "HairSides/23"
+        "HairSides/23",
+        "HairFrontSides/23"
       ]
     },
     {
       "id": "24",
       "cells": [
-        "HairSides/24"
+        "HairSides/24",
+        "HairFrontSides/24"
       ]
     },
     {
       "id": "25",
       "cells": [
-        "HairSides/25"
+        "HairSides/25",
+        "HairFrontSides/25"
       ]
     },
     {
       "id": "26",
       "cells": [
-        "HairSides/26"
+        "HairSides/26",
+        "HairFrontSides/26"
       ]
     },
     {
       "id": "27",
       "cells": [
-        "HairSides/27"
+        "HairSides/27",
+        "HairFrontSides/27"
       ]
     }
   ],
@@ -1042,182 +1068,182 @@ export const OPTIONS: Record<string, PortraitOption[]> = {
       "id": "01",
       "cells": [
         "HairCrown/01",
-        "HairFront/01"
+        "HairFrontTop/01"
       ]
     },
     {
       "id": "02",
       "cells": [
         "HairCrown/02",
-        "HairFront/02"
+        "HairFrontTop/02"
       ]
     },
     {
       "id": "03",
       "cells": [
         "HairCrown/03",
-        "HairFront/03"
+        "HairFrontTop/03"
       ]
     },
     {
       "id": "04",
       "cells": [
         "HairCrown/04",
-        "HairFront/04"
+        "HairFrontTop/04"
       ]
     },
     {
       "id": "05",
       "cells": [
         "HairCrown/05",
-        "HairFront/05"
+        "HairFrontTop/05"
       ]
     },
     {
       "id": "06",
       "cells": [
         "HairCrown/06",
-        "HairFront/06"
+        "HairFrontTop/06"
       ]
     },
     {
       "id": "08",
       "cells": [
         "HairCrown/08",
-        "HairFront/08"
+        "HairFrontTop/08"
       ]
     },
     {
       "id": "09",
       "cells": [
         "HairCrown/09",
-        "HairFront/09"
+        "HairFrontTop/09"
       ]
     },
     {
       "id": "10",
       "cells": [
         "HairCrown/10",
-        "HairFront/10"
+        "HairFrontTop/10"
       ]
     },
     {
       "id": "11",
       "cells": [
         "HairCrown/11",
-        "HairFront/11"
+        "HairFrontTop/11"
       ]
     },
     {
       "id": "12",
       "cells": [
         "HairCrown/12",
-        "HairFront/12"
+        "HairFrontTop/12"
       ]
     },
     {
       "id": "13",
       "cells": [
         "HairCrown/13",
-        "HairFront/13"
+        "HairFrontTop/13"
       ]
     },
     {
       "id": "14",
       "cells": [
         "HairCrown/14",
-        "HairFront/14"
+        "HairFrontTop/14"
       ]
     },
     {
       "id": "15",
       "cells": [
         "HairCrown/15",
-        "HairFront/15"
+        "HairFrontTop/15"
       ]
     },
     {
       "id": "16",
       "cells": [
         "HairCrown/16",
-        "HairFront/16"
+        "HairFrontTop/16"
       ]
     },
     {
       "id": "17",
       "cells": [
         "HairCrown/17",
-        "HairFront/17"
+        "HairFrontTop/17"
       ]
     },
     {
       "id": "18",
       "cells": [
         "HairCrown/18",
-        "HairFront/18"
+        "HairFrontTop/18"
       ]
     },
     {
       "id": "19",
       "cells": [
         "HairCrown/19",
-        "HairFront/19"
+        "HairFrontTop/19"
       ]
     },
     {
       "id": "20",
       "cells": [
         "HairCrown/20",
-        "HairFront/20"
+        "HairFrontTop/20"
       ]
     },
     {
       "id": "21",
       "cells": [
         "HairCrown/21",
-        "HairFront/21"
+        "HairFrontTop/21"
       ]
     },
     {
       "id": "22",
       "cells": [
         "HairCrown/22",
-        "HairFront/22"
+        "HairFrontTop/22"
       ]
     },
     {
       "id": "23",
       "cells": [
         "HairCrown/23",
-        "HairFront/23"
+        "HairFrontTop/23"
       ]
     },
     {
       "id": "24",
       "cells": [
         "HairCrown/24",
-        "HairFront/24"
+        "HairFrontTop/24"
       ]
     },
     {
       "id": "25",
       "cells": [
         "HairCrown/25",
-        "HairFront/25"
+        "HairFrontTop/25"
       ]
     },
     {
       "id": "26",
       "cells": [
         "HairCrown/26",
-        "HairFront/26"
+        "HairFrontTop/26"
       ]
     },
     {
       "id": "27",
       "cells": [
         "HairCrown/27",
-        "HairFront/27"
+        "HairFrontTop/27"
       ]
     }
   ],
