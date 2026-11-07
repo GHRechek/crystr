@@ -109,12 +109,8 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
             shown={shown}
             earned={achievementGrid(badges.filter((b) => b.earned_at))}
             tradable={resolveShown(tradable.map((i) => `i:${i.id}`), badges, items, profile.handle, 10000)}
-            aside={
-              <Link href="/me/trades" className="px" style={{ fontSize: 11, color: "var(--pur-pale)", whiteSpace: "nowrap" }}>
-                TRADES{waiting ? ` · ${waiting}` : ""} →
-              </Link>
-            }
-            tradeHref="/me/trades"
+            aside={null}
+            tradeHref="/me/historikals"
             tradeCount={waiting}
             scan
             token={{

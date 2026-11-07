@@ -14,8 +14,6 @@ export default async function HistorikalsPage() {
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
         <Link href="/me" className="btn btn-sm">← ME</Link>
         <h1 className="px" style={{ fontSize: 13, color: "var(--pur-soft)", fontWeight: 400 }}>YOUR HISTORIKALS</h1>
-        <span className="spacer" />
-        <Link href="/me/trades" className="px" style={{ fontSize: 10, color: "var(--pur-pale)", textDecoration: "none" }}>EXCHANGE →</Link>
       </div>
       <p style={{ margin: 0, fontSize: 12.5, lineHeight: 1.6, color: "var(--text-3)" }}>
         Creatures to collect, trade and battle, face to face. A good one (usually rare) comes for every three people you help and for every main quest you finish, and one for every five battles you win.

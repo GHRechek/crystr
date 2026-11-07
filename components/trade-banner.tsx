@@ -10,7 +10,7 @@ export function TradeBanner({ who }: { who: string[] }) {
       : `${who[0]} and ${rest} ${rest === 1 ? "other" : "others"} have offered you badge trades.`;
 
   return (
-    <Link href="/me/trades" className="setup-banner" style={{ gap: 10, alignItems: "center" }}>
+    <Link href="/me/historikals" className="setup-banner" style={{ gap: 10, alignItems: "center" }}>
       <span style={{ fontSize: 12, lineHeight: 1.4, flex: "1 1 160px" }}>{line}</span>
       <span className="px" style={{ fontSize: 11 }}>
         SEE IT →

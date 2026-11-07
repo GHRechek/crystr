@@ -59,11 +59,7 @@ export default async function QuestsPage(props: { searchParams: Promise<{ pick?:
             earned={achievementGrid(badges.filter((b) => b.earned_at))}
             tradable={resolveShown(tradable.map((i) => `i:${i.id}`), badges, items, profile.handle, 10000)}
             current={shown.map((b) => b.key)}
-            aside={
-              <Link href="/me/trades" className="px" style={{ fontSize: 11, color: "var(--pur-pale)", whiteSpace: "nowrap" }}>
-                TRADES →
-              </Link>
-            }
+            aside={null}
           />
         }
         quests={

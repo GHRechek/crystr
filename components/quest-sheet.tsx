@@ -15,7 +15,7 @@ export const WHERE: Record<string, [string, string]> = {
   "visit-the-well": ["/well", "GO TO THE WELL"],
   "vote-on-a-motion": ["/ball?tab=motions", "SEE THE MOTIONS"],
   "publish-an-op-ed": ["/ball", "GO TO THE BALL"],
-  "first-trade": ["/me/trades", "YOUR TRADES"],
+  "first-trade": ["/me/historikals", "YOUR HISTORIKALS"],
 };
 
 /** Quests the system counts for you: how to go about it, and where to go. */
@@ -32,7 +32,7 @@ const CUSTOM: Record<string, { text: string; link?: [string, string] }> = {
   "ask-for-help": { text: "Go to your profile, tap your picture, choose ASK FOR HELP, and say what you need.", link: ["/me", "GO TO YOUR PROFILE"] },
   "top-five-in": { text: "Nothing to fill in: it happens when someone puts you in their Top 5. Meet people, whisper, make friends.", link: ["/people", "FIND PEOPLE"] },
   "got-token": { text: "Someone has to give you their token. Ask a friend to give you theirs from their Trades page.", link: ["/people", "FIND PEOPLE"] },
-  "gift-badge": { text: "Offer one of your Historikals to someone and ask for nothing back.", link: ["/me/trades", "GO TO TRADES"] },
+  "gift-badge": { text: "Offer one of your Historikals to someone and ask for nothing back.", link: ["/me/historikals", "YOUR HISTORIKALS"] },
   "max-fifty": { text: "Your max mana grows with every badge you earn. Keep earning.", link: ["/quests", "GO TO YOUR QUESTS"] },
   "all-eight": { text: "Earn each of the first eight badges: the ones everyone starts with. Check what is still undone in Side Quests.", link: ["/quests#side-quests", "GO TO SIDE QUESTS"] },
   "tier-three": { text: "Keep going on a badge that has steps, like First Words or Visit the Mana Well, until you reach its third step.", link: ["/quests#side-quests", "GO TO SIDE QUESTS"] },
