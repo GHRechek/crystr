@@ -98,7 +98,7 @@ export function AboutBadges({
   const LEAD_PX = 104 / 2 - EVEN;
   const endPx = leads ? LEAD_PX : compact ? Math.round(px * 1.35) : px;
   const nItems = (leads ? 1 : 0) + (token ? 1 : 0) + nBadges + (eyeEnd ? 1 : 0);
-  const shared = leads ? Math.max(22, Math.min(44, Math.floor((width + PORTRAIT_GAP - EVEN * nItems - endPx - (eyeEnd ? px : 0)) / Math.max(1, nBadges + (token ? 1 : 0))))) : 0;
+  const shared = leads ? Math.max(22, Math.min(Math.round(px * 0.78), Math.floor((width + PORTRAIT_GAP - EVEN * nItems - endPx - (eyeEnd ? px : 0)) / Math.max(1, nBadges + (token ? 1 : 0))))) : 0;
   // Elsewhere (someone else's profile) the Proof leads, a size up, and the badges step down to fit.
   const tokPx = leads ? shared : compact ? Math.round(px * 1.35) : px;
   const badgePx = leads
