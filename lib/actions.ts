@@ -487,7 +487,11 @@ export async function acceptTerms(fd: FormData) {
     await wentWrong();
     redirect("/terms");
   }
-  redirect("/");
+  // Someone new goes straight to the registry; anyone else back in.
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  const { data: me } = user ? await supabase.from("profiles").select("onboarded").eq("id", user.id).single() : { data: null };
+  redirect(me && me.onboarded === false ? "/welcome" : "/");
 }
 
 // ---------------------------------------------------------------- the override

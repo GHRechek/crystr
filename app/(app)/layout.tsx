@@ -37,7 +37,12 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   // lands on the breach and not the form. A missing flag means a database from before it:
   // let them in.
   const welcoming = profile.onboarded === false;
-  const here = (await headers()).get("x-pathname") ?? "";
+  const hdrs = await headers();
+  const here = hdrs.get("x-pathname") ?? "";
+  // A form's redirect is drawn in the same response as the form, and the path the proxy saw is the
+  // form's page (the terms, say), not where it sends you. Judging that path would send you on to
+  // /welcome again and again, a blank screen; the action has already decided where you go.
+  const fromAction = !!hdrs.get("next-action");
   // Whispers with something new, for the bubble on the tab. The one open right now is
   // being read, so it is not counted.
   const openWhisper = /^\/whispers\/(\d+)/.exec(here)?.[1];
@@ -45,7 +50,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   if (welcoming) {
     const path = here;
     const open = ["/welcome", "/wiki", "/me/avatar", "/breach"].some((p) => path === p || path.startsWith(`${p}/`));
-    if (!open) {
+    if (!open && !fromAction) {
       const jar = await cookies();
       const key = jar.get(BREACH_COOKIE)?.value || jar.get(SCAN_COOKIE)?.value;
       redirect(key ? "/breach" : "/welcome");
