@@ -2039,3 +2039,9 @@ select.input { border: 0; }
 .bv-item img { pointer-events: none; -webkit-user-drag: none; user-select: none; }
 /* A page that fills the screen and scrolls inside itself (the face maker). */
 .decay-wrap:has(> .fill-screen) { height: 100%; }
+
+/* Low on mana: the restore sheet, opened from the potion in the header. */
+.restore-wrap { position: fixed; inset: 0; z-index: 85; background: rgba(10, 6, 22, .72); display: flex; align-items: flex-end; justify-content: center; }
+.restore-sheet { width: 100%; max-width: 480px; background: var(--device); box-shadow: 0 -2px 0 #9184d9; padding: 16px 16px 22px; display: flex; flex-direction: column; gap: 12px; max-height: 85vh; overflow-y: auto; animation: restore-up .18s steps(4); }
+@keyframes restore-up { from { transform: translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .restore-sheet { animation: none; } }

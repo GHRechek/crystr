@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { requireMe, getPendingVouches, getTopSixNotices, getTradeNotices, hasAcceptedTerms, claimBirthdayBadge, getUnreadThreadIds } from "@/lib/data";
+import { requireMe, getQuests, getPendingVouches, getTopSixNotices, getTradeNotices, hasAcceptedTerms, claimBirthdayBadge, getUnreadThreadIds } from "@/lib/data";
 import { birthdayBadgeDue } from "@/lib/birthday";
 import { EDGE } from "@/lib/toast";
 import { TERMS_VERSION } from "@/lib/terms";
@@ -69,6 +69,10 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       ? { k: "HAPPY BIRTHDAY", t: "The City gives you a Historikal draw for the day. Open it from the monster button beside your portrait: FIND ONE!", e: EDGE.mag }
       : null);
   const mana = profile.mana;
+  // Running low (a quarter or less): the potion opens a restore sheet with the Well's tasks.
+  const restoreTasks = !welcoming && mana <= cap * 0.25
+    ? (await getQuests(userId)).map(({ slug, glyph, chip, title, sub, reward, ready_at }) => ({ slug, glyph, chip, title, sub, reward, ready_at }))
+    : undefined;
 
   return (
     <div className="stage">
@@ -92,7 +96,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             >
               <i style={{ width: `${Math.max(2, (mana / cap) * 100)}%` }} />
             </div>
-            <ManaButton mana={mana} cap={cap} closed={welcoming} />
+            <ManaButton mana={mana} cap={cap} closed={welcoming} tasks={restoreTasks} />
             <div className="mana-count" style={{ color: manaColor(mana) }}>
               {String(mana).padStart(2, "0")}/{cap}
             </div>
