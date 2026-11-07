@@ -213,7 +213,7 @@ function Rays() {
 }
 
 /** Sparkles around the risen badge: x, y (from the badge's corner), colour, delay, size, and whether it drifts down. */
-const SPARKS: [number, number, string, number, number, number][] = [[97, 38, "#e0398a", 1.17, 1, 0], [81, 75, "#9184d9", 1.05, 2, 0], [64, 86, "#4c7df0", 0.75, 1, 0], [33, 97, "#ffffff", 1.49, 1, 0], [-17, 68, "#e0398a", 1.05, 1, 0], [-19, 40, "#9184d9", 1.76, 1, 0], [-2, 12, "#4c7df0", 0.75, 2, 0], [16, -5, "#ffffff", 1.47, 1, 0], [52, -15, "#e0398a", 0.34, 1, 0], [86, 15, "#9184d9", 0.11, 1, 0], [42, 129, "#9184d9", 1.71, 2, 1], [50, 124, "#4c7df0", 0.66, 1, 1], [60, 109, "#ffffff", 1.26, 2, 1], [77, 143, "#e0398a", 0.63, 1, 1], [7, 121, "#9184d9", 1.67, 1, 1], [82, 122, "#4c7df0", 2.12, 1, 1], [66, 132, "#ffffff", 1.93, 2, 1], [27, 117, "#e0398a", 1.09, 2, 1]];
+const SPARKS: [number, number, string, number, number, number][] = [[97, 38, "#e0398a", 1.17, 1, 0], [64, 86, "#4c7df0", 0.75, 1, 0], [-17, 68, "#e0398a", 1.05, 1, 0], [-2, 12, "#4c7df0", 0.75, 2, 0], [52, -15, "#e0398a", 0.34, 1, 0], [42, 129, "#9184d9", 1.71, 2, 1], [77, 143, "#e0398a", 0.63, 1, 1], [66, 132, "#ffffff", 1.93, 2, 1]];
 
 /** Where the rays meet, as a share of the screen's height. The badge comes to rest exactly here. */
 const RAY_CY = 0.38;

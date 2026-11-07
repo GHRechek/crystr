@@ -332,7 +332,7 @@ export function helpingRow(badges: BadgeRow[], helps: number): ShownBadge | null
   return {
     key: "a:a-helping-hand",
     badge: { slug: b.slug, art: b.art, tiers: b.tiers, tier: Math.max(1, b.tier) },
-    title: "Help Someone Else",
+    title: "I'm a Helper",
     line: "Help someone with their problem. Scan their QR to confirm!",
     locked: false,
     progress: { n: helps % 10, of: 10 },
