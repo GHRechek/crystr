@@ -4,6 +4,7 @@
 export const SPECIES = [
   { value: "elf", label: "Elf" },
   { value: "forsaken", label: "Forsaken" },
+  { value: "undead", label: "Undead" },
   { value: "shifter", label: "Shifter" },
   { value: "human", label: "Human" },
   { value: "orc", label: "Orc" },
@@ -20,4 +21,7 @@ export type Kind = { species?: string | null; spellcaster?: boolean | null; is_w
 
 /** Whether this person is the kind a quest asks for (anyone, when it names no kind). */
 export const isKind = (p: Kind, target: string | null | undefined): boolean =>
-  !target ? true : target === "witch" ? !!p.is_witch : target === "spellcaster" ? !!p.spellcaster || !!p.is_witch : target === "leylines" ? !!p.leylines || !!p.is_witch : p.species === target;
+  !target ? true : target === "witch" ? !!p.is_witch : target === "spellcaster" ? !!p.spellcaster || !!p.is_witch : target === "leylines" ? !!p.leylines || !!p.is_witch : target === "forsaken" ? isForsaken(p.species) : p.species === target;
+
+/** The Forsaken are a family: the Forsaken themselves, the undead, and planars. */
+export const isForsaken = (species: string | null | undefined) => species === "forsaken" || species === "undead" || species === "planar";

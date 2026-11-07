@@ -18,6 +18,7 @@ export const SPECIES = [
   { value: "shifter", label: "Shifter" },
   { value: "elf", label: "Elf" },
   { value: "planar", label: "Planar" },
+  { value: "undead", label: "Undead" },
   // Not a species the City registers: choosing it sends you to the administrator.
   { value: "other", label: "Other" },
 ] as const;

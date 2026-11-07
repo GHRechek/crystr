@@ -8,7 +8,7 @@ import type { Author } from "@/lib/data";
 
 type Row = { person: Author; species: string | null; spellcaster: boolean; witch: boolean };
 
-const KINDS = ["elf", "forsaken", "shifter", "human", "orc", "goblin", "planar", "spellcaster", "witch"];
+const KINDS = ["elf", "forsaken", "undead", "shifter", "human", "orc", "goblin", "planar", "spellcaster", "witch"];
 
 const matches = (r: Row, k: string) => (k === "spellcaster" ? r.spellcaster : k === "witch" ? r.witch : r.species === k);
 

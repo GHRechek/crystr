@@ -8,6 +8,7 @@ const SPECIES: Record<string, string> = {
   goblin: "a goblin",
   elf: "an elf",
   forsaken: "a Forsaken",
+  undead: "an undead",
   human: "a human",
   orc: "an orc",
   shifter: "a shifter",
