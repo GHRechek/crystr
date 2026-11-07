@@ -297,13 +297,13 @@ function TeamPicker({ v, act }: { v: View; act: (a: Record<string, unknown>) => 
 
       <div className="en-dock">
         <button type="button" data-slot="stake" className={`en-slot en-slot-stake${stake ? " full" : ""}`} onClick={() => { if (stake) { playClick(); setStake(null); } }} aria-label={stake ? "Your stake: tap to take it back" : "Stake: drag your Proof or a Historikal here for an epic fight"}>
-          {stake ? ("token" in stake ? <TokenPic design={v.my_token} size={44} /> : <Creature slug={hkOf(stake.item)?.slug ?? ""} size={48} />) : <span className="px">STAKE</span>}
+          {stake ? ("token" in stake ? <TokenPic design={v.my_token} size={44} /> : <Creature slug={hkOf(stake.item)?.slug ?? ""} size={48} />) : <span className="px en-slotq gold" aria-hidden>!</span>}
           <b className="px en-slotlabel">{stake ? ("token" in stake ? "PROOF · EPIC" : "HISTORIKAL STAKED") : "PROOF / HISTORIKAL"}</b>
         </button>
         {team.map((id, i) => (
           <button key={i} type="button" data-slot={`t${i}`} className={`en-slot en-slot-${["c", "l", "r"][i]}${id !== null ? " full" : ""}`} onClick={() => { if (id !== null) { playClick(); setTeam((t) => t.map((x, j) => (j === i ? null : x))); } }} aria-label={id !== null ? `${hkOf(id)?.name}: tap to take it out` : `Team slot ${i + 1}`}>
             {id !== null ? <span className="en-mini"><Stats h={hkOf(id)!} k={2} only="type" /></span> : null}
-            {id !== null ? <Creature slug={hkOf(id)?.slug ?? ""} size={56} /> : <span className="px">{i + 1}</span>}
+            {id !== null ? <Creature slug={hkOf(id)?.slug ?? ""} size={56} /> : <span className="px en-slotq" aria-hidden style={{ animationDelay: `${i * -0.9}s` }}>?</span>}
             {id !== null ? <span className="en-mini"><Stats h={hkOf(id)!} hp={hkOf(id)!.hp} k={2} only="hearts" /></span> : null}
           </button>
         ))}
