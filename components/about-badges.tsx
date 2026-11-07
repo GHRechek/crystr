@@ -82,28 +82,24 @@ export function AboutBadges({
   // and the trade (or eye) button share the width.
   const gap = 4;
   const px = compact ? Math.max(28, Math.min(48, Math.floor((width - gap * 5) / 6))) : 42;
-  // Beside the portrait the token leads, a size up, and the badges after it step down to fit; the
-  // trade button keeps the plain size. All of them sit on one centre line.
-  const tokPx = compact ? Math.round(px * 1.35) : px;
-  // The trade (or eye) button matches the token, and the badges spread evenly between the two, so the
-  // row runs from the portrait to the edge of the page's text column.
-  // A size smaller than the token, sitting on the same bottom line as the token and the portrait (the row is
-  // lowered 6px under the portrait to make up for the space under the token's drawing, so it rises 6px back).
-  // The Historikals button leads the row beside the portrait, the size of the Proof.
-  const endPx = compact ? tokPx : px;
-  // With the Historikals button leading beside the portrait, every gap is the same EVEN px, the one
-  // between the portrait and the button too (the button steps back over the portrait's 11px), and the
-  // badges take what is left between them.
-  const PORTRAIT_GAP = 11;
-  const EVEN = 7;
   const leads = compact && !!tradeHref;
   const nBadges = Math.min(shown.length, SHOW_MAX);
   const eyeEnd = compact && !editable && (earned.length || tradable.length);
-  const fixedPx = (leads ? endPx : 0) + (token ? tokPx : 0) + (eyeEnd ? px : 0);
+  // Your own row beside the portrait: the Historikals button leads, small enough to leave the same EVEN
+  // gap above it (to the banner's edge, half the 104px portrait up) as beside it; the Proof and the
+  // badges after it are all one size, sharing what is left; every gap is EVEN px, the one between the
+  // portrait and the button too (the button steps back over the portrait's 11px).
+  const PORTRAIT_GAP = 11;
+  const EVEN = 7;
+  const LEAD_PX = 104 / 2 - EVEN;
+  const endPx = leads ? LEAD_PX : compact ? Math.round(px * 1.35) : px;
   const nItems = (leads ? 1 : 0) + (token ? 1 : 0) + nBadges + (eyeEnd ? 1 : 0);
-  const badgePx = leads && nBadges
-    ? Math.max(22, Math.min(Math.round(px * 0.9), Math.floor((width + PORTRAIT_GAP - EVEN * nItems - fixedPx) / nBadges)))
-    : compact ? Math.max(22, Math.min(Math.round(px * 0.82), Math.floor((width - gap * 5 - endPx - tokPx) / 4))) : px;
+  const shared = leads ? Math.max(22, Math.min(44, Math.floor((width + PORTRAIT_GAP - EVEN * nItems - endPx - (eyeEnd ? px : 0)) / Math.max(1, nBadges + (token ? 1 : 0))))) : 0;
+  // Elsewhere (someone else's profile) the Proof leads, a size up, and the badges step down to fit.
+  const tokPx = leads ? shared : compact ? Math.round(px * 1.35) : px;
+  const badgePx = leads
+    ? shared
+    : compact ? Math.max(22, Math.min(Math.round(px * 0.82), Math.floor((width - gap * (Math.max(4, nBadges) + 1) - endPx - tokPx) / Math.max(4, nBadges)))) : px;
   const endBtn: React.CSSProperties = compact
     ? // Its bottom sits on the portrait's (the row is lowered 6px, so it rises 6px back), and the space after
       // it matches the 11px between it and the portrait.
