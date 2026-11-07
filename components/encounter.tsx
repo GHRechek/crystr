@@ -289,12 +289,15 @@ function TeamPicker({ v, act }: { v: View; act: (a: Record<string, unknown>) => 
   return (
     <>
       <div className="px en-q">PICK YOUR TEAM OF 3</div>
-      {v.their_stake && "token" in v.their_stake ? <div className="px en-epicask en-theirstake">★ {up(v.them.handle)} PUT THEIR PROOF UP · AN EPIC FIGHT ★</div>
-        : v.their_stake?.item ? <div className="px en-epicask en-theirstake">{up(v.them.handle)} STAKED {up(v.their_stake.item.name)}</div> : null}
+      <div className="en-tophints">
+        {v.their_stake && "token" in v.their_stake ? <div className="px en-epicask">★ {up(v.them.handle)} PUT THEIR PROOF UP · AN EPIC FIGHT ★</div>
+        : v.their_stake?.item ? <div className="px en-epicask">{up(v.them.handle)} STAKED {up(v.their_stake.item.name)}</div> : null}
+        <div className="px en-say">{full ? (stake ? "READY" : canToken ? "OR DRAG YOUR PROOF TO THE GOLD SLOT" : "READY") : `DRAG ${team.filter((x) => x === null).length} UP${canToken && !stake ? " · OR YOUR PROOF" : ""}`}</div>
+      </div>
 
       <div className="en-dock">
         <button type="button" data-slot="stake" className={`en-slot en-slot-stake${stake ? " full" : ""}`} onClick={() => { if (stake) { playClick(); setStake(null); } }} aria-label={stake ? "Your stake: tap to take it back" : "Stake: drag your Proof or a Historikal here for an epic fight"}>
-          {stake ? ("token" in stake ? <TokenPic design={v.my_token} size={52} /> : <Creature slug={hkOf(stake.item)?.slug ?? ""} size={56} />) : <span className="px">STAKE</span>}
+          {stake ? ("token" in stake ? <TokenPic design={v.my_token} size={44} /> : <Creature slug={hkOf(stake.item)?.slug ?? ""} size={48} />) : <span className="px">STAKE</span>}
           <b className="px en-slotlabel">{stake ? ("token" in stake ? "PROOF · EPIC" : "HISTORIKAL STAKED") : "PROOF / HISTORIKAL"}</b>
         </button>
         {team.map((id, i) => (
@@ -307,7 +310,6 @@ function TeamPicker({ v, act }: { v: View; act: (a: Record<string, unknown>) => 
       </div>
 
       <div className="en-shelf en-teamshelf">
-        <div className="px en-say">{full ? (stake ? "READY" : canToken ? "OR DRAG YOUR PROOF TO THE GOLD SLOT" : "READY") : `DRAG ${team.filter((x) => x === null).length} UP${canToken && !stake ? " · OR YOUR PROOF" : ""}`}</div>
         <div className="en-row" onPointerMove={move} onPointerUp={release} onPointerCancel={cancel}>
           {canToken ? (
             <button type="button" className={`en-tokenitem${stake && "token" in stake ? " used" : ""}`} onPointerDown={down({ token: true })} onClick={tap({ token: true })} aria-label="Your Proof: put it up for an epic fight">

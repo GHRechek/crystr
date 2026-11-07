@@ -1967,7 +1967,7 @@ select.input { border: 0; }
 /* Team picking: three slots (and a gold stake slot) above one swipeable row. */
 .en-theirstake { position: absolute; left: 0; right: 0; top: calc(60px + env(safe-area-inset-top)); z-index: 4; padding: 0 16px; }
 .en-dock { position: absolute; left: 0; right: 0; top: calc(38% - 48px); z-index: 4; display: grid; grid-template-columns: repeat(3, 84px); grid-template-areas: "l c r" ". s ."; justify-content: center; gap: 8px 14px; padding: 0 10px; }
-.en-slot-l { grid-area: l; } .en-slot-c { grid-area: c; } .en-slot-r { grid-area: r; } .en-slot-stake { grid-area: s; margin-top: 0; height: 72px; }
+.en-slot-l { grid-area: l; } .en-slot-c { grid-area: c; } .en-slot-r { grid-area: r; } .en-slot.en-slot-stake { grid-area: s; justify-self: center; margin-top: 4px; width: 60px; height: 60px; }
 .en-slot { position: relative; width: 84px; height: 96px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; border: 0; background: none; color: #d2cefd; cursor: pointer; font-size: 18px;
   outline: 2px dashed rgba(224, 57, 138, .7); outline-offset: -2px; }
 .en-slot.full { outline: none; }
@@ -1979,3 +1979,4 @@ select.input { border: 0; }
 .en-row button { user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
 .en-tokenitem { justify-content: center; }
 .en-ghost { position: fixed; z-index: 90; transform: translate(-50%, -60%) scale(1.1); pointer-events: none; }
+.en-tophints { position: absolute; left: 0; right: 0; top: calc(60px + env(safe-area-inset-top)); z-index: 4; display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 0 16px; text-align: center; }
