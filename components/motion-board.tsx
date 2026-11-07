@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Cost } from "@/components/mana";
 import { getMotions, type Motion } from "@/lib/data";
-import { castVote } from "@/lib/actions";
+import { castVote, voteAgain } from "@/lib/actions";
 import { ago, closesIn, corrupt, COSTS } from "@/lib/crystr";
 
 /** The motion board, as a tab of the Ball: what is open to vote on, and what has been decided.
@@ -173,24 +173,42 @@ export function Open({ motion, mana, decay }: { motion: Motion; mana: number; de
       </div>
 
       {motion.my_side ? (
-        <div
-          className="px"
-          style={{
-            minHeight: 40,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            borderRadius: "var(--px-r)",
-            fontSize: 11,
-            background:
-              motion.my_side === "for" ? "rgba(224,57,138,.12)" : "rgba(76,125,240,.12)",
-            boxShadow: `inset 0 0 0 1px ${
-              motion.my_side === "for" ? "var(--mag-edge)" : "var(--blu-edge)"
-            }`,
-            color: motion.my_side === "for" ? "var(--mag-pale)" : "var(--blu-pale)",
-          }}
-        >
-          YOU SAID {motion.my_side === "for" ? "YAY" : "NAY"} <Cost n={COSTS.vote} />
+        <div style={{ display: "flex", gap: 8 }}>
+          <div style={{ flex: 1, display: "flex" }}>
+          <div
+            className="px"
+            style={{
+              flex: 1,
+              minHeight: 40,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: "var(--px-r)",
+              fontSize: 11,
+              background:
+                motion.my_side === "for" ? "rgba(224,57,138,.12)" : "rgba(76,125,240,.12)",
+              boxShadow: `inset 0 0 0 1px ${
+                motion.my_side === "for" ? "var(--mag-edge)" : "var(--blu-edge)"
+              }`,
+              color: motion.my_side === "for" ? "var(--mag-pale)" : "var(--blu-pale)",
+            }}
+          >
+            YOU SAID {motion.my_side === "for" ? "YAY" : "NAY"}{motion.my_votes > 1 ? " · TWICE" : ""}
+          </div>
+          </div>
+          {/* Once more, the same way: it counts twice. */}
+          {motion.my_votes < 2 ? (
+            <form action={voteAgain} style={{ flex: 1, display: "flex" }}>
+              <input type="hidden" name="motion_id" value={motion.id} />
+              <button
+                type="submit"
+                className={`btn btn-block ${motion.my_side === "for" ? "btn-mag" : "btn-blue"}`}
+                style={{ minHeight: 40, fontSize: 11, opacity: mana >= COSTS.voteAgain ? 1 : 0.5 }}
+              >
+                VOTE AGAIN <Cost n={COSTS.voteAgain} />
+              </button>
+            </form>
+          ) : null}
         </div>
       ) : (
         <div style={{ display: "flex", gap: 8 }}>
@@ -246,7 +264,7 @@ function Decided({ motion, decay }: { motion: Motion; decay: number }) {
         </span>
         <span className="spacer" />
         <span style={{ color: motion.my_side ? "var(--pur-pale)" : "var(--muted)" }}>
-          {motion.my_side ? `YOU SAID ${motion.my_side === "for" ? "YAY" : "NAY"}` : "DID NOT VOTE"}
+          {motion.my_side ? `YOU SAID ${motion.my_side === "for" ? "YAY" : "NAY"}${motion.my_votes > 1 ? " TWICE" : ""}` : "DID NOT VOTE"}
         </span>
         <span style={{ color: "var(--dim)" }}>{ago(motion.closes_at)}</span>
       </div>

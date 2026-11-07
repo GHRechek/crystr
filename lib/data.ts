@@ -481,6 +481,8 @@ export type Motion = {
   votes_for: number;
   votes_against: number;
   my_side: "for" | "against" | null;
+  /** How many votes you've cast on it: one, or two once you've voted again. */
+  my_votes: number;
 };
 
 export async function getMotions(): Promise<{ open: Motion[]; past: Motion[] }> {
@@ -491,7 +493,7 @@ export async function getMotions(): Promise<{ open: Motion[]; past: Motion[] }> 
       .select("id, kicker, title, blurb, closes_at, briefing_id")
       .order("closes_at", { ascending: false }),
     supabase.rpc("motion_tallies"),
-    supabase.from("motion_votes").select("motion_id, side"),
+    supabase.from("motion_votes").select("motion_id, side, votes"),
   ]);
 
   const tally = new Map<number, { f: number; a: number }>();
@@ -502,7 +504,8 @@ export async function getMotions(): Promise<{ open: Motion[]; past: Motion[] }> 
     });
   }
   const my = new Map<number, "for" | "against">();
-  for (const v of mine ?? []) my.set(v.motion_id as number, v.side as "for" | "against");
+  const myVotes = new Map<number, number>();
+  for (const v of mine ?? []) { my.set(v.motion_id as number, v.side as "for" | "against"); myVotes.set(v.motion_id as number, Number(v.votes ?? 1)); }
 
   const now = Date.now();
   const all: Motion[] = (motions ?? []).map((m) => ({
@@ -515,6 +518,7 @@ export async function getMotions(): Promise<{ open: Motion[]; past: Motion[] }> 
     votes_for: tally.get(m.id as number)?.f ?? 0,
     votes_against: tally.get(m.id as number)?.a ?? 0,
     my_side: my.get(m.id as number) ?? null,
+    my_votes: myVotes.get(m.id as number) ?? 0,
   }));
 
   return {

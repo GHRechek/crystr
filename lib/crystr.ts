@@ -24,6 +24,8 @@ export const COSTS = {
   whisper: 1,
   report: 2,
   vote: 3,
+  /** A second vote on the same motion, the same way: it counts twice. */
+  voteAgain: 15,
   oped: 6,
   topSix: 4,
   /** What adding a fact to a wiki page takes. Display only: the database charges it. */

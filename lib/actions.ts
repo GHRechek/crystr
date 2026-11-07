@@ -631,6 +631,20 @@ export async function castVote(fd: FormData) {
   revalidatePath("/ball");
 }
 
+/** A second vote on a motion you've voted on: the same side again, counted twice, for 15. */
+export async function voteAgain(fd: FormData) {
+  const r = await call("cr_vote_again", { p_motion: Number(fd.get("motion_id")) });
+  if (!r.ok) {
+    if (r.code === "insufficient") await broke(r, "A second vote takes fifteen, and you have {have}. Go and recover, then come back.");
+    else if (r.code === "already") await setFlash("COUNTED TWICE", "You have already voted twice on this one.", EDGE.purple);
+    else if (r.code === "closed") await setFlash("CLOSED", "That motion closed while you were deciding. There will be another.", EDGE.purple);
+    else await wentWrong();
+  } else {
+    await setFlash("COUNTED TWICE", `Your second vote is in, the same way as your first. That took fifteen.`, (r as { side?: string }).side === "for" ? EDGE.mag : EDGE.blue);
+  }
+  revalidatePath("/ball");
+}
+
 export async function createMotion(fd: FormData) {
   const r = await call("cr_create_motion", {
     m_kicker: str(fd, "m_kicker"),
