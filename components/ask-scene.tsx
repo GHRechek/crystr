@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { BadgeArt } from "@/components/badges";
 
 /** A short, original 8-bit fanfare: a rising arpeggio and a held chord, square waves. Plays once. */
@@ -193,7 +193,7 @@ function Rays() {
       const pulse = reduce ? 1 : 0.88 + 0.12 * Math.sin(t / 9), spin = reduce ? 0 : t * 0.006, step = Math.PI / 6;
       for (let y = 0; y < H; y++) {
         for (let x = 0; x < W; x++) {
-          let a = Math.atan2(y + 0.5 - H * 0.42, x + 0.5 - W / 2) - spin;
+          let a = Math.atan2(y + 0.5 - H * RAY_CY, x + 0.5 - W / 2) - spin;
           a = ((a % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
           const i = Math.floor(a / step), o = (y * W + x) * 4;
           const col = i % 2 ? BG : RAY, m = i % 2 ? 1 : pulse;
@@ -211,6 +211,9 @@ function Rays() {
   }, []);
   return <canvas ref={ref} aria-hidden style={{ position: "absolute", inset: 0, width: "100%", height: "100%", imageRendering: "pixelated" }} />;
 }
+
+/** Where the rays meet, as a share of the screen's height. The badge comes to rest exactly here. */
+const RAY_CY = 0.38;
 
 export type AskSide = "ask" | "wait";
 
@@ -246,6 +249,8 @@ export function AskScene({
   sound?: boolean;
 }) {
   const chestRef = useRef<HTMLDivElement>(null);
+  const sceneRef = useRef<HTMLDivElement>(null);
+  const badgeRef = useRef<HTMLDivElement>(null);
   const [drag, setDrag] = useState<{ x: number; y: number } | null>(null);
   const start = useRef<{ x: number; y: number; t: number; px: number; py: number } | null>(null);
   const last = useRef<{ x: number; y: number; t: number }[]>([]);
@@ -281,6 +286,15 @@ export function AskScene({
       return () => window.clearTimeout(id);
     }
   }, [state, sound, onClose]);
+
+  // How far the badge climbs: from the chest's mouth to the point where the rays meet.
+  useLayoutEffect(() => {
+    if (state !== "open") return;
+    const b = badgeRef.current, sc = sceneRef.current;
+    if (!b || !sc) return;
+    const r = b.getBoundingClientRect(), box = sc.getBoundingClientRect();
+    b.style.setProperty("--rise", `${Math.round(box.top + box.height * RAY_CY - (r.top + r.height / 2))}px`);
+  }, [state]);
 
   const canDrag = side === "ask" && state === "idle";
 
@@ -323,7 +337,7 @@ export function AskScene({
 
   const keyPos = fling ?? drag ?? { x: 0, y: 0 };
   return (
-    <div role="dialog" aria-label={question} className="ask-scene">
+    <div ref={sceneRef} role="dialog" aria-label={question} className="ask-scene">
       <Rays />
       <div className={`ask-dim${state === "unlocking" ? " is-on" : state === "open" ? " is-after" : ""}`} aria-hidden />
       <div className="px ask-question">
@@ -340,7 +354,7 @@ export function AskScene({
       <div className="ask-stage">
         <div ref={chestRef}>
           <Chest open={state === "open"} quiet={state !== "idle"}>
-            <div className="ask-badge">
+            <div ref={badgeRef} className="ask-badge">
               <BadgeArt b={{ art: badge.art, slug: badge.slug, tiers: badge.tiers ?? 1 }} got tier={1} size={84} />
               <span className="ask-glint g1" aria-hidden />
               <span className="ask-glint g2" aria-hidden />
