@@ -1612,6 +1612,8 @@ select {
   --blk-mag-hi: #a0255f;
   --blk-blu: #2d4fbf;
   --blk-blu-hi: #375ad6;
+  --blk-motion: #3a1230; /* motions: a deep dark pink */
+  --blk-oped: #2a2a32;   /* op-eds: grey */
 }
 .btn {
   border: 0;
