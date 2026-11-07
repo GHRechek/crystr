@@ -5,7 +5,8 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import jsQR from "jsqr";
 import { BadgeArt } from "@/components/badges";
-import { allowTrade, claimBadge, claimHelp, scanPerson, type Scanned } from "@/lib/actions";
+import { claimBadge, claimHelp, scanPerson, type Scanned } from "@/lib/actions";
+import { startEncounter } from "@/components/encounter";
 import { targetLabel } from "@/lib/species";
 
 /** The camera, full screen, looking for another person's CRYSTR code. A code that points at a
@@ -114,7 +115,9 @@ export function QrScanner({ onClose, tradesHref, waiting, mode = "general", only
             <div style={{ display: "flex", gap: 8 }}>
               {(
                 [
-                  ["⇄", "TRADE", async () => { await allowTrade(found.handle); router.push(`/u/${found.handle}/trade`); onClose(); }],
+                  // Trades and battles happen right here, on both phones at once.
+                  ["⇄", "TRADE", async () => { onClose(); await startEncounter("trade", found.id); }],
+                  ["⚔", "BATTLE", async () => { onClose(); await startEncounter("battle", found.id); }],
                   ["☺", "PROFILE", () => { router.push(`/u/${found.handle}`); onClose(); }],
                 ] as [string, string, () => void][]
               ).map(([icon, label, go]) => (

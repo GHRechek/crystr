@@ -15,6 +15,7 @@ import { ManaButton } from "@/components/mana";
 import { VouchBanner } from "@/components/vouch-banner";
 import { TopSixBanner } from "@/components/top-six-banner";
 import { TradeBanner } from "@/components/trade-banner";
+import { EncounterHost } from "@/components/encounter";
 import { BADGE_MANA, BASE_CAP, WELCOME_CAP, hasStarterHandle, manaColor } from "@/lib/crystr";
 import { BREACH_COOKIE, SCAN_COOKIE } from "@/lib/breach";
 
@@ -118,6 +119,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         </main>
 
         {flash ? <Toast flash={flash} /> : null}
+
+        {/* Someone has scanned you to trade or battle: it opens here, on both phones. */}
+        {welcoming ? null : <EncounterHost />}
 
         <TabBar welcoming={welcoming} unreadWhispers={unreadWhispers} />
       </div>

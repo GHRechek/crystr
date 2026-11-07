@@ -34,7 +34,7 @@ export function playFanfare() {
 
 /** The build-up while the lock gives: an original rising, quickening zigzag in square waves over a low
  *  triangle drone, ending on a held note that wants to resolve (the fanfare resolves it). About 1.6s. */
-function playBuildUp() {
+export function playBuildUp() {
   try {
     const AC = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
     if (!AC) return;
@@ -76,7 +76,7 @@ function playBuildUp() {
 }
 
 /** The lid giving way: a low wooden clack, then a short upward pop. Deeper and rounder than the lock's click. */
-function playLidOpen() {
+export function playLidOpen() {
   try {
     const AC = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
     if (!AC) return;
@@ -105,7 +105,7 @@ function playLidOpen() {
 }
 
 /** A lock turning over, for the key going in: a sharp noise tick, then a lower clunk. */
-function playClick() {
+export function playClick() {
   try {
     const AC = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
     if (!AC) return;
@@ -129,7 +129,7 @@ function playClick() {
 }
 
 /** A whoosh, for a key thrown away. */
-function playWhoosh() {
+export function playWhoosh() {
   try {
     const AC = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
     if (!AC) return;
@@ -174,7 +174,7 @@ function Key() {
 
 /** The background: wide pixel-edged rays in the CRYSTR colours, drawn small and scaled up, turning slowly
  *  and gently strobing. */
-function Rays() {
+export function Rays({ bg = [30, 50, 128], ray = [58, 100, 204] }: { bg?: number[]; ray?: number[] } = {}) {
   const ref = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
     const c = ref.current;
@@ -186,7 +186,7 @@ function Rays() {
     let t = 0;
     // Each pixel is worked out on its own, so every edge is a hard step with no in-between colours.
     const img = ctx.createImageData(W, H), d = img.data;
-    const BG = [30, 50, 128], RAY = [58, 100, 204]; // a darker blue, and the chest panels' blue
+    const BG = bg, RAY = ray; // by default a darker blue, and the chest panels' blue
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const draw = () => {
       t += 1;
