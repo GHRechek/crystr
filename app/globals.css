@@ -1963,3 +1963,18 @@ select.input { border: 0; }
 
 /* Battles show creatures plain: no rarity outline. */
 .en-battle .hk-ring { filter: none !important; }
+
+/* Team picking: three slots (and a gold stake slot) above one swipeable row. */
+.en-theirstake { position: absolute; left: 0; right: 0; top: calc(60px + env(safe-area-inset-top)); z-index: 4; padding: 0 16px; }
+.en-dock { position: absolute; left: 0; right: 0; top: 30%; z-index: 4; display: flex; justify-content: center; gap: 8px; padding: 0 10px; }
+.en-slot { position: relative; width: 76px; height: 96px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; border: 0; background: none; color: #d2cefd; cursor: pointer; font-size: 18px;
+  outline: 2px dashed rgba(224, 57, 138, .7); outline-offset: -2px; }
+.en-slot.full { outline: none; }
+.en-slot-stake { color: #f2b544; outline-color: rgba(242, 181, 68, .8); font-size: 11px; }
+.en-slotlabel { position: absolute; bottom: -18px; left: 0; right: 0; font-size: 9px; font-weight: 400; color: #f2b544; text-align: center; }
+.en-teamshelf { bottom: calc(110px + env(safe-area-inset-bottom)); }
+.en-row button.used { opacity: .3; }
+.en-row button.out { opacity: .5; cursor: default; } .en-row button.out img { filter: grayscale(1) brightness(.6); }
+.en-row button { user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+.en-tokenitem { justify-content: center; }
+.en-ghost { position: fixed; z-index: 90; transform: translate(-50%, -60%) scale(1.1); pointer-events: none; }
