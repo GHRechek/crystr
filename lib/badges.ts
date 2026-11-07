@@ -7,6 +7,7 @@
 // 20261028070000_badge_tiers.sql); this is what the screens need.
 
 import { normalizeToken, tokenSrc, tokenTitle } from "@/lib/token";
+import { kindArtSrc } from "@/lib/historikals";
 
 export type BadgeRow = {
   slug: string;
@@ -186,7 +187,7 @@ export function resolveShown(
             : it.maker?.handle === owner
               ? "Earned by helping others."
               : it.kindRow.blurb || "A tradable badge.";
-      out.push({ key, src: `/badges/tradable/${it.kindRow.art}`, title: it.kindRow.title.toUpperCase(), line });
+      out.push({ key, src: kindArtSrc(it.kindRow.art), title: it.kindRow.title.toUpperCase(), line });
     }
   }
   return out.slice(0, limit);
