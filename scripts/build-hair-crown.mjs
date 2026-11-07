@@ -159,13 +159,31 @@ const ids = readdirSync(`${ROOT}/HairBack`)
   .filter((id) => !EXCLUDE.includes(id))
   .sort();
 /** Extra sides cut from an artist's style, with no top of their own: id ->
- *  the style they come from and how they are trimmed. 28 is the updo's sides
- *  (08) without its long back — the bun mass behind the head and the tail
- *  behind the ear — for short tops.
- *  minX is how far back the hair may reach (rounded off toward the crown), cut
- *  the row the tail stops at. */
-const VARIANTS = {
-  "28": { from: "08", minX: 30, cut: 82 },
+ *  { from, minX, cut }, trimmed as TRIMS below. None at the moment (the updo's
+ *  short back was tried as one, then became the updo itself). */
+const VARIANTS = {};
+
+/** Styles redrawn shorter at the back of the head (x < CORE[0]). The updo
+ *  (08) hung a mass of hair behind the head and a tail behind the ear; both
+ *  are trimmed, and the bun's top tapers in to meet them. Sides: hair may
+ *  reach back to minX (rounded off toward the crown) and stops at row cut.
+ *  Top: from row crownFrom down to the cut, the back edge narrows from crownX
+ *  to sidesX. New edges take the style's darkest shade as an outline. */
+const TRIMS = {
+  "08": { minX: 30, cut: 82, crownFrom: 30, crownX: 29, sidesX: 32 },
+};
+const OUTLINE = [50, 35, 29, 255];
+const outlineBack = (png) => {
+  const edge = [];
+  for (let y = 0; y < SIZE; y++) for (let x = 0; x < CORE[0]; x++) {
+    if (opaque(png, x, y) && (!opaque(png, x - 1, y) || !opaque(png, x, y + 1))) edge.push([x, y]);
+  }
+  for (const [x, y] of edge) png.data.set(OUTLINE, at(png, x, y));
+};
+const trimSides = (png, { minX, cut: tail }) => {
+  for (let y = 0; y < SIZE; y++) for (let x = 0; x < CORE[0]; x++) {
+    if (y >= tail || x < minX + Math.max(0, Math.round((52 - y) / 3))) png.data[at(png, x, y) + 3] = 0;
+  }
 };
 const sideIds = [...ids, ...Object.keys(VARIANTS)];
 for (const dir of ["HairCrown", "HairSides", "HairFrontTop", "HairFrontSides"]) {
@@ -175,6 +193,23 @@ for (const dir of ["HairCrown", "HairSides", "HairFrontTop", "HairFrontSides"]) 
 const cut = {};
 for (const id of ids) {
   cut[id] = split(read(`HairBack/${id}`));
+  const trim = TRIMS[id];
+  if (trim) {
+    trimSides(cut[id].sides, trim);
+    outlineBack(cut[id].sides);
+    const { crownFrom, crownX, sidesX } = trim;
+    let touched = false;
+    for (let y = crownFrom; y < MID; y++) {
+      const edge = Math.round(crownX + ((sidesX - crownX) * (y - crownFrom)) / (MID - 1 - crownFrom));
+      for (let x = 0; x < edge; x++) if (opaque(cut[id].top, x, y)) { cut[id].top.data[at(cut[id].top, x, y) + 3] = 0; touched = true; }
+    }
+    if (touched) {
+      // outline only the rows that were cut, so the bun keeps its own edge
+      const edge = [];
+      for (let y = crownFrom; y < MID; y++) for (let x = 0; x < CORE[0]; x++) if (opaque(cut[id].top, x, y) && !opaque(cut[id].top, x - 1, y)) edge.push([x, y]);
+      for (const [x, y] of edge) cut[id].top.data.set(OUTLINE, at(cut[id].top, x, y));
+    }
+  }
   writeFileSync(`${ROOT}/HairCrown/${id}.png`, PNG.sync.write(cut[id].top));
   writeFileSync(`${ROOT}/HairSides/${id}.png`, PNG.sync.write(cut[id].sides));
   // The front sheet (drawn over the face), cut into locks and fringe. The fringe is
@@ -201,14 +236,8 @@ for (const id of ids) {
 // new edge gets the style's own darkest shade as an outline.
 for (const [id, { from, minX, cut: tail }] of Object.entries(VARIANTS)) {
   const sides = PNG.sync.read(PNG.sync.write(cut[from].sides));
-  for (let y = 0; y < SIZE; y++) for (let x = 0; x < CORE[0]; x++) {
-    if (y >= tail || x < minX + Math.max(0, Math.round((52 - y) / 3))) sides.data[at(sides, x, y) + 3] = 0;
-  }
-  const edge = [];
-  for (let y = 0; y < SIZE; y++) for (let x = 0; x < CORE[0]; x++) {
-    if (opaque(sides, x, y) && (!opaque(sides, x - 1, y) || !opaque(sides, x, y + 1))) edge.push([x, y]);
-  }
-  for (const [x, y] of edge) sides.data.set([50, 35, 29, 255], at(sides, x, y));
+  trimSides(sides, { minX, cut: tail });
+  outlineBack(sides);
   cut[id] = { top: cut[from].top, sides };
   writeFileSync(`${ROOT}/HairSides/${id}.png`, PNG.sync.write(sides));
   writeFileSync(`${ROOT}/HairFrontSides/${id}.png`, readFileSync(`${ROOT}/HairFrontSides/${from}.png`));
