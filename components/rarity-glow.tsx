@@ -4,7 +4,8 @@ import { HISTORIKAL, RARITY_COLOR } from "@/lib/historikals";
  *  black border: no square, no haze. */
 export function RarityGlow({ slug, size, children }: { slug: string; size: number; children: React.ReactNode }) {
   const h = HISTORIKAL.get(slug);
-  if (!h) return <>{children}</>;
+  // Commons go without.
+  if (!h || h.rarity === "common") return <span style={{ display: "block", width: size, height: size, flex: "none" }}>{children}</span>;
   const c = RARITY_COLOR[h.rarity];
   const k = Math.max(1, Math.round(size / 34));
   return (
