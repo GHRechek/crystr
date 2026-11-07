@@ -21,7 +21,7 @@ export function askLines(slug: string, them: string): AskLines {
   if (s === "a-helping-hand") return { question: `Did ${them} help you?`, waiting: `They're deciding if you helped them` };
   if (s === "make-friends" || s.endsWith("-friend") || s === "meet-witch")
     return { question: `Would you call ${them} a friend?`, waiting: `They're deciding if you're a friend` };
-  if (s === "orcish-philosophy") return { question: `Did ${them} talk philosophy with you?`, waiting: `They're deciding if you talked philosophy` };
+  if (s === "orcish-philosophy") return { question: `Was that a fun conversation about philosophy?`, waiting: `They're deciding if it was a fun conversation` };
   if (s.startsWith("culture-")) {
     const who = SPECIES[s.slice(8)];
     return {
@@ -29,7 +29,7 @@ export function askLines(slug: string, them: string): AskLines {
       waiting: `They're deciding if you talked culture`,
     };
   }
-  if (s.includes("spell")) return { question: `Did ${them} cast a spell for you?`, waiting: `They're deciding if you cast a spell for them` };
+  if (s.includes("spell")) return { question: `Was ${them}'s spell cool, or at least fun?`, waiting: `They're deciding if your spell was cool` };
   if (s.includes("potion")) return { question: `Did ${them} brew you a potion?`, waiting: `They're deciding if you brewed them a potion` };
   if (s.includes("workshop")) return { question: `Was ${them} at the workshop?`, waiting: `They're deciding if you were at the workshop` };
   if (s.includes("support-group")) return { question: `Was ${them} at the support group?`, waiting: `They're deciding if you were at the support group` };

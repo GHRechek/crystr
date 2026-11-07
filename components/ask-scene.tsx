@@ -32,6 +32,49 @@ export function playFanfare() {
   }
 }
 
+/** The build-up while the lock gives: an original rising, quickening zigzag in square waves over a low
+ *  triangle drone, ending on a held note that wants to resolve (the fanfare resolves it). About 1.6s. */
+function playBuildUp() {
+  try {
+    const AC = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    if (!AC) return;
+    const ctx = new AC();
+    const now = ctx.currentTime;
+    const note = (f: number, t: number, len: number, vol: number, type: OscillatorType = "square") => {
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = type;
+      o.frequency.value = f;
+      g.gain.setValueAtTime(0.0001, now + t);
+      g.gain.exponentialRampToValueAtTime(vol, now + t + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, now + t + len);
+      o.connect(g).connect(ctx.destination);
+      o.start(now + t);
+      o.stop(now + t + len + 0.05);
+    };
+    // A low drone that swells.
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = "triangle";
+    o.frequency.value = 98;
+    g.gain.setValueAtTime(0.0001, now);
+    g.gain.exponentialRampToValueAtTime(0.09, now + 1.3);
+    g.gain.exponentialRampToValueAtTime(0.0001, now + 1.65);
+    o.connect(g).connect(ctx.destination);
+    o.start(now);
+    o.stop(now + 1.7);
+    // Climbing in a zigzag, a semitone at a time, each step a little quicker and a little louder.
+    const steps = [261.63, 329.63, 277.18, 349.23, 293.66, 369.99, 311.13, 392.0, 329.63, 415.3, 349.23, 440.0, 369.99, 466.16];
+    let t = 0;
+    steps.forEach((f, i) => {
+      const len = 0.13 - i * 0.005;
+      note(f, t, len, 0.025 + i * 0.002);
+      t += len;
+    });
+    // The held note at the top, trembling.
+    for (let i = 0; i < 6; i++) note(i % 2 ? 493.88 : 523.25, t + i * 0.05, 0.06, 0.05);
+    window.setTimeout(() => void ctx.close(), 2200);
+  } catch {}
+}
+
 /** A lock turning over, for the key going in: a sharp noise tick, then a lower clunk. */
 function playClick() {
   try {
@@ -80,11 +123,11 @@ function playWhoosh() {
  *  Open, it is drawn twice: the whole sprite behind, then only its front wall (from the rim down) on top,
  *  so whatever is passed in rises out of the mouth of the chest, in front of the lid. */
 const RIM = 21 * 5; // the front rim of the open sprite, in CSS px (row 21 of 39, five px a pixel)
-function Chest({ open, children }: { open: boolean; children?: React.ReactNode }) {
+function Chest({ open, quiet, children }: { open: boolean; /** Stop rattling: the key is in. */ quiet?: boolean; children?: React.ReactNode }) {
   return (
     <div style={{ width: 230, height: 195, display: "flex", alignItems: "flex-end", justifyContent: "center", position: "relative", zIndex: 2 }}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img className="ask-shut" src="/ask/chest-closed.png" alt="" width={230} height={165} draggable={false} style={{ display: open ? "none" : "block", imageRendering: "pixelated" }} />
+      <img className="ask-shut" src="/ask/chest-closed.png" alt="" width={230} height={165} draggable={false} style={{ display: open ? "none" : "block", imageRendering: "pixelated", animation: quiet ? "none" : undefined }} />
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src="/ask/chest-open.png" alt="" width={225} height={195} draggable={false} style={{ display: open ? "block" : "none", imageRendering: "pixelated" }} />
       {open ? children : null}
@@ -177,12 +220,12 @@ export function AskScene({
   const [drag, setDrag] = useState<{ x: number; y: number } | null>(null);
   const start = useRef<{ x: number; y: number; t: number; px: number; py: number } | null>(null);
   const last = useRef<{ x: number; y: number; t: number }[]>([]);
-  const [state, setState] = useState<"idle" | "open" | "thrown">(result === "yes" ? "open" : result === "no" ? "thrown" : "idle");
+  const [state, setState] = useState<"idle" | "unlocking" | "open" | "thrown">(result === "yes" ? "open" : result === "no" ? "thrown" : "idle");
   const [fling, setFling] = useState<{ x: number; y: number } | null>(null);
 
   // The asker's side follows the answer when it lands.
   useEffect(() => {
-    if (result === "yes" && state === "idle") setState("open");
+    if (result === "yes" && state === "idle") setState("unlocking");
     if (result === "no" && state === "idle") {
       setFling({ x: 0, y: 900 });
       setState("thrown");
@@ -190,10 +233,16 @@ export function AskScene({
   }, [result, state]);
 
   useEffect(() => {
-    if (state === "open" && sound) {
-      playClick();
-      window.setTimeout(playFanfare, 500);
+    // The key goes in: a click, the world dims, a build-up, and then the lid flies open.
+    if (state === "unlocking") {
+      if (sound) {
+        playClick();
+        window.setTimeout(playBuildUp, 140);
+      }
+      const id = window.setTimeout(() => setState("open"), 1850);
+      return () => window.clearTimeout(id);
     }
+    if (state === "open" && sound) window.setTimeout(playFanfare, 120);
     if (state === "thrown") {
       if (sound) playWhoosh();
       const id = window.setTimeout(() => onClose?.(), 900);
@@ -220,7 +269,7 @@ export function AskScene({
     // Dropped on the chest: YES.
     const box = chestRef.current?.getBoundingClientRect();
     if (box && e.clientX > box.left && e.clientX < box.right && e.clientY > box.top && e.clientY < box.bottom) {
-      setState("open");
+      setState("unlocking");
       onYes?.();
       return;
     }
@@ -244,8 +293,9 @@ export function AskScene({
   return (
     <div role="dialog" aria-label={question} className="ask-scene">
       <Rays />
+      <div className={`ask-dim${state === "unlocking" ? " is-on" : state === "open" ? " is-after" : ""}`} aria-hidden />
       <div className="px ask-question">
-        {side === "wait" && state === "idle" ? (
+        {side === "wait" && (state === "idle" || state === "unlocking") ? (
           <>
             {waiting ?? `${who} is deciding`}
             <span className="ask-dots" aria-hidden><i>.</i><i>.</i><i>.</i></span>
@@ -257,7 +307,7 @@ export function AskScene({
 
       <div className="ask-stage">
         <div ref={chestRef}>
-          <Chest open={state === "open"}>
+          <Chest open={state === "open"} quiet={state !== "idle"}>
             <div className="ask-badge">
               <BadgeArt b={{ art: badge.art, slug: badge.slug, tiers: badge.tiers ?? 1 }} got tier={1} size={84} />
               <span className="ask-glint g1" aria-hidden />
@@ -280,7 +330,7 @@ export function AskScene({
             style={{ transform: `translate(${keyPos.x}px, ${keyPos.y}px)`, cursor: canDrag ? "grab" : "default", touchAction: "none" }}
             onKeyDown={(e) => {
               if (!canDrag) return;
-              if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setState("open"); onYes?.(); }
+              if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setState("unlocking"); onYes?.(); }
               if (e.key === "Delete" || e.key === "Backspace" || e.key === "Escape") { e.preventDefault(); setFling({ x: 0, y: 900 }); setState("thrown"); onNo?.(); }
             }}
             tabIndex={side === "ask" ? 0 : undefined}
@@ -297,7 +347,7 @@ export function AskScene({
 
         {state === "open" ? (
           <div className="px ask-result is-yes">{side === "wait" ? `${who.toUpperCase()} SAID YES!` : "UNLOCKED!"}</div>
-        ) : state === "thrown" ? null : side === "wait" ? (
+        ) : state === "thrown" || state === "unlocking" ? null : side === "wait" ? (
           null
         ) : (
           <div className="ask-hints" aria-hidden="true">

@@ -1762,6 +1762,11 @@ select.input { border: 0; }
   80% { transform: translateY(-178px); }
   100% { transform: translateY(-166px); }
 }
+/* When the key goes in the world dims quickly (not all the way) while the lock gives, then lifts a little
+   as the lid opens. Above the rays, below the chest. */
+.ask-dim { position: absolute; inset: 0; z-index: 1; background: #07040e; opacity: 0; pointer-events: none; transition: opacity 0.35s steps(5); }
+.ask-dim.is-on { opacity: 0.72; }
+.ask-dim.is-after { opacity: 0.4; transition-duration: 0.6s; }
 /* Shut, the chest rattles now and then, as if something inside wants out. */
 .ask-shut { animation: ask-rattle 3.2s steps(1) infinite; transform-origin: 50% 100%; }
 @keyframes ask-rattle {
