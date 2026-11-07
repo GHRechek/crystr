@@ -158,10 +158,41 @@ const ids = readdirSync(`${ROOT}/HairBack`)
   .map((f) => f.replace(/\.png$/, ""))
   .filter((id) => !EXCLUDE.includes(id))
   .sort();
-/** Extra sides cut from an artist's style, with no top of their own: id ->
- *  { from, minX, cut }, trimmed as TRIMS below. None at the moment (the updo's
- *  short back was tried as one, then became the updo itself). */
-const VARIANTS = {};
+/** The updo's strands, shorter: everything ends at the top of the mouth, the
+ *  strand by the ear goes (the hair there curves in to a soft point instead),
+ *  the front strand ends in a point, and the far side's outer strand keeps its
+ *  own curl down to its tip. Applied to the sides and the front locks alike;
+ *  orig is the cell as it was, for what is kept. */
+const MOUTH = 86;
+const shortStrands = (png, orig) => {
+  const on = (x, y) => png.data[at(png, x, y) + 3] > 0;
+  for (let y = MOUTH; y < SIZE; y++) for (let x = 0; x < SIZE; x++) png.data[at(png, x, y) + 3] = 0;
+  for (let y = 72; y < SIZE; y++) for (let x = 44; x < 53; x++) png.data[at(png, x, y) + 3] = 0;
+  // over rows y0..y1 each run narrows a pixel a row, to its middle: a point
+  const point = (y0, y1, x0, x1) => {
+    for (let y = y0; y < y1; y++) {
+      let x = x0;
+      while (x < x1) {
+        if (!on(x, y)) { x++; continue; }
+        let w = 0;
+        while (x + w < x1 && on(x + w, y)) w++;
+        const keep = Math.max(1, w - (y - y0 + 1)), start = x + Math.floor((w - keep) / 2);
+        for (let k = 0; k < w; k++) if (x + k < start || x + k >= start + keep) png.data[at(png, x + k, y) + 3] = 0;
+        x += w;
+      }
+    }
+  };
+  point(68, 72, 44, 53);
+  point(MOUTH - 4, MOUTH, 53, 88);
+  for (let y = MOUTH - 4; y < SIZE; y++) for (let x = 88; x < SIZE; x++) { const i = at(png, x, y); png.data.set(orig.data.subarray(i, i + 4), i); }
+};
+
+/** Extra sides made from an artist's style, with no top of their own: id ->
+ *  the style and what is done to it — trimmed as TRIMS below ({ minX, cut }),
+ *  or redrawn by edit(png, orig), applied to its sides and front locks. */
+const VARIANTS = {
+  "28": { from: "08", edit: shortStrands },
+};
 
 /** Styles redrawn shorter at the back of the head (x < CORE[0]). The updo
  *  (08) hung a mass of hair behind the head and a tail behind the ear; both
@@ -234,13 +265,16 @@ for (const id of ids) {
 
 // The trimmed sides: the back of the head only (x < CORE[0]) is cut, and the
 // new edge gets the style's own darkest shade as an outline.
-for (const [id, { from, minX, cut: tail }] of Object.entries(VARIANTS)) {
-  const sides = PNG.sync.read(PNG.sync.write(cut[from].sides));
-  trimSides(sides, { minX, cut: tail });
-  outlineBack(sides);
+for (const [id, { from, minX, cut: tail, edit }] of Object.entries(VARIANTS)) {
+  const copy = (png) => PNG.sync.read(PNG.sync.write(png));
+  const sides = copy(cut[from].sides);
+  const frontOrig = read(`HairFrontSides/${from}`);
+  const front = copy(frontOrig);
+  if (minX !== undefined) { trimSides(sides, { minX, cut: tail }); outlineBack(sides); }
+  if (edit) { edit(sides, cut[from].sides); edit(front, frontOrig); }
   cut[id] = { top: cut[from].top, sides };
   writeFileSync(`${ROOT}/HairSides/${id}.png`, PNG.sync.write(sides));
-  writeFileSync(`${ROOT}/HairFrontSides/${id}.png`, readFileSync(`${ROOT}/HairFrontSides/${from}.png`));
+  writeFileSync(`${ROOT}/HairFrontSides/${id}.png`, PNG.sync.write(front));
 }
 writeFileSync(`${ROOT}/_sides-own.json`, JSON.stringify(Object.fromEntries(Object.entries(VARIANTS).map(([id, v]) => [id, v.from]))) + "\n");
 
