@@ -85,6 +85,21 @@ export default function GameInfoPage() {
           ))}
         </div>
       </div>
+
+      {/* The app itself: mana, quests, Historikals, battles, your Proof and your face. */}
+      <div>
+        <h2 className="screen-title" style={{ marginTop: 6 }}>
+          {G.appTitle.toUpperCase()}
+        </h2>
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          {G.app.map(([head, text]) => (
+            <div key={head} className="card" style={{ gap: 6 }}>
+              <div className="px" style={{ fontSize: 11, color: "var(--mag)" }}>{head.toUpperCase()}</div>
+              <div style={{ fontSize: 12.5, lineHeight: 1.55, color: "var(--text-2)" }}>{text}</div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
