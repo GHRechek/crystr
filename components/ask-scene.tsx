@@ -53,14 +53,19 @@ function playWhoosh() {
 }
 
 /** The chest: a pixel sprite, silver-blue frame and CRYSTR purple panels. Shut until the key goes in.
- *  Both states sit on the same baseline so the lid swings up rather than the chest jumping. */
-function Chest({ open }: { open: boolean }) {
+ *  Open, it is drawn twice: the whole sprite behind, then only its front wall (from the rim down) on top,
+ *  so whatever is passed in rises out of the mouth of the chest, in front of the lid. */
+const RIM = 21 * 5; // the front rim of the open sprite, in CSS px (row 21 of 39, five px a pixel)
+function Chest({ open, children }: { open: boolean; children?: React.ReactNode }) {
   return (
     <div style={{ width: 230, height: 195, display: "flex", alignItems: "flex-end", justifyContent: "center", position: "relative", zIndex: 2 }}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src="/ask/chest-closed.png" alt="" width={230} height={165} draggable={false} style={{ display: open ? "none" : "block", imageRendering: "pixelated" }} />
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src="/ask/chest-open.png" alt="" width={225} height={195} draggable={false} style={{ display: open ? "block" : "none", imageRendering: "pixelated" }} />
+      {open ? children : null}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src="/ask/chest-open.png" alt="" width={225} height={195} draggable={false} style={{ display: open ? "block" : "none", position: "absolute", left: 2, bottom: 0, zIndex: 2, clipPath: `inset(${RIM}px 0 0 0)`, imageRendering: "pixelated", pointerEvents: "none" }} />
     </div>
   );
 }
@@ -83,27 +88,26 @@ function Rays() {
     c.width = W;
     c.height = H;
     let t = 0;
-    const cols = ["#5a1f6e", "#2d2f8a"];
+    // Each pixel is worked out on its own, so every edge is a hard step with no in-between colours.
+    const img = ctx.createImageData(W, H), d = img.data;
+    const BG = [42, 22, 80], RAY = [[90, 31, 110], [45, 47, 138]];
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const draw = () => {
       t += 1;
-      const pulse = 0.82 + 0.18 * Math.sin(t / 6);
-      ctx.fillStyle = "#2a1650";
-      ctx.fillRect(0, 0, W, H);
-      const cx = W / 2, cy = H * 0.5, n = 8, r = 200;
-      const spin = t * 0.025;
-      for (let i = 0; i < n; i++) {
-        const a0 = spin + (i / n) * Math.PI * 2;
-        const a1 = a0 + Math.PI / n;
-        ctx.globalAlpha = pulse;
-        ctx.fillStyle = cols[i % 2];
-        ctx.beginPath();
-        ctx.moveTo(cx, cy);
-        ctx.lineTo(cx + Math.cos(a0) * r, cy + Math.sin(a0) * r);
-        ctx.lineTo(cx + Math.cos(a1) * r, cy + Math.sin(a1) * r);
-        ctx.closePath();
-        ctx.fill();
+      const pulse = reduce ? 1 : 0.78 + 0.22 * Math.sin(t / 6), spin = reduce ? 0 : t * 0.025, step = Math.PI / 8;
+      for (let y = 0; y < H; y++) {
+        for (let x = 0; x < W; x++) {
+          let a = Math.atan2(y + 0.5 - H / 2, x + 0.5 - W / 2) - spin;
+          a = ((a % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+          const i = Math.floor(a / step), o = (y * W + x) * 4;
+          const col = i % 2 ? BG : RAY[(i / 2) % 2], m = i % 2 ? 1 : pulse;
+          d[o] = Math.round(BG[0] + (col[0] - BG[0]) * m);
+          d[o + 1] = Math.round(BG[1] + (col[1] - BG[1]) * m);
+          d[o + 2] = Math.round(BG[2] + (col[2] - BG[2]) * m);
+          d[o + 3] = 255;
+        }
       }
-      ctx.globalAlpha = 1;
+      ctx.putImageData(img, 0, 0);
     };
     draw();
     const id = window.setInterval(draw, 140);
@@ -213,16 +217,15 @@ export function AskScene({
       <div className="px ask-question">{question}</div>
 
       <div className="ask-stage">
-        {state === "open" ? (
-          <div className="ask-badge">
-            <BadgeArt b={{ art: badge.art, slug: badge.slug, tiers: badge.tiers ?? 1 }} got tier={1} size={84} />
-            <span className="ask-glint g1" aria-hidden />
-            <span className="ask-glint g2" aria-hidden />
-            <span className="ask-glint g3" aria-hidden />
-          </div>
-        ) : null}
         <div ref={chestRef}>
-          <Chest open={state === "open"} />
+          <Chest open={state === "open"}>
+            <div className="ask-badge">
+              <BadgeArt b={{ art: badge.art, slug: badge.slug, tiers: badge.tiers ?? 1 }} got tier={1} size={84} />
+              <span className="ask-glint g1" aria-hidden />
+              <span className="ask-glint g2" aria-hidden />
+              <span className="ask-glint g3" aria-hidden />
+            </div>
+          </Chest>
         </div>
         <div className="px ask-title">{state === "open" ? title.toUpperCase() : ""}</div>
       </div>
@@ -236,7 +239,13 @@ export function AskScene({
             onPointerUp={up}
             onPointerCancel={() => { start.current = null; setDrag(null); }}
             style={{ transform: `translate(${keyPos.x}px, ${keyPos.y}px)`, cursor: canDrag ? "grab" : "default", touchAction: "none" }}
-            aria-label={side === "ask" ? "The key: drag it to the chest for yes, throw it away for no" : "The key"}
+            onKeyDown={(e) => {
+              if (!canDrag) return;
+              if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setState("open"); onYes?.(); }
+              if (e.key === "Delete" || e.key === "Backspace" || e.key === "Escape") { e.preventDefault(); setFling({ x: 0, y: 900 }); setState("thrown"); onNo?.(); }
+            }}
+            tabIndex={side === "ask" ? 0 : undefined}
+            aria-label={side === "ask" ? "The key. Drag it to the chest for yes, throw it away for no. Or press Enter for yes, Delete for no." : "The key"}
             role={side === "ask" ? "button" : undefined}
           >
             <Key />
@@ -254,17 +263,11 @@ export function AskScene({
             WAITING ON {who.toUpperCase()}<span className="ask-dots" aria-hidden><i>.</i><i>.</i><i>.</i></span>
           </div>
         ) : (
-          <div className="ask-hints">
-            <span className="px ask-yes">YES? UNLOCK THE CHEST</span>
-            <span className="px ask-no">NO? THROW THE KEY AWAY</span>
+          <div className="ask-hints" aria-hidden="true">
+            <div className="px ask-hint ask-yes"><b>YES!</b><span>UNLOCK IT!</span></div>
+            <div className="px ask-hint ask-no"><b>NO!</b><span>TOSS THE KEY!</span></div>
           </div>
         )}
-        {side === "ask" && state === "idle" ? (
-          <div className="ask-keyboard">
-            <button type="button" className="px" onClick={() => { setState("open"); onYes?.(); }}>YES</button>
-            <button type="button" className="px" onClick={() => { setFling({ x: 0, y: 900 }); setState("thrown"); onNo?.(); }}>NO</button>
-          </div>
-        ) : null}
         {onClose && (state === "open" || side === "wait") ? (
           <button type="button" className="px ask-close" onClick={onClose}>{state === "open" ? "CLOSE" : "CLOSE · KEEP WAITING"}</button>
         ) : null}

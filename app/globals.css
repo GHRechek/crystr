@@ -1751,13 +1751,16 @@ select.input { border: 0; }
 }
 .ask-stage { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; margin-top: 10px; }
 .ask-badge {
-  position: absolute; z-index: 1; top: 0; left: 50%; margin-left: -42px; line-height: 0;
-  animation: ask-rise 2.4s steps(14) both;
+  /* Starts sunk below the chest's front rim (105px down), hidden by the front wall drawn over it,
+     then climbs out of the mouth, in front of the lid, overshoots and settles. */
+  position: absolute; z-index: 1; top: 105px; left: 50%; margin-left: -42px; line-height: 0;
+  animation: ask-rise 2.4s steps(16) both;
 }
 @keyframes ask-rise {
-  0% { transform: translateY(60px); }
-  80% { transform: translateY(-78px); }
-  100% { transform: translateY(-70px); }
+  0% { transform: translateY(0); }
+  15% { transform: translateY(0); }
+  80% { transform: translateY(-178px); }
+  100% { transform: translateY(-166px); }
 }
 .ask-glint { position: absolute; width: 6px; height: 6px; background: #fff; opacity: 0; animation: ask-glint 1.2s steps(2) 2.4s infinite; }
 .ask-glint.g1 { left: -14px; top: 6px; }
@@ -1765,18 +1768,33 @@ select.input { border: 0; }
 .ask-glint.g3 { left: 40px; top: -16px; animation-delay: 3.2s; }
 @keyframes ask-glint { 0%, 100% { opacity: 0; } 50% { opacity: 1; } }
 .ask-title { position: relative; z-index: 3; min-height: 18px; font-size: 13px; color: #ffe38b; text-shadow: 2px 2px 0 #160b2e; margin-top: 10px; }
-.ask-bottom { position: relative; z-index: 4; display: flex; flex-direction: column; align-items: center; gap: 12px; width: 100%; }
-.ask-key { line-height: 0; animation: ask-bob 2.4s steps(6) infinite; }
-.ask-key.is-held { animation: none; filter: drop-shadow(3px 3px 0 #160b2e); }
-.ask-key.is-thrown { animation: none; transition: transform 0.8s steps(8); }
-@keyframes ask-bob { 0%, 100% { margin-top: 0; } 50% { margin-top: -10px; } }
-.ask-hints { display: flex; justify-content: space-between; width: 100%; padding: 0 4px; gap: 12px; }
-.ask-yes, .ask-no { font-size: 11px; line-height: 1.5; text-shadow: 2px 2px 0 #160b2e; animation: tremble 3s ease-in-out infinite; }
-.ask-yes { color: #8fa2ff; }
-.ask-no { color: #ff5a7a; text-align: right; animation-delay: 1.4s; }
-/* Plain buttons too, for anyone who cannot drag. */
-.ask-keyboard { display: flex; gap: 16px; }
-.ask-keyboard button { background: none; border: 0; color: #d2cefd; font-size: 10px; opacity: 0.7; cursor: pointer; padding: 6px; }
+.ask-bottom { position: relative; z-index: 4; display: flex; flex-direction: column; align-items: center; gap: 12px; width: 100%; min-height: 190px; padding-top: 30px; }
+/* The key wanders about the bottom of the screen; the picture inside drifts, so the drag transform on the
+   wrapper is left alone. Keyboard: Enter for yes, Delete for no. */
+.ask-key { line-height: 0; }
+.ask-key:focus-visible { outline: 2px solid #ffe38b; outline-offset: 4px; }
+.ask-key img { animation: ask-drift 6s steps(24) infinite; }
+.ask-key.is-held img, .ask-key.is-thrown img { animation: none; }
+.ask-key.is-held { filter: drop-shadow(3px 3px 0 #160b2e); }
+.ask-key.is-thrown { transition: transform 0.8s steps(8); }
+@keyframes ask-drift {
+  0%, 100% { transform: translate(0, 0) rotate(-6deg); }
+  20% { transform: translate(-34px, -22px) rotate(4deg); }
+  40% { transform: translate(-12px, -46px) rotate(10deg); }
+  60% { transform: translate(30px, -30px) rotate(-2deg); }
+  80% { transform: translate(38px, -6px) rotate(-10deg); }
+}
+/* YES! / NO!, big and tilted, floating in the bottom corners, with what to do underneath. */
+.ask-hints { position: absolute; inset: 0; pointer-events: none; }
+.ask-hint { position: absolute; bottom: 6px; display: flex; flex-direction: column; line-height: 1.15; text-shadow: 3px 3px 0 #160b2e; }
+.ask-hint b { font-weight: 400; font-size: 30px; }
+.ask-hint span { font-size: 13px; margin-top: 4px; }
+.ask-hint b, .ask-hint span { animation: tremble 3s ease-in-out infinite; }
+.ask-yes { left: 2px; color: #8fa2ff; align-items: flex-start; animation: ask-float-l 4.2s steps(14) infinite; }
+.ask-no { right: 2px; color: #ff5a7a; align-items: flex-end; text-align: right; animation: ask-float-r 4.6s steps(14) infinite; }
+.ask-no b, .ask-no span { animation-delay: 1.4s; }
+@keyframes ask-float-l { 0%, 100% { transform: rotate(-10deg) translateY(0); } 50% { transform: rotate(-6deg) translateY(-12px); } }
+@keyframes ask-float-r { 0%, 100% { transform: rotate(9deg) translateY(-10px); } 50% { transform: rotate(5deg) translateY(2px); } }
 .ask-waiting { font-size: 15px; color: #d2cefd; text-shadow: 2px 2px 0 #160b2e; }
 .ask-dots i { font-style: normal; animation: ask-glint 1.2s steps(2) infinite; }
 .ask-dots i:nth-child(2) { animation-delay: 0.3s; }
@@ -1786,5 +1804,5 @@ select.input { border: 0; }
 .ask-result.is-no { color: #ff5a7a; }
 .ask-close { background: none; border: 0; color: #d2cefd; font-size: 11px; cursor: pointer; }
 @media (prefers-reduced-motion: reduce) {
-  .ask-badge, .ask-yes, .ask-no, .ask-glint, .ask-dots i, .ask-key { animation: none; }
+  .ask-badge, .ask-hint, .ask-hint b, .ask-hint span, .ask-glint, .ask-dots i, .ask-key img { animation: none; }
 }
