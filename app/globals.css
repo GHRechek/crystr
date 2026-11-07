@@ -1762,6 +1762,21 @@ select.input { border: 0; }
   80% { transform: translateY(-178px); }
   100% { transform: translateY(-166px); }
 }
+/* Shut, the chest rattles now and then, as if something inside wants out. */
+.ask-shut { animation: ask-rattle 3.6s steps(1) infinite; transform-origin: 50% 100%; }
+@keyframes ask-rattle {
+  0%, 70%, 100% { transform: none; }
+  72% { transform: translate(-3px, 0) rotate(-2deg); }
+  74% { transform: translate(3px, -2px) rotate(2deg); }
+  76% { transform: translate(-3px, 0) rotate(-1deg); }
+  78% { transform: translate(2px, -3px) rotate(1deg); }
+  80% { transform: translate(-2px, 0); }
+  82% { transform: translate(1px, -1px); }
+  84% { transform: none; }
+  88% { transform: translate(-2px, 0) rotate(-1deg); }
+  90% { transform: translate(2px, -1px) rotate(1deg); }
+  92% { transform: none; }
+}
 .ask-glint { position: absolute; width: 6px; height: 6px; background: #fff; opacity: 0; animation: ask-glint 1.2s steps(2) 2.4s infinite; }
 .ask-glint.g1 { left: -14px; top: 6px; }
 .ask-glint.g2 { right: -12px; top: 22px; animation-delay: 2.8s; }
@@ -1804,5 +1819,5 @@ select.input { border: 0; }
 .ask-result.is-no { color: #ff5a7a; }
 .ask-close { background: none; border: 0; color: #d2cefd; font-size: 11px; cursor: pointer; }
 @media (prefers-reduced-motion: reduce) {
-  .ask-badge, .ask-hint, .ask-hint b, .ask-hint span, .ask-glint, .ask-dots i, .ask-key img { animation: none; }
+  .ask-badge, .ask-hint, .ask-hint b, .ask-hint span, .ask-glint, .ask-dots i, .ask-key img, .ask-shut { animation: none; }
 }

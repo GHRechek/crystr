@@ -84,7 +84,7 @@ function Chest({ open, children }: { open: boolean; children?: React.ReactNode }
   return (
     <div style={{ width: 230, height: 195, display: "flex", alignItems: "flex-end", justifyContent: "center", position: "relative", zIndex: 2 }}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/ask/chest-closed.png" alt="" width={230} height={165} draggable={false} style={{ display: open ? "none" : "block", imageRendering: "pixelated" }} />
+      <img className="ask-shut" src="/ask/chest-closed.png" alt="" width={230} height={165} draggable={false} style={{ display: open ? "none" : "block", imageRendering: "pixelated" }} />
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src="/ask/chest-open.png" alt="" width={225} height={195} draggable={false} style={{ display: open ? "block" : "none", imageRendering: "pixelated" }} />
       {open ? children : null}
@@ -118,7 +118,7 @@ function Rays() {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const draw = () => {
       t += 1;
-      const pulse = reduce ? 1 : 0.78 + 0.22 * Math.sin(t / 9), spin = reduce ? 0 : t * 0.016, step = Math.PI / 8;
+      const pulse = reduce ? 1 : 0.78 + 0.22 * Math.sin(t / 9), spin = 0, step = Math.PI / 8;
       for (let y = 0; y < H; y++) {
         for (let x = 0; x < W; x++) {
           let a = Math.atan2(y + 0.5 - H * 0.42, x + 0.5 - W / 2) - spin;
