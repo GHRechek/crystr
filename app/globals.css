@@ -2020,3 +2020,6 @@ select.input { border: 0; }
 .hk-menu button:disabled { color: rgba(255, 255, 255, .3); cursor: default; background: none; }
 .hk-menu button.find:not(:disabled) { color: #8fa2ff; } .hk-menu button.summon:not(:disabled) { color: #ffe08a; }
 .hk-n { margin-left: auto; min-width: 20px; height: 20px; display: grid; place-items: center; font-weight: 400; font-size: 10px; background: rgba(0, 0, 0, .35); color: inherit; padding: 0 4px; }
+/* The next chest, rising back in from below. */
+.dr-return { animation: dr-return .7s cubic-bezier(.25, .6, .3, 1) both; }
+@keyframes dr-return { from { transform: translateY(220px); opacity: 0; } to { transform: none; opacity: 1; } }

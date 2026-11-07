@@ -30,7 +30,8 @@ async function drawFromDb(kind: DrawKind): Promise<{ ok: boolean; code?: string 
 export function DrawScene({ kind, count, onClose, drawWith = drawFromDb }: { kind: DrawKind; count: number; onClose: () => void; /** For trying it out without the database. */ drawWith?: typeof drawFromDb }) {
   const t = THEME[kind];
   const [left, setLeft] = useState(count);
-  const [state, setState] = useState<"idle" | "unlocking" | "open">("idle");
+  // "again": you've seen what came out; it has gone up to your finds and a fresh chest is back for the next key.
+  const [state, setState] = useState<"idle" | "unlocking" | "open" | "again">("idle");
   const [round, setRound] = useState(0);
   const [got, setGot] = useState<HK | null>(null);
   const [found, setFound] = useState<HK[]>([]);
@@ -44,7 +45,7 @@ export function DrawScene({ kind, count, onClose, drawWith = drawFromDb }: { kin
 
   // Turn the key: the draw is asked for at once, and the lid opens once the build-up is done.
   const turn = () => {
-    if (state !== "idle" && state !== "open") return;
+    if (state === "unlocking") return;
     if (left <= 0) return;
     if (got) setFound((f) => [...f, got]);
     setGot(null);
@@ -83,6 +84,18 @@ export function DrawScene({ kind, count, onClose, drawWith = drawFromDb }: { kin
     return () => { live = false; };
   }, [state, kind]);
 
+  // With draws left, the creature goes up to your finds and a closed chest comes back for the next key.
+  useEffect(() => {
+    if (state !== "open" || left <= 0) return;
+    const id = window.setTimeout(() => {
+      setFound((f) => (got ? [...f, got] : f));
+      setGot(null);
+      setRound((r) => r + 1);
+      setState("again");
+    }, 3800);
+    return () => window.clearTimeout(id);
+  }, [state, left, got]);
+
   // How far it rises: from the chest's mouth to where the rays meet.
   useLayoutEffect(() => {
     if (state !== "open") return;
@@ -111,7 +124,7 @@ export function DrawScene({ kind, count, onClose, drawWith = drawFromDb }: { kin
   };
 
   const colour = got ? RARITY_COLOR[got.rarity] : "#fff";
-  const keyReady = left > 0 && (state === "idle" || state === "open");
+  const keyReady = left > 0 && state !== "unlocking";
 
   return (
     <div ref={sceneRef} role="dialog" aria-label={t.title} className="ask-scene dr-scene">
@@ -129,10 +142,10 @@ export function DrawScene({ kind, count, onClose, drawWith = drawFromDb }: { kin
       </div>
 
       <div className="ask-stage">
-        <div ref={chestRef} key={round}>
+        <div ref={chestRef} key={round} className={state === "again" ? "dr-return" : undefined}>
           <div style={{ width: 230, height: 195, display: "flex", alignItems: "flex-end", justifyContent: "center", position: "relative", zIndex: 2 }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img className="ask-shut" src={t.shut} alt="" width={230} height={165} draggable={false} style={{ display: state === "open" ? "none" : "block", imageRendering: "pixelated", animation: state === "idle" ? undefined : "none" }} />
+            <img className="ask-shut" src={t.shut} alt="" width={230} height={165} draggable={false} style={{ display: state === "open" ? "none" : "block", imageRendering: "pixelated", animation: state === "idle" || state === "again" ? undefined : "none" }} />
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img className="ask-drop" src={t.open} alt="" width={225} height={195} draggable={false} style={{ display: state === "open" ? "block" : "none", imageRendering: "pixelated" }} />
             {state === "open" && got ? (
@@ -174,7 +187,7 @@ export function DrawScene({ kind, count, onClose, drawWith = drawFromDb }: { kin
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={t.key} alt="" width={59} height={108} draggable={false} style={{ display: "block", imageRendering: "pixelated", pointerEvents: "none" }} />
             </div>
-            <div className="px dr-hint" style={{ color: t.hint }} aria-hidden>{state === "open" ? "AGAIN!" : "TURN THE KEY!"}</div>
+            <div className="px dr-hint" style={{ color: t.hint }} aria-hidden>{state === "idle" ? "TURN THE KEY!" : "AGAIN!"}</div>
           </>
         ) : null}
         {state !== "unlocking" ? (
