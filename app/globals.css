@@ -17,8 +17,9 @@
   --raised: #2b2e3d;
 
   /* rules */
-  --edge: #3f424d;
-  --rule: #2b2e3d;
+  /* Lines and rules are CRYSTR purple, not grey. */
+  --edge: #4b4180;
+  --rule: #4b4180;
   --rule-soft: #262936;
   --edge-hover: #796cbf;
 
@@ -1725,3 +1726,10 @@ select.input { border: 0; }
   background: var(--blk);
 }
 .pad > .rowcard + .rowcard { margin-top: -12px; }
+
+/* A picture on a post sits in a 3px CRYSTR frame. */
+.crystr-frame {
+  padding: 3px;
+  background: linear-gradient(135deg, #e0398a, #9184d9 52%, #4c7df0);
+}
+.crystr-frame > img { background: var(--inset); }

@@ -98,13 +98,16 @@ export function PostCard({
         )}
 
         {post.image_url ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={post.image_url}
-            alt="A picture shared with this post"
-            loading="lazy"
-            style={{ display: "block", width: "100%", maxHeight: 420, objectFit: "contain", background: "var(--inset)" }}
-          />
+          // A picture wears a CRYSTR frame: pink into purple into blue.
+          <div className="crystr-frame">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={post.image_url}
+              alt="A picture shared with this post"
+              loading="lazy"
+              style={{ display: "block", width: "100%", maxHeight: 420, objectFit: "contain", background: "var(--inset)" }}
+            />
+          </div>
         ) : post.has_image ? (
           <Placeholder label="IMAGE — PENDING TILE" height={132} />
         ) : null}

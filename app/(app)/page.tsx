@@ -122,8 +122,10 @@ function Card({ item, decay, me, witch }: { item: FeedItem; decay: number; me: s
 
           <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
             {item.banner_icon ? (
-              <div style={{ width: 56, height: 56, flex: "none", display: "grid", placeItems: "center", background: "var(--inset)" }}>
-                <ArticleIcon slug={item.banner_icon} box={46} />
+              <div className="crystr-frame" style={{ width: 56, height: 56, flex: "none" }}>
+                <div style={{ width: "100%", height: "100%", display: "grid", placeItems: "center", background: "var(--inset)" }}>
+                  <ArticleIcon slug={item.banner_icon} box={42} />
+                </div>
               </div>
             ) : null}
             <div style={{ minWidth: 0, display: "flex", flexDirection: "column", gap: 4 }}>
