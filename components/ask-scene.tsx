@@ -378,7 +378,7 @@ export function AskScene({
         ) : null}
 
         {state === "open" ? (
-          <div className="px ask-result is-yes">{side === "wait" ? `${who.toUpperCase()} SAID YES!` : "UNLOCKED!"}</div>
+          <div className="px ask-result is-yes">{side === "wait" ? `YOU EARNED THE ${title.toUpperCase()} BADGE!` : "UNLOCKED!"}</div>
         ) : state === "thrown" || state === "unlocking" ? null : side === "wait" ? (
           null
         ) : (
@@ -388,7 +388,7 @@ export function AskScene({
           </div>
         )}
         {onClose && (state === "open" || side === "wait") ? (
-          <button type="button" className="px ask-close" onClick={onClose}>{state === "open" ? "CLOSE" : "CLOSE · KEEP WAITING"}</button>
+          <button type="button" className={`px ask-close${state === "open" ? " is-done" : ""}`} onClick={onClose}>{state === "open" ? "CLOSE" : "CLOSE · KEEP WAITING"}</button>
         ) : null}
       </div>
     </div>
