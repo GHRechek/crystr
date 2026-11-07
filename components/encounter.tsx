@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Rays, playBuildUp, playClick, playFanfare, playLidOpen, playWhoosh } from "@/components/ask-scene";
 import { RARITY_COLOR, historikalSrc, type Element, type MoveKind, type Rarity } from "@/lib/historikals";
+import { normalizeToken, tokenSrc } from "@/lib/token";
 
 /* Face to face, after a scan: a trade or a battle on both phones at once. The server holds the whole thing
    (supabase/migrations/20261108390000_encounters.sql) and tells each phone only its own side; this draws it.
@@ -20,7 +21,27 @@ type View = {
   swapped?: boolean; turn?: number; quiet?: number; move?: { m?: number; swap?: number } | null; their_moved?: boolean; need?: boolean; their_need?: boolean;
   shadow?: string; left?: number; their_pips?: { ko: boolean; cur: boolean }[]; theirs?: HK; last?: { turn: number; line: string; extra: string; a: Side; b: Side } | null;
   alive?: number; their_alive?: number;
+  epic?: "token" | "historikal" | null; ask?: boolean; token_ok?: boolean; my_token?: unknown;
+  stake?: { token?: boolean; item?: number } | null; their_stake?: { token?: unknown; item?: HK } | null;
+  prize?: { won: boolean; kind: "token" | "historikal"; item: HK | null; token: unknown } | null;
 };
+/** A token's picture from its design. */
+// eslint-disable-next-line @next/next/no-img-element
+const TokenPic = ({ design, size }: { design: unknown; size: number }) => <img src={tokenSrc(normalizeToken(design))} alt="" width={size} height={size} style={{ display: "block", imageRendering: "pixelated" }} />;
+/** What an epic battle was won or lost for, from your side. */
+function PrizeLine({ v }: { v: View }) {
+  const p = v.prize;
+  if (!p) return null;
+  const them = up(v.them.handle);
+  return (
+    <div className="en-prize">
+      {p.kind === "token" ? <TokenPic design={p.token} size={56} /> : p.item ? <Creature slug={p.item.slug} size={64} /> : null}
+      <span className="px">{p.won
+        ? (p.kind === "token" ? `YOU WON ${them}'S TOKEN` : `YOU WON ${up(p.item?.name ?? "")}`)
+        : (p.kind === "token" ? `${them} WON A COPY OF YOUR TOKEN` : `${them} TOOK ${up(p.item?.name ?? "")}`)}</span>
+    </div>
+  );
+}
 
 const supabase = () => createClient();
 
@@ -161,10 +182,10 @@ function useDrag(onUp: () => void, onDown: () => void, target: React.RefObject<H
   return { bind, style: { transform: `translate(${pos.x}px, ${pos.y}px)`, touchAction: "none" as const }, held };
 }
 
-function Shell({ kind, children, dim }: { kind: "trade" | "battle"; children: React.ReactNode; dim?: "on" | "after" }) {
+function Shell({ kind, children, dim, epic }: { kind: "trade" | "battle"; children: React.ReactNode; dim?: "on" | "after"; epic?: boolean }) {
   return (
     <div role="dialog" aria-label={kind === "trade" ? "Trade" : "Battle"} className={`en-scene en-${kind}`}>
-      {kind === "trade" ? <Rays bg={[50, 86, 190]} ray={[76, 125, 240]} /> : <Rays bg={[36, 14, 50]} ray={[88, 22, 66]} />}
+      {kind === "trade" ? <Rays bg={[50, 86, 190]} ray={[76, 125, 240]} /> : epic ? <Rays key="epic" bg={[40, 25, 4]} ray={[110, 74, 12]} /> : <Rays key="plain" bg={[36, 14, 50]} ray={[88, 22, 66]} />}
       <div className={`en-dim${dim ? ` is-${dim}` : ""}`} aria-hidden />
       {children}
     </div>
@@ -177,6 +198,7 @@ function Closed({ v, close, what }: { v: View; close: () => void; what: string }
       <div className="px">
         <b>{what} CALLED OFF</b>
         {v.off_by === "me" ? "You walked away." : v.off_by === "them" ? `${up(v.them.handle)} walked away.` : "Something else started."}
+        <PrizeLine v={v} />
         <button type="button" className="px en-btn" onClick={close}>CLOSE</button>
       </div>
     </div>
@@ -283,6 +305,8 @@ export function BattleScreen({ v, act, close }: { v: View; act: (a: Record<strin
   const mid = useRef<HTMLDivElement>(null);
   const [team, setTeam] = useState<number[]>([]);
   const [swapping, setSwapping] = useState(false);
+  const [stake, setStake] = useState<{ token?: boolean; item?: number } | null>(null);
+  const [stakeMode, setStakeMode] = useState(false);
   const [revealing, setRevealing] = useState(false);
   const shown = useRef<number | null>(null); // the turn whose clash we've played
   const [lunge, setLunge] = useState(false);
@@ -325,33 +349,71 @@ export function BattleScreen({ v, act, close }: { v: View; act: (a: Record<strin
   const fighting = ["fight", "replace", "end"].includes(v.stage) && !revealing;
 
   return (
-    <Shell kind="battle" dim={revealing ? "on" : v.stage === "end" ? "after" : undefined}>
+    <Shell kind="battle" epic={!!v.epic} dim={revealing ? "on" : v.stage === "end" ? "after" : undefined}>
       {v.stage === "off" ? <Closed v={v} close={close} what="BATTLE" /> : null}
       {v.stage === "invite" ? <Invite v={v} act={act} kind="battle" /> : null}
 
       {v.stage === "team" ? (
         v.ready ? (
-          <><div className="px en-q">WAITING ON {up(v.them.handle)}<Dots /></div><div className="px en-big">{up(v.them.handle)}<b>IS PICKING A TEAM</b></div></>
+          <><div className="px en-q">WAITING ON {up(v.them.handle)}<Dots /></div><div className="px en-big">{up(v.them.handle)}<b>IS PICKING A TEAM</b>{v.stake?.token ? "YOUR TOKEN IS UP" : v.stake?.item ? "YOU STAKED A HISTORIKAL" : ""}</div></>
         ) : (v.mine ?? []).filter((h) => (h.hp ?? h.hearts) > 0).length < 3 ? (
           <><div className="px en-q">PICK YOUR TEAM OF 3</div><div className="px en-big">YOU NEED<b>3 HISTORIKALS</b>WITH HEARTS LEFT</div>
           <div className="en-bottom"><a href="/me/historikals" className="px en-btn" style={{ textDecoration: "none" }} onClick={() => act({ do: "leave" })}>HEAL YOURS</a><Nevermind onClick={() => act({ do: "leave" })} /></div></>
         ) : (
           <>
-            <div className="px en-q">PICK YOUR TEAM OF 3</div>
-            <div className="en-grid">
-              {(v.mine ?? []).map((h) => { const n = team.indexOf(h.id), out = (h.hp ?? h.hearts) <= 0; return (
-                <button key={h.id} type="button" className={`en-pickc${n >= 0 ? " on" : ""}${out ? " out" : ""}`} aria-pressed={n >= 0} disabled={out} aria-label={out ? `${h.name}, knocked out: heal it first` : h.name}
-                  onClick={() => { playClick(); setTeam((t) => (n >= 0 ? t.filter((x) => x !== h.id) : t.length < 3 ? [...t, h.id] : t)); }}>
+            <div className="px en-q">{stakeMode ? "WHICH ONE DO YOU STAKE?" : "PICK YOUR TEAM OF 3"}</div>
+            {/* Your first slot: put your token up for an epic fight, or stake a Historikal. */}
+            <div className="en-stakebar">
+              {v.their_stake && "token" in v.their_stake ? <div className="px en-epicask">★ {up(v.them.handle)} PUT THEIR TOKEN UP · AN EPIC FIGHT ★</div>
+                : v.their_stake?.item ? <div className="px en-epicask">{up(v.them.handle)} STAKED {up(v.their_stake.item.name)}</div> : null}
+              <div className="en-stakeopts">
+                {v.token_ok && v.my_token ? (
+                  <button type="button" className={`px en-stakeopt${stake?.token ? " on" : ""}`} aria-pressed={!!stake?.token} onClick={() => { playClick(); setStakeMode(false); setStake((x) => (x?.token ? null : { token: true })); }}>
+                    <TokenPic design={v.my_token} size={36} /><span>{stake?.token ? "TOKEN UP · EPIC" : "LEAD WITH YOUR TOKEN"}</span>
+                  </button>
+                ) : v.my_token ? <span className="px en-say" style={{ fontSize: 9 }}>YOUR TOKEN IS RESTING · LOST IN THE LAST 3 MONTHS</span> : null}
+                {!stake?.token ? (
+                  stake?.item ? (
+                    <button type="button" className="px en-stakeopt on" onClick={() => setStake(null)} aria-label="Take the stake back">
+                      <Creature slug={(v.mine ?? []).find((h) => h.id === stake.item)?.slug ?? ""} size={36} /><span>STAKED · TAP TO TAKE BACK</span>
+                    </button>
+                  ) : (
+                    <button type="button" className={`px en-stakeopt${stakeMode ? " on" : ""}`} onClick={() => setStakeMode((x) => !x)}><span>{stakeMode ? "CANCEL" : "STAKE A HISTORIKAL"}</span></button>
+                  )
+                ) : null}
+              </div>
+            </div>
+            <div className="en-grid" style={{ top: "calc(150px + env(safe-area-inset-top))" }}>
+              {(v.mine ?? []).map((h) => { const n = team.indexOf(h.id), out = (h.hp ?? h.hearts) <= 0 && !stakeMode; return (
+                <button key={h.id} type="button" className={`en-pickc${n >= 0 && !stakeMode ? " on" : ""}${out ? " out" : ""}`} aria-pressed={n >= 0} disabled={out} aria-label={out ? `${h.name}, knocked out: heal it first` : h.name}
+                  onClick={() => { playClick(); if (stakeMode) { setStake({ item: h.id }); setStakeMode(false); return; } setTeam((t) => (n >= 0 ? t.filter((x) => x !== h.id) : t.length < 3 ? [...t, h.id] : t)); }}>
                   <Creature slug={h.slug} size={56} /><span className="en-mini"><Stats h={h} hp={h.hp} k={2} /></span>{out ? <span className="px en-ko">NEEDS HEALING</span> : null}{n >= 0 ? <b className="px en-num">{n + 1}</b> : null}
                 </button>); })}
             </div>
             <div className="en-bottom">
-              <button type="button" className="px en-btn" disabled={team.length !== 3} onClick={() => act({ do: "team", ids: team })}>{team.length === 3 ? "BRING THESE 3" : `PICK ${3 - team.length} MORE`}</button>
+              <button type="button" className="px en-btn" disabled={team.length !== 3} onClick={() => act({ do: "team", ids: team, stake })}>{team.length === 3 ? "BRING THESE 3" : `PICK ${3 - team.length} MORE`}</button>
               <Nevermind onClick={() => act({ do: "leave" })} />
             </div>
           </>
         )
       ) : null}
+
+      {v.stage === "stake" ? (
+        v.ask ? (
+          <>
+            <div className="px en-q">{up(v.them.handle)} CAN&apos;T PUT A TOKEN UP</div>
+            {v.their_stake?.item ? <div className="en-mid"><Creature slug={v.their_stake.item.slug} size={102} /></div> : null}
+            {v.their_stake?.item ? <div className="px en-midlabel">THEY STAKED<b>{up(v.their_stake.item.name)}</b><Stats h={v.their_stake.item} k={2} /></div> : null}
+            <Shelf items={v.mine ?? []} label="STAKE ONE OF YOURS FOR AN EPIC FIGHT?" onPick={(h) => act({ do: "answer", stake: { item: h.id } })} />
+            <div className="en-bottom"><button type="button" className="px en-btn quiet" onClick={() => act({ do: "answer" })}>NO, JUST FIGHT</button></div>
+          </>
+        ) : (
+          <><div className="px en-q">{up(v.them.handle)} IS DECIDING<Dots /></div>
+          <div className="px en-big">YOU STAKED<b>{up((v.mine ?? []).find((h) => h.id === v.stake?.item)?.name ?? "A HISTORIKAL")}</b>AGAINST THEIR TOKEN</div></>
+        )
+      ) : null}
+
+      {v.epic && ["pick", "shadow", "fight", "replace"].includes(v.stage) ? <div className="px en-epic">★ EPIC BATTLE ★</div> : null}
 
       {v.stage === "pick" ? (
         <>
@@ -427,6 +489,7 @@ export function BattleScreen({ v, act, close }: { v: View; act: (a: Record<strin
               {(() => { const res = (v.quiet ?? 0) >= 3 ? "draw" : (v.alive ?? 0) > 0 && !(v.their_alive ?? 0) ? "win" : !(v.alive ?? 0) && (v.their_alive ?? 0) > 0 ? "lose" : "draw";
                 return <div className="px en-result" style={{ color: res === "win" ? "#f2b544" : res === "lose" ? "#8a7fb0" : "#fff" }}>{res === "win" ? "YOU WON!" : res === "lose" ? "YOU LOST" : "DRAW!"}</div>; })()}
               {(v.quiet ?? 0) >= 3 ? <div className="px en-say">NOBODY COULD LAND A HIT</div> : null}
+              <PrizeLine v={v} />
               <div className="en-row2"><button type="button" className="px en-btn" onClick={() => act({ do: "rematch" })}>REMATCH</button><button type="button" className="px en-btn quiet" onClick={close}>CLOSE</button></div>
             </div>
           ) : v.stage === "replace" ? (

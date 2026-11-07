@@ -333,13 +333,8 @@ export function TokenDesigner({ start, fresh, how = "", canGive = false, onUse }
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={tokenSrc(d)} alt="Your token, as it will be" width={64} height={64} style={{ imageRendering: "pixelated", flex: "none" }} />
         <div style={{ flex: 1, fontSize: 12, lineHeight: 1.5, color: "var(--muted)" }}>
-          {fresh ? "Nobody has seen this yet." : "Changing it changes what you give next; tokens already given keep their look."}
+          {fresh ? "Nobody has seen this yet." : "Changing it changes what the next winner takes; copies already won keep their look."}
         </div>
-        {canGive && !onUse ? (
-          <a href="/me/trades#give-token" className="btn btn-sm btn-purple" style={{ minHeight: 40, flex: "none", display: "inline-flex", alignItems: "center", textAlign: "center" }}>
-            GIVE IT TO SOMEONE
-          </a>
-        ) : null}
       </div>
 
       {/* + on the left, the stage, and the picked icon's tools on the right (their column is

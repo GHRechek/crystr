@@ -1950,3 +1950,13 @@ select.input { border: 0; }
 @media (prefers-reduced-motion: reduce) {
   .en-qmark, .en-float, .en-hint, .en-mid img, .en-sil img, .en-icon, .en-dots i { animation: none !important; }
 }
+
+/* Epic battles: tokens (or Historikals) at stake, on a dark gold strobe. */
+.en-stakebar { position: absolute; left: 0; right: 0; top: calc(56px + env(safe-area-inset-top)); z-index: 5; display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 0 12px; }
+.en-stakeopts { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+.en-stakeopt { display: flex; align-items: center; gap: 8px; border: 0; border-radius: 0; padding: 6px 10px; min-height: 48px; cursor: pointer; color: #fff; background: rgba(10, 4, 20, .5); font-size: 10px; letter-spacing: .04em; box-shadow: 3px 3px 0 #160b2e; }
+.en-stakeopt.on { background: #8a5a0c; box-shadow: 0 0 0 3px #f2b544, 3px 3px 0 #160b2e; }
+.en-stakeopt:focus-visible { outline: 2px solid #ffe38b; outline-offset: 2px; }
+.en-epicask { font-size: 11px; color: #f2b544; text-shadow: 2px 2px 0 #160b2e; text-align: center; line-height: 1.5; }
+.en-epic { position: absolute; left: 0; right: 0; top: calc(52px + env(safe-area-inset-top)); z-index: 4; text-align: center; font-size: 11px; color: #f2b544; text-shadow: 2px 2px 0 #160b2e; }
+.en-prize { display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 13px; color: #f2b544; text-shadow: 2px 2px 0 #160b2e; text-align: center; }
