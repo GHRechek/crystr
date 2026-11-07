@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { requireMe, getHistorikals } from "@/lib/data";
+import { requireMe, getHistorikals, getPicksOpen } from "@/lib/data";
 import { healHistorikal } from "@/lib/actions";
 import { Creature, Stats } from "@/components/encounter";
 
@@ -7,7 +7,7 @@ import { Creature, Stats } from "@/components/encounter";
  *  Hearts lost in a battle stay lost until healed here, with your own mana: two for each heart. */
 export default async function HistorikalsPage() {
   const { userId, profile } = await requireMe();
-  const list = await getHistorikals(userId);
+  const [list, picks] = await Promise.all([getHistorikals(userId), getPicksOpen()]);
   const hurt = list.filter((h) => h.hp < h.hearts).length;
   return (
     <div className="pad" style={{ gap: 14 }}>
@@ -19,6 +19,11 @@ export default async function HistorikalsPage() {
         Creatures to collect, trade and battle, face to face. A good one (usually rare) comes for every three people you help and for every main quest you finish, and one for every five battles you win.
         Hearts lost in a battle stay lost until you heal them here: two mana a heart.
       </p>
+      {picks > 0 ? (
+        <Link href="/me/historikals/pick" className="px" style={{ display: "block", padding: "14px 16px", background: "#8a5a0c", boxShadow: "0 0 0 3px #f2b544", color: "#fff", fontSize: 12, lineHeight: 1.6, textDecoration: "none", textAlign: "center" }}>
+          ★ A GIFT: PICK ANY HISTORIKAL{picks > 1 ? ` · ${picks} PICKS` : ""} ★<br /><span style={{ color: "#ffe38b" }}>CHOOSE YOURS →</span>
+        </Link>
+      ) : null}
       {hurt ? <div className="px" style={{ fontSize: 11, color: "#ff5a7a" }}>{hurt} HURT · YOU HAVE {profile.mana} MANA</div> : null}
       {list.length === 0 ? (
         <div className="empty">NO HISTORIKALS YET</div>

@@ -864,6 +864,13 @@ export async function getHistorikals(userId: string): Promise<HeldHistorikal[]> 
     .map(({ sort: _s, ...h }) => h);
 }
 
+/** How many pick-any-Historikal gifts you have waiting. */
+export async function getPicksOpen(): Promise<number> {
+  const supabase = createClient();
+  const { data } = await supabase.rpc("cr_picks_open");
+  return typeof data === "number" ? data : 0;
+}
+
 /** This person's own token design, or null if they have not made one. */
 export async function getToken(userId: string): Promise<TokenRow | null> {
   const supabase = createClient();

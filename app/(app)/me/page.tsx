@@ -14,6 +14,7 @@ import {
   countOpenBugs,
   getOverride,
   getPeople,
+  getPicksOpen,
 } from "@/lib/data";
 import { ROMAN, tokenReadyAt, resolveShown, resolveWorking, finishedWorking, goalGrid, questGrid, achievementGrid, firstStepGrid, firstStepsDone, helpingRow } from "@/lib/badges";
 import { Avatar } from "@/components/bits";
@@ -43,7 +44,7 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
   await createClient().rpc("cr_check_badges");
   const { data: progressData } = await createClient().rpc("cr_goal_progress");
   const progress = (progressData ?? {}) as Record<string, number>;
-  const [top, badges, items, token, helps, trades, plaintiffSince, override, people] = await Promise.all([
+  const [top, badges, items, token, helps, trades, plaintiffSince, override, people, picks] = await Promise.all([
     getTopFriends(userId),
     getBadges(userId),
     getBadgeItems(userId),
@@ -53,6 +54,7 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
     getPlaintiffSince(userId),
     getOverride(userId),
     getPeople(userId),
+    getPicksOpen(),
   ]);
   const [openReports, openBugs] = profile.is_witch ? await Promise.all([countOpenReports(), countOpenBugs()]) : [0, 0];
   const earnedCount = badges.filter((b) => b.earned_at).length;
@@ -132,6 +134,11 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
           gap: 12,
         }}
       >
+        {picks > 0 ? (
+          <Link href="/me/historikals/pick" className="px" style={{ display: "block", padding: "12px 14px", background: "#8a5a0c", boxShadow: "0 0 0 3px #f2b544", color: "#fff", fontSize: 11, lineHeight: 1.6, textDecoration: "none", textAlign: "center" }}>
+            ★ A GIFT: PICK ANY HISTORIKAL ★ <span style={{ color: "#ffe38b" }}>CHOOSE →</span>
+          </Link>
+        ) : null}
         {/* Who you are: the username and character name, left aligned; under them the
             details and the bio. */}
         <div>

@@ -1273,6 +1273,19 @@ export async function deletePost(fd: FormData) {
 }
 
 /** Heal a hurt Historikal back to full, with your own mana: two for each heart it has lost. */
+export async function pickHistorikal(fd: FormData) {
+  const r = await call("cr_pick_historikal", { p_slug: String(fd.get("slug") ?? "") });
+  if (!r.ok) {
+    if (r.code === "none") await setFlash("NO PICK LEFT", "That pick has been used already.", EDGE.purple);
+    else await wentWrong();
+    redirect("/me/historikals");
+  }
+  await setFlash("IT'S YOURS", `${String((r as { name?: string }).name ?? "Your Historikal").toUpperCase()} joins your Historikals.`, EDGE.blue);
+  revalidatePath("/me/historikals");
+  revalidatePath("/", "layout");
+  redirect("/me/historikals");
+}
+
 export async function healHistorikal(fd: FormData) {
   const r = await call("cr_heal", { p_item: Number(fd.get("item")) });
   if (!r.ok) {
