@@ -114,13 +114,12 @@ function Card({ item, decay, me, witch }: { item: FeedItem; decay: number; me: s
                 {corrupt(item.headline, decay)}
               </div>
               {item.standfirst ? <div style={{ fontSize: 13, lineHeight: 1.5, color: "var(--text-2)" }}>{corrupt(item.standfirst, decay)}</div> : null}
+              {/* A text link, like the wiki's, lined up with the words: a motion's briefing asks for the vote. */}
+              <Link href={`/ball/${item.id}`} className="px" style={{ alignSelf: "flex-start", fontSize: 11, color: "var(--pur-pale)", textDecoration: "none", padding: "4px 0" }}>
+                {item.kicker?.toUpperCase().includes("MOTION") ? "VOTE YAY OR NAY →" : "READ THE DISPATCH →"}
+              </Link>
             </div>
           </div>
-
-          {/* A text link, like the wiki's: a motion's briefing asks for the vote. */}
-          <Link href={`/ball/${item.id}`} className="px" style={{ alignSelf: "flex-start", fontSize: 11, color: "var(--pur-pale)", textDecoration: "none", padding: "4px 0" }}>
-            {item.kicker?.toUpperCase().includes("MOTION") ? "VOTE YAY OR NAY →" : "READ THE DISPATCH →"}
-          </Link>
         </div>
       </div>
     );
