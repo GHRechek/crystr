@@ -58,8 +58,8 @@ export default async function ReportsPage() {
                 color: "var(--text-2)",
                 whiteSpace: "pre-wrap",
                 padding: "8px 10px",
-                background: "var(--surface)",
-                boxShadow: "0 0 0 1px var(--edge)",
+                background: "var(--blk)",
+                boxShadow: "none",
               }}
             >
               {r.excerpt}

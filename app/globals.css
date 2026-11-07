@@ -341,7 +341,7 @@ select {
   justify-content: center;
   background: var(--mag);
   color: #fff;
-  border-radius: 8px;
+  border-radius: 0;
   box-shadow: 0 0 0 2px var(--device);
   font-family: var(--px-font);
   font-size: 11px;
@@ -1596,3 +1596,118 @@ select {
   .pix-in, .hold-overlay { animation: none; }
   .hold-sink { transition: none; }
 }
+
+/* ---------------------------------------------------------- solid blocks
+   The whole app in hard blocks of colour, like the whispers: no outlines, no rounded corners, no
+   see-through tints. Each colour is a darkened CRYSTR colour. This sits last so it wins over the
+   older outlined styles above. */
+:root {
+  --px-r: 0px;
+  --blk: #241f3b;        /* a plain block */
+  --blk-hi: #2e2850;     /* the same, pressed or hovered */
+  --blk-deep: #1a1630;   /* a block inside a block, and fields */
+  --blk-pur: #4a3c8c;
+  --blk-pur-hi: #5847a3;
+  --blk-mag: #8a1f55;
+  --blk-mag-hi: #a0255f;
+  --blk-blu: #2d4fbf;
+  --blk-blu-hi: #375ad6;
+}
+.btn {
+  border: 0;
+  border-radius: 0;
+  background: var(--blk);
+  color: var(--text-2);
+}
+.btn:hover { background: var(--blk-hi); color: var(--text); }
+.btn-mag, .btn-mag:hover { border: 0; color: #ffe1ef; }
+.btn-mag { background: var(--blk-mag); }
+.btn-mag:hover { background: var(--blk-mag-hi); }
+.btn-blue, .btn-blue:hover { border: 0; color: #fff; }
+.btn-blue { background: var(--blk-blu); }
+.btn-blue:hover { background: var(--blk-blu-hi); }
+.btn-purple, .btn-purple:hover { border: 0; color: #fff; }
+.btn-purple { background: var(--blk-pur); }
+.btn-purple:hover { background: var(--blk-pur-hi); }
+.btn[disabled],
+.btn[aria-disabled="true"],
+.btn[disabled]:hover,
+.btn[aria-disabled="true"]:hover {
+  border: 0;
+  background: var(--blk-deep);
+  color: var(--muted);
+  opacity: 0.7;
+}
+.btn.dots-btn, .btn.dots-btn:hover { background: transparent; }
+
+.card { background: var(--blk); box-shadow: none; border-radius: 0; }
+.card-flat { background: transparent; }
+.card .card { background: var(--blk-deep); }
+.tile { background: var(--blk); box-shadow: none; border-radius: 0; }
+.rowcard { background: var(--blk); border: 0; border-radius: 0; }
+.rowcard:hover { background: var(--blk-hi); }
+.notice { border: 0; background: var(--blk-deep); border-radius: 0; }
+.banner-note { border-radius: 0; }
+.banner-purple { background: #2b2350; box-shadow: none; }
+.banner-mag { background: #4a1630; box-shadow: none; }
+.witchbar { background: #2b2350; box-shadow: none; border-radius: 0; }
+.placeholder { box-shadow: none; border-radius: 0; }
+.setup-banner { background: #2b2350; box-shadow: none; }
+.toast { border-radius: 0; }
+
+.pill { border-radius: 0; }
+.pill-ball { background: #24407f; color: var(--blu-pale); box-shadow: none; }
+.pill-passed { background: #24407f; color: var(--blu-pale); }
+.pill-failed { background: #5a1a3a; color: var(--mag-pale); }
+.pill-review { background: var(--blk-pur); color: #fff; }
+.pill-returned { background: #5a1a3a; color: var(--mag-pale); }
+.pill-draft { background: var(--blk-hi); }
+
+.input,
+.textarea { border: 0; border-radius: 0; background: var(--blk-deep); }
+.input:focus,
+.textarea:focus { outline: 2px solid var(--blk-pur); outline-offset: 0; }
+select.input { border: 0; }
+
+.seg { border: 0; border-radius: 0; gap: 2px; overflow: visible; }
+.seg > * { border: 0; border-left: 0; background: var(--blk); color: var(--muted); }
+.seg > *:hover { background: var(--blk-hi); filter: none; }
+.seg > [data-on="true"],
+.seg > [data-on="true"]:hover { background: var(--blk-pur); color: #fff; }
+.ball-tabs { gap: 2px; }
+.ball-tab { box-shadow: none; background: var(--blk); border-radius: 0; }
+.ball-tab[data-on="true"] { background: var(--blk-pur); color: #fff; box-shadow: none; }
+.mana-well[data-here="true"] { box-shadow: none; background: var(--blk-pur); }
+/* Top-level cards and rows are blocks too, not transparent bands with a rule under them. Rows of one
+   list sit 2px apart. */
+.pad > .card,
+.pad > .rowcard,
+.pad > .notice,
+.pad > .banner-note,
+.pad > .witchbar {
+  margin-inline: 0;
+  padding-inline: 13px;
+}
+.pad > .card,
+.pad > .rowcard {
+  background: var(--blk);
+  border-bottom: 0;
+}
+.pad > .rowcard:hover { background: var(--blk-hi); }
+.pad > .card + .card,
+.pad > .rowcard + .rowcard,
+.pad > .card + .rowcard,
+.pad > .rowcard + .card {
+  margin-top: -10px;
+}
+/* A plain button inside a block steps up a shade so it still reads as a button. */
+.card .btn:not(.btn-mag):not(.btn-blue):not(.btn-purple):not(.dots-btn),
+.tile .btn:not(.btn-mag):not(.btn-blue):not(.btn-purple):not(.dots-btn),
+.witchbar .btn:not(.btn-mag):not(.btn-blue):not(.btn-purple):not(.dots-btn) {
+  background: #3a3163;
+}
+.card .btn:not(.btn-mag):not(.btn-blue):not(.btn-purple):not(.dots-btn):hover,
+.tile .btn:not(.btn-mag):not(.btn-blue):not(.btn-purple):not(.dots-btn):hover {
+  background: #463c75;
+}
+.card .input, .card .textarea, .tile .input, .tile .textarea { background: var(--blk-deep); }

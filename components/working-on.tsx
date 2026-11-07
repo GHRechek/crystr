@@ -253,7 +253,7 @@ export function WorkingOn({ items, all, editable, person, finished, isWitch, ope
                       </button>
                     ) : null}
                     {n >= 0 ? (
-                      <span aria-hidden className="px" style={{ flex: "none", minWidth: 20, height: 20, display: "grid", placeItems: "center", fontSize: 11, background: "var(--pur)", color: "#fff", borderRadius: 10 }}>{n + 1}</span>
+                      <span aria-hidden className="px" style={{ flex: "none", minWidth: 20, height: 20, display: "grid", placeItems: "center", fontSize: 11, background: "var(--pur)", color: "#fff", borderRadius: 0 }}>{n + 1}</span>
                     ) : null}
                   </div>
                 );

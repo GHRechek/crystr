@@ -189,7 +189,7 @@ export function HoldMenu({
             <div style={{ fontSize: 12, color: "var(--muted)" }}>Only the witches see this. {who ? <>About <b style={{ color: "var(--text)" }}>@{who}</b>.</> : null}</div>
             <div>
               <div className="px" style={{ fontSize: 10, color: "var(--muted)", marginBottom: 4 }}>EVIDENCE · THE LINE, AS IT STOOD</div>
-              <div style={{ padding: "8px 10px", background: "var(--surface)", boxShadow: "0 0 0 1px var(--edge)", fontSize: 12.5, lineHeight: 1.45, color: "var(--text-2)", whiteSpace: "pre-wrap", overflowWrap: "anywhere" }}>
+              <div style={{ padding: "8px 10px", background: "var(--blk)", boxShadow: "none", fontSize: 12.5, lineHeight: 1.45, color: "var(--text-2)", whiteSpace: "pre-wrap", overflowWrap: "anywhere" }}>
                 {text || "a picture or a post"}
               </div>
             </div>

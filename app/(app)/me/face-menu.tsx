@@ -122,7 +122,7 @@ export function ProfileHead({
               </Link>
               {origin ? (
                 <div style={{ padding: "10px 0 8px", display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
-                  <div style={{ width: "min(100%, 190px)", borderRadius: 4, overflow: "hidden" }}>
+                  <div style={{ width: "min(100%, 190px)", borderRadius: 0, overflow: "hidden" }}>
                     <QrCode text={`${origin}/u/${handle}`} size={190} label="Your code. Someone scans it to trade with you." />
                   </div>
                   <div className="px" style={{ fontSize: 10, color: "var(--muted)" }}>YOUR CODE</div>

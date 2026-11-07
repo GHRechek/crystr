@@ -84,7 +84,7 @@ export function AvatarBuilder({ start, fresh }: { start: PortraitConfig; fresh: 
             width: 128,
             height: 128,
             flex: "none",
-            boxShadow: "0 0 0 1px var(--edge)",
+            boxShadow: "none",
             borderRadius: "var(--px-r)",
             overflow: "hidden",
             lineHeight: 0,

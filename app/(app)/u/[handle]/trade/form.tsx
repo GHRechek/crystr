@@ -100,7 +100,7 @@ export function TradeForm({
           {myToken ? (
             <TokenImage design={myToken.design} size={64} />
           ) : (
-            <div aria-hidden style={{ width: 64, height: 64, flex: "none", display: "grid", placeItems: "center", color: "var(--dim)", border: "1px dashed var(--edge)", borderRadius: "var(--px-r)" }}>
+            <div aria-hidden style={{ width: 64, height: 64, flex: "none", display: "grid", placeItems: "center", color: "var(--dim)", border: 0, borderRadius: "var(--px-r)" }}>
               ?
             </div>
           )}

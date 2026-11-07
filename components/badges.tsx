@@ -109,7 +109,7 @@ export function BadgeArt({
           border: `1px solid ${got ? "var(--mag-edge)" : "var(--edge)"}`,
           outline: ring ? `2px solid ${ring}` : undefined,
           outlineOffset: 1,
-          borderRadius: 6,
+          borderRadius: 0,
         }}
       >
         {BADGE_GLYPH}

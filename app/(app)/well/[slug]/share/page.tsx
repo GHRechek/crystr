@@ -35,7 +35,7 @@ export default async function SharePage(props: { params: Promise<{ slug: string 
           <img
             src={item.image_url}
             alt="What you handed in"
-            style={{ display: "block", width: "100%", maxHeight: 420, objectFit: "contain", borderRadius: 4, background: "var(--inset)" }}
+            style={{ display: "block", width: "100%", maxHeight: 420, objectFit: "contain", borderRadius: 0, background: "var(--inset)" }}
           />
         ) : null}
         {wroteIt ? (

@@ -51,7 +51,7 @@ export function WitchFace({ person, quests }: { person: Author; quests: ShownBad
             {list.length === 0 ? <li className="empty">NOTHING LEFT TO MARK</li> : null}
             {list.map((b) => (
               <li key={b.key}>
-                <button type="button" onClick={() => setPick(b)} style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, textAlign: "left", padding: "8px 10px", background: "var(--surface)", border: "1px solid var(--edge)", borderRadius: "var(--px-r)", color: "inherit", font: "inherit", cursor: "pointer" }}>
+                <button type="button" onClick={() => setPick(b)} style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, textAlign: "left", padding: "8px 10px", background: "var(--blk)", border: 0, borderRadius: "var(--px-r)", color: "inherit", font: "inherit", cursor: "pointer" }}>
                   <span style={{ flex: "none", lineHeight: 0, opacity: 0.85 }}><BadgeFace b={b} size={36} /></span>
                   <span style={{ minWidth: 0, flex: 1 }}>
                     <span className="px" style={{ display: "block", fontSize: 11, lineHeight: 1.5 }}>{b.title}</span>
@@ -63,7 +63,7 @@ export function WitchFace({ person, quests }: { person: Author; quests: ShownBad
           </ul>
           {pick ? (
             <div role="dialog" aria-label="Confirm" onClick={() => setPick(null)} style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,.6)", display: "grid", placeItems: "center", padding: 24 }}>
-              <div onClick={(e) => e.stopPropagation()} style={{ width: "min(320px, 100%)", background: "var(--surface)", border: "1px solid var(--edge)", borderRadius: "var(--px-r)", padding: 18, display: "flex", flexDirection: "column", alignItems: "center", gap: 10, textAlign: "center" }}>
+              <div onClick={(e) => e.stopPropagation()} style={{ width: "min(320px, 100%)", background: "var(--blk)", border: 0, borderRadius: "var(--px-r)", padding: 18, display: "flex", flexDirection: "column", alignItems: "center", gap: 10, textAlign: "center" }}>
                 <BadgeFace b={pick} size={56} />
                 <div className="px" style={{ fontSize: 12 }}>{pick.title}</div>
                 <div style={{ fontSize: 12.5, lineHeight: 1.5, color: "var(--muted)" }}>Say {person.handle} has done this?</div>

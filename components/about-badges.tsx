@@ -123,17 +123,17 @@ export function AboutBadges({
           type="button"
           aria-label={editable ? "See all your badges and choose which to show" : "See all their badges"}
           onClick={() => setChoosing(true)}
-          style={{ flex: "none", width: 42, height: 42, display: "grid", placeItems: "center", background: "none", border: "1px dashed var(--edge)", borderRadius: "var(--px-r)", color: "var(--muted)", cursor: "pointer", fontSize: 15 }}
+          style={{ flex: "none", width: 42, height: 42, display: "grid", placeItems: "center", background: "none", border: 0, borderRadius: "var(--px-r)", color: "var(--muted)", cursor: "pointer", fontSize: 15 }}
         >
           {editable ? "✎" : <EyeIcon />}
         </button>
       ) : null}
       {tradeHref && scan ? (
         <>
-          <button type="button" aria-label="Scan someone's code to trade" title="Scan a code" onClick={() => setScanning(true)} style={{ position: "relative", flex: "none", width: px, height: px, display: "grid", placeItems: "center", background: "none", border: "1px dashed var(--edge)", borderRadius: "var(--px-r)", color: "var(--muted)", cursor: "pointer" }}>
+          <button type="button" aria-label="Scan someone's code to trade" title="Scan a code" onClick={() => setScanning(true)} style={{ position: "relative", flex: "none", width: px, height: px, display: "grid", placeItems: "center", background: "none", border: 0, borderRadius: "var(--px-r)", color: "var(--muted)", cursor: "pointer" }}>
             <TradeIcon />
             {tradeCount ? (
-              <span aria-hidden className="px" style={{ position: "absolute", top: -6, right: -6, minWidth: 16, height: 16, display: "grid", placeItems: "center", fontSize: 10, lineHeight: 1, background: "var(--pur)", color: "#fff", borderRadius: 8 }}>{tradeCount}</span>
+              <span aria-hidden className="px" style={{ position: "absolute", top: -6, right: -6, minWidth: 16, height: 16, display: "grid", placeItems: "center", fontSize: 10, lineHeight: 1, background: "var(--pur)", color: "#fff", borderRadius: 0 }}>{tradeCount}</span>
             ) : null}
           </button>
           {scanning ? <QrScanner onClose={() => setScanning(false)} tradesHref={tradeHref} waiting={tradeCount} /> : null}
@@ -143,11 +143,11 @@ export function AboutBadges({
           href={tradeHref}
           aria-label={tradeCount ? `Trades, ${tradeCount} waiting` : "Trades"}
           title="Trades"
-          style={{ position: "relative", flex: "none", width: px, height: px, display: "grid", placeItems: "center", border: "1px dashed var(--edge)", borderRadius: "var(--px-r)", color: "var(--muted)", textDecoration: "none" }}
+          style={{ position: "relative", flex: "none", width: px, height: px, display: "grid", placeItems: "center", border: 0, borderRadius: "var(--px-r)", color: "var(--muted)", textDecoration: "none" }}
         >
           <TradeIcon />
           {tradeCount ? (
-            <span aria-hidden className="px" style={{ position: "absolute", top: -6, right: -6, minWidth: 16, height: 16, display: "grid", placeItems: "center", fontSize: 10, lineHeight: 1, background: "var(--pur)", color: "#fff", borderRadius: 8 }}>
+            <span aria-hidden className="px" style={{ position: "absolute", top: -6, right: -6, minWidth: 16, height: 16, display: "grid", placeItems: "center", fontSize: 10, lineHeight: 1, background: "var(--pur)", color: "#fff", borderRadius: 0 }}>
               {tradeCount}
             </span>
           ) : null}
@@ -158,7 +158,7 @@ export function AboutBadges({
           type="button"
           aria-label="See all their badges"
           onClick={() => setChoosing(true)}
-          style={{ flex: "none", width: px, height: px, display: "grid", placeItems: "center", background: "none", border: "1px dashed var(--edge)", borderRadius: "var(--px-r)", color: "var(--muted)", cursor: "pointer" }}
+          style={{ flex: "none", width: px, height: px, display: "grid", placeItems: "center", background: "none", border: 0, borderRadius: "var(--px-r)", color: "var(--muted)", cursor: "pointer" }}
         >
           <EyeIcon />
         </button>

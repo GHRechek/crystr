@@ -97,7 +97,7 @@ export function BadgeViewer({
                       {b.title}
                     </span>
                     {n >= 0 ? (
-                      <span aria-hidden className="px" style={{ position: "absolute", top: -2, right: 4, minWidth: 16, height: 16, display: "grid", placeItems: "center", fontSize: 10, lineHeight: 1, background: "var(--pur)", color: "#fff", borderRadius: 8 }}>
+                      <span aria-hidden className="px" style={{ position: "absolute", top: -2, right: 4, minWidth: 16, height: 16, display: "grid", placeItems: "center", fontSize: 10, lineHeight: 1, background: "var(--pur)", color: "#fff", borderRadius: 0 }}>
                         {n + 1}
                       </span>
                     ) : null}

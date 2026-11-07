@@ -56,7 +56,7 @@ export function BannerPicker({ current }: { current: Banner }) {
       <div
         aria-label="Preview of your banner"
         role="img"
-        style={{ height: 84, borderRadius: "var(--px-r)", boxShadow: "0 0 0 1px var(--edge)", ...bannerStyle({ pattern, a, b }) }}
+        style={{ height: 84, borderRadius: "var(--px-r)", boxShadow: "none", ...bannerStyle({ pattern, a, b }) }}
       />
 
       <input type="hidden" name="pattern" value={pattern} />

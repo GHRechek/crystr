@@ -55,7 +55,7 @@ export function BadgeChooser({ options, current, onClose }: { options: ShownBadg
                     {o.title}
                   </span>
                   {at >= 0 ? (
-                    <span aria-hidden className="px" style={{ position: "absolute", top: 3, right: 3, minWidth: 16, height: 16, display: "grid", placeItems: "center", fontSize: 10, background: "var(--pur)", color: "#fff", borderRadius: 8 }}>
+                    <span aria-hidden className="px" style={{ position: "absolute", top: 3, right: 3, minWidth: 16, height: 16, display: "grid", placeItems: "center", fontSize: 10, background: "var(--pur)", color: "#fff", borderRadius: 0 }}>
                       {at + 1}
                     </span>
                   ) : null}

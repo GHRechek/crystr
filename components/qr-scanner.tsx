@@ -153,7 +153,7 @@ export function QrScanner({ onClose, tradesHref, waiting, mode = "general", only
                         >
                           <input type="hidden" name="slug" value={q.slug} />
                           <input type="hidden" name="other_id" value={found.id} />
-                          <button type="submit" disabled={done} style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, textAlign: "left", padding: "8px 10px", background: "var(--surface)", border: `1px solid ${done ? "var(--pur)" : "var(--edge)"}`, borderRadius: "var(--px-r)", color: "inherit", font: "inherit", cursor: done ? "default" : "pointer", opacity: done ? 0.7 : 1 }}>
+                          <button type="submit" disabled={done} style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, textAlign: "left", padding: "8px 10px", background: "var(--blk)", border: `1px solid ${done ? "var(--pur)" : "var(--edge)"}`, borderRadius: "var(--px-r)", color: "inherit", font: "inherit", cursor: done ? "default" : "pointer", opacity: done ? 0.7 : 1 }}>
                             <span style={{ flex: "none", lineHeight: 0 }}>
                               <BadgeArt b={{ art: q.art, slug: q.slug, tiers: q.tiers }} got={false} tier={0} size={42} />
                             </span>
@@ -175,7 +175,7 @@ export function QrScanner({ onClose, tradesHref, waiting, mode = "general", only
       ) : (
       <div style={{ flex: 1, minHeight: 0, position: "relative", display: "grid", placeItems: "center" }}>
         <video ref={video} playsInline muted style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-        <div aria-hidden style={{ position: "absolute", width: "62%", aspectRatio: "1", border: "2px solid var(--pur)", borderRadius: 8, boxShadow: "0 0 0 999px rgba(0,0,0,.45)" }} />
+        <div aria-hidden style={{ position: "absolute", width: "62%", aspectRatio: "1", border: "2px solid var(--pur)", borderRadius: 0, boxShadow: "0 0 0 999px rgba(0,0,0,.45)" }} />
       </div>
       )}
       <div style={{ padding: "12px 16px 20px", fontSize: 12.5, lineHeight: 1.5, color: err ? "var(--mag-soft)" : "var(--muted)", textAlign: "center" }}>

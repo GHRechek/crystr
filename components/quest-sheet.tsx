@@ -84,7 +84,7 @@ export function QuestRow({ b, face, rest, scan, bare }: { b: ShownBadge; face: R
 
       {tip ? (
         <div role="dialog" aria-label={b.title} onClick={() => setTip(false)} style={{ position: "fixed", inset: 0, zIndex: 85, background: "rgba(0,0,0,.6)", display: "grid", placeItems: "center", padding: 24 }}>
-          <div onClick={(e) => e.stopPropagation()} style={{ width: "min(340px, 100%)", background: "var(--surface)", border: "1px solid var(--edge)", borderRadius: "var(--px-r)", padding: 18, display: "flex", flexDirection: "column", alignItems: "center", gap: 10, textAlign: "center" }}>
+          <div onClick={(e) => e.stopPropagation()} style={{ width: "min(340px, 100%)", background: "var(--blk)", border: 0, borderRadius: "var(--px-r)", padding: 18, display: "flex", flexDirection: "column", alignItems: "center", gap: 10, textAlign: "center" }}>
             <BadgeFace b={b} size={64} />
             <div className="px" style={{ fontSize: 12, lineHeight: 1.5, color: "var(--text)" }}>{b.title}</div>
             <div style={{ fontSize: 12.5, lineHeight: 1.5, color: "var(--muted)" }}>{b.line}</div>

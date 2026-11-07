@@ -87,7 +87,7 @@ function Tally({ motion, height }: { motion: Motion; height: number }) {
       style={{
         display: "flex",
         height,
-        borderRadius: 2,
+        borderRadius: 0,
         overflow: "hidden",
         background: "var(--track)",
         boxShadow: height > 8 ? "inset 0 0 0 1px var(--edge)" : undefined,

@@ -89,7 +89,7 @@ export function WhisperComposer({
             padding: "6px 9px",
             fontSize: 12,
             color: "var(--muted)",
-            boxShadow: "0 0 0 1px var(--edge)",
+            boxShadow: "none",
           }}
         >
           <span style={{ flex: 1, minWidth: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
@@ -104,7 +104,7 @@ export function WhisperComposer({
       {thumb ? (
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={thumb} alt="Picture to send" style={{ height: 52, width: "auto", borderRadius: 4, boxShadow: "0 0 0 1px var(--edge)" }} />
+          <img src={thumb} alt="Picture to send" style={{ height: 52, width: "auto", borderRadius: 0, boxShadow: "none" }} />
           <button type="button" className="btn btn-sm" onClick={clear} style={{ minHeight: 40 }}>
             REMOVE
           </button>

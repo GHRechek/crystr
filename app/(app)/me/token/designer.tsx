@@ -453,8 +453,8 @@ export function TokenDesigner({ start, fresh, how = "", canGive = false, onUse }
                   minHeight: 48,
                   padding: 0,
                   cursor: "pointer",
-                  background: "var(--surface)",
-                  border: "1px solid var(--edge)",
+                  background: "var(--blk)",
+                  border: 0,
                   borderRadius: "var(--px-r)",
                   display: "grid",
                   placeItems: "center",
@@ -505,7 +505,7 @@ export function TokenDesigner({ start, fresh, how = "", canGive = false, onUse }
                   }}
                 >
                   {s.key === "none" ? (
-                    <span aria-hidden style={{ width: "100%", maxWidth: 64, aspectRatio: "1", display: "grid", placeItems: "center", fontSize: 22, border: "1px dashed var(--edge)" }}>
+                    <span aria-hidden style={{ width: "100%", maxWidth: 64, aspectRatio: "1", display: "grid", placeItems: "center", fontSize: 22, border: 0 }}>
                       ∅
                     </span>
                   ) : (
