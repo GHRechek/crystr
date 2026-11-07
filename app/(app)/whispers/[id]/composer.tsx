@@ -148,10 +148,10 @@ export function WhisperComposer({
         />
         <button type="submit" disabled={busy} aria-label={`Send (costs ${cost} mana)`} title={`Send · ${cost} mana`} style={{ minHeight: 44, minWidth: 48, padding: 0, border: 0, borderRadius: 0, background: "#3a5bd9", color: "#fff", cursor: "pointer", display: "grid", placeItems: "center" }}>
           <svg width="18" height="18" viewBox="0 0 9 9" shapeRendering="crispEdges" aria-hidden="true" fill="currentColor">
-            <rect x="4" y="0" width="1" height="9" />
-            <rect x="3" y="1" width="3" height="1" />
-            <rect x="2" y="2" width="5" height="1" />
-            <rect x="1" y="3" width="7" height="1" />
+            <rect x="0" y="4" width="9" height="1" />
+            <rect x="7" y="3" width="1" height="3" />
+            <rect x="6" y="2" width="1" height="5" />
+            <rect x="5" y="1" width="1" height="7" />
           </svg>
         </button>
       </div>
