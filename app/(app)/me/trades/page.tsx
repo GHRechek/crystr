@@ -144,21 +144,9 @@ export default async function TradesPage() {
         ) : (
           <>
             <div style={{ fontSize: 12, lineHeight: 1.5, color: "var(--muted)" }}>
-              Pick who gets it. They say yes before anything moves, and then the next one is {TOKEN_GIFT_MONTHS} months away.
+              Give it face to face: tap the exchange button on your profile, scan their code, choose TRADE, then offer your token.
+              They say yes before anything moves, and then the next one is {TOKEN_GIFT_MONTHS} months away.
             </div>
-            {people.length === 0 ? (
-              <div className="empty">THERE IS NOBODY ELSE IN THE CITY YET</div>
-            ) : (
-              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                {people.map((p) => (
-                  <Link key={p.id} href={`/u/${p.handle}/trade?give=token`} className="rowcard" style={{ minHeight: 48, padding: "8px 11px" }}>
-                    <Avatar person={p} size={28} />
-                    <div style={{ flex: 1, minWidth: 0, fontSize: 13 }}>{p.handle}</div>
-                    <span className="px" style={{ fontSize: 11, color: "var(--dim)" }}>→</span>
-                  </Link>
-                ))}
-              </div>
-            )}
           </>
         )}
       </div>

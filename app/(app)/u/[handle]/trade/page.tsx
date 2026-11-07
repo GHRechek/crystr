@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import { requireMe, getBadgeItems, getToken, getProfileByHandle } from "@/lib/data";
 import { tokenReadyAt } from "@/lib/badges";
 import { TradeForm } from "./form";
@@ -24,6 +25,22 @@ export default async function TradePage(props: {
   const person = await getProfileByHandle(handle);
   if (!person) notFound();
   if (person.id === userId) redirect("/me");
+
+  // Trading only opens after their code is scanned (the exchange button on your profile).
+  if ((await cookies()).get("crystr.trade")?.value !== person.handle) {
+    return (
+      <div className="pad" style={{ gap: 12 }}>
+        <Link href={`/u/${person.handle}`} className="btn btn-sm" style={{ alignSelf: "flex-start" }}>
+          ← {person.handle.toUpperCase()}
+        </Link>
+        <h1 className="screen-title">SCAN TO TRADE</h1>
+        <div className="notice">
+          Trades happen face to face. Tap the exchange button on your profile and scan {person.handle}&apos;s code to open a trade with them.
+        </div>
+        <Link href="/me" className="btn btn-purple btn-block" style={{ minHeight: 46 }}>GO TO YOUR PROFILE</Link>
+      </div>
+    );
+  }
 
   const [mine, theirs, token] = await Promise.all([getBadgeItems(userId), getBadgeItems(person.id), getToken(userId)]);
   const ready = tokenReadyAt(token?.last_given_at);

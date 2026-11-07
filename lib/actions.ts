@@ -1030,10 +1030,22 @@ export async function setToken(fd: FormData) {
 const longDate = (iso: string) =>
   new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
 
+/** A trade starts with a scan: scanning someone's code from the exchange button lets you trade with them
+ *  for the next fifteen minutes. */
+export async function allowTrade(handle: string) {
+  const h = handle.toLowerCase();
+  if (!/^[a-z0-9_.-]{1,40}$/.test(h)) return;
+  (await cookies()).set("crystr.trade", h, { path: "/", maxAge: 15 * 60, httpOnly: true, sameSite: "lax" });
+}
+
 /** Offer someone a badge of yours, or your token, for one of theirs or for nothing. */
 export async function offerTrade(fd: FormData) {
   const to = str(fd, "to_id");
   const handle = str(fd, "to_handle").toLowerCase().replace(/[^a-z0-9_.-]/g, "");
+  if ((await cookies()).get("crystr.trade")?.value !== handle) {
+    await setFlash("SCAN FIRST", "Trades start by scanning their code with the exchange button on your profile.", EDGE.mag);
+    redirect(`/u/${handle}`);
+  }
   const give = str(fd, "give");
   const want = str(fd, "want");
   const back = `/u/${handle}`;

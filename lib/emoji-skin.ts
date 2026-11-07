@@ -28,12 +28,12 @@ export function skinRamp(skin: string): Record<string, string> {
     // The darkest yellows draw the mouths, eyes and outlines. Squeezed into the skin's own ramp they fade
     // into the face (most of all on dark skin), so they get their own step, well clear of the skin.
     const [h, sat, l] = rgbToHsl(...hexToRgb(key));
-    const feature = hslToHex(h, Math.min(1, sat * 0.9 + 0.1), l > 0.4 ? Math.max(0.12, l - 0.42) : Math.max(0.04, l * 0.35));
+    const feature = hslToHex(h, Math.min(1, sat * 0.9 + 0.1), l > 0.4 ? Math.max(0.08, l - 0.52) : Math.max(0.03, l * 0.22));
     m["#b57519"] = feature;
     // The palest yellows are teeth and glints: they stay near white on any skin, or a grin goes flat.
     m["#ffecb9"] = hslToHex(h, sat * 0.35, Math.max(0.88, l + 0.1));
     m["#fff4d4"] = hslToHex(h, sat * 0.25, 0.95);
-    m["#fb8d28"] = hslToHex(h, Math.min(1, sat * 0.9 + 0.1), l > 0.4 ? Math.max(0.18, l - 0.3) : Math.max(0.06, l * 0.5));
+    m["#fb8d28"] = hslToHex(h, Math.min(1, sat * 0.9 + 0.1), l > 0.4 ? Math.max(0.12, l - 0.4) : Math.max(0.04, l * 0.35));
     cache.set(key, m);
   }
   return m;

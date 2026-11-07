@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import jsQR from "jsqr";
 import { BadgeArt } from "@/components/badges";
-import { claimBadge, claimHelp, scanPerson, type Scanned } from "@/lib/actions";
+import { allowTrade, claimBadge, claimHelp, scanPerson, type Scanned } from "@/lib/actions";
 import { targetLabel } from "@/lib/species";
 
 /** The camera, full screen, looking for another person's CRYSTR code. A code that points at a
@@ -85,12 +85,13 @@ export function QrScanner({ onClose, tradesHref, waiting, mode = "general", only
   }, [onClose, router, mode]);
 
   return (
-    <div role="dialog" aria-label="Scan someone's code" style={{ position: "fixed", inset: 0, zIndex: 90, maxWidth: 480, margin: "0 auto", background: "#000", display: "flex", flexDirection: "column" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "14px 16px" }}>
-        <div className="px" style={{ fontSize: 12, color: "var(--pur-soft)" }}>{mode === "quest" ? "SCAN FOR A QUEST" : "SCAN THEIR CODE"}</div>
+    <div role="dialog" aria-label="Scan someone's code" style={{ position: "fixed", inset: 0, zIndex: 90, maxWidth: 480, margin: "0 auto", background: "#120e24", display: "flex", flexDirection: "column" }}>
+      {/* What the scan is for, big, on the CRYSTR colours. */}
+      <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "16px 16px 14px", background: "linear-gradient(90deg,#e0398a,#9184d9 52%,#4c7df0)" }}>
+        <div className="px" style={{ fontSize: 20, lineHeight: 1.2, color: "#fff", textShadow: "2px 2px 0 #1a1033" }}>{mode === "quest" ? (title ?? "QUEST").toUpperCase() : "TRADE REQUEST"}</div>
         <span className="spacer" />
         {tradesHref ? (
-          <Link href={tradesHref} onClick={onClose} className="px" style={{ fontSize: 11, color: "var(--pur-pale)" }}>
+          <Link href={tradesHref} onClick={onClose} className="px" style={{ fontSize: 11, color: "#fff" }}>
             MY TRADES{waiting ? ` · ${waiting}` : ""} →
           </Link>
         ) : null}
@@ -113,7 +114,7 @@ export function QrScanner({ onClose, tradesHref, waiting, mode = "general", only
             <div style={{ display: "flex", gap: 8 }}>
               {(
                 [
-                  ["⇄", "TRADE", () => { router.push(`/u/${found.handle}/trade`); onClose(); }],
+                  ["⇄", "TRADE", async () => { await allowTrade(found.handle); router.push(`/u/${found.handle}/trade`); onClose(); }],
                   ["☺", "PROFILE", () => { router.push(`/u/${found.handle}`); onClose(); }],
                 ] as [string, string, () => void][]
               ).map(([icon, label, go]) => (
@@ -175,10 +176,10 @@ export function QrScanner({ onClose, tradesHref, waiting, mode = "general", only
       ) : (
       <div style={{ flex: 1, minHeight: 0, position: "relative", display: "grid", placeItems: "center" }}>
         <video ref={video} playsInline muted style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-        <div aria-hidden style={{ position: "absolute", width: "62%", aspectRatio: "1", border: "2px solid var(--pur)", borderRadius: 0, boxShadow: "0 0 0 999px rgba(0,0,0,.45)" }} />
+        <div aria-hidden style={{ position: "absolute", width: "62%", aspectRatio: "1", border: "4px solid #e0398a", outline: "4px solid #4c7df0", borderRadius: 0, boxShadow: "0 0 0 999px rgba(18,14,36,.6)" }} />
       </div>
       )}
-      <div style={{ padding: "12px 16px 20px", fontSize: 12.5, lineHeight: 1.5, color: err ? "var(--mag-soft)" : "var(--muted)", textAlign: "center" }}>
+      <div style={{ padding: "14px 16px 22px", fontSize: 12.5, lineHeight: 1.5, color: err ? "var(--mag-soft)" : "var(--pur-pale)", textAlign: "center", background: "#2b1f4f" }}>
         {found ? (view === "quests" ? "One at a time. They get a whisper and say yes or no." : "") : err ?? (mode === "quest" ? (title ? `${title}: ${how ?? ""} Point the camera at their code.` : "Point the camera at their code to see which quests you can do with them.") : "Point the camera at the code on someone's profile menu.")}
       </div>
     </div>

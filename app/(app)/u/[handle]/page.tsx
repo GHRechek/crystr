@@ -78,11 +78,6 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
                 shown={shown}
                 earned={achievementGrid(earned)}
                 tradable={resolveShown(items.filter((i) => i.kind === "tradable").map((i) => `i:${i.id}`), badges, items, person.handle, 10000)}
-                aside={
-                  <Link href={`/u/${person.handle}/trade`} className="px" style={{ fontSize: 11, color: "var(--pur-pale)", whiteSpace: "nowrap" }}>
-                    OFFER A TRADE →
-                  </Link>
-                }
               />
           </div>
         </div>
@@ -101,9 +96,6 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
               WHISPER
             </button>
           </form>
-          <Link href={`/u/${person.handle}/trade`} className="btn btn-purple" style={{ minHeight: 40, flex: 1, display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
-            TRADE BADGES
-          </Link>
         </div>
 
         <div>
