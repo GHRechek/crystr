@@ -22,7 +22,7 @@ type View = {
   swapped?: boolean; turn?: number; quiet?: number; move?: { m?: number; swap?: number } | null; their_moved?: boolean; need?: boolean; their_need?: boolean;
   shadow?: string; left?: number; their_pips?: { ko: boolean; cur: boolean }[]; theirs?: HK; last?: { turn: number; line: string; extra: string; a: Side; b: Side } | null;
   alive?: number; their_alive?: number;
-  epic?: "token" | "historikal" | null; ask?: boolean; token_ok?: boolean; my_token?: unknown; want_epic?: boolean; lineup_ok?: boolean;
+  epic?: "token" | "historikal" | null; ask?: boolean; token_ok?: boolean; my_token?: unknown; want_epic?: boolean; lineup_ok?: boolean; lineup?: number[];
   stake?: { token?: boolean; item?: number } | null; their_stake?: { token?: unknown; item?: HK } | null;
   prize?: { won: boolean; kind: "token" | "historikal"; item: HK | null; token: unknown } | null;
 };
@@ -252,7 +252,8 @@ function Invite({ v, act, kind }: { v: View; act: Act; kind: "trade" | "battle" 
         return (
           <>
             <div className="px en-q">STAKE ONE OF YOURS</div>
-            <Shelf items={(v.mine ?? [])} label="THE WINNER TAKES THE OTHER'S" onPick={(h) => yes({ item: h.id })} />
+            {/* Your lineup, in its order. */}
+            <Shelf items={(v.lineup ?? []).map((id) => (v.mine ?? []).find((h) => h.id === id)).filter((h): h is HK => !!h)} label="STAKE ONE OF YOUR LINEUP" onPick={(h) => yes({ item: h.id })} />
             <div className="en-bottom"><button type="button" className="px en-btn quiet" onClick={() => setStaking(false)}>BACK</button></div>
           </>
         );
@@ -423,7 +424,7 @@ export function BattleScreen({ v, act, close }: { v: View; act: (a: Record<strin
             <div className="px en-q">{up(v.them.handle)} CAN&apos;T PUT A PROOF UP</div>
             {v.their_stake?.item ? <div className="en-mid"><Creature slug={v.their_stake.item.slug} size={102} /></div> : null}
             {v.their_stake?.item ? <div className="px en-midlabel">THEY STAKED<b>{up(v.their_stake.item.name)}</b><Stats h={v.their_stake.item} k={2} /></div> : null}
-            <Shelf items={v.mine ?? []} label="STAKE ONE OF YOURS FOR AN EPIC FIGHT?" onPick={(h) => act({ do: "answer", stake: { item: h.id } })} />
+            <Shelf items={(v.lineup ?? []).map((id) => (v.mine ?? []).find((h) => h.id === id)).filter((h): h is HK => !!h)} label="STAKE ONE OF YOUR LINEUP FOR AN EPIC FIGHT?" onPick={(h) => act({ do: "answer", stake: { item: h.id } })} />
             <div className="en-bottom"><button type="button" className="px en-btn quiet" onClick={() => act({ do: "answer" })}>NO, JUST FIGHT</button></div>
           </>
         ) : (

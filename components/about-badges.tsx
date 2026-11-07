@@ -165,7 +165,8 @@ export function AboutBadges({
                     <TokenImage design={token.design} size={64} /><span className="px">YOUR PROOF</span>
                   </button>
                 ) : null}
-                {tradable.map((h) => (
+                {/* Your Proof first, then your lineup: the Historikals on show in your badge display. */}
+                {shown.filter((h) => h.key.startsWith("i:")).map((h) => (
                   <button key={h.key} type="button" onClick={() => { setStaking(false); setScan({ intent: "battle", stake: { item: Number(h.key.slice(2)) } }); }}>
                     <BadgeFace b={h} size={64} /><span className="px">{h.title.toUpperCase()}</span>
                   </button>
