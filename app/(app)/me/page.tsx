@@ -74,6 +74,7 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
     [
       ["birthday", formatBirthday(profile.birthday)],
       ["likes", profile.likes],
+      ["dislikes", profile.dislikes],
       ["food", profile.food],
       ["obsession", profile.obsession],
     ] as [DetailKind, string | null | undefined][]

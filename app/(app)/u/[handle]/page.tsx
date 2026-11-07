@@ -52,6 +52,7 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
     [
       ["birthday", formatBirthday(person.birthday)],
       ["likes", person.likes],
+      ["dislikes", person.dislikes],
       ["food", person.food],
       ["obsession", person.obsession],
     ] as [DetailKind, string | null | undefined][]

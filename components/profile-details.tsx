@@ -2,16 +2,19 @@
 
 import { useEffect, useRef, useState } from "react";
 import { BadgeTip } from "@/components/badge-tip";
+import { EmojiImg } from "@/components/emoji-img";
 
 /** What each detail is: a small picture, and what a tap on it says. */
-const KINDS = {
+// A badge-set picture (art), or one of the pixel emoji, in the CRYSTR colours or as drawn.
+const KINDS: Record<string, { art?: number; emoji?: string; crystr?: boolean; title: string; line: string }> = {
   birthday: { art: 130, title: "BIRTHDAY", line: "Their birthday." },
-  likes: { art: 103, title: "LIKES", line: "What they like." },
-  food: { art: 135, title: "FAVOURITE FOOD", line: "Their favourite food." },
-  obsession: { art: 139, title: "OBSESSED WITH", line: "What they are obsessed with right now." },
-} as const;
+  likes: { emoji: "pm-54", crystr: true, title: "LIKES", line: "What they like." },
+  dislikes: { emoji: "pm-53", crystr: true, title: "DISLIKES", line: "What they don't." },
+  food: { emoji: "pm-69", crystr: true, title: "FAVOURITE FOOD", line: "Their favourite food." },
+  obsession: { emoji: "pm-59", title: "OBSESSED WITH", line: "What they are obsessed with right now." },
+};
 
-export type DetailKind = keyof typeof KINDS;
+export type DetailKind = "birthday" | "likes" | "dislikes" | "food" | "obsession";
 
 /** The details on a profile: a small picture and the words, no label. Tap a row to say what it is. */
 export function ProfileDetails({ rows }: { rows: { kind: DetailKind; value: string }[] }) {
@@ -47,7 +50,7 @@ export function ProfileDetails({ rows }: { rows: { kind: DetailKind; value: stri
   const k = tip ? KINDS[tip.kind] : null;
 
   return (
-    <div ref={box} style={{ position: "relative", display: "flex", flexDirection: "column", gap: 6 }}>
+    <div ref={box} style={{ position: "relative", display: "flex", flexDirection: "column", gap: 2 }}>
       {rows.map((r) => (
         <button
           key={r.kind}
@@ -60,9 +63,15 @@ export function ProfileDetails({ rows }: { rows: { kind: DetailKind; value: stri
           }}
           style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: 0, background: "none", border: 0, cursor: "pointer", color: "inherit", font: "inherit", textAlign: "left" }}
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={`/badges/set/${KINDS[r.kind].art}.png`} alt="" style={{ flex: "none", imageRendering: "pixelated", display: "block", marginTop: 0 }} />
-          <span style={{ fontSize: 12.5, lineHeight: "23px", color: "var(--text-2)", minWidth: 0 }}>{r.value}</span>
+          <span style={{ flex: "none", width: 23, height: 21, display: "grid", placeItems: "center" }}>
+            {KINDS[r.kind].emoji ? (
+              <EmojiImg e={KINDS[r.kind].emoji!} crystr={KINDS[r.kind].crystr} size={18} />
+            ) : (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={`/badges/set/${KINDS[r.kind].art}.png`} alt="" width={21} height={21} style={{ imageRendering: "pixelated", display: "block" }} />
+            )}
+          </span>
+          <span style={{ fontSize: 12.5, lineHeight: "21px", color: "var(--text-2)", minWidth: 0 }}>{r.value}</span>
         </button>
       ))}
       {k && tip ? <BadgeTip x={tip.x} top={tip.top} width={width} title={k.title} line={k.line} /> : null}

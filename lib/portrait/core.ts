@@ -92,7 +92,7 @@ export const BG_CHOICES = [
 
 // ----------------------------------------------------------------- colour
 
-function hexToRgb(hex: string): [number, number, number] {
+export function hexToRgb(hex: string): [number, number, number] {
   const h = hex.replace("#", "");
   return [
     parseInt(h.slice(0, 2), 16),
@@ -101,7 +101,7 @@ function hexToRgb(hex: string): [number, number, number] {
   ];
 }
 
-function rgbToHsl(r: number, g: number, b: number): [number, number, number] {
+export function rgbToHsl(r: number, g: number, b: number): [number, number, number] {
   r /= 255; g /= 255; b /= 255;
   const max = Math.max(r, g, b), min = Math.min(r, g, b);
   const l = (max + min) / 2;
@@ -115,7 +115,7 @@ function rgbToHsl(r: number, g: number, b: number): [number, number, number] {
   return [h, s, l];
 }
 
-function hslToHex(h: number, s: number, l: number): string {
+export function hslToHex(h: number, s: number, l: number): string {
   const f = (n: number) => {
     const k = (n + h * 12) % 12;
     const a = s * Math.min(l, 1 - l);
