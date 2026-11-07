@@ -62,30 +62,42 @@ export default async function FeedPage() {
 
 function Card({ item, decay, me, witch }: { item: FeedItem; decay: number; me: string; witch?: boolean }) {
   if (item.kind === "ball") {
+    const motion = !!item.kicker?.toUpperCase().includes("MOTION");
     // Laid out like a post: the quill where a face would be, and everything else indented beside it.
     return (
       <div className="tpost">
         <div className="tpost-side">
-          <div aria-hidden style={{ width: 40, height: 40, display: "grid", placeItems: "center", background: "linear-gradient(135deg,#4c7df0,#9184d9)" }}>
-            <svg width="22" height="22" viewBox="0 0 10 10" shapeRendering="crispEdges" fill="#fff">
-              <rect x="7" y="0" width="2" height="1" />
-              <rect x="6" y="1" width="3" height="1" />
-              <rect x="5" y="2" width="3" height="1" />
-              <rect x="4" y="3" width="3" height="1" />
-              <rect x="3" y="4" width="3" height="1" />
-              <rect x="3" y="5" width="2" height="1" />
-              <rect x="2" y="6" width="2" height="1" />
-              <rect x="2" y="7" width="1" height="1" />
-              <rect x="1" y="8" width="1" height="1" />
-              <rect x="0" y="9" width="1" height="1" />
-            </svg>
-          </div>
+          {motion ? (
+            // A motion is put by the City itself: its face is a pixel "!" on the CRYSTR colours.
+            <div aria-hidden style={{ width: 40, height: 40, display: "grid", placeItems: "center", background: "linear-gradient(135deg,#e0398a,#9184d9 52%,#4c7df0)" }}>
+              <svg width="22" height="22" viewBox="0 0 7 7" shapeRendering="crispEdges" fill="#fff">
+                <rect x="2" y="0" width="3" height="3" />
+                <rect x="3" y="3" width="1" height="1" />
+                <rect x="2" y="5" width="3" height="2" />
+              </svg>
+            </div>
+          ) : (
+            <div aria-hidden style={{ width: 40, height: 40, display: "grid", placeItems: "center", background: "linear-gradient(135deg,#4c7df0,#9184d9)" }}>
+              <svg width="22" height="22" viewBox="0 0 10 10" shapeRendering="crispEdges" fill="#fff">
+                <rect x="7" y="0" width="2" height="1" />
+                <rect x="6" y="1" width="3" height="1" />
+                <rect x="5" y="2" width="3" height="1" />
+                <rect x="4" y="3" width="3" height="1" />
+                <rect x="3" y="4" width="3" height="1" />
+                <rect x="3" y="5" width="2" height="1" />
+                <rect x="2" y="6" width="2" height="1" />
+                <rect x="2" y="7" width="1" height="1" />
+                <rect x="1" y="8" width="1" height="1" />
+                <rect x="0" y="9" width="1" height="1" />
+              </svg>
+            </div>
+          )}
         </div>
 
         <div className="tpost-main">
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <div style={{ display: "flex", flexDirection: "column", gap: 1, minWidth: 0 }}>
-              <div style={{ fontSize: 13.5, fontWeight: 500 }}>{item.byline_name?.trim().toLowerCase() || "crystr ball"}</div>
+              <div style={{ fontSize: 13.5, fontWeight: 500 }}>{motion ? "the city" : item.byline_name?.trim().toLowerCase() || "crystr ball"}</div>
               <div className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
                 {item.kicker} · {ago(item.published_at || item.created_at)}
               </div>
@@ -95,16 +107,7 @@ function Card({ item, decay, me, witch }: { item: FeedItem; decay: number; me: s
           </div>
 
           <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
-            {item.kicker?.toUpperCase().includes("MOTION") ? (
-              // A motion's briefing wears a pixel "!" on the CRYSTR colours.
-              <div aria-hidden style={{ width: 56, height: 56, flex: "none", display: "grid", placeItems: "center", background: "linear-gradient(135deg,#e0398a,#9184d9 52%,#4c7df0)" }}>
-                <svg width="28" height="28" viewBox="0 0 7 7" shapeRendering="crispEdges" fill="#fff">
-                  <rect x="2" y="0" width="3" height="3" />
-                  <rect x="3" y="3" width="1" height="1" />
-                  <rect x="2" y="5" width="3" height="2" />
-                </svg>
-              </div>
-            ) : item.banner_icon ? (
+            {item.banner_icon ? (
               <div style={{ width: 56, height: 56, flex: "none", display: "grid", placeItems: "center", background: "var(--inset)" }}>
                 <ArticleIcon slug={item.banner_icon} box={46} />
               </div>
@@ -116,7 +119,7 @@ function Card({ item, decay, me, witch }: { item: FeedItem; decay: number; me: s
               {item.standfirst ? <div style={{ fontSize: 13, lineHeight: 1.5, color: "var(--text-2)" }}>{corrupt(item.standfirst, decay)}</div> : null}
               {/* A text link, like the wiki's, lined up with the words: a motion's briefing asks for the vote. */}
               <Link href={`/ball/${item.id}`} className="px" style={{ alignSelf: "flex-start", fontSize: 11, color: "var(--pur-pale)", textDecoration: "none", padding: "4px 0" }}>
-                {item.kicker?.toUpperCase().includes("MOTION") ? "VOTE YAY OR NAY →" : "READ THE DISPATCH →"}
+                {motion ? "VOTE YAY OR NAY →" : "READ THE DISPATCH →"}
               </Link>
             </div>
           </div>
