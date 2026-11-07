@@ -173,6 +173,15 @@ for (const id of ids) {
   const frontPng = read(`HairFront/${id}`);
   const isLock = frontSidesOf(frontPng);
   const front = split(frontPng, (x) => isLock(x));
+  // Over the forehead and temples the top keeps its locks too, down to LOCK:
+  // the face is drawn over the scalp and crown, so only front hair covers the
+  // hairline, and a top that gave its locks up left bare skin there under
+  // another style's sides. Mixed, both are drawn; matched, the compositor
+  // draws the original front cell instead, so a style still adds up exactly.
+  for (let y = 0; y < LOCK; y++) for (let x = 0; x < SIZE; x++) {
+    const i = at(frontPng, x, y);
+    if (frontPng.data[i + 3] && isLock(x)) front.top.data.set(frontPng.data.subarray(i, i + 4), i);
+  }
   writeFileSync(`${ROOT}/HairFrontTop/${id}.png`, PNG.sync.write(front.top));
   writeFileSync(`${ROOT}/HairFrontSides/${id}.png`, PNG.sync.write(front.sides));
 }

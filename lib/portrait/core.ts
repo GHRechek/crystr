@@ -224,6 +224,8 @@ export const SHEET_ORDER = [
   // with the sides, the fringe with the top over them.
   "HairFrontSides",
   "HairFrontTop",
+  // Matched hair: the original front cell, in place of the two halves.
+  "HairFront",
   "LayeredAccessories",
 ];
 
@@ -468,6 +470,15 @@ export function drawPlan(config: PortraitConfig): string[] {
   // The scalp is a single shape with no choice behind it.
   want("Cranium/00");
 
+  // Matched hair draws the artist's own front cell. Split, the top's half and
+  // the sides' half overlap over the hairline (so a mix leaves no bare skin),
+  // and drawing that overlap twice would change a style's soft edges.
+  if (c.top !== NONE && c.top === c.hair_back && wanted.get("HairFrontTop")?.has(c.top)) {
+    wanted.get("HairFrontTop")!.delete(c.top);
+    wanted.get("HairFrontSides")?.delete(c.top);
+    want(`HairFront/${c.top}`);
+  }
+
   return SHEET_ORDER.flatMap((sheet) =>
     [...(wanted.get(sheet) ?? [])].sort().map((id) => `${sheet}/${id}.png`),
   );
@@ -481,7 +492,7 @@ const PACK_ORDER = Object.keys(ALLOWED).sort();
  *  the crop, the art. Faces are cached immutably for a year, and the packed
  *  spec only describes the config, so without this a fixed renderer keeps
  *  serving the broken picture out of everyone's browser cache. */
-export const RENDER = "27";
+export const RENDER = "28";
 
 export function packPortrait(config: PortraitConfig): string {
   const c = normalizePortrait(config);
