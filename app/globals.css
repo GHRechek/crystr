@@ -2037,3 +2037,5 @@ select.input { border: 0; }
 @keyframes bv-float { 0%, 100% { translate: 0 0; } 50% { translate: 0 -5px; } }
 @media (prefers-reduced-motion: reduce) { .bv-float { animation: none; } }
 .bv-item img { pointer-events: none; -webkit-user-drag: none; user-select: none; }
+/* A page that fills the screen and scrolls inside itself (the face maker). */
+.decay-wrap:has(> .fill-screen) { height: 100%; }

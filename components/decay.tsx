@@ -76,7 +76,8 @@ export function DecayFrame({ mana, card = true, children }: { mana: number; card
           </div>
         </div>
       ) : null}
-      <div style={{ filter: DECAY_FILTER[level] }}>{children}</div>
+      {/* A page that fills the screen (the face maker, which keeps its face pinned that way) makes this as tall as the screen. */}
+      <div className="decay-wrap" style={{ filter: DECAY_FILTER[level] }}>{children}</div>
     </>
   );
 }
