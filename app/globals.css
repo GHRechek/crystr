@@ -1749,6 +1749,8 @@ select.input { border: 0; }
   position: relative; z-index: 3; text-align: center; font-size: 18px; line-height: 1.45; color: #fff;
   text-shadow: 2px 2px 0 #160b2e; max-width: 340px; margin-top: 8px;
 }
+/* Once the badge is out, the question has been answered: it fades away. */
+.ask-question.is-gone { opacity: 0; transition: opacity 0.9s ease 0.6s; }
 .ask-stage { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; margin-top: 10px; transform: translateY(22px); }
 .ask-badge {
   /* Starts sunk below the chest's front rim (105px down), hidden by the front wall drawn over it, then
@@ -1793,7 +1795,7 @@ select.input { border: 0; }
   animation: ask-spark 1.6s steps(4) calc(1s + var(--d)) infinite; }
 .ask-spark.fall { animation-name: ask-spark-fall; animation-duration: 2.2s; }
 @keyframes ask-spark { 0%, 100% { opacity: 0; transform: scale(.4); } 40% { opacity: 1; transform: scale(1); } }
-@keyframes ask-spark-fall { 0% { opacity: 0; transform: translateY(0) scale(.5); } 25% { opacity: 1; transform: translateY(6px) scale(1); } 100% { opacity: 0; transform: translateY(34px) scale(.4); } }
+@keyframes ask-spark-fall { 0% { opacity: 0; transform: translateY(0) scale(.5); } 25% { opacity: 1; transform: translateY(6px) scale(1); } 100% { opacity: 0; transform: translateY(16px) scale(.4); } }
 .ask-glint { position: absolute; width: 6px; height: 6px; background: #fff; opacity: 0; animation: ask-glint 1.2s steps(2) 2.4s infinite; }
 .ask-glint.g1 { left: -14px; top: 6px; }
 .ask-glint.g2 { right: -12px; top: 22px; animation-delay: 2.8s; }
@@ -1831,7 +1833,7 @@ select.input { border: 0; }
 .ask-dots i { font-style: normal; animation: ask-glint 1.2s steps(2) infinite; }
 .ask-dots i:nth-child(2) { animation-delay: 0.3s; }
 .ask-dots i:nth-child(3) { animation-delay: 0.6s; }
-.ask-result { translate: 0 -140px; font-size: 18px; line-height: 1.4; text-align: center; max-width: 300px; text-shadow: 3px 3px 0 #160b2e; animation: pix-in 240ms steps(4) 2.4s both; }
+.ask-result { translate: 0 -160px; font-size: 18px; line-height: 1.4; text-align: center; max-width: 300px; text-shadow: 3px 3px 0 #160b2e; animation: pix-in 240ms steps(4) 2.4s both; }
 .ask-result.is-yes { color: #8fa2ff; }
 .ask-earned { display: block; color: #e0398a; font-size: 22px; margin-top: 4px; }
 .ask-result.is-no { color: #ff5a7a; }

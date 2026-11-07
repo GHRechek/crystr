@@ -213,7 +213,7 @@ function Rays() {
 }
 
 /** Sparkles around the risen badge: x, y (from the badge's corner), colour, delay, size, and whether it drifts down. */
-const SPARKS: [number, number, string, number, number, number][] = [[97, 38, "#e0398a", 1.17, 1, 0], [64, 86, "#4c7df0", 0.75, 1, 0], [-17, 68, "#e0398a", 1.05, 1, 0], [-2, 12, "#4c7df0", 0.75, 2, 0], [52, -15, "#e0398a", 0.34, 1, 0], [42, 129, "#9184d9", 1.71, 2, 1], [77, 143, "#e0398a", 0.63, 1, 1], [66, 132, "#ffffff", 1.93, 2, 1]];
+const SPARKS: [number, number, string, number, number, number][] = [[97, 38, "#e0398a", 1.17, 1, 0], [64, 86, "#4c7df0", 0.75, 1, 0], [-17, 68, "#e0398a", 1.05, 1, 0], [-2, 12, "#4c7df0", 0.75, 2, 0], [52, -15, "#e0398a", 0.34, 1, 0], [22, 96, "#9184d9", 1.5, 1, 1]];
 
 /** Where the rays meet, as a share of the screen's height. The badge comes to rest exactly here. */
 const RAY_CY = 0.38;
@@ -343,7 +343,7 @@ export function AskScene({
     <div ref={sceneRef} role="dialog" aria-label={question} className="ask-scene">
       <Rays />
       <div className={`ask-dim${state === "unlocking" ? " is-on" : state === "open" ? " is-after" : ""}`} aria-hidden />
-      <div className="px ask-question">
+      <div className={`px ask-question${state === "open" ? " is-gone" : ""}`}>
         {side === "wait" && (state === "idle" || state === "unlocking") ? (
           <>
             {waiting ?? `${who} is deciding`}
