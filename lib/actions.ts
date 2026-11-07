@@ -364,7 +364,7 @@ export async function unsendMessage(fd: FormData) {
   const { data, error } = await supabase.rpc("cr_unsend", { p_message: Number(fd.get("message_id")) });
   const r = data as { ok?: boolean; code?: string; image?: string | null } | null;
   if (r?.code === "held") {
-    await setFlash("HELD", "Someone marked this as too much, so it stays.", EDGE.mag);
+    await setFlash("HELD", "This was marked too much or reported, so it stays.", EDGE.mag);
   } else if (error || !r?.ok) {
     await wentWrong();
   } else {

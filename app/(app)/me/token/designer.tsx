@@ -6,6 +6,7 @@ import { PICTURE_CATEGORIES, pictureCategory, SET_REMOVED } from "@/lib/badges";
 
 /** Which of the five groups an icon belongs to: set pictures by their number, the rest by what they are called. */
 function iconGroup(slug: string, label: string): number {
+  if (slug.startsWith("e-")) return 5;
   if (slug.startsWith("s-")) return pictureCategory(Number(slug.slice(2)));
   const l = label.toLowerCase();
   if (/crest|banner|medal|trophy|ribbon|badge|emblem/.test(l)) return 2;
@@ -429,7 +430,7 @@ export function TokenDesigner({ start, fresh, how = "", canGive = false, onUse }
       {panel === "icons" ? (
         <Sheet title={`ADD AN ICON · ${placed.length}/${SLOTS.length}`} onClose={() => setPanel(null)}>
           <div style={{ display: "flex", flex: "none", gap: 6, overflowX: "auto", paddingBottom: 6 }}>
-            {[{ label: "ALL" }, ...PICTURE_CATEGORIES].map((c, k) => {
+            {[{ label: "ALL" }, ...PICTURE_CATEGORIES, { label: "EMOJI" }].map((c, k) => {
               const i = k - 1;
               return (
                 <button key={c.label} type="button" aria-pressed={group === i} onClick={() => setGroup(i)} className={`btn btn-sm${group === i ? " btn-purple" : ""}`} style={{ flex: "none", minHeight: 36, fontSize: 10 }}>

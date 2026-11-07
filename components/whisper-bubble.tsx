@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { answerBadgeClaim } from "@/lib/actions";
 import { HoldMenu } from "@/components/hold-menu";
-import { TOO_MUCH } from "@/lib/whisper";
+import { TOO_MUCH, isPixelEmoji } from "@/lib/whisper";
 import { corrupt } from "@/lib/crystr";
 import type { Message } from "@/lib/data";
 
@@ -172,7 +172,12 @@ export function Bubble({
                 background: r.mine ? "rgba(145,132,217,.14)" : "var(--surface)",
               }}
             >
-              {r.emoji}
+              {isPixelEmoji(r.emoji) ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={`/emoji/${r.emoji}.png`} alt="" width={14} height={15} style={{ imageRendering: "pixelated", objectFit: "contain", verticalAlign: "-3px" }} />
+              ) : (
+                r.emoji
+              )}
               {r.count > 1 ? <span style={{ fontSize: 11, marginLeft: 3, color: "var(--muted)" }}>{r.count}</span> : null}
             </span>
           ))}

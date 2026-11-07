@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRef, useState } from "react";
 import { reactToMessage, submitReport, unsendMessage } from "@/lib/actions";
 import { REPORT_REASONS } from "@/lib/terms";
-import { REACTIONS, TOO_MUCH, TOO_MUCH_ON } from "@/lib/whisper";
+import { PIXEL_EMOJI, PIXEL_REACTS_ON, QUICK_PIXEL, REACTIONS, TOO_MUCH, TOO_MUCH_ON } from "@/lib/whisper";
 
 const HOLD_MS = 450;
 
@@ -40,6 +40,7 @@ export function HoldMenu({
   // While a finger is down the bubble sinks a step; the menu ignores taps for a moment after it opens, so the
   // lifting finger does not land on (or select) one of its options.
   const [holding, setHolding] = useState(false);
+  const [more, setMore] = useState(false);
   const [ready, setReady] = useState(false);
   const timer = useRef<number | null>(null);
   const start = useRef<{ x: number; y: number } | null>(null);
@@ -107,18 +108,23 @@ export function HoldMenu({
             </button>
           </form>
           ) : null}
-          <div style={{ display: "flex", gap: 4, paddingTop: 2 }}>
-            {REACTIONS.map((e) => (
-              <form key={e} action={reactToMessage} onSubmit={() => setOpen(false)}>
-                <input type="hidden" name="thread_id" value={thread} />
-                <input type="hidden" name="message_id" value={id} />
-                <input type="hidden" name="emoji" value={e} />
-                <button type="submit" aria-label={`React ${e}`} style={{ width: 42, height: 42, border: 0, background: "none", fontSize: 24, cursor: "pointer", lineHeight: 1 }}>
-                  {e}
-                </button>
-              </form>
+          <div style={{ display: "flex", gap: 2, paddingTop: 2, alignItems: "center" }}>
+            {(PIXEL_REACTS_ON ? QUICK_PIXEL : REACTIONS).map((e) => (
+              <PixelReact key={e} e={e} thread={thread} id={id} done={() => setOpen(false)} />
             ))}
+            {PIXEL_REACTS_ON ? (
+            <button type="button" aria-label="More reactions" aria-expanded={more} onClick={() => setMore((m) => !m)} className="px" style={{ width: 40, height: 40, border: "2px solid #9184d9", background: more ? "#4a1a3a" : "#1d1636", color: "var(--pur-pale)", fontSize: 18, cursor: "pointer", lineHeight: 1 }}>
+              {more ? "−" : "+"}
+            </button>
+            ) : null}
           </div>
+          {more ? (
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 40px)", gap: 2, maxHeight: 220, overflowY: "auto", paddingTop: 6, borderTop: "2px solid #0b0814", marginTop: 4 }}>
+              {PIXEL_EMOJI.map((e) => (
+                <PixelReact key={e} e={e} thread={thread} id={id} done={() => setOpen(false)} />
+              ))}
+            </div>
+          ) : null}
           </div>
 
           <div onClick={(e) => e.stopPropagation()} className="pix-in" style={{ maxWidth: "90%", pointerEvents: "none" }}>
@@ -208,5 +214,24 @@ export function HoldMenu({
         </div>
       ) : null}
     </>
+  );
+}
+
+/** One pixel emoji in the reaction picker. */
+function PixelReact({ e, thread, id, done }: { e: string; thread: number; id: number; done: () => void }) {
+  return (
+    <form action={reactToMessage} onSubmit={done}>
+      <input type="hidden" name="thread_id" value={thread} />
+      <input type="hidden" name="message_id" value={id} />
+      <input type="hidden" name="emoji" value={e} />
+      <button type="submit" aria-label={`React ${e}`} style={{ width: 40, height: 40, border: 0, background: "none", cursor: "pointer", padding: 0, display: "grid", placeItems: "center" }}>
+        {e.startsWith("pm-") ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={`/emoji/${e}.png`} alt="" width={22} height={24} style={{ imageRendering: "pixelated", objectFit: "contain" }} />
+        ) : (
+          <span style={{ fontSize: 22, lineHeight: 1 }}>{e}</span>
+        )}
+      </button>
+    </form>
   );
 }
