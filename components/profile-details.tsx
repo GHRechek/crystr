@@ -7,7 +7,7 @@ import { EmojiImg } from "@/components/emoji-img";
 /** What each detail is: a small picture, and what a tap on it says. */
 // A badge-set picture (art), or one of the pixel emoji, in the CRYSTR colours or as drawn.
 const KINDS: Record<string, { art?: number; emoji?: string; crystr?: boolean; title: string; line: string }> = {
-  birthday: { art: 130, title: "BIRTHDAY", line: "Their birthday." },
+  birthday: { art: 130, crystr: true, title: "BIRTHDAY", line: "Their birthday." },
   likes: { emoji: "pm-54", crystr: true, title: "LIKES", line: "What they like." },
   dislikes: { emoji: "pm-53", crystr: true, title: "DISLIKES", line: "What they don't." },
   food: { emoji: "pm-69", crystr: true, title: "FAVOURITE FOOD", line: "Their favourite food." },
@@ -67,8 +67,7 @@ export function ProfileDetails({ rows }: { rows: { kind: DetailKind; value: stri
             {KINDS[r.kind].emoji ? (
               <EmojiImg e={KINDS[r.kind].emoji!} crystr={KINDS[r.kind].crystr} size={18} />
             ) : (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={`/badges/set/${KINDS[r.kind].art}.png`} alt="" width={21} height={21} style={{ imageRendering: "pixelated", display: "block" }} />
+              <EmojiImg e={`art-${KINDS[r.kind].art}`} from={`/badges/set/${KINDS[r.kind].art}.png`} crystr={KINDS[r.kind].crystr} size={21} />
             )}
           </span>
           <span style={{ fontSize: 12.5, lineHeight: "21px", color: "var(--text-2)", minWidth: 0 }}>{r.value}</span>

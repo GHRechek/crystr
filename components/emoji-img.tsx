@@ -7,8 +7,8 @@ const made = new Map<string, string>();
 
 /** A pixel emoji, its yellow skin recoloured to `skin` (a face-maker skin colour). Drawn once per
  *  emoji and skin on a canvas from the small 16px original, then reused. */
-export function EmojiImg({ e, skin, size = 24, style, crystr }: { e: string; skin?: string | null; size?: number; style?: React.CSSProperties; /** Wear the CRYSTR colours instead. */ crystr?: boolean }) {
-  const plain = `/emoji/${e}.png`;
+export function EmojiImg({ e, skin, size = 24, style, crystr, from }: { e: string; skin?: string | null; size?: number; style?: React.CSSProperties; /** Wear the CRYSTR colours instead. */ crystr?: boolean; /** Tint this picture instead of an emoji (with crystr). */ from?: string }) {
+  const plain = from ?? `/emoji/${e}.png`;
   const key = crystr ? `${e}:crystr` : skin && hasSkin(e) ? `${e}:${skin}` : "";
   const [src, setSrc] = useState(key && made.get(key) ? made.get(key)! : plain);
 
@@ -50,8 +50,8 @@ export function EmojiImg({ e, skin, size = 24, style, crystr }: { e: string; ski
       made.set(key, url);
       setSrc(url);
     };
-    img.src = `/emoji/${e}-s.png`;
-  }, [key, skin, e, crystr]);
+    img.src = from ?? `/emoji/${e}-s.png`;
+  }, [key, skin, e, crystr, from]);
 
   // eslint-disable-next-line @next/next/no-img-element
   return <img src={src} alt="" width={size} height={size} style={{ imageRendering: "pixelated", ...style }} />;

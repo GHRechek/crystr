@@ -39,14 +39,14 @@ export function skinRamp(skin: string): Record<string, string> {
   return m;
 }
 
-/** CRYSTR colours for any emoji: each pixel's brightness picked off a dark-blue, blue, purple, pink, pale
- *  ramp, so the drawing keeps its shading but wears the app's colours. */
+/** CRYSTR colours for any picture: each pixel's brightness picked off a dark-blue, blue, blue-purple, pale
+ *  lilac ramp (no pink), so the drawing keeps its shading but wears the app's blue-purple. */
 const CRYSTR_STOPS: [number, [number, number, number]][] = [
-  [0, [27, 20, 48]],
-  [0.3, [58, 91, 217]],
-  [0.55, [145, 132, 217]],
-  [0.75, [224, 57, 138]],
-  [0.9, [247, 202, 221]],
+  [0, [20, 18, 44]],
+  [0.3, [52, 76, 190]],
+  [0.55, [110, 120, 230]],
+  [0.75, [145, 132, 217]],
+  [0.9, [210, 206, 253]],
   [1, [255, 255, 255]],
 ];
 export function crystrTint(r: number, g: number, b: number): [number, number, number] {
