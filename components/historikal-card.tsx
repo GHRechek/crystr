@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect } from "react";
 import { Creature, MoveIcon, Stats } from "@/components/encounter";
+import { healHistorikal } from "@/lib/actions";
 import { ELEMENT_COLOR, HISTORIKAL, NO_EFFECT, RARITY_COLOR, SUPER, type Element } from "@/lib/historikals";
 
 const up = (s: string) => s.toUpperCase();
@@ -24,7 +25,7 @@ export function HistorikalCard({
   onEditLineup,
   onClose,
 }: {
-  hk: { slug: string; hp: number };
+  hk: { slug: string; hp: number; id?: number };
   /** Where it came from, as its tooltip says. */
   line?: string;
   own?: boolean;
@@ -71,7 +72,17 @@ export function HistorikalCard({
         </div>
         {line ? <div style={{ fontSize: 12, lineHeight: 1.5, color: "var(--muted)", textAlign: "center" }}>{line}</div> : null}
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "center" }}>
-          {own && hurt ? <Link href="/me/historikals" className="btn btn-sm" style={{ background: "#e0398a", color: "#fff" }}>{ko ? "REVIVE" : "HEAL"} · {2 * (h.hearts - hk.hp)} MANA</Link> : null}
+          {own && hurt ? (
+            hk.id ? (
+              // Two mana a heart, from your own.
+              <form action={healHistorikal}>
+                <input type="hidden" name="item" value={hk.id} />
+                <button type="submit" className="btn btn-sm" style={{ background: "#e0398a", color: "#fff" }}>{ko ? "REVIVE" : "HEAL"} · {2 * (h.hearts - hk.hp)} MANA</button>
+              </form>
+            ) : (
+              <Link href="/me/historikals" className="btn btn-sm" style={{ background: "#e0398a", color: "#fff" }}>{ko ? "REVIVE" : "HEAL"} · {2 * (h.hearts - hk.hp)} MANA</Link>
+            )
+          ) : null}
           {own && onEditLineup ? <button type="button" className="btn btn-sm" onClick={() => { onClose(); onEditLineup(); }}>EDIT LINEUP</button> : null}
           <button type="button" className="btn btn-sm" onClick={onClose}>CLOSE</button>
         </div>
