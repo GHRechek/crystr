@@ -119,17 +119,10 @@ export function WorkingOn({ items, all, editable, person, finished, isWitch, ope
               );
             }
             // Tap a quest (the badge or the name) for how it is earned, in a tooltip in the middle of the screen.
-            if (!person) {
-              return (
-                <li key={b.key}>
-                  <QuestRow b={b} scan={scan} face={face} rest={rest} />
-                </li>
-              );
-            }
-            // On someone else's page a row is just a row: helping and meeting are confirmed by scanning now.
+            // On someone else's page the tooltip only explains: scanning is for your own quests.
             return (
-              <li key={b.key} style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                {row}
+              <li key={b.key}>
+                <QuestRow b={b} scan={scan} face={face} rest={rest} />
               </li>
             );
           })}

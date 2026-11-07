@@ -165,7 +165,7 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
           <WorkingOn person={{ id: person.id, handle: person.handle }} items={resolveWorking(person.working_on, badges, person.working_on?.some((k) => k.startsWith("t:")) ? await getAllTokens(person.id) : [])} />
         ) : (
           // Still on their first steps: that is what they are working on.
-          <WorkingOn heading="FIRST STEPS" total={firstStepGrid(badges).length} items={firstStepGrid(badges)} />
+          <WorkingOn person={{ id: person.id, handle: person.handle }} heading="FIRST STEPS" total={firstStepGrid(badges).length} items={firstStepGrid(badges)} />
         )}
 
       </div>
