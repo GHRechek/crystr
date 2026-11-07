@@ -16,7 +16,7 @@ export default async function HistorikalsPage() {
         <h1 className="px" style={{ fontSize: 13, color: "var(--pur-soft)", fontWeight: 400 }}>YOUR HISTORIKALS</h1>
       </div>
       <p style={{ margin: 0, fontSize: 12.5, lineHeight: 1.6, color: "var(--text-3)" }}>
-        Creatures to collect, trade and battle, face to face. You earn draws: a summon (usually rare) for every three people you help and every main quest you finish, a find for every five battles you win. Open them from the monster button beside your portrait.
+        Creatures to collect, trade and battle, face to face. You earn draws: a summon (usually rare) for every three people you help and every main quest you finish, a find for each first step, every three side quests and every five battles you win. Open them from the monster button beside your portrait.
         Hearts lost in a battle stay lost until you heal them here: two mana a heart.
       </p>
       {picks > 0 ? (

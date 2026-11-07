@@ -116,7 +116,7 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
             aside={null}
             tradeHref="/me/historikals"
             draws={draws}
-            tradeCount={draws.normal + draws.main}
+            tradeCount={waiting}
             scan
           />
         }
