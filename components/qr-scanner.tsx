@@ -93,7 +93,7 @@ export function QrScanner({ onClose, tradesHref, waiting, mode = "general", only
         <span className="spacer" />
         {tradesHref ? (
           <Link href={tradesHref} onClick={onClose} className="px" style={{ fontSize: 11, color: "#fff" }}>
-            YOURS{waiting ? ` · ${waiting}` : ""} →
+            MY HISTORIKALS{waiting ? ` · ${waiting}` : ""} →
           </Link>
         ) : null}
         <button type="button" className="btn btn-sm" onClick={onClose} aria-label="Close" style={{ minHeight: 40, padding: "0 10px" }}>
