@@ -85,11 +85,17 @@ export function AboutBadges({
   // Beside the portrait the token leads, a size up, and the badges after it step down to fit; the
   // trade button keeps the plain size. All of them sit on one centre line.
   const tokPx = compact ? Math.round(px * 1.35) : px;
-  const badgePx = compact ? Math.max(22, Math.min(Math.round(px * 0.82), Math.floor((width - gap * 5 - px - tokPx) / 4))) : px;
+  // The trade (or eye) button matches the token, and the badges spread evenly between the two, so the
+  // row runs from the portrait to the edge of the page's text column.
+  const endPx = compact ? tokPx : px;
+  const badgePx = compact ? Math.max(22, Math.min(Math.round(px * 0.82), Math.floor((width - gap * 5 - endPx - tokPx) / 4))) : px;
+  const endBtn: React.CSSProperties = compact
+    ? { position: "relative", flex: "none", width: endPx, height: endPx, display: "grid", placeItems: "center", background: "var(--blk-pur)", border: 0, borderRadius: 0, color: "#fff", cursor: "pointer", textDecoration: "none" }
+    : { position: "relative", flex: "none", width: px, height: px, display: "grid", placeItems: "center", background: "none", border: 0, borderRadius: "var(--px-r)", color: "var(--muted)", cursor: "pointer", textDecoration: "none" };
   const tipBadge = tip ? shown.find((b) => b.key === tip.key) : undefined;
 
   return (
-    <div ref={box} style={{ position: "relative", display: "flex", flexWrap: compact ? "nowrap" : "wrap", alignItems: "center", gap: compact ? gap : 6 }}>
+    <div ref={box} style={{ position: "relative", display: "flex", flexWrap: compact ? "nowrap" : "wrap", alignItems: "center", justifyContent: compact ? "space-between" : undefined, gap: compact ? gap : 6 }}>
       {token ? (
         <button
           type="button"
@@ -134,7 +140,7 @@ export function AboutBadges({
       ) : null}
       {tradeHref && scan ? (
         <>
-          <button type="button" aria-label="Scan someone's code to trade" title="Scan a code" onClick={() => setScanning(true)} style={{ position: "relative", flex: "none", width: px, height: px, display: "grid", placeItems: "center", background: "none", border: 0, borderRadius: "var(--px-r)", color: "var(--muted)", cursor: "pointer" }}>
+          <button type="button" aria-label="Scan someone's code to trade" title="Scan a code" onClick={() => setScanning(true)} style={endBtn}>
             <TradeIcon />
             {tradeCount ? (
               <span aria-hidden className="px" style={{ position: "absolute", top: -6, right: -6, minWidth: 16, height: 16, display: "grid", placeItems: "center", fontSize: 10, lineHeight: 1, background: "var(--pur)", color: "#fff", borderRadius: 0 }}>{tradeCount}</span>
@@ -147,7 +153,7 @@ export function AboutBadges({
           href={tradeHref}
           aria-label={tradeCount ? `Trades, ${tradeCount} waiting` : "Trades"}
           title="Trades"
-          style={{ position: "relative", flex: "none", width: px, height: px, display: "grid", placeItems: "center", border: 0, borderRadius: "var(--px-r)", color: "var(--muted)", textDecoration: "none" }}
+          style={endBtn}
         >
           <TradeIcon />
           {tradeCount ? (
@@ -162,7 +168,7 @@ export function AboutBadges({
           type="button"
           aria-label="See all their badges"
           onClick={() => setChoosing(true)}
-          style={{ flex: "none", width: px, height: px, display: "grid", placeItems: "center", background: "none", border: 0, borderRadius: "var(--px-r)", color: "var(--muted)", cursor: "pointer" }}
+          style={endBtn}
         >
           <EyeIcon />
         </button>
