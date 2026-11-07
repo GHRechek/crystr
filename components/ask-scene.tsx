@@ -118,7 +118,7 @@ function Rays() {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const draw = () => {
       t += 1;
-      const pulse = reduce ? 1 : 0.78 + 0.22 * Math.sin(t / 9), spin = 0, step = Math.PI / 8;
+      const pulse = reduce ? 1 : 0.78 + 0.22 * Math.sin(t / 9), spin = reduce ? 0 : t * 0.006, step = Math.PI / 8;
       for (let y = 0; y < H; y++) {
         for (let x = 0; x < W; x++) {
           let a = Math.atan2(y + 0.5 - H * 0.42, x + 0.5 - W / 2) - spin;
@@ -291,7 +291,7 @@ export function AskScene({
           </div>
         ) : (
           <div className="ask-hints" aria-hidden="true">
-            <div className="px ask-hint ask-yes"><b>YES!</b><span>UNLOCK IT!</span></div>
+            <div className="px ask-hint ask-yes"><b>YES!</b><span>UNLOCK</span><span style={{ marginTop: 0 }}>THE CHEST!</span></div>
             <div className="px ask-hint ask-no"><b>NO!</b><span>TOSS</span><span style={{ marginTop: 0 }}>THE KEY!</span></div>
           </div>
         )}
