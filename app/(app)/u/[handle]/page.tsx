@@ -70,7 +70,7 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
               <Avatar person={person} size={104} />
             </div>
           )}
-          <div style={{ minWidth: 0, flex: 1 }}>
+          <div style={{ minWidth: 0, flex: 1, marginBottom: -6 }}>
             <AboutBadges
                 compact
                 token={token ? { design: token.design, title: tokenTitle(person.display_name, person.handle).toUpperCase(), line: token.how?.trim() || `Ask ${person.handle} how to earn it.` } : undefined}
