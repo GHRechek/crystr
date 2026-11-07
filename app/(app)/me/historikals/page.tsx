@@ -18,7 +18,7 @@ export default async function HistorikalsPage() {
         <Link href="/me/trades" className="px" style={{ fontSize: 10, color: "var(--pur-pale)", textDecoration: "none" }}>EXCHANGE →</Link>
       </div>
       <p style={{ margin: 0, fontSize: 12.5, lineHeight: 1.6, color: "var(--text-3)" }}>
-        Creatures to collect, trade and battle, face to face. One comes for every three people you help, every ten battles you win, and a rare one for every main quest you finish.
+        Creatures to collect, trade and battle, face to face. A rare one comes for every three people you help and for every main quest you finish, and one for every five battles you win.
         Hearts lost in a battle stay lost until you heal them here: two mana a heart.
       </p>
       {hurt ? <div className="px" style={{ fontSize: 11, color: "#ff5a7a" }}>{hurt} HURT · YOU HAVE {profile.mana} MANA</div> : null}
