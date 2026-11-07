@@ -11,7 +11,7 @@ import { targetLabel } from "@/lib/species";
 export const WHERE: Record<string, [string, string]> = {
   "top-five-full": ["/me/top-six", "PICK YOUR TOP 5"],
   "first-bio": ["/me/edit", "EDIT YOUR PROFILE"],
-  "token-made": ["/me/token", "MAKE YOUR TOKEN"],
+  "token-made": ["/me/token", "MAKE YOUR PROOF"],
   "visit-the-well": ["/well", "GO TO THE WELL"],
   "vote-on-a-motion": ["/ball?tab=motions", "SEE THE MOTIONS"],
   "publish-an-op-ed": ["/ball", "GO TO THE BALL"],
@@ -31,7 +31,7 @@ const CUSTOM: Record<string, { text: string; link?: [string, string] }> = {
   "visit-the-well": { text: "Go to the Mana Well and answer one of its quests.", link: ["/well", "GO TO THE WELL"] },
   "ask-for-help": { text: "Go to your profile, tap your picture, choose ASK FOR HELP, and say what you need.", link: ["/me", "GO TO YOUR PROFILE"] },
   "top-five-in": { text: "Nothing to fill in: it happens when someone puts you in their Top 5. Meet people, whisper, make friends.", link: ["/people", "FIND PEOPLE"] },
-  "got-token": { text: "Someone has to give you their token. Ask a friend to give you theirs from their Trades page.", link: ["/people", "FIND PEOPLE"] },
+  "got-token": { text: "Win someone's Proof: put yours up in a battle, and if they put theirs up too and you win, a copy of theirs is yours.", link: ["/people", "FIND PEOPLE"] },
   "gift-badge": { text: "Offer one of your Historikals to someone and ask for nothing back.", link: ["/me/historikals", "YOUR HISTORIKALS"] },
   "max-fifty": { text: "Your max mana grows with every badge you earn. Keep earning.", link: ["/quests", "GO TO YOUR QUESTS"] },
   "all-eight": { text: "Earn each of the first eight badges: the ones everyone starts with. Check what is still undone in Side Quests.", link: ["/quests#side-quests", "GO TO SIDE QUESTS"] },

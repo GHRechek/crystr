@@ -119,7 +119,7 @@ export function TradeForm({
         </Row>
         {!myToken ? (
           <Link href="/me/token" className="px" style={{ fontSize: 11, color: "var(--pur-pale)" }}>
-            MAKE YOUR TOKEN →
+            MAKE YOUR PROOF →
           </Link>
         ) : null}
         {mine.map((it) => (
@@ -135,7 +135,7 @@ export function TradeForm({
           <div className="px" style={{ fontSize: 11, marginBottom: 4 }}>
             ONCE EVERY {TOKEN_GIFT_MONTHS} MONTHS
           </div>
-          You are giving your token away. If {toHandle} says yes, you cannot give another until{" "}
+          You are giving your Proof away. If {toHandle} says yes, you cannot give another until{" "}
           {longDate(next.toISOString())}. The one they hold is theirs to keep or trade on.
         </div>
       ) : null}

@@ -97,7 +97,7 @@ export function listBadges(titles: string[]): string {
 
 /** What a tradable badge or token is called. */
 export function itemTitle(item: Pick<BadgeItem, "kind" | "title" | "kindRow">): string {
-  return item.kind === "token" ? item.title ?? "A token" : item.kindRow?.title ?? "A badge";
+  return item.kind === "token" ? item.title ?? "A Proof" : item.kindRow?.title ?? "A badge";
 }
 
 /** When this token can be given again, or null if it can be given now. */

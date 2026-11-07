@@ -28,8 +28,8 @@ export default async function TokenPage() {
       <TokenDesigner start={token ? normalizeToken(token.design) : defaultToken()} fresh={!token} how={token?.how ?? ""} canGive={!!token && !ready} />
 
       <div style={{ fontSize: 12, lineHeight: 1.5, color: "var(--muted)" }}>
-        Your token is your battle badge. Lead with it when you pick your team: if they put theirs up too, it&apos;s an epic
-        battle, and the winner takes a copy of the loser&apos;s token. Lose yours and you can&apos;t put it up again for three months.
+        Your Proof is your battle badge. Lead with it when you pick your team: if they put theirs up too, it&apos;s an epic
+        battle, and the winner takes a copy of the loser&apos;s Proof. Lose yours and you can&apos;t put it up again for three months.
       </div>
     </div>
   );

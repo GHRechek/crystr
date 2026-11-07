@@ -1542,5 +1542,5 @@ export const tokenSrc = (design: TokenDesign): string => `/token/${packToken(des
 /** "Marrow's Token": the first word of the character's name, or the handle. */
 export function tokenTitle(displayName: string | null | undefined, handle: string): string {
   const first = (displayName ?? "").trim().split(/\s+/)[0] || handle;
-  return `${first}'s Token`;
+  return `${first}'s Proof`;
 }

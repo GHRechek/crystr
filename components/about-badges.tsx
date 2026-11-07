@@ -102,7 +102,7 @@ export function AboutBadges({
         <button
           type="button"
           data-about-badge
-          aria-label={token.title ? `${token.title}. ${token.line ?? ""}` : "Token"}
+          aria-label={token.title ? `${token.title}. ${token.line ?? ""}` : "Proof"}
           aria-expanded={tip?.key === "__token"}
           onClick={(e) => {
             const r = e.currentTarget;
@@ -180,7 +180,7 @@ export function AboutBadges({
           x={tip.x}
           top={tip.top}
           width={width}
-          title={token.title ?? "TOKEN"}
+          title={token.title ?? "PROOF"}
           line={token.line ?? ""}
           action={
             token.href ? (

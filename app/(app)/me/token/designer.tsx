@@ -331,7 +331,7 @@ export function TokenDesigner({ start, fresh, how = "", canGive = false, onUse }
         }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={tokenSrc(d)} alt="Your token, as it will be" width={64} height={64} style={{ imageRendering: "pixelated", flex: "none" }} />
+        <img src={tokenSrc(d)} alt="Your Proof, as it will be" width={64} height={64} style={{ imageRendering: "pixelated", flex: "none" }} />
         <div style={{ flex: 1, fontSize: 12, lineHeight: 1.5, color: "var(--muted)" }}>
           {fresh ? "Nobody has seen this yet." : "Changing it changes what the next winner takes; copies already won keep their look."}
         </div>
@@ -419,7 +419,7 @@ export function TokenDesigner({ start, fresh, how = "", canGive = false, onUse }
       ) : null}
 
       <button type="submit" className="btn btn-lg btn-purple btn-block">
-        {onUse ? "USE THIS PICTURE" : "KEEP THIS TOKEN"}
+        {onUse ? "USE THIS PICTURE" : "KEEP THIS PROOF"}
       </button>
 
       {panel === "icons" ? (

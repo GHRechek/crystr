@@ -38,8 +38,8 @@ function PrizeLine({ v }: { v: View }) {
     <div className="en-prize">
       {p.kind === "token" ? <TokenPic design={p.token} size={56} /> : p.item ? <Creature slug={p.item.slug} size={64} /> : null}
       <span className="px">{p.won
-        ? (p.kind === "token" ? `YOU WON ${them}'S TOKEN` : `YOU WON ${up(p.item?.name ?? "")}`)
-        : (p.kind === "token" ? `${them} WON A COPY OF YOUR TOKEN` : `${them} TOOK ${up(p.item?.name ?? "")}`)}</span>
+        ? (p.kind === "token" ? `YOU WON ${them}'S PROOF` : `YOU WON ${up(p.item?.name ?? "")}`)
+        : (p.kind === "token" ? `${them} WON A COPY OF YOUR PROOF` : `${them} TOOK ${up(p.item?.name ?? "")}`)}</span>
     </div>
   );
 }
@@ -289,13 +289,13 @@ function TeamPicker({ v, act }: { v: View; act: (a: Record<string, unknown>) => 
   return (
     <>
       <div className="px en-q">PICK YOUR TEAM OF 3</div>
-      {v.their_stake && "token" in v.their_stake ? <div className="px en-epicask en-theirstake">★ {up(v.them.handle)} PUT THEIR TOKEN UP · AN EPIC FIGHT ★</div>
+      {v.their_stake && "token" in v.their_stake ? <div className="px en-epicask en-theirstake">★ {up(v.them.handle)} PUT THEIR PROOF UP · AN EPIC FIGHT ★</div>
         : v.their_stake?.item ? <div className="px en-epicask en-theirstake">{up(v.them.handle)} STAKED {up(v.their_stake.item.name)}</div> : null}
 
       <div className="en-dock">
-        <button type="button" data-slot="stake" className={`en-slot en-slot-stake${stake ? " full" : ""}`} onClick={() => { if (stake) { playClick(); setStake(null); } }} aria-label={stake ? "Your stake: tap to take it back" : "Stake: drag your token or a Historikal here for an epic fight"}>
+        <button type="button" data-slot="stake" className={`en-slot en-slot-stake${stake ? " full" : ""}`} onClick={() => { if (stake) { playClick(); setStake(null); } }} aria-label={stake ? "Your stake: tap to take it back" : "Stake: drag your Proof or a Historikal here for an epic fight"}>
           {stake ? ("token" in stake ? <TokenPic design={v.my_token} size={52} /> : <Creature slug={hkOf(stake.item)?.slug ?? ""} size={56} />) : <span className="px">STAKE</span>}
-          <b className="px en-slotlabel">{stake ? ("token" in stake ? "TOKEN · EPIC" : "HISTORIKAL STAKED") : "TOKEN / HISTORIKAL"}</b>
+          <b className="px en-slotlabel">{stake ? ("token" in stake ? "PROOF · EPIC" : "HISTORIKAL STAKED") : "PROOF / HISTORIKAL"}</b>
         </button>
         {team.map((id, i) => (
           <button key={i} type="button" data-slot={`t${i}`} className={`en-slot en-slot-${["c", "l", "r"][i]}${id !== null ? " full" : ""}`} onClick={() => { if (id !== null) { playClick(); setTeam((t) => t.map((x, j) => (j === i ? null : x))); } }} aria-label={id !== null ? `${hkOf(id)?.name}: tap to take it out` : `Team slot ${i + 1}`}>
@@ -306,11 +306,11 @@ function TeamPicker({ v, act }: { v: View; act: (a: Record<string, unknown>) => 
       </div>
 
       <div className="en-shelf en-teamshelf">
-        <div className="px en-say">{full ? (stake ? "READY" : canToken ? "OR DRAG YOUR TOKEN TO THE GOLD SLOT" : "READY") : `DRAG ${team.filter((x) => x === null).length} UP${canToken && !stake ? " · OR YOUR TOKEN" : ""}`}</div>
+        <div className="px en-say">{full ? (stake ? "READY" : canToken ? "OR DRAG YOUR PROOF TO THE GOLD SLOT" : "READY") : `DRAG ${team.filter((x) => x === null).length} UP${canToken && !stake ? " · OR YOUR PROOF" : ""}`}</div>
         <div className="en-row" onPointerMove={move} onPointerUp={release} onPointerCancel={cancel}>
           {canToken ? (
-            <button type="button" className={`en-tokenitem${stake && "token" in stake ? " used" : ""}`} onPointerDown={down({ token: true })} onClick={tap({ token: true })} aria-label="Your token: put it up for an epic fight">
-              <TokenPic design={v.my_token} size={56} /><span className="px en-ko" style={{ color: "#f2b544" }}>YOUR TOKEN</span>
+            <button type="button" className={`en-tokenitem${stake && "token" in stake ? " used" : ""}`} onPointerDown={down({ token: true })} onClick={tap({ token: true })} aria-label="Your Proof: put it up for an epic fight">
+              <TokenPic design={v.my_token} size={56} /><span className="px en-ko" style={{ color: "#f2b544" }}>YOUR PROOF</span>
             </button>
           ) : null}
           {mine.map((h) => {
@@ -324,7 +324,7 @@ function TeamPicker({ v, act }: { v: View; act: (a: Record<string, unknown>) => 
             );
           })}
         </div>
-        {v.my_token && !v.token_ok ? <div className="px en-say" style={{ fontSize: 9 }}>YOUR TOKEN IS RESTING · LOST IN THE LAST 3 MONTHS</div> : null}
+        {v.my_token && !v.token_ok ? <div className="px en-say" style={{ fontSize: 9 }}>YOUR PROOF IS RESTING · LOST IN THE LAST 3 MONTHS</div> : null}
       </div>
 
       {ghost ? <div className="en-ghost" style={{ left: ghost.x, top: ghost.y }} aria-hidden>{ghostImg}</div> : null}
@@ -457,7 +457,7 @@ export function BattleScreen({ v, act, close }: { v: View; act: (a: Record<strin
 
       {v.stage === "team" ? (
         v.ready ? (
-          <><div className="px en-q">WAITING ON {up(v.them.handle)}<Dots /></div><div className="px en-big">{up(v.them.handle)}<b>IS PICKING A TEAM</b>{v.stake?.token ? "YOUR TOKEN IS UP" : v.stake?.item ? "YOU STAKED A HISTORIKAL" : ""}</div></>
+          <><div className="px en-q">WAITING ON {up(v.them.handle)}<Dots /></div><div className="px en-big">{up(v.them.handle)}<b>IS PICKING A TEAM</b>{v.stake?.token ? "YOUR PROOF IS UP" : v.stake?.item ? "YOU STAKED A HISTORIKAL" : ""}</div></>
         ) : (v.mine ?? []).filter((h) => (h.hp ?? h.hearts) > 0).length < 3 ? (
           <><div className="px en-q">PICK YOUR TEAM OF 3</div><div className="px en-big">YOU NEED<b>3 HISTORIKALS</b>WITH HEARTS LEFT</div>
           <div className="en-bottom"><a href="/me/historikals" className="px en-btn" style={{ textDecoration: "none" }} onClick={() => act({ do: "leave" })}>HEAL YOURS</a><Nevermind onClick={() => act({ do: "leave" })} /></div></>
@@ -469,7 +469,7 @@ export function BattleScreen({ v, act, close }: { v: View; act: (a: Record<strin
       {v.stage === "stake" ? (
         v.ask ? (
           <>
-            <div className="px en-q">{up(v.them.handle)} CAN&apos;T PUT A TOKEN UP</div>
+            <div className="px en-q">{up(v.them.handle)} CAN&apos;T PUT A PROOF UP</div>
             {v.their_stake?.item ? <div className="en-mid"><Creature slug={v.their_stake.item.slug} size={102} /></div> : null}
             {v.their_stake?.item ? <div className="px en-midlabel">THEY STAKED<b>{up(v.their_stake.item.name)}</b><Stats h={v.their_stake.item} k={2} /></div> : null}
             <Shelf items={v.mine ?? []} label="STAKE ONE OF YOURS FOR AN EPIC FIGHT?" onPick={(h) => act({ do: "answer", stake: { item: h.id } })} />
@@ -477,7 +477,7 @@ export function BattleScreen({ v, act, close }: { v: View; act: (a: Record<strin
           </>
         ) : (
           <><div className="px en-q">{up(v.them.handle)} IS DECIDING<Dots /></div>
-          <div className="px en-big">YOU STAKED<b>{up((v.mine ?? []).find((h) => h.id === v.stake?.item)?.name ?? "A HISTORIKAL")}</b>AGAINST THEIR TOKEN</div></>
+          <div className="px en-big">YOU STAKED<b>{up((v.mine ?? []).find((h) => h.id === v.stake?.item)?.name ?? "A HISTORIKAL")}</b>AGAINST THEIR PROOF</div></>
         )
       ) : null}
 

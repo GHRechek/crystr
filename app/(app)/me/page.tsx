@@ -119,8 +119,8 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
               design: token?.design ?? null,
               href: "/me/token",
               title: tokenTitle(profile.display_name, profile.handle).toUpperCase(),
-              line: token ? token.how?.trim() || "Nobody has been told how to earn it yet. Write it on your token page." : "You have not made your token yet.",
-              actionLabel: token ? "OPEN YOUR TOKEN →" : "MAKE YOUR TOKEN →",
+              line: token ? token.how?.trim() || "Nobody has been told how to earn it yet. Write it on your Proof page." : "You have not made your Proof yet.",
+              actionLabel: token ? "OPEN YOUR PROOF →" : "MAKE YOUR PROOF →",
             }}
           />
         }
@@ -252,7 +252,7 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
         {tokens.length ? (
           <div>
             {heading(
-              "TOKENS GIVEN TO YOU",
+              "PROOFS GIVEN TO YOU",
               "var(--pur-soft)",
               <div className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
                 {tokens.length} · +{BADGE_MANA.token} EACH

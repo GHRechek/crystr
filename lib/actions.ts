@@ -1013,7 +1013,7 @@ export async function setToken(fd: FormData) {
   try {
     parsed = JSON.parse(String(fd.get("design") ?? "{}"));
   } catch {
-    await setFlash("UNREADABLE", "That token did not survive the journey. Try again.", EDGE.mag);
+    await setFlash("UNREADABLE", "That Proof did not survive the journey. Try again.", EDGE.mag);
     return;
   }
   const r = await call("cr_set_token", { p_design: normalizeToken(parsed), p_how: String(fd.get("how") ?? "").slice(0, 140) });
@@ -1021,7 +1021,7 @@ export async function setToken(fd: FormData) {
     await wentWrong();
     return;
   }
-  await setFlash("YOUR TOKEN", "Saved. Give it to someone from their page, once every six months.", EDGE.purple);
+  await setFlash("YOUR PROOF", "Saved. Put it up in a battle when you pick your team.", EDGE.purple);
   revalidatePath("/me");
   revalidatePath("/me/token");
   redirect("/me");
@@ -1053,22 +1053,22 @@ export async function offerTrade(fd: FormData) {
   const giveToken = give === "token";
   const wantItem = want.startsWith("item:") ? Number(want.slice(5)) || null : null;
   if (!giveItem && !giveToken) {
-    await setFlash("NOTHING OFFERED", "Pick a badge of yours to give, or your token.", EDGE.mag);
+    await setFlash("NOTHING OFFERED", "Pick a badge of yours to give, or your Proof.", EDGE.mag);
     redirect(`${back}/trade`);
   }
 
   const r = await call("cr_offer_trade", { p_to: to, p_give: giveItem, p_give_token: giveToken, p_want: wantItem });
   if (!r.ok) {
     if (r.code === "too_soon") {
-      await setFlash("NOT YET", `Your token can be given again on ${r.ready_at ? longDate(r.ready_at) : "a later day"}.`, EDGE.purple);
+      await setFlash("NOT YET", `Your Proof can be given again on ${r.ready_at ? longDate(r.ready_at) : "a later day"}.`, EDGE.purple);
     } else if (r.code === "already") {
       await setFlash("ALREADY WAITING", "They already have an offer from you waiting. Let them answer that one first.", EDGE.purple);
     } else if (r.code === "not_yours" || r.code === "not_theirs") {
       await setFlash("NOT THERE", "That badge has moved on since the page was drawn. Have another look.", EDGE.purple);
     } else if (r.code === "own_token") {
-      await setFlash("THEIR OWN", "You cannot hand someone their own token.", EDGE.purple);
+      await setFlash("THEIR OWN", "You cannot hand someone their own Proof.", EDGE.purple);
     } else if (r.code === "no_design") {
-      await setFlash("NO TOKEN YET", "Design your token first, from your profile.", EDGE.purple);
+      await setFlash("NO PROOF YET", "Design your Proof first, from your profile.", EDGE.purple);
     } else {
       await wentWrong();
     }
