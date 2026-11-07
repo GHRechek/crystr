@@ -294,6 +294,15 @@ export function topsFor(back: string): string[] {
   return [...(TOPS[back] ?? [back]), NONE];
 }
 
+/** The sides that will take a top: none first if it can sit on a shaved head,
+ *  then the top's own sides, then the rest. In the builder the top leads and
+ *  these are what SIDES steps through. */
+export function sidesTaking(top: string): string[] {
+  const ok = ALLOWED.hair_back.filter((s) => topsFor(s).includes(top));
+  const own = ok.includes(top) ? [top] : [];
+  return [...ok.filter((s) => s === NONE), ...own, ...ok.filter((s) => s !== NONE && s !== top)];
+}
+
 /** The sides to wear with a top you picked: these if they take it, otherwise
  *  the nearest sides that do (most alike in shape), falling back to the top's
  *  own. */

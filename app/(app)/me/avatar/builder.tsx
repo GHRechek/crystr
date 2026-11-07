@@ -14,7 +14,7 @@ import {
   packPortrait,
   randomPortrait,
   sidesFor,
-  topsFor,
+  sidesTaking,
   type PortraitConfig,
 } from "@/lib/portrait/core";
 
@@ -31,25 +31,26 @@ export function AvatarBuilder({ start, fresh }: { start: PortraitConfig; fresh: 
 
   const packed = useMemo(() => packPortrait(c), [c]);
 
+  const [open, setOpen] = useState<string | null>(null);
+
+  /** What a control steps through. The top leads: every top is on offer, and
+   *  SIDES only offers the sides that take the top you have. */
+  const listFor = (key: string, cfg: PortraitConfig) => (key === "hair_back" ? sidesTaking(cfg.top) : ALLOWED[key]);
+  /** This face with one choice changed. A top these sides won't take brings
+   *  the nearest sides that will. */
+  const withChoice = (prev: PortraitConfig, key: string, value: string): PortraitConfig => {
+    const out = { ...prev, [key]: value };
+    if (key === "top") out.hair_back = sidesFor(value, prev.hair_back);
+    return out;
+  };
   const step = (key: string, by: number) =>
     setC((prev) => {
-      const list = ALLOWED[key];
+      const list = listFor(key, prev);
       const at = Math.max(0, list.indexOf(prev[key]));
-      const next = (((at + by) % list.length) + list.length) % list.length;
-      const out = { ...prev, [key]: list[next] };
-      // Stepping the sides walks through the artist's own 27 styles: while
-      // top and sides match, the top moves with them. Change the top on its
-      // own and they stay split — until you reach sides it won't sit on,
-      // when it comes back to matching.
-      // Every top is on offer. One these sides won't take brings the nearest
-      // sides that will.
-      if (key === "top") out.hair_back = sidesFor(out.top, prev.hair_back);
-      if (key === "hair_back") {
-        const split = prev.top !== prev.hair_back && topsFor(out.hair_back).includes(prev.top);
-        out.top = split ? prev.top : out.hair_back;
-      }
-      return out;
+      return withChoice(prev, key, list[(((at + by) % list.length) + list.length) % list.length]);
     });
+  // The top above the sides: you pick the top, then the sides that suit it.
+  const controls = [...CONTROLS].sort((a, b) => (a.key === "top" && b.key === "hair_back" ? -1 : a.key === "hair_back" && b.key === "top" ? 1 : 0));
 
   return (
     <form action={saveAvatar} className="pad" style={{ gap: 12 }}>
@@ -148,13 +149,13 @@ export function AvatarBuilder({ start, fresh }: { start: PortraitConfig; fresh: 
         </div>
       ))}
 
-      {CONTROLS.map((control) => {
-        const list = ALLOWED[control.key];
+      {controls.map((control) => {
+        const list = listFor(control.key, c);
         const at = Math.max(0, list.indexOf(c[control.key]));
-        const optionals = control.optional ? 1 : 0;
+        const optionals = list.includes(NONE) ? 1 : 0;
         return (
+          <div key={control.key}>
           <div
-            key={control.key}
             style={{
               display: "flex",
               alignItems: "center",
@@ -163,9 +164,15 @@ export function AvatarBuilder({ start, fresh }: { start: PortraitConfig; fresh: 
               borderBottom: "1px solid var(--rule-soft)",
             }}
           >
-            <div className="px" style={{ fontSize: 11, color: "var(--dim)", flex: 1 }}>
-              {control.label}
-            </div>
+            <button
+              type="button"
+              className="px"
+              onClick={() => setOpen((o) => (o === control.key ? null : control.key))}
+              aria-expanded={open === control.key}
+              style={{ fontSize: 11, color: open === control.key ? "var(--pur-bright)" : "var(--dim)", flex: 1, textAlign: "left", background: "none", border: 0, padding: "8px 0", cursor: "pointer" }}
+            >
+              {control.label} {open === control.key ? "▴" : "▾"}
+            </button>
             <button
               type="button"
               className="btn btn-sm"
@@ -192,6 +199,32 @@ export function AvatarBuilder({ start, fresh }: { start: PortraitConfig; fresh: 
             >
               ▶
             </button>
+          </div>
+          {open === control.key ? (
+            // Every choice, on your own face, in a row you scroll. Tap one to wear it.
+            <div style={{ display: "flex", gap: 6, overflowX: "auto", padding: "8px 0 10px", scrollbarWidth: "thin" }}>
+              {list.map((v, i) => {
+                const on = c[control.key] === v;
+                const face = withChoice(c, control.key, v);
+                return (
+                  <button
+                    key={v}
+                    type="button"
+                    onClick={() => setC(face)}
+                    aria-pressed={on}
+                    // Opens on what you're wearing, scrolled into the middle of the row.
+                    ref={on ? (el) => { el?.scrollIntoView({ block: "nearest", inline: "center" }); } : undefined}
+                    aria-label={`${control.label} ${v === NONE ? "none" : control.names?.[v] ?? v}`}
+                    style={{ flex: "none", padding: 0, border: 0, background: "none", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: 3 }}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={`/face/${packPortrait(face)}.png`} alt="" width={72} height={72} loading="lazy" style={{ display: "block", imageRendering: "pixelated", outline: on ? "3px solid var(--pur-bright)" : "none", outlineOffset: -3 }} />
+                    <span className="px" style={{ fontSize: 9, color: on ? "var(--pur-bright)" : "var(--muted)" }}>{v === NONE ? "NONE" : control.names?.[v] ?? i + 1 - optionals}</span>
+                  </button>
+                );
+              })}
+            </div>
+          ) : null}
           </div>
         );
       })}
