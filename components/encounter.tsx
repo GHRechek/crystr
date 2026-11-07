@@ -138,12 +138,12 @@ const UNDO = ["..#.......", ".##.......", "#######...", ".##....#..", "..#.....#
 const SWAP = ["...#...", "....#..", "#######", "....#..", "..#.#..", ".#.....", "#######"];
 
 /** Element (in its rarity's colour, or ? until you know it) then white hearts. */
-export function Stats({ h, hp, k = 3, known = true }: { h: HK; hp?: number; k?: number; known?: boolean }) {
+export function Stats({ h, hp, k = 3, known = true, only }: { h: HK; hp?: number; k?: number; known?: boolean; only?: "type" | "hearts" }) {
   const left = hp ?? h.hearts;
   return (
     <span className="en-stats">
-      {known && h.element ? <Pix rows={TYPE[h.element]} k={k} fill={ELEMENT_COLOR[h.element]} /> : <Pix rows={QMARK} k={k} fill="#d2cefd" />}
-      {Array.from({ length: h.hearts }, (_, i) => <Pix key={i} rows={HEART} k={k} fill="#fff" dim={i >= left} />)}
+      {only === "hearts" ? null : known && h.element ? <Pix rows={TYPE[h.element]} k={k} fill={ELEMENT_COLOR[h.element]} /> : <Pix rows={QMARK} k={k} fill="#d2cefd" />}
+      {only === "type" ? null : Array.from({ length: h.hearts }, (_, i) => <Pix key={i} rows={HEART} k={k} fill="#fff" dim={i >= left} />)}
     </span>
   );
 }
@@ -299,8 +299,9 @@ function TeamPicker({ v, act }: { v: View; act: (a: Record<string, unknown>) => 
         </button>
         {team.map((id, i) => (
           <button key={i} type="button" data-slot={`t${i}`} className={`en-slot en-slot-${["c", "l", "r"][i]}${id !== null ? " full" : ""}`} onClick={() => { if (id !== null) { playClick(); setTeam((t) => t.map((x, j) => (j === i ? null : x))); } }} aria-label={id !== null ? `${hkOf(id)?.name}: tap to take it out` : `Team slot ${i + 1}`}>
+            {id !== null ? <span className="en-mini"><Stats h={hkOf(id)!} k={2} only="type" /></span> : null}
             {id !== null ? <Creature slug={hkOf(id)?.slug ?? ""} size={56} /> : <span className="px">{i + 1}</span>}
-            {id !== null ? <span className="en-mini"><Stats h={hkOf(id)!} hp={hkOf(id)!.hp} k={2} /></span> : null}
+            {id !== null ? <span className="en-mini"><Stats h={hkOf(id)!} hp={hkOf(id)!.hp} k={2} only="hearts" /></span> : null}
           </button>
         ))}
       </div>
