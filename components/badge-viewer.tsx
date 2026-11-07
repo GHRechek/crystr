@@ -5,6 +5,9 @@ import { BadgeFace } from "@/components/badge-chooser";
 import { setShownBadges } from "@/lib/actions";
 import { SHOW_MAX, type ShownBadge } from "@/lib/badges";
 
+/** Historikals in the display are your lineup: the three you battle with. */
+const LINEUP = 3;
+
 /** Every badge a person has, full screen: no cards, just the pictures on the background, in two
  *  tabs, earned and Historikals. Tap one to read what it is and how it was earned. On your own
  *  page (`editable`) tapping also picks up to five to show on the profile, numbered in the order
@@ -34,7 +37,9 @@ export function BadgeViewer({
 
   const tap = (b: ShownBadge) => {
     setLast(b);
-    if (editable) setPick((p) => (p.includes(b.key) ? p.filter((k) => k !== b.key) : p.length >= SHOW_MAX ? p : [...p, b.key]));
+    // At most three Historikals: they are your lineup, the team you battle with.
+    const full = (p: string[]) => p.length >= SHOW_MAX || (b.key.startsWith("i:") && p.filter((k) => k.startsWith("i:")).length >= LINEUP);
+    if (editable) setPick((p) => (p.includes(b.key) ? p.filter((k) => k !== b.key) : full(p) ? p : [...p, b.key]));
   };
 
   return (
@@ -43,7 +48,7 @@ export function BadgeViewer({
         <input type="hidden" name="list" value={JSON.stringify(pick)} />
         <div style={{ display: "flex", alignItems: "center", gap: 10, padding: inline ? "4px 0 8px" : "14px 16px 8px" }}>
           <div className="px" style={{ fontSize: 12, color: "var(--pur-soft)" }}>
-            BADGES{editable ? ` · SHOWING ${pick.length}/${SHOW_MAX}` : ""}
+            BADGES{editable ? ` · SHOWING ${pick.length}/${SHOW_MAX} · LINEUP ${pick.filter((k) => k.startsWith("i:")).length}/${LINEUP}` : ""}
           </div>
           <span className="spacer" />
           {aside}
@@ -71,7 +76,7 @@ export function BadgeViewer({
             </>
           ) : (
             <div style={{ fontSize: 12, lineHeight: 1.4, color: "var(--muted)" }}>
-              {editable ? `Tap a badge to read it, and to show it on your profile. Up to ${SHOW_MAX}.` : "Tap a badge to read what it is and how it was earned."}
+              {editable ? `Tap a badge to read it, and to show it on your profile: up to ${SHOW_MAX}. The Historikals you show, up to ${LINEUP}, are your lineup, the team you battle with.` : "Tap a badge to read what it is and how it was earned."}
             </div>
           )}
         </div>

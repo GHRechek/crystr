@@ -6,12 +6,12 @@ import { useRouter } from "next/navigation";
 import jsQR from "jsqr";
 import { BadgeArt } from "@/components/badges";
 import { claimBadge, claimHelp, scanPerson, type Scanned } from "@/lib/actions";
-import { startEncounter } from "@/components/encounter";
+import { startEncounter, type Stake } from "@/components/encounter";
 import { targetLabel } from "@/lib/species";
 
 /** The camera, full screen, looking for another person's CRYSTR code. A code that points at a
  *  profile (…/u/<handle>) opens the trade page with that person. */
-export function QrScanner({ onClose, tradesHref, waiting, mode = "general", only, title, how }: { only?: string; title?: string; how?: string; onClose: () => void; tradesHref?: string; waiting?: number; /** "general": trade, open a profile, or say they helped you. "quest": only the quests you can do with them. */ mode?: "general" | "quest" }) {
+export function QrScanner({ onClose, tradesHref, waiting, mode = "general", only, title, how, intent, stake }: { only?: string; title?: string; how?: string; onClose: () => void; tradesHref?: string; waiting?: number; /** "general": trade, open a profile, or say they helped you. "quest": only the quests you can do with them. */ mode?: "general" | "quest"; /** Straight to a trade or a battle with whoever is scanned (from the Historikals menu); a battle with a stake is epic. */ intent?: "trade" | "battle"; stake?: Stake }) {
   const router = useRouter();
   const video = useRef<HTMLVideoElement>(null);
   const [err, setErr] = useState<string | null>(null);
@@ -52,7 +52,14 @@ export function QrScanner({ onClose, tradesHref, waiting, mode = "general", only
           if (h) {
             stop = true;
             stream?.getTracks().forEach((t) => t.stop());
-            scanPerson(h, mode === "quest").then((p) => (p === "self" ? setErr("That is your own code. Scan someone else's. Close this and try again.") : p ? setFound(p) : setErr("That person is not in the City. Close this and scan again.")));
+            scanPerson(h, mode === "quest").then(async (p) => {
+              if (p === "self") return setErr("That is your own code. Scan someone else's. Close this and try again.");
+              if (!p) return setErr("That person is not in the City. Close this and scan again.");
+              if (!intent) return setFound(p);
+              const why = await startEncounter(intent, p.id, stake);
+              if (why) setErr(why);
+              else onClose();
+            });
             return;
           }
           setErr("That code is not a CRYSTR person.");
@@ -89,7 +96,7 @@ export function QrScanner({ onClose, tradesHref, waiting, mode = "general", only
     <div role="dialog" aria-label="Scan someone's code" style={{ position: "fixed", inset: 0, zIndex: 90, maxWidth: 480, margin: "0 auto", background: "#120e24", display: "flex", flexDirection: "column" }}>
       {/* What the scan is for, big, on the CRYSTR colours. */}
       <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "16px 16px 14px", background: "linear-gradient(90deg,#e0398a,#9184d9 52%,#4c7df0)" }}>
-        <div className="px" style={{ fontSize: 20, lineHeight: 1.2, color: "#fff", textShadow: "2px 2px 0 #1a1033" }}>{mode === "quest" ? (title ?? "QUEST").toUpperCase() : "GET HISTORIKAL"}</div>
+        <div className="px" style={{ fontSize: 20, lineHeight: 1.2, color: "#fff", textShadow: "2px 2px 0 #1a1033" }}>{mode === "quest" ? (title ?? "QUEST").toUpperCase() : intent === "trade" ? "TRADE" : intent === "battle" ? (stake ? "EPIC BATTLE" : "BATTLE") : "GET HISTORIKAL"}</div>
         <span className="spacer" />
         {tradesHref ? (
           <Link href={tradesHref} onClick={onClose} className="px" style={{ fontSize: 11, color: "#fff" }}>
@@ -116,8 +123,8 @@ export function QrScanner({ onClose, tradesHref, waiting, mode = "general", only
               {(
                 [
                   // Trades and battles happen right here, on both phones at once.
-                  ["⇄", "TRADE", async () => { onClose(); await startEncounter("trade", found.id); }],
-                  ["⚔", "BATTLE", async () => { onClose(); await startEncounter("battle", found.id); }],
+                  ["⇄", "TRADE", async () => { const why = await startEncounter("trade", found.id); if (why) setErr(why); else onClose(); }],
+                  ["⚔", "BATTLE", async () => { const why = await startEncounter("battle", found.id); if (why) setErr(why); else onClose(); }],
                   ["☺", "PROFILE", () => { router.push(`/u/${found.handle}`); onClose(); }],
                 ] as [string, string, () => void][]
               ).map(([icon, label, go]) => (

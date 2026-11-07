@@ -1984,3 +1984,15 @@ select.input { border: 0; }
 .en-slotq { font-size: 76px; line-height: 1; color: #e0398a; text-shadow: 3px 3px 0 #160b2e; animation: en-tq 3s ease-in-out infinite; }
 .en-slotq.gold { font-size: 58px; color: #f2b544; animation-delay: -1.6s; }
 @media (prefers-reduced-motion: reduce) { .en-slotq { animation: none !important; } }
+
+/* The Historikals menu, under its button beside the portrait. */
+.hk-menu { position: absolute; left: 0; z-index: 41; display: flex; flex-direction: column; min-width: 180px; background: var(--blk-pur); box-shadow: 4px 4px 0 #0a0616; }
+.hk-menu button { border: 0; border-radius: 0; background: none; color: #fff; text-align: left; font-size: 11px; letter-spacing: .04em; padding: 0 14px; min-height: 44px; cursor: pointer; }
+.hk-menu button + button { box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08); }
+.hk-menu button:hover, .hk-menu button:focus-visible { background: #5a1f6e; outline: none; }
+.hk-menu button.epic { color: #f2b544; }
+/* Choosing your stake for an epic battle. */
+.hk-stake { position: fixed; inset: 0; z-index: 85; max-width: 480px; margin: 0 auto; background: #1c1405; padding: 16px; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; }
+.hk-stake-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 6px; }
+.hk-stake-grid button { border: 0; background: none; color: inherit; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 4px; font-size: 9px; line-height: 1.4; text-align: center; }
+.hk-stake-grid button:hover, .hk-stake-grid button:focus-visible { transform: translateY(-3px); outline: none; }

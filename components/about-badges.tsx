@@ -8,6 +8,7 @@ import { BadgeFace } from "@/components/badge-chooser";
 import { BadgeViewer } from "@/components/badge-viewer";
 import { BadgeTip } from "@/components/badge-tip";
 import { SHOW_MAX, type ShownBadge } from "@/lib/badges";
+import type { Stake } from "@/components/encounter";
 
 /** The strip under the About Me text: the person's token (passed in as children), then up to five
  *  badges of their choosing, smaller. Tap a badge for its name and what it took. On your own page
@@ -50,7 +51,10 @@ export function AboutBadges({
 }) {
   const [tip, setTip] = useState<{ key: string; x: number; top: number } | null>(null);
   const [choosing, setChoosing] = useState(!!openAtStart && !!editable);
-  const [scanning, setScanning] = useState(false);
+  // The Historikals menu, the stake picked for an epic battle, and the camera once you've chosen.
+  const [menu, setMenu] = useState(false);
+  const [staking, setStaking] = useState(false);
+  const [camera, setScan] = useState<{ intent?: "trade" | "battle"; stake?: Stake } | null>(null);
   const box = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(300);
 
@@ -110,13 +114,54 @@ export function AboutBadges({
   const leadBtn: React.CSSProperties = leads ? { ...endBtn, marginLeft: EVEN - PORTRAIT_GAP } : endBtn;
   const tradeEl = tradeHref && scan ? (
         <>
-          <button type="button" aria-label="Scan someone's code to trade or battle Historikals" title="Get Historikal" onClick={() => setScanning(true)} style={leadBtn}>
+          <button type="button" aria-label="Historikals: trade, battle, or edit your lineup" aria-haspopup="menu" aria-expanded={menu} title="Historikals" onClick={() => setMenu((m) => !m)} style={leadBtn}>
             <TradeIcon size={iconPx} />
             {tradeCount ? (
               <span aria-hidden className="px" style={{ position: "absolute", top: -6, right: -6, minWidth: 16, height: 16, display: "grid", placeItems: "center", fontSize: 10, lineHeight: 1, background: "var(--pur)", color: "#fff", borderRadius: 0 }}>{tradeCount}</span>
             ) : null}
           </button>
-          {scanning ? <QrScanner onClose={() => setScanning(false)} tradesHref={tradeHref} waiting={tradeCount} /> : null}
+          {menu ? (
+            <>
+              <button type="button" aria-label="Close the menu" onClick={() => setMenu(false)} style={{ position: "fixed", inset: 0, zIndex: 40, background: "transparent", border: 0, cursor: "default" }} />
+              <div role="menu" className="hk-menu" style={{ top: endPx + 8 }}>
+                {(
+                  [
+                    ["TRADE", () => setScan({ intent: "trade" })],
+                    ["EDIT LINEUP", () => setChoosing(true)],
+                    ["BATTLE", () => setScan({ intent: "battle" })],
+                    ["★ EPIC BATTLE", () => setStaking(true)],
+                  ] as [string, () => void][]
+                ).map(([label, go]) => (
+                  <button key={label} type="button" role="menuitem" className={`px${label.startsWith("★") ? " epic" : ""}`} onClick={() => { setMenu(false); go(); }}>{label}</button>
+                ))}
+              </div>
+            </>
+          ) : null}
+          {staking ? (
+            // What you put up: your Proof, or one of your Historikals. The winner takes a copy of the
+            // loser's Proof, or the loser's Historikal.
+            <div role="dialog" aria-label="What do you put up?" className="hk-stake">
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <div className="px" style={{ fontSize: 12, color: "#f2b544" }}>★ EPIC BATTLE · WHAT DO YOU PUT UP?</div>
+                <span className="spacer" />
+                <button type="button" className="btn btn-sm" onClick={() => setStaking(false)} aria-label="Close" style={{ minHeight: 40, padding: "0 10px" }}>✕</button>
+              </div>
+              <div style={{ fontSize: 12.5, lineHeight: 1.5, color: "var(--muted)" }}>If they put theirs up too, the winner takes a copy of the loser&apos;s Proof, or the loser&apos;s Historikal.</div>
+              <div className="hk-stake-grid">
+                {token?.design ? (
+                  <button type="button" onClick={() => { setStaking(false); setScan({ intent: "battle", stake: { token: true } }); }}>
+                    <TokenImage design={token.design} size={64} /><span className="px">YOUR PROOF</span>
+                  </button>
+                ) : null}
+                {tradable.map((h) => (
+                  <button key={h.key} type="button" onClick={() => { setStaking(false); setScan({ intent: "battle", stake: { item: Number(h.key.slice(2)) } }); }}>
+                    <BadgeFace b={h} size={64} /><span className="px">{h.title.toUpperCase()}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : null}
+          {camera ? <QrScanner onClose={() => setScan(null)} tradesHref={tradeHref} waiting={tradeCount} intent={camera.intent} stake={camera.stake} /> : null}
         </>
       ) : tradeHref ? (
         <Link

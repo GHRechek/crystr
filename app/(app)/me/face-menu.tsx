@@ -114,9 +114,6 @@ export function ProfileHead({
               >
                 <span aria-hidden="true">◔</span> ASK FOR HELP
               </button>
-              <Link href="/me?badges=1" className="face-menu-item" role="menuitem">
-                <span aria-hidden="true">◈</span> CHANGE BADGE DISPLAY
-              </Link>
               <Link href="/me/historikals" className="face-menu-item" role="menuitem">
                 <span aria-hidden="true">♥</span> YOUR HISTORIKALS
               </Link>
