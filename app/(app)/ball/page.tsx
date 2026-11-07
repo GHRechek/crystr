@@ -70,6 +70,7 @@ export default async function BallPage(
         <MotionBoard
           showPast={searchParams.show === "past"}
           isWitch={profile.is_witch}
+          keyed={profile.species === "forsaken" && !profile.is_witch}
           mana={profile.mana}
           decay={decay}
           base={tabHref("motions")}

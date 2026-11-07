@@ -606,10 +606,17 @@ export async function seeTopSix() {
 
 // ------------------------------------------------------------------ votes
 
+/** What a Forsaken hears when a vote comes without a witch's key, or with a code that isn't one. */
+const KEY_FLASH = {
+  need_key: "Contact a licensed witch or advocate before filing. A Forsaken's vote goes in with a witch's key: scan the QR code on a witch's profile.",
+  bad_key: "That code is not a witch's key. A Forsaken's vote goes in with a licensed witch: scan the QR code on a witch's profile.",
+} as const;
+
 export async function castVote(fd: FormData) {
   const r = await call("cr_cast_vote", {
     p_motion: Number(fd.get("motion_id")),
     p_side: str(fd, "side"),
+    p_key: str(fd, "key") || null,
   });
 
   if (!r.ok) {
@@ -622,6 +629,8 @@ export async function castVote(fd: FormData) {
       await setFlash("COUNTED", "You have already voted on this one, and it cannot be changed.", EDGE.purple);
     } else if (r.code === "closed") {
       await setFlash("CLOSED", "That motion closed while you were deciding. There will be another.", EDGE.purple);
+    } else if (r.code === "need_key" || r.code === "bad_key") {
+      await setFlash("STOP", KEY_FLASH[r.code], EDGE.purple);
     } else {
       await wentWrong();
     }
@@ -637,10 +646,11 @@ export async function castVote(fd: FormData) {
 
 /** A second vote on a motion you've voted on: the same side again, counted twice, for 15. */
 export async function voteAgain(fd: FormData) {
-  const r = await call("cr_vote_again", { p_motion: Number(fd.get("motion_id")) });
+  const r = await call("cr_vote_again", { p_motion: Number(fd.get("motion_id")), p_key: str(fd, "key") || null });
   if (!r.ok) {
     if (r.code === "insufficient") await broke(r, "A second vote takes fifteen, and you have {have}. Go and recover, then come back.");
     else if (r.code === "already") await setFlash("COUNTED TWICE", "You have already voted twice on this one.", EDGE.purple);
+    else if (r.code === "need_key" || r.code === "bad_key") await setFlash("STOP", KEY_FLASH[r.code], EDGE.purple);
     else if (r.code === "closed") await setFlash("CLOSED", "That motion closed while you were deciding. There will be another.", EDGE.purple);
     else await wentWrong();
   } else {

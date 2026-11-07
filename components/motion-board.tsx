@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Cost } from "@/components/mana";
 import { getMotions, type Motion } from "@/lib/data";
 import { castVote, voteAgain } from "@/lib/actions";
+import { KeyedVote } from "@/components/keyed-vote";
 import { ago, closesIn, corrupt, COSTS } from "@/lib/crystr";
 
 /** The motion board, as a tab of the Ball: what is open to vote on, and what has been decided.
@@ -9,12 +10,15 @@ import { ago, closesIn, corrupt, COSTS } from "@/lib/crystr";
 export async function MotionBoard({
   showPast,
   isWitch,
+  keyed,
   mana,
   decay,
   base,
 }: {
   showPast: boolean;
   isWitch: boolean;
+  /** A Forsaken: each vote goes in with a witch's key, scanned. */
+  keyed?: boolean;
   mana: number;
   decay: number;
   base: string;
@@ -58,7 +62,7 @@ export async function MotionBoard({
       ) : (
         <>
           {open.map((m) => (
-            <Open key={m.id} motion={m} mana={mana} decay={decay} />
+            <Open key={m.id} motion={m} mana={mana} decay={decay} keyed={keyed} />
           ))}
           {open.length === 0 ? (
             <div className="empty">
@@ -99,7 +103,7 @@ function Tally({ motion, height }: { motion: Motion; height: number }) {
   );
 }
 
-export function Open({ motion, mana, decay }: { motion: Motion; mana: number; decay: number }) {
+export function Open({ motion, mana, decay, keyed }: { motion: Motion; mana: number; decay: number; keyed?: boolean }) {
   const total = motion.votes_for + motion.votes_against;
   const pct = total ? Math.round((motion.votes_for / total) * 100) : 0;
   const closes = closesIn(motion.closes_at);
@@ -197,7 +201,11 @@ export function Open({ motion, mana, decay }: { motion: Motion; mana: number; de
           </div>
           </div>
           {/* Once more, the same way: it counts twice. */}
-          {motion.my_votes < 2 ? (
+          {motion.my_votes < 2 && keyed ? (
+            <div style={{ flex: 1, display: "flex" }}>
+              <KeyedVote motionId={motion.id} again cost={COSTS.voteAgain} dim={mana < COSTS.voteAgain} label="VOTE AGAIN" className={`btn btn-block ${motion.my_side === "for" ? "btn-mag" : "btn-blue"}`} />
+            </div>
+          ) : motion.my_votes < 2 ? (
             <form action={voteAgain} style={{ flex: 1, display: "flex" }}>
               <input type="hidden" name="motion_id" value={motion.id} />
               <button
@@ -212,7 +220,11 @@ export function Open({ motion, mana, decay }: { motion: Motion; mana: number; de
         </div>
       ) : (
         <div style={{ display: "flex", gap: 8 }}>
-          {(["for", "against"] as const).map((side) => (
+          {(["for", "against"] as const).map((side) => keyed ? (
+            <div key={side} style={{ flex: 1, display: "flex" }}>
+              <KeyedVote motionId={motion.id} side={side} cost={COSTS.vote} dim={mana < COSTS.vote} label={side === "for" ? "YAY" : "NAY"} className={`btn btn-block ${side === "for" ? "btn-mag" : "btn-blue"}`} />
+            </div>
+          ) : (
             <form key={side} action={castVote} style={{ flex: 1, display: "flex" }}>
               <input type="hidden" name="motion_id" value={motion.id} />
               <input type="hidden" name="side" value={side} />

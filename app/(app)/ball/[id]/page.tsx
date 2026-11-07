@@ -38,7 +38,7 @@ export default async function ArticlePage(props: { params: Promise<{ id: string 
           ← CRYSTR BALL
         </Link>
 
-        {motion && motionOpen ? <MotionVote motion={{ ...motion, briefing_id: null }} mana={profile.mana} decay={decay} /> : null}
+        {motion && motionOpen ? <MotionVote motion={{ ...motion, briefing_id: null }} mana={profile.mana} decay={decay} keyed={profile.species === "forsaken" && !isWitch} /> : null}
 
         <div>
           <div className="kicker" style={{ display: "block", marginBottom: 9, fontSize: 11 }}>
