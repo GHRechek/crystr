@@ -89,11 +89,11 @@ export function QrScanner({ onClose, tradesHref, waiting, mode = "general", only
     <div role="dialog" aria-label="Scan someone's code" style={{ position: "fixed", inset: 0, zIndex: 90, maxWidth: 480, margin: "0 auto", background: "#120e24", display: "flex", flexDirection: "column" }}>
       {/* What the scan is for, big, on the CRYSTR colours. */}
       <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "16px 16px 14px", background: "linear-gradient(90deg,#e0398a,#9184d9 52%,#4c7df0)" }}>
-        <div className="px" style={{ fontSize: 20, lineHeight: 1.2, color: "#fff", textShadow: "2px 2px 0 #1a1033" }}>{mode === "quest" ? (title ?? "QUEST").toUpperCase() : "TRADE REQUEST"}</div>
+        <div className="px" style={{ fontSize: 20, lineHeight: 1.2, color: "#fff", textShadow: "2px 2px 0 #1a1033" }}>{mode === "quest" ? (title ?? "QUEST").toUpperCase() : "GET HISTORIKAL"}</div>
         <span className="spacer" />
         {tradesHref ? (
           <Link href={tradesHref} onClick={onClose} className="px" style={{ fontSize: 11, color: "#fff" }}>
-            MY TRADES{waiting ? ` · ${waiting}` : ""} →
+            YOURS{waiting ? ` · ${waiting}` : ""} →
           </Link>
         ) : null}
         <button type="button" className="btn btn-sm" onClick={onClose} aria-label="Close" style={{ minHeight: 40, padding: "0 10px" }}>

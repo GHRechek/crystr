@@ -142,7 +142,7 @@ export function AboutBadges({
       ) : null}
       {tradeHref && scan ? (
         <>
-          <button type="button" aria-label="Scan someone's code to trade" title="Scan a code" onClick={() => setScanning(true)} style={endBtn}>
+          <button type="button" aria-label="Scan someone's code to trade or battle Historikals" title="Get Historikal" onClick={() => setScanning(true)} style={endBtn}>
             <TradeIcon />
             {tradeCount ? (
               <span aria-hidden className="px" style={{ position: "absolute", top: -6, right: -6, minWidth: 16, height: 16, display: "grid", placeItems: "center", fontSize: 10, lineHeight: 1, background: "var(--pur)", color: "#fff", borderRadius: 0 }}>{tradeCount}</span>
@@ -153,8 +153,8 @@ export function AboutBadges({
       ) : tradeHref ? (
         <Link
           href={tradeHref}
-          aria-label={tradeCount ? `Trades, ${tradeCount} waiting` : "Trades"}
-          title="Trades"
+          aria-label="Your Historikals"
+          title="Your Historikals"
           style={endBtn}
         >
           <TradeIcon />
@@ -208,12 +208,12 @@ function EyeIcon() {
   );
 }
 
-/** Two pixel arrows passing each other: a trade. */
+/** A little pixel monster face: scan someone to trade or battle Historikals. */
 function TradeIcon() {
-  const rows = ["......#..", ".......#.", "#########", ".......#.", "......#..", ".........", "..#......", ".#.......", "#########", ".#.......", "..#......"];
+  const rows = ["#.........#", "##.......##", ".#########.", "###########", "##..###..##", "##..###..##", "###########", "##.#.#.#.##", "##.......##", "###########", ".#########."];
   const on = (r: number, c: number) => rows[r][c] === "#";
   return (
-    <svg width={20} height={22} viewBox="0 0 9 11" shapeRendering="crispEdges" aria-hidden>
+    <svg width={22} height={22} viewBox="0 0 11 11" shapeRendering="crispEdges" aria-hidden>
       {rows.flatMap((r, y) => [...r].map((_, x) => (on(y, x) ? <rect key={`${x}${y}`} x={x} y={y} width={1} height={1} fill="currentColor" /> : null)))}
     </svg>
   );
