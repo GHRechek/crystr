@@ -523,7 +523,13 @@ export async function submitReport(fd: FormData) {
     p_kind: str(fd, "kind"),
     p_target: Number(fd.get("target")),
     p_reason: str(fd, "reason"),
-    p_note: str(fd, "note"),
+    p_note: (() => {
+      // A report made from a held whisper carries that line as it stood, ahead of the note.
+      const line = str(fd, "evidence_text").slice(0, 300);
+      const lineId = str(fd, "evidence_id");
+      const note = str(fd, "note");
+      return (lineId ? `[line ${lineId}] "${line}"${note ? ` — ${note}` : ""}` : note).slice(0, 500);
+    })(),
   });
 
   if (r.ok) {

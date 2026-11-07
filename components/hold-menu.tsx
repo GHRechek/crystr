@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useRef, useState } from "react";
-import { reactToMessage, unsendMessage } from "@/lib/actions";
+import { reactToMessage, submitReport, unsendMessage } from "@/lib/actions";
+import { REPORT_REASONS } from "@/lib/terms";
 import { REACTIONS, TOO_MUCH } from "@/lib/whisper";
 
 const HOLD_MS = 450;
@@ -17,8 +18,11 @@ export function HoldMenu({
   sentAt,
   tooMuch,
   myTooMuch,
+  who,
   children,
 }: {
+  /** The sender's handle, for a report. */
+  who?: string;
   /** Somebody has called this message too much: it can no longer be unsent. */
   tooMuch?: boolean;
   /** You are the one who said so (tap again to take it back). */
@@ -32,6 +36,7 @@ export function HoldMenu({
 }) {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [reporting, setReporting] = useState(false);
   const timer = useRef<number | null>(null);
   const start = useRef<{ x: number; y: number } | null>(null);
 
@@ -138,7 +143,55 @@ export function HoldMenu({
                 </button>
               </form>
             ) : null}
+            {!mine ? (
+              <button type="button" className="hold-item" onClick={() => { setOpen(false); setReporting(true); }} style={{ color: "#ef4444" }}>
+                <span aria-hidden>⚑</span> Report
+              </button>
+            ) : null}
           </div>
+        </div>
+      ) : null}
+
+      {reporting ? (
+        <div role="dialog" aria-label="Report misconduct" onClick={() => setReporting(false)} style={{ position: "fixed", inset: 0, zIndex: 96, background: "rgba(8,8,16,.6)", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
+          <form
+            action={submitReport}
+            onClick={(e) => e.stopPropagation()}
+            style={{ width: "100%", maxWidth: 480, background: "var(--device)", borderTop: "1px solid var(--edge)", borderRadius: "16px 16px 0 0", padding: "16px 16px calc(20px + env(safe-area-inset-bottom))", display: "flex", flexDirection: "column", gap: 10, userSelect: "text" }}
+          >
+            <input type="hidden" name="kind" value="whisper" />
+            <input type="hidden" name="target" value={thread} />
+            <input type="hidden" name="back" value={`/whispers/${thread}`} />
+            <input type="hidden" name="evidence_id" value={id} />
+            <input type="hidden" name="evidence_text" value={text} />
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <div className="px" style={{ fontSize: 12, color: "#ef4444" }}>REPORT MISCONDUCT</div>
+              <span className="spacer" />
+              <button type="button" className="btn btn-sm" onClick={() => setReporting(false)} aria-label="Close" style={{ minHeight: 36, padding: "0 9px" }}>✕</button>
+            </div>
+            <div style={{ fontSize: 12, color: "var(--muted)" }}>Only the witches see this. {who ? <>About <b style={{ color: "var(--text)" }}>@{who}</b>.</> : null}</div>
+            <div>
+              <div className="px" style={{ fontSize: 10, color: "var(--muted)", marginBottom: 4 }}>EVIDENCE · THE LINE, AS IT STOOD</div>
+              <div style={{ padding: "8px 10px", background: "var(--surface)", boxShadow: "0 0 0 1px var(--edge)", fontSize: 12.5, lineHeight: 1.45, color: "var(--text-2)", whiteSpace: "pre-wrap", overflowWrap: "anywhere" }}>
+                {text || "a picture or a post"}
+              </div>
+            </div>
+            <label style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+              <span className="px" style={{ fontSize: 10, color: "var(--muted)" }}>WHAT HAPPENED</span>
+              <select name="reason" className="input" defaultValue="harassment">
+                {REPORT_REASONS.map((r) => (
+                  <option key={r.value} value={r.value}>{r.label}</option>
+                ))}
+              </select>
+            </label>
+            <label style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+              <span className="px" style={{ fontSize: 10, color: "var(--muted)" }}>DETAILS (OPTIONAL)</span>
+              <textarea name="note" className="textarea" rows={3} maxLength={300} placeholder="Anything the witches should know" style={{ fontSize: 12.5 }} />
+            </label>
+            <button type="submit" className="btn btn-block" style={{ minHeight: 46, color: "#ef4444", boxShadow: "0 0 0 1px #ef4444" }}>
+              SEND TO THE WITCHES
+            </button>
+          </form>
         </div>
       ) : null}
     </>

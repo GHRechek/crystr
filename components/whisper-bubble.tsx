@@ -57,7 +57,7 @@ export function Bubble({
 
   return (
     <div style={{ maxWidth: "78%", alignSelf: side, display: "flex", flexDirection: "column", alignItems: side, gap: 4 }}>
-      <HoldMenu thread={thread} id={m.id} mine={mine} text={m.body} sentAt={m.created_at} tooMuch={tooMuch} myTooMuch={!!tooMuchR?.mine}>
+      <HoldMenu thread={thread} id={m.id} mine={mine} text={m.body} sentAt={m.created_at} tooMuch={tooMuch} myTooMuch={!!tooMuchR?.mine} who={mine ? undefined : other}>
       <div style={{ display: "flex", flexDirection: mine ? "row-reverse" : "row", alignItems: "flex-end", gap: 6 }}>
         <div
           style={{

@@ -1,13 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { requireMe, getThread, getVouchesBetween } from "@/lib/data";
+import { requireMe, getThread } from "@/lib/data";
 import { Avatar } from "@/components/bits";
-import { claimVouch } from "@/lib/actions";
 import { Bubble, snippet } from "@/components/whisper-bubble";
 import { WhisperComposer } from "./composer";
-import { ReportButton } from "@/components/report-button";
 import { corrupt, COSTS, decayLevel } from "@/lib/crystr";
-import type { Vouch } from "@/lib/data";
 
 export default async function ThreadPage(props: {
   params: Promise<{ id: string }>;
@@ -22,7 +19,6 @@ export default async function ThreadPage(props: {
   const thread = await getThread(id, userId);
   if (!thread) notFound();
 
-  const vouches = await getVouchesBetween(userId, thread.other.id);
   const broke = profile.mana < COSTS.whisper;
   const decay = decayLevel(profile.mana);
   const wanted = Number(query?.reply);
@@ -102,11 +98,6 @@ export default async function ThreadPage(props: {
         ) : null}
       </div>
 
-      <div style={{ flex: "none", padding: "8px 16px 0" }}>
-        <ReportButton kind="whisper" target={id} back={`/whispers/${id}`} label="REPORT THIS CONVERSATION" />
-      </div>
-
-      <Said thread={id} other={thread.other} me={userId} vouches={vouches} />
 
       <WhisperComposer
         key={thread.messages[thread.messages.length - 1]?.id ?? 0}
@@ -116,63 +107,6 @@ export default async function ThreadPage(props: {
         replyLine={replyTarget ? `${replyTarget.sender_id === userId ? "you" : thread.other.handle}: ${snippet(replyTarget)}` : null}
         closeReplyHref={`/whispers/${id}`}
       />
-    </div>
-  );
-}
-
-/** Say that something happened between you two. The other person confirms from
- *  the banner at the top of their screen; one yes is enough. */
-function Said({
-  thread,
-  other,
-  me,
-  vouches,
-}: {
-  thread: number;
-  other: { id: string; handle: string };
-  me: string;
-  vouches: Vouch[];
-}) {
-  const find = (kind: Vouch["kind"], mine?: boolean) =>
-    vouches.find((v) => v.kind === kind && (mine === undefined || (v.claimant === me) === mine));
-  const met = find("meetup");
-  const helpedThem = find("helped", true);
-
-  const rows: { key: string; text: string; ask?: { kind: string; label: string } }[] = [];
-
-  if (met?.status === "confirmed") rows.push({ key: "m", text: `You and ${other.handle} met up. ✓` });
-  else if (met?.claimant === me) rows.push({ key: "m", text: `Waiting for ${other.handle} to confirm you met up.` });
-  else if (met) rows.push({ key: "m", text: `${other.handle} says you met up. The note is at the top of your screen.` });
-  else rows.push({ key: "m", text: "", ask: { kind: "meetup", label: "WE MET UP" } });
-
-  if (helpedThem?.status === "confirmed") rows.push({ key: "h", text: `${other.handle} confirmed you helped them. ✓` });
-  else if (helpedThem) rows.push({ key: "h", text: `Waiting for ${other.handle} to confirm you helped them.` });
-  else rows.push({ key: "h", text: "", ask: { kind: "helped", label: "I HELPED THEM" } });
-
-  return (
-    <div style={{ flex: "none", padding: "6px 16px 0", display: "flex", flexDirection: "column", gap: 6 }}>
-      <span className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
-        SAY WHAT HAPPENED
-      </span>
-      {/* The two buttons share a line, each taking half; a status sentence takes a full line. */}
-      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
-        {rows.map((r) =>
-          r.ask ? (
-            <form key={r.key} action={claimVouch} style={{ flex: "1 1 0", minWidth: 0 }}>
-              <input type="hidden" name="thread_id" value={thread} />
-              <input type="hidden" name="other_id" value={other.id} />
-              <input type="hidden" name="kind" value={r.ask.kind} />
-              <button type="submit" className="btn btn-sm btn-block" style={{ minHeight: 40, fontSize: 11, padding: "0 6px" }}>
-                {r.ask.label}
-              </button>
-            </form>
-          ) : (
-            <span key={r.key} style={{ flex: "1 1 100%", fontSize: 12, color: "var(--muted)" }}>
-              {r.text}
-            </span>
-          ),
-        )}
-      </div>
     </div>
   );
 }
