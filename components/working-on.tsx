@@ -5,7 +5,7 @@ import { useState } from "react";
 import { BadgeFace } from "@/components/badge-chooser";
 import { ArrowIcon, CameraIcon } from "@/components/icons";
 import { BadgeEditor, type BadgeDraft as Draft } from "@/components/badge-editor";
-import { setWorkingOn, vouchFromProfile } from "@/lib/actions";
+import { setWorkingOn } from "@/lib/actions";
 import { WORKING_MAX, type ShownBadge } from "@/lib/badges";
 import { targetLabel } from "@/lib/species";
 import { QuestRow } from "@/components/quest-sheet";
@@ -126,44 +126,10 @@ export function WorkingOn({ items, all, editable, person, finished, isWitch, ope
                 </li>
               );
             }
-            if (!person || !b.key.startsWith("a:")) {
-              return (
-                <li key={b.key} style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  {row}
-                </li>
-              );
-            }
-            const open = say === b.key;
+            // On someone else's page a row is just a row: helping and meeting are confirmed by scanning now.
             return (
-              <li key={b.key} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                <button
-                  type="button"
-                  aria-expanded={open}
-                  onClick={() => setSay(open ? null : b.key)}
-                  style={{ display: "flex", alignItems: "center", gap: 10, padding: 0, background: "none", border: 0, cursor: "pointer", color: "inherit", font: "inherit" }}
-                >
-                  {row}
-                </button>
-                {open ? (
-                  <div style={{ display: "flex", gap: 8, paddingLeft: 52 }}>
-                    {(
-                      [
-                        ["helped", "THEY HELPED ME"],
-                        ["meetup", "WE MET UP"],
-                      ] as const
-                    ).map(([kind, label]) => (
-                      <form key={kind} action={vouchFromProfile} style={{ flex: 1, minWidth: 0 }}>
-                        <input type="hidden" name="kind" value={kind} />
-                        <input type="hidden" name="person_id" value={person.id} />
-                        <input type="hidden" name="handle" value={person.handle} />
-                        <input type="hidden" name="badge" value={b.key.slice(2)} />
-                        <button type="submit" className="btn btn-sm btn-block" style={{ minHeight: 40 }}>
-                          {label}
-                        </button>
-                      </form>
-                    ))}
-                  </div>
-                ) : null}
+              <li key={b.key} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                {row}
               </li>
             );
           })}
