@@ -42,20 +42,22 @@ const isSides = (x, y) => y >= UNDER || (y >= MID && (x < CORE[0] || x > CORE[1]
  *  cut with nothing below, is a high fade at this row and reads as one, so
  *  it isn't counted: a short top sits on the curly sides that are a few
  *  curls at the nape, and on no sides at all. */
-const MAX_SHELF = 3;
+const MAX_SHELF = Number(process.env.MAX_SHELF ?? 12);
 /** ...unless that ending is well out from the head. The skull's edge is at
  *  x 37 on the cut row; hair that stops at the cut more than 7px outside it
  *  isn't a fade, it's a slab hanging in the air — the big dome and the
  *  messy bun over a short side. Counted in boundary pixels past x 30 on
  *  the left and 86 on the right. */
-const MAX_AIR = 3;
+const MAX_AIR = Number(process.env.MAX_AIR ?? 12);
 const AIR = [30, 86];
 
 /** Styles left out of the builder. 07 was the receding hairline, cut. */
 const EXCLUDE = ["07"];
-/** How much the shading may jump across the seam, on average, where both
- *  have hair: mean luminance difference in 0–255. */
-const MAX_SHADE = 25;
+/** The shading across the seam is reported (--matrix) but no longer decides
+ *  anything: every face is recoloured to its own hair colour, and at the size
+ *  faces are shown the jump between two styles' painted shading doesn't read.
+ *  The silhouette limits were 3px and blocked combinations that looked fine;
+ *  checked by eye across the whole sides x tops grid at 12. */
 
 const read = (p) => PNG.sync.read(readFileSync(`${ROOT}/${p}.png`));
 const at = (png, x, y) => (y * SIZE + x) * 4;
@@ -133,7 +135,7 @@ for (const id of ids) {
   writeFileSync(`${ROOT}/HairSides/${id}.png`, PNG.sync.write(cut[id].sides));
 }
 
-const fits = ({ shelf, air, shade }) => shelf <= MAX_SHELF && air <= MAX_AIR && shade <= MAX_SHADE;
+const fits = ({ shelf, air }) => shelf <= MAX_SHELF && air <= MAX_AIR;
 
 // sides id -> the top ids that sit on it cleanly, its own first. "none" is
 // no sides: the tops that can sit on a shaved head.
@@ -150,6 +152,17 @@ const bare = new PNG({ width: SIZE, height: SIZE });
 bare.data.fill(0);
 pairs.none = ids.filter((t) => fits(seam(cut[t].top, bare)));
 writeFileSync(`${ROOT}/_crown-pairs.json`, JSON.stringify(pairs, null, 2) + "\n");
+
+// sides id -> every other sides, most alike first (overlap of their shapes), so
+// the builder can find the nearest sides that will take a top you picked.
+// "none" lists them smallest first.
+const mask = (png) => { const m = new Uint8Array(SIZE * SIZE); for (let i = 0; i < m.length; i++) m[i] = png.data[i * 4 + 3] > 0 ? 1 : 0; return m; };
+const masks = Object.fromEntries(ids.map((id) => [id, mask(cut[id].sides)]));
+const area = (m) => m.reduce((n, v) => n + v, 0);
+const iou = (a, b) => { let i = 0, u = 0; for (let k = 0; k < a.length; k++) { i += a[k] & b[k]; u += a[k] | b[k]; } return u ? i / u : 1; };
+const near = { none: [...ids].sort((a, b) => area(masks[a]) - area(masks[b])) };
+for (const s of ids) near[s] = ids.filter((o) => o !== s).sort((a, b) => iou(masks[s], masks[b]) - iou(masks[s], masks[a]));
+writeFileSync(`${ROOT}/_sides-near.json`, JSON.stringify(near) + "\n");
 
 if (process.argv.includes("--matrix")) {
   console.log("sides \\ top: shelf / shade (own pair marked *)");

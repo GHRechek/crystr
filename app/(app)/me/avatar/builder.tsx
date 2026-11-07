@@ -13,6 +13,7 @@ import {
   SKIN_CHOICES,
   packPortrait,
   randomPortrait,
+  sidesFor,
   topsFor,
   type PortraitConfig,
 } from "@/lib/portrait/core";
@@ -32,8 +33,7 @@ export function AvatarBuilder({ start, fresh }: { start: PortraitConfig; fresh: 
 
   const step = (key: string, by: number) =>
     setC((prev) => {
-      // The top only steps through the tops that sit on these sides.
-      const list = key === "top" ? topsFor(prev.hair_back) : ALLOWED[key];
+      const list = ALLOWED[key];
       const at = Math.max(0, list.indexOf(prev[key]));
       const next = (((at + by) % list.length) + list.length) % list.length;
       const out = { ...prev, [key]: list[next] };
@@ -41,6 +41,9 @@ export function AvatarBuilder({ start, fresh }: { start: PortraitConfig; fresh: 
       // top and sides match, the top moves with them. Change the top on its
       // own and they stay split — until you reach sides it won't sit on,
       // when it comes back to matching.
+      // Every top is on offer. One these sides won't take brings the nearest
+      // sides that will.
+      if (key === "top") out.hair_back = sidesFor(out.top, prev.hair_back);
       if (key === "hair_back") {
         const split = prev.top !== prev.hair_back && topsFor(out.hair_back).includes(prev.top);
         out.top = split ? prev.top : out.hair_back;

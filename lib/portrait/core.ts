@@ -1,4 +1,4 @@
-import { OPTIONS, TOPS, type PortraitOption } from "./manifest";
+import { OPTIONS, SIDES_NEAR, TOPS, type PortraitOption } from "./manifest";
 
 // Portraits are layered 128x128 art from the Portrait Maker sprite sheets.
 //
@@ -286,11 +286,21 @@ export const ALLOWED: Record<string, string[]> = (() => {
 })();
 
 /** The tops that sit on a given hair back: its own first, then any other
- *  whose cut edge meets these sides cleanly. No sides takes none, or a top
- *  that ends above the cut — a shaved head with something on top. */
+ *  whose cut edge meets these sides cleanly, then none (a bald crown over
+ *  the sides). No sides takes none, or a top that ends above the cut — a
+ *  shaved head with something on top. */
 export function topsFor(back: string): string[] {
   if (back === NONE) return [NONE, ...(TOPS.none ?? [])];
-  return TOPS[back] ?? [back];
+  return [...(TOPS[back] ?? [back]), NONE];
+}
+
+/** The sides to wear with a top you picked: these if they take it, otherwise
+ *  the nearest sides that do (most alike in shape), falling back to the top's
+ *  own. */
+export function sidesFor(top: string, back: string): string {
+  if (topsFor(back).includes(top)) return back;
+  const near = SIDES_NEAR[back] ?? [];
+  return [...near, NONE].find((s) => topsFor(s).includes(top)) ?? top;
 }
 
 /** The top a face should wear: the one it has if that sits on its back,
@@ -398,8 +408,13 @@ export function randomPortrait(): PortraitConfig {
  *  others that sit on these sides. */
 const MATCHED_TOP_PCT = 75;
 
+/** The pairings as they stood when faces were first handed out. A face nobody
+ *  chose is rolled from its id, so rolling it against today's looser pairings
+ *  would quietly give people new hair; it keeps rolling against these. */
+const ROLLED_TOPS: Record<string, string[]> = {"10":["10","01","04","09","15","16","23","24"],"11":["11","13","18","19","25"],"12":["12","03","13"],"13":["13","18","19"],"14":["14","01","04","09","10","15","16","23","24","26"],"15":["15","04","09","10","16","23","24"],"16":["16","04","09","10","15","23","24"],"17":["17","01","04","09","10","14","15","16","23","24"],"18":["18","13","19","25"],"19":["19","13","18","25"],"20":["20","01","02","04","09","10"],"21":["21","04","20","22"],"22":["22","04","20","21"],"23":["23","04","09","10","15","16","24"],"24":["24","04","09","10","15","16","23"],"25":["25","11","13","18","19"],"26":["26","01","09","10","14","15","16","23","24"],"27":["27"],"01":["01","02","20"],"02":["02","01","04","10","20"],"03":["03","13","19","25"],"04":["04","01","02","09","10","15","16","20","23"],"05":["05","01","04","09","10","14","15","16","17","23","24"],"06":["06"],"08":["08"],"09":["09","01","04","10","15","16","23","24"],"none":["03","11","12","13","18","19","25"]};
+
 function pickTop(c: PortraitConfig, roll: number, which: number) {
-  const others = topsFor(c.hair_back).filter((id) => id !== c.hair_back);
+  const others = (c.hair_back === NONE ? ROLLED_TOPS.none ?? [] : ROLLED_TOPS[c.hair_back] ?? [c.hair_back]).filter((id) => id !== c.hair_back);
   c.top = roll < MATCHED_TOP_PCT || !others.length ? c.hair_back : others[which % others.length];
 }
 
