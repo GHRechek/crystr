@@ -148,6 +148,11 @@ const TRADE_ARROWS = ["......#..", ".......#.", "#########", ".......#.", ".....
 const UNDO = ["..#.......", ".##.......", "#######...", ".##....#..", "..#.....#.", ".........#", ".........#", "........#.", "...#####.."];
 const SWAP = ["...#...", "....#..", "#######", "....#..", "..#.#..", ".#.....", "#######"];
 
+/** A move's kind as its little pixel icon: sword, spell or armor. */
+export function MoveIcon({ kind, k = 2, fill = "#fff" }: { kind: MoveKind; k?: number; fill?: string }) {
+  return <Pix rows={MOVE[kind]} k={k} fill={fill} />;
+}
+
 /** Element (in its rarity's colour, or ? until you know it) then white hearts. */
 export function Stats({ h, hp, k = 3, known = true, only }: { h: HK; hp?: number; k?: number; known?: boolean; only?: "type" | "hearts" }) {
   const left = hp ?? h.hearts;

@@ -7,7 +7,7 @@
 // 20261028070000_badge_tiers.sql); this is what the screens need.
 
 import { normalizeToken, tokenSrc, tokenTitle } from "@/lib/token";
-import { kindArtSrc } from "@/lib/historikals";
+import { HISTORIKAL, kindArtSrc } from "@/lib/historikals";
 
 export type BadgeRow = {
   slug: string;
@@ -179,14 +179,14 @@ export function resolveShown(
     } else if (key.startsWith("i:")) {
       const it = items.find((x) => x.kind === "tradable" && String(x.id) === key.slice(2));
       if (!it?.kindRow) continue;
-      const line =
-        it.occasion === "birthday"
-          ? "Given on their birthday."
-          : it.earned_by && it.earned_by !== it.owner_id
-            ? `Came in a trade from ${it.maker?.handle ?? "someone"}.`
-            : it.maker?.handle === owner
-              ? "Earned by helping others."
-              : it.kindRow.blurb || "A Historikal.";
+      // What it is (rarity, type, hearts), then where it came from.
+      const hk = it.kind_slug ? HISTORIKAL.get(it.kind_slug) : undefined;
+      const what = hk ? `${hk.rarity[0].toUpperCase()}${hk.rarity.slice(1)} ${hk.element} Historikal, ${hk.hearts} hearts.` : "A Historikal.";
+      const from =
+        it.earned_by && it.earned_by !== it.owner_id
+          ? `Came from ${it.maker?.handle ?? "someone"}.`
+          : ({ birthday: "Found on a birthday.", battle: "Won in battle.", epic: "Summoned for a main quest.", helped: "Summoned for helping.", quest: "Found on a quest.", pick: "A gift." } as Record<string, string>)[it.occasion ?? ""] ?? "";
+      const line = `${what}${from ? ` ${from}` : ""}`;
       out.push({ key, src: kindArtSrc(it.kindRow.art), title: it.kindRow.title.toUpperCase(), line });
     }
   }
