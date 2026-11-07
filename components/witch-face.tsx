@@ -3,14 +3,17 @@
 import { useState } from "react";
 import { Avatar } from "@/components/bits";
 import { BadgeFace } from "@/components/badge-chooser";
-import { witchGrant } from "@/lib/actions";
+import { witchGrant, witchSetSpecies } from "@/lib/actions";
+import { SPECIES } from "@/lib/species";
 import type { Author } from "@/lib/data";
 import type { ShownBadge } from "@/lib/badges";
 
-/** On someone else's profile, a witch taps their picture for a menu: mark one of their quests as done.
+/** On someone else's profile, a witch taps their picture for a menu: mark one of their quests as done,
+ *  or set what they are (someone the registry had no line for, like the undead, can be made Forsaken).
  *  Everyone else just sees the picture. */
-export function WitchFace({ person, quests }: { person: Author; quests: ShownBadge[] }) {
+export function WitchFace({ person, quests, species }: { person: Author; quests: ShownBadge[]; species?: string | null }) {
   const [open, setOpen] = useState(false);
+  const [kinds, setKinds] = useState(false);
   const [sheet, setSheet] = useState(false);
   const [q, setQ] = useState("");
   const [pick, setPick] = useState<ShownBadge | null>(null);
@@ -33,6 +36,28 @@ export function WitchFace({ person, quests }: { person: Author; quests: ShownBad
           <button type="button" className="face-menu-item" role="menuitem" onClick={() => { setOpen(false); setSheet(true); }}>
             <span aria-hidden="true">✓</span> MARK A QUEST DONE
           </button>
+          <button type="button" className="face-menu-item" role="menuitem" onClick={() => { setOpen(false); setKinds(true); }}>
+            <span aria-hidden="true">◈</span> SET SPECIES{species ? ` · ${SPECIES.find((x) => x.value === species)?.label.toUpperCase() ?? ""}` : ""}
+          </button>
+        </div>
+      ) : null}
+
+      {kinds ? (
+        <div role="dialog" aria-label="Set species" onClick={() => setKinds(false)} style={{ position: "fixed", inset: 0, zIndex: 90, background: "rgba(0,0,0,.6)", display: "grid", placeItems: "center", padding: 24 }}>
+          <div onClick={(e) => e.stopPropagation()} style={{ width: "min(340px, 100%)", background: "var(--blk)", borderRadius: "var(--px-r)", padding: 18, display: "flex", flexDirection: "column", gap: 10 }}>
+            <div className="px" style={{ fontSize: 12, color: "var(--pur-soft)" }}>WHAT IS {person.handle.toUpperCase()}?</div>
+            <div style={{ fontSize: 12.5, lineHeight: 1.5, color: "var(--muted)" }}>The undead, and anyone else the registry has no line for, are Forsaken. It counts for the Friend quests at once.</div>
+            <form action={async (fd) => { await witchSetSpecies(fd); setKinds(false); }} style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+              <input type="hidden" name="user_id" value={person.id} />
+              <input type="hidden" name="handle" value={person.handle} />
+              {SPECIES.map((x) => (
+                <button key={x.value} type="submit" name="species" value={x.value} className={`btn btn-sm${species === x.value ? " btn-purple" : ""}`} style={{ minHeight: 40 }}>
+                  {x.label.toUpperCase()}
+                </button>
+              ))}
+            </form>
+            <button type="button" className="btn btn-sm" onClick={() => setKinds(false)} style={{ minHeight: 40, alignSelf: "flex-end" }}>CANCEL</button>
+          </div>
         </div>
       ) : null}
 

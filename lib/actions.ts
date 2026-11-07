@@ -1200,6 +1200,21 @@ export async function witchGrant(fd: FormData) {
   revalidatePath("/", "layout");
 }
 
+/** A witch sets what someone is, from their profile: the undead and others the registry has no line
+ *  for become Forsaken this way. */
+export async function witchSetSpecies(fd: FormData) {
+  const handle = str(fd, "handle");
+  const r = await call("cr_witch_set_species", { p_user: str(fd, "user_id"), p_species: str(fd, "species") });
+  if (!r.ok) {
+    if (r.code === "forbidden") await setFlash("WITCHES ONLY", "Only a witch can do that.", EDGE.mag);
+    else await wentWrong();
+  } else {
+    await setFlash("SET", `${handle} is ${String((r as { label?: string }).label ?? "set")} now.`, EDGE.blue);
+  }
+  revalidatePath(`/u/${handle}`);
+  revalidatePath("/", "layout");
+}
+
 /** Help Someone Else, from a scan: ask the person you helped to say yes. */
 export async function claimHelp(fd: FormData) {
   const r = await call("cr_scan_help", { p_other: str(fd, "other_id") });

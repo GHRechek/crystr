@@ -66,7 +66,7 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
       <div style={{ padding: "0 16px", marginTop: -44, position: "relative", display: "flex", flexDirection: "column", gap: 12 }}>
         <div style={{ display: "flex", alignItems: "flex-end", gap: 12 }}>
           {me.is_witch ? (
-            <WitchFace person={person} quests={questGrid(badges).filter((b) => b.locked)} />
+            <WitchFace person={person} species={person.species} quests={questGrid(badges).filter((b) => b.locked)} />
           ) : (
             <div style={{ width: 104, height: 104, flex: "none" }}>
               <Avatar person={person} size={104} />
