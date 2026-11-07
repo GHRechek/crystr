@@ -33,6 +33,7 @@ export function askLines(slug: string, them: string): AskLines {
   }
   if (s.includes("spell")) return { question: `Was ${them}'s spell cool, or at least fun?`, waiting: `They're deciding if your spell was cool` };
   if (s.includes("potion")) return { question: `Was ${them}'s potion experience cool or fun?`, waiting: `They're deciding if your potion was fun` };
+  if (s.includes("party-game")) return { question: `Did ${them} win the party game?`, waiting: `They're deciding if you won` };
   if (s.includes("workshop")) return { question: `Was ${them} at the workshop?`, waiting: `They're deciding if you were at the workshop` };
   if (s.includes("support-group")) return { question: `Was ${them} at the support group?`, waiting: `They're deciding if you were at the support group` };
   if (s === "first-timer") return { question: `Did ${them} bring someone new to the café?`, waiting: `They're deciding if you brought someone new` };
