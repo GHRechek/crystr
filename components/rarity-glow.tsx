@@ -9,7 +9,7 @@ export function RarityGlow({ slug, size, children }: { slug: string; size: numbe
   const c = RARITY_COLOR[h.rarity];
   const k = Math.max(1, Math.round(size / 34));
   return (
-    <span style={{ display: "block", width: size, height: size, flex: "none", filter: `drop-shadow(${k}px 0 0 ${c}) drop-shadow(-${k}px 0 0 ${c}) drop-shadow(0 ${k}px 0 ${c}) drop-shadow(0 -${k}px 0 ${c})` }}>
+    <span className="hk-ring" style={{ display: "block", width: size, height: size, flex: "none", filter: `drop-shadow(${k}px 0 0 ${c}) drop-shadow(-${k}px 0 0 ${c}) drop-shadow(0 ${k}px 0 ${c}) drop-shadow(0 -${k}px 0 ${c})` }}>
       {children}
     </span>
   );
