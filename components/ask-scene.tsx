@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BadgeArt } from "@/components/badges";
 
 /** A short, original 8-bit fanfare: a rising arpeggio and a held chord, square waves. Plays once. */
@@ -10,7 +10,6 @@ export function playFanfare() {
     if (!AC) return;
     const ctx = new AC();
     const notes: [number, number, number][] = [
-      // [frequency, start, length] in seconds
       [392.0, 0.0, 0.12], [523.25, 0.13, 0.12], [659.25, 0.26, 0.12], [783.99, 0.39, 0.12],
       [698.46, 0.6, 0.12], [880.0, 0.73, 0.12], [1046.5, 0.86, 0.7],
       [659.25, 0.86, 0.7], [523.25, 0.86, 0.7],
@@ -33,38 +32,162 @@ export function playFanfare() {
   }
 }
 
-/** The wooden crate the badge rises out of: a front, a dark mouth, two lid boards thrown open. */
-function Crate() {
+/** A whoosh, for a key thrown away. */
+function playWhoosh() {
+  try {
+    const AC = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    if (!AC) return;
+    const ctx = new AC();
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.type = "square";
+    o.frequency.setValueAtTime(600, ctx.currentTime);
+    o.frequency.exponentialRampToValueAtTime(90, ctx.currentTime + 0.35);
+    g.gain.setValueAtTime(0.05, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.4);
+    o.connect(g).connect(ctx.destination);
+    o.start();
+    o.stop(ctx.currentTime + 0.45);
+    window.setTimeout(() => void ctx.close(), 800);
+  } catch {}
+}
+
+const GOLD = "#f2b544", GOLD_HI = "#ffd877", GOLD_LO = "#b9761c", WOOD = "#7a3b1f", WOOD_LO = "#4e2312", INK = "#1a0d14", RED = "#e23a3a";
+
+/** An original pixel chest: gold frame and bands, dark wood, side handles, a horned plate. Open or shut. */
+function Chest({ open }: { open: boolean }) {
   return (
-    <svg viewBox="0 0 40 26" width={200} height={130} shapeRendering="crispEdges" aria-hidden="true" style={{ display: "block", position: "relative", zIndex: 2 }}>
-      {/* open lid boards */}
-      <rect x={0} y={0} width={12} height={4} fill="#5a3416" transform="rotate(-18 6 4)" />
-      <rect x={28} y={0} width={12} height={4} fill="#5a3416" transform="rotate(18 34 4)" />
-      {/* the crate's mouth */}
-      <rect x={2} y={4} width={36} height={3} fill="#1c0f06" />
-      {/* the front */}
-      <rect x={1} y={6} width={38} height={20} fill="#7a4a1f" />
-      <rect x={1} y={6} width={38} height={2} fill="#9c6330" />
-      <rect x={1} y={13} width={38} height={1} fill="#5a3416" />
-      <rect x={1} y={19} width={38} height={1} fill="#5a3416" />
-      <rect x={1} y={6} width={3} height={20} fill="#5a3416" />
-      <rect x={36} y={6} width={3} height={20} fill="#5a3416" />
-      {/* the cross-brace */}
-      <rect x={6} y={8} width={2} height={2} fill="#c08a45" />
-      <rect x={32} y={8} width={2} height={2} fill="#c08a45" />
-      <rect x={6} y={22} width={2} height={2} fill="#c08a45" />
-      <rect x={32} y={22} width={2} height={2} fill="#c08a45" />
-      <rect x={0} y={25} width={40} height={1} fill="#2a1508" />
+    <svg viewBox="0 0 48 40" width={216} height={180} shapeRendering="crispEdges" aria-hidden="true" style={{ display: "block", position: "relative", zIndex: 2 }}>
+      {/* handles */}
+      <rect x={0} y={22} width={3} height={8} fill={INK} />
+      <rect x={1} y={23} width={2} height={6} fill={GOLD} />
+      <rect x={45} y={22} width={3} height={8} fill={INK} />
+      <rect x={45} y={23} width={2} height={6} fill={GOLD} />
+      {open ? (
+        <>
+          {/* lid, swung back */}
+          <rect x={4} y={0} width={40} height={9} fill={INK} />
+          <rect x={5} y={1} width={38} height={7} fill={GOLD} />
+          <rect x={7} y={2} width={34} height={5} fill={WOOD} />
+          <rect x={7} y={2} width={34} height={1} fill={GOLD_HI} />
+          <rect x={21} y={2} width={6} height={5} fill={GOLD_LO} />
+          {/* the inside, dark, with a glow */}
+          <rect x={3} y={9} width={42} height={8} fill={INK} />
+          <rect x={5} y={10} width={38} height={6} fill="#3a1220" />
+          <rect x={8} y={11} width={32} height={2} fill="#ffe7a0" opacity={0.5} />
+        </>
+      ) : (
+        <>
+          {/* lid, shut and domed */}
+          <rect x={4} y={6} width={40} height={2} fill={INK} />
+          <rect x={3} y={8} width={42} height={9} fill={INK} />
+          <rect x={4} y={8} width={40} height={8} fill={GOLD} />
+          <rect x={6} y={9} width={36} height={6} fill={WOOD} />
+          <rect x={6} y={9} width={36} height={1} fill="#9c4d26" />
+          <rect x={4} y={7} width={40} height={1} fill={GOLD_HI} />
+          <rect x={12} y={8} width={3} height={8} fill={GOLD_LO} />
+          <rect x={33} y={8} width={3} height={8} fill={GOLD_LO} />
+        </>
+      )}
+      {/* body */}
+      <rect x={3} y={17} width={42} height={21} fill={INK} />
+      <rect x={4} y={17} width={40} height={20} fill={GOLD} />
+      <rect x={6} y={19} width={36} height={16} fill={WOOD} />
+      {[10, 16, 31, 37].map((x) => (
+        <rect key={x} x={x} y={19} width={1} height={16} fill={WOOD_LO} />
+      ))}
+      <rect x={4} y={17} width={40} height={1} fill={GOLD_HI} />
+      <rect x={12} y={17} width={3} height={20} fill={GOLD_LO} />
+      <rect x={33} y={17} width={3} height={20} fill={GOLD_LO} />
+      <rect x={4} y={36} width={40} height={1} fill={GOLD_LO} />
+      {/* the horned plate */}
+      <rect x={19} y={17} width={10} height={11} fill={INK} />
+      <rect x={20} y={18} width={8} height={9} fill={GOLD} />
+      <rect x={17} y={16} width={2} height={3} fill={GOLD} />
+      <rect x={29} y={16} width={2} height={3} fill={GOLD} />
+      <rect x={16} y={15} width={2} height={2} fill={GOLD_HI} />
+      <rect x={30} y={15} width={2} height={2} fill={GOLD_HI} />
+      <rect x={21} y={20} width={2} height={2} fill={open ? GOLD_LO : RED} />
+      <rect x={25} y={20} width={2} height={2} fill={open ? GOLD_LO : RED} />
+      <rect x={23} y={23} width={2} height={3} fill={INK} />
     </svg>
   );
 }
 
+/** An original ornate gold key, drawn upright: a ring bow with a jewel, a shaft, and teeth at the bottom. */
+function Key() {
+  return (
+    <svg viewBox="0 0 14 30" width={56} height={120} shapeRendering="crispEdges" aria-hidden="true" style={{ display: "block", pointerEvents: "none" }}>
+      <rect x={3} y={0} width={8} height={1} fill={INK} />
+      <rect x={2} y={1} width={10} height={8} fill={INK} />
+      <rect x={3} y={1} width={8} height={7} fill={GOLD} />
+      <rect x={3} y={1} width={8} height={1} fill={GOLD_HI} />
+      <rect x={5} y={3} width={4} height={3} fill={INK} />
+      <rect x={6} y={4} width={2} height={1} fill={RED} />
+      <rect x={1} y={4} width={1} height={3} fill={GOLD_LO} />
+      <rect x={12} y={4} width={1} height={3} fill={GOLD_LO} />
+      <rect x={5} y={9} width={4} height={2} fill={INK} />
+      <rect x={6} y={9} width={2} height={18} fill={GOLD} />
+      <rect x={5} y={11} width={1} height={16} fill={INK} />
+      <rect x={8} y={11} width={1} height={16} fill={INK} />
+      <rect x={6} y={10} width={1} height={16} fill={GOLD_HI} />
+      <rect x={9} y={19} width={3} height={2} fill={GOLD} />
+      <rect x={9} y={23} width={2} height={2} fill={GOLD} />
+      <rect x={9} y={26} width={3} height={2} fill={GOLD} />
+      <rect x={9} y={21} width={3} height={1} fill={INK} />
+      <rect x={6} y={27} width={2} height={2} fill={GOLD_LO} />
+      <rect x={5} y={29} width={4} height={1} fill={INK} />
+    </svg>
+  );
+}
+
+/** The background: wide pixel-edged rays in the CRYSTR colours, drawn small and scaled up, turning slowly
+ *  and gently strobing. */
+function Rays() {
+  const ref = useRef<HTMLCanvasElement>(null);
+  useEffect(() => {
+    const c = ref.current;
+    const ctx = c?.getContext("2d");
+    if (!c || !ctx) return;
+    const W = 60, H = 110;
+    c.width = W;
+    c.height = H;
+    let t = 0;
+    const cols = ["#5a1f6e", "#2d2f8a"];
+    const draw = () => {
+      t += 1;
+      const pulse = 0.82 + 0.18 * Math.sin(t / 6);
+      ctx.fillStyle = "#2a1650";
+      ctx.fillRect(0, 0, W, H);
+      const cx = W / 2, cy = H * 0.5, n = 8, r = 200;
+      const spin = t * 0.025;
+      for (let i = 0; i < n; i++) {
+        const a0 = spin + (i / n) * Math.PI * 2;
+        const a1 = a0 + Math.PI / n;
+        ctx.globalAlpha = pulse;
+        ctx.fillStyle = cols[i % 2];
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cx + Math.cos(a0) * r, cy + Math.sin(a0) * r);
+        ctx.lineTo(cx + Math.cos(a1) * r, cy + Math.sin(a1) * r);
+        ctx.closePath();
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+    };
+    draw();
+    const id = window.setInterval(draw, 140);
+    return () => window.clearInterval(id);
+  }, []);
+  return <canvas ref={ref} aria-hidden style={{ position: "absolute", inset: 0, width: "100%", height: "100%", imageRendering: "pixelated" }} />;
+}
+
 export type AskSide = "ask" | "wait";
 
-/** The screen both people see when one asks the other, face to face, to confirm a quest (or a trade):
- *  the badge rises out of a pixel crate to a fanfare, the question sits on top, and the person being
- *  asked answers YES or NO (trembling words, not buttons). The asker sees the same scene with
- *  "Waiting…" until the answer lands. */
+/** The screen both people see when one asks the other, face to face, to confirm a quest (or a trade).
+ *  A shut chest, the question on top, and a key floating at the bottom. The person being asked drags the
+ *  key to the chest for YES (it unlocks, the badge rises out to a fanfare) or throws it off the screen for
+ *  NO (the scene closes for both). The asker watches the same scene, waiting, and sees it play out. */
 export function AskScene({
   side,
   badge,
@@ -79,60 +202,143 @@ export function AskScene({
 }: {
   side: AskSide;
   badge: { art: string | null; slug: string; tiers?: number };
-  /** The badge's name, under it. */
   title: string;
-  /** What the person being asked is asked, e.g. "Would you call sammi a friend?". */
   question: string;
-  /** The other person's handle. */
   who: string;
+  /** The answer, once there is one (the asker learns it this way). */
   result?: "yes" | "no" | null;
   onYes?: () => void;
   onNo?: () => void;
   onClose?: () => void;
   sound?: boolean;
 }) {
-  const played = useRef(false);
-  useEffect(() => {
-    if (sound && !played.current) {
-      played.current = true;
-      window.setTimeout(playFanfare, 900);
-    }
-  }, [sound]);
+  const chestRef = useRef<HTMLDivElement>(null);
+  const [drag, setDrag] = useState<{ x: number; y: number } | null>(null);
+  const start = useRef<{ x: number; y: number; t: number; px: number; py: number } | null>(null);
+  const last = useRef<{ x: number; y: number; t: number }[]>([]);
+  const [state, setState] = useState<"idle" | "open" | "thrown">(result === "yes" ? "open" : result === "no" ? "thrown" : "idle");
+  const [fling, setFling] = useState<{ x: number; y: number } | null>(null);
 
+  // The asker's side follows the answer when it lands.
+  useEffect(() => {
+    if (result === "yes" && state === "idle") setState("open");
+    if (result === "no" && state === "idle") {
+      setFling({ x: 0, y: 900 });
+      setState("thrown");
+    }
+  }, [result, state]);
+
+  useEffect(() => {
+    if (state === "open" && sound) window.setTimeout(playFanfare, 500);
+    if (state === "thrown") {
+      if (sound) playWhoosh();
+      const id = window.setTimeout(() => onClose?.(), 900);
+      return () => window.clearTimeout(id);
+    }
+  }, [state, sound, onClose]);
+
+  const canDrag = side === "ask" && state === "idle";
+
+  const down = (e: React.PointerEvent) => {
+    if (!canDrag) return;
+    (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
+    start.current = { x: e.clientX, y: e.clientY, t: performance.now(), px: drag?.x ?? 0, py: drag?.y ?? 0 };
+    last.current = [{ x: e.clientX, y: e.clientY, t: performance.now() }];
+  };
+  const move = (e: React.PointerEvent) => {
+    if (!start.current) return;
+    setDrag({ x: start.current.px + e.clientX - start.current.x, y: start.current.py + e.clientY - start.current.y });
+    last.current = [...last.current.slice(-4), { x: e.clientX, y: e.clientY, t: performance.now() }];
+  };
+  const up = (e: React.PointerEvent) => {
+    if (!start.current) return;
+    start.current = null;
+    // Dropped on the chest: YES.
+    const box = chestRef.current?.getBoundingClientRect();
+    if (box && e.clientX > box.left && e.clientX < box.right && e.clientY > box.top && e.clientY < box.bottom) {
+      setState("open");
+      onYes?.();
+      return;
+    }
+    // Thrown hard, or dragged out of the screen: NO.
+    const a = last.current[0], b = last.current[last.current.length - 1];
+    const dt = Math.max(1, b.t - a.t);
+    const vx = (b.x - a.x) / dt, vy = (b.y - a.y) / dt;
+    const speed = Math.hypot(vx, vy);
+    const off = e.clientX < 0 || e.clientY < 0 || e.clientX > window.innerWidth || e.clientY > window.innerHeight;
+    if (speed > 1.1 || off) {
+      setFling({ x: (drag?.x ?? 0) + vx * 900, y: (drag?.y ?? 0) + vy * 900 });
+      setState("thrown");
+      onNo?.();
+      return;
+    }
+    // Let go somewhere else: it drifts home.
+    setDrag(null);
+  };
+
+  const keyPos = fling ?? drag ?? { x: 0, y: 0 };
   return (
     <div role="dialog" aria-label={question} className="ask-scene">
-      <div className="ask-rays" aria-hidden />
+      <Rays />
       <div className="px ask-question">{question}</div>
 
       <div className="ask-stage">
-        <div className="ask-badge">
-          <BadgeArt b={{ art: badge.art, slug: badge.slug, tiers: badge.tiers ?? 1 }} got tier={1} size={84} />
-          <span className="ask-glint g1" aria-hidden />
-          <span className="ask-glint g2" aria-hidden />
-          <span className="ask-glint g3" aria-hidden />
+        {state === "open" ? (
+          <div className="ask-badge">
+            <BadgeArt b={{ art: badge.art, slug: badge.slug, tiers: badge.tiers ?? 1 }} got tier={1} size={84} />
+            <span className="ask-glint g1" aria-hidden />
+            <span className="ask-glint g2" aria-hidden />
+            <span className="ask-glint g3" aria-hidden />
+          </div>
+        ) : null}
+        <div ref={chestRef}>
+          <Chest open={state === "open"} />
         </div>
-        <Crate />
-        <div className="px ask-title">{title.toUpperCase()}</div>
+        <div className="px ask-title">{state === "open" ? title.toUpperCase() : ""}</div>
       </div>
 
-      {result ? (
-        <div className={`px ask-result ${result === "yes" ? "is-yes" : "is-no"}`}>
-          {result === "yes" ? (side === "wait" ? `${who.toUpperCase()} SAID YES!` : "CONFIRMED!") : side === "wait" ? `${who.toUpperCase()} SAID NO` : "NOT THIS TIME"}
-        </div>
-      ) : side === "wait" ? (
-        <div className="px ask-waiting">
-          WAITING ON {who.toUpperCase()}<span className="ask-dots" aria-hidden><i>.</i><i>.</i><i>.</i></span>
-        </div>
-      ) : (
-        <div className="ask-choices">
-          <button type="button" className="px ask-yes" onClick={onYes}>YES</button>
-          <button type="button" className="px ask-no" onClick={onNo}>NO</button>
-        </div>
-      )}
+      <div className="ask-bottom">
+        {state === "idle" ? (
+          <div
+            className={`ask-key${drag ? " is-held" : ""}`}
+            onPointerDown={down}
+            onPointerMove={move}
+            onPointerUp={up}
+            onPointerCancel={() => { start.current = null; setDrag(null); }}
+            style={{ transform: `translate(${keyPos.x}px, ${keyPos.y}px)`, cursor: canDrag ? "grab" : "default", touchAction: "none" }}
+            aria-label={side === "ask" ? "The key: drag it to the chest for yes, throw it away for no" : "The key"}
+            role={side === "ask" ? "button" : undefined}
+          >
+            <Key />
+          </div>
+        ) : state === "thrown" ? (
+          <div className="ask-key is-thrown" style={{ transform: `translate(${keyPos.x}px, ${keyPos.y}px) rotate(540deg)` }}>
+            <Key />
+          </div>
+        ) : null}
 
-      {onClose && (result || side === "wait") ? (
-        <button type="button" className="px ask-close" onClick={onClose}>{result ? "CLOSE" : "CLOSE · KEEP WAITING"}</button>
-      ) : null}
+        {state === "open" ? (
+          <div className="px ask-result is-yes">{side === "wait" ? `${who.toUpperCase()} SAID YES!` : "UNLOCKED!"}</div>
+        ) : state === "thrown" ? null : side === "wait" ? (
+          <div className="px ask-waiting">
+            WAITING ON {who.toUpperCase()}<span className="ask-dots" aria-hidden><i>.</i><i>.</i><i>.</i></span>
+          </div>
+        ) : (
+          <div className="ask-hints">
+            <span className="px ask-yes">YES? UNLOCK THE CHEST</span>
+            <span className="px ask-no">NO? THROW THE KEY AWAY</span>
+          </div>
+        )}
+        {side === "ask" && state === "idle" ? (
+          <div className="ask-keyboard">
+            <button type="button" className="px" onClick={() => { setState("open"); onYes?.(); }}>YES</button>
+            <button type="button" className="px" onClick={() => { setFling({ x: 0, y: 900 }); setState("thrown"); onNo?.(); }}>NO</button>
+          </div>
+        ) : null}
+        {onClose && (state === "open" || side === "wait") ? (
+          <button type="button" className="px ask-close" onClick={onClose}>{state === "open" ? "CLOSE" : "CLOSE · KEEP WAITING"}</button>
+        ) : null}
+      </div>
     </div>
   );
 }

@@ -1735,62 +1735,56 @@ select.input { border: 0; }
 .crystr-frame > img { background: var(--inset); }
 
 /* ---------------------------------------------------------- the ask scene
-   Face to face: a badge rises out of a crate, the question sits on top, YES and NO tremble below. */
+   Face to face: a shut chest, the question on top, a key floating at the bottom. Drag the key to the chest
+   to say yes (the badge rises out), throw it away to say no. */
 .ask-scene {
   position: fixed; inset: 0; z-index: 120; max-width: 480px; margin: 0 auto; overflow: hidden;
   display: flex; flex-direction: column; align-items: center; justify-content: space-between;
-  padding: calc(28px + env(safe-area-inset-top)) 20px calc(28px + env(safe-area-inset-bottom));
-  background: linear-gradient(180deg, #3a1157 0%, #2a1f6b 45%, #1b2f7a 100%);
+  padding: calc(28px + env(safe-area-inset-top)) 20px calc(22px + env(safe-area-inset-bottom));
+  background: #2a1650;
   user-select: none; -webkit-user-select: none;
   animation: pix-in 240ms steps(4) both;
 }
-.ask-scene::after {
-  content: ""; position: absolute; inset: 0; pointer-events: none;
-  background-image: repeating-conic-gradient(rgba(0, 0, 0, 0.18) 0% 25%, transparent 0% 50%);
-  background-size: 4px 4px;
-}
-.ask-rays {
-  position: absolute; left: 50%; top: 52%; width: 760px; height: 760px; margin: -380px 0 0 -380px; pointer-events: none;
-  background: repeating-conic-gradient(rgba(224, 57, 138, 0.22) 0deg 10deg, transparent 10deg 30deg, rgba(76, 125, 240, 0.2) 30deg 40deg, transparent 40deg 60deg);
-  animation: ask-spin 16s steps(48) infinite;
-}
-@keyframes ask-spin { to { transform: rotate(360deg); } }
 .ask-question {
   position: relative; z-index: 3; text-align: center; font-size: 18px; line-height: 1.45; color: #fff;
   text-shadow: 2px 2px 0 #160b2e; max-width: 340px; margin-top: 8px;
 }
-.ask-stage { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; margin-top: 20px; }
+.ask-stage { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; margin-top: 10px; }
 .ask-badge {
-  position: relative; z-index: 1; margin-bottom: -46px; line-height: 0;
-  animation: ask-rise 2.6s steps(14) 0.3s both;
+  position: absolute; z-index: 1; top: 0; left: 50%; margin-left: -42px; line-height: 0;
+  animation: ask-rise 2.4s steps(14) both;
 }
 @keyframes ask-rise {
-  0% { transform: translateY(80px); }
-  80% { transform: translateY(-34px); }
-  100% { transform: translateY(-26px); }
+  0% { transform: translateY(60px); }
+  80% { transform: translateY(-78px); }
+  100% { transform: translateY(-70px); }
 }
-.ask-glint { position: absolute; width: 6px; height: 6px; background: #fff; opacity: 0; animation: ask-glint 1.2s steps(2) 2.8s infinite; }
+.ask-glint { position: absolute; width: 6px; height: 6px; background: #fff; opacity: 0; animation: ask-glint 1.2s steps(2) 2.4s infinite; }
 .ask-glint.g1 { left: -14px; top: 6px; }
-.ask-glint.g2 { right: -12px; top: 22px; animation-delay: 3.2s; }
-.ask-glint.g3 { left: 40px; top: -16px; animation-delay: 3.6s; }
+.ask-glint.g2 { right: -12px; top: 22px; animation-delay: 2.8s; }
+.ask-glint.g3 { left: 40px; top: -16px; animation-delay: 3.2s; }
 @keyframes ask-glint { 0%, 100% { opacity: 0; } 50% { opacity: 1; } }
-.ask-title { position: relative; z-index: 3; font-size: 13px; color: #ffe38b; text-shadow: 2px 2px 0 #160b2e; margin-top: 10px; }
-.ask-choices { position: relative; z-index: 3; width: 100%; display: flex; justify-content: space-around; padding: 0 10px; }
-.ask-yes, .ask-no {
-  background: none; border: 0; cursor: pointer; font-size: 30px; padding: 14px 18px; letter-spacing: 0.08em;
-  text-shadow: 3px 3px 0 #160b2e;
-  animation: tremble 3s ease-in-out infinite;
-}
+.ask-title { position: relative; z-index: 3; min-height: 18px; font-size: 13px; color: #ffe38b; text-shadow: 2px 2px 0 #160b2e; margin-top: 10px; }
+.ask-bottom { position: relative; z-index: 4; display: flex; flex-direction: column; align-items: center; gap: 12px; width: 100%; }
+.ask-key { line-height: 0; animation: ask-bob 2.4s steps(6) infinite; }
+.ask-key.is-held { animation: none; filter: drop-shadow(3px 3px 0 #160b2e); }
+.ask-key.is-thrown { animation: none; transition: transform 0.8s steps(8); }
+@keyframes ask-bob { 0%, 100% { margin-top: 0; } 50% { margin-top: -10px; } }
+.ask-hints { display: flex; justify-content: space-between; width: 100%; padding: 0 4px; gap: 12px; }
+.ask-yes, .ask-no { font-size: 11px; line-height: 1.5; text-shadow: 2px 2px 0 #160b2e; animation: tremble 3s ease-in-out infinite; }
 .ask-yes { color: #8fa2ff; }
-.ask-no { color: #ff5a7a; animation-delay: 1.4s; }
-.ask-waiting { position: relative; z-index: 3; font-size: 15px; color: #d2cefd; text-shadow: 2px 2px 0 #160b2e; }
+.ask-no { color: #ff5a7a; text-align: right; animation-delay: 1.4s; }
+/* Plain buttons too, for anyone who cannot drag. */
+.ask-keyboard { display: flex; gap: 16px; }
+.ask-keyboard button { background: none; border: 0; color: #d2cefd; font-size: 10px; opacity: 0.7; cursor: pointer; padding: 6px; }
+.ask-waiting { font-size: 15px; color: #d2cefd; text-shadow: 2px 2px 0 #160b2e; }
 .ask-dots i { font-style: normal; animation: ask-glint 1.2s steps(2) infinite; }
 .ask-dots i:nth-child(2) { animation-delay: 0.3s; }
 .ask-dots i:nth-child(3) { animation-delay: 0.6s; }
-.ask-result { position: relative; z-index: 3; font-size: 22px; text-shadow: 3px 3px 0 #160b2e; animation: pix-in 240ms steps(4) both; }
+.ask-result { font-size: 22px; text-shadow: 3px 3px 0 #160b2e; animation: pix-in 240ms steps(4) both; }
 .ask-result.is-yes { color: #8fa2ff; }
 .ask-result.is-no { color: #ff5a7a; }
-.ask-close { position: relative; z-index: 3; background: none; border: 0; color: #d2cefd; font-size: 11px; margin-top: 10px; cursor: pointer; }
+.ask-close { background: none; border: 0; color: #d2cefd; font-size: 11px; cursor: pointer; }
 @media (prefers-reduced-motion: reduce) {
-  .ask-rays, .ask-badge, .ask-yes, .ask-no, .ask-glint, .ask-dots i { animation: none; }
+  .ask-badge, .ask-yes, .ask-no, .ask-glint, .ask-dots i, .ask-key { animation: none; }
 }
