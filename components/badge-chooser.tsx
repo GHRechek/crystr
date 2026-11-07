@@ -4,14 +4,14 @@ import { useState } from "react";
 import { BadgeArt } from "@/components/badges";
 import { setShownBadges } from "@/lib/actions";
 import { SHOW_MAX, type ShownBadge } from "@/lib/badges";
+import { IdleImg } from "@/components/idle-img";
 
 const SHOW = SHOW_MAX;
 
 /** One badge's picture. */
 export function BadgeFace({ b, size }: { b: ShownBadge; size: number }) {
   if (b.badge) return <BadgeArt b={{ art: b.badge.art, slug: b.badge.slug, tiers: b.badge.tiers }} got tier={b.badge.tier} size={size} />;
-  // eslint-disable-next-line @next/next/no-img-element
-  return <img src={b.src} alt="" width={size} height={size} style={{ display: "block", imageRendering: "pixelated" }} />;
+  return <IdleImg src={b.src ?? ""} size={size} />;
 }
 
 /** The sheet for choosing which of your badges are on show: the ones you have earned and the

@@ -2,6 +2,7 @@ import { BADGE_GLYPH, itemTitle, type BadgeItem, type BadgeRow, type TradeItem }
 import { BADGE_MANA, HELPS_PER_BADGE } from "@/lib/crystr";
 import { normalizeToken, tokenSrc } from "@/lib/token";
 import { kindArtSrc } from "@/lib/historikals";
+import { IdleImg } from "@/components/idle-img";
 
 /** A 3x5 pixel face for the count inside the heart. */
 const GLYPHS: Record<string, string[]> = {
@@ -172,14 +173,7 @@ export function ItemArt({ item, size }: { item: Pick<BadgeItem, "kind" | "design
     );
   }
   return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src={kindArtSrc(item.kindRow.art)}
-      alt=""
-      width={size ?? 42}
-      height={size ?? 42}
-      style={{ display: "block", flex: "none", imageRendering: "pixelated" }}
-    />
+    <IdleImg src={kindArtSrc(item.kindRow.art)} size={size ?? 42} style={{ flex: "none" }} />
   );
 }
 
