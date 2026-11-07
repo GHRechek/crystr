@@ -141,6 +141,8 @@ export function AboutBadges({
                     ["FIND ONE!", () => setDrawing("normal"), draws?.normal ?? 0, "find"],
                     ["SUMMON ONE!", () => setDrawing("main"), draws?.main ?? 0, "summon"],
                     ["TRADE", () => setScan({ intent: "trade" })],
+                    // Every one you hold: hearts, type, moves, healing.
+                    ["MY HISTORIKALS", () => router.push("/me/historikals")],
                     ["EDIT LINEUP", () => setChoosing(true)],
                     ["BATTLE", () => setScan({ intent: "battle" })],
                     ["★ EPIC BATTLE", () => setStaking(true)],
