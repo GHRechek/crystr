@@ -1996,3 +1996,27 @@ select.input { border: 0; }
 .hk-stake-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 6px; }
 .hk-stake-grid button { border: 0; background: none; color: inherit; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 4px; font-size: 9px; line-height: 1.4; text-align: center; }
 .hk-stake-grid button:hover, .hk-stake-grid button:focus-visible { transform: translateY(-3px); outline: none; }
+
+/* Opening draws (FIND ONE! / SUMMON ONE!): the chest bursts in the creature's rarity colour as it rises. */
+.dr-top { position: relative; z-index: 4; display: flex; flex-direction: column; align-items: center; gap: 6px; text-shadow: 2px 2px 0 #160b2e; }
+.dr-title { font-size: 22px; }
+.dr-count { font-size: 11px; color: #fff; }
+.dr-found { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; max-width: 320px; margin-top: 4px; }
+.dr-burst { position: absolute; z-index: 1; left: 50%; top: 112px; width: 40px; height: 40px; margin: -20px 0 0 -20px; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle, #fff 0 18%, var(--rc) 19% 46%, transparent 62%); animation: dr-burst .9s ease-out both; }
+@keyframes dr-burst { 0% { transform: scale(.2); opacity: 1; } 70% { opacity: .9; } 100% { transform: scale(8); opacity: 0; } }
+.dr-pop { position: absolute; z-index: 1; top: 100px; left: 50%; margin-left: -48px; line-height: 0;
+  filter: drop-shadow(0 0 10px var(--rc)); animation: ask-rise 2.2s cubic-bezier(.25, .6, .3, 1) both, ask-hover 2.4s ease-in-out 2.2s infinite; }
+.dr-bottom { gap: 8px; }
+.dr-result { translate: 0 -150px; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; text-shadow: 3px 3px 0 #160b2e; animation: pix-in 240ms steps(4) 1.4s both; }
+.dr-name { font-size: 22px; }
+.dr-sub { display: flex; align-items: center; gap: 8px; font-size: 10px; letter-spacing: .06em; }
+.dr-key.is-again { animation: pix-in 240ms steps(4) 2.2s both; }
+.dr-hint { font-size: 14px; text-shadow: 2px 2px 0 #160b2e; animation: tremble 3s ease-in-out infinite; }
+.dr-problem { font-size: 11px; color: #ffb3cf; }
+.dr-close { border: 0; border-radius: 0; background: none; color: #d2cefd; font-size: 11px; padding: 10px 20px; cursor: pointer; }
+.dr-close[style*="background"] { color: #fff; font-size: 13px; padding: 12px 34px; box-shadow: 3px 3px 0 #160b2e; }
+.hk-menu button { display: flex; align-items: center; gap: 8px; }
+.hk-menu button:disabled { color: rgba(255, 255, 255, .3); cursor: default; background: none; }
+.hk-menu button.find:not(:disabled) { color: #8fa2ff; } .hk-menu button.summon:not(:disabled) { color: #ffe08a; }
+.hk-n { margin-left: auto; min-width: 20px; height: 20px; display: grid; place-items: center; font-weight: 400; font-size: 10px; background: rgba(0, 0, 0, .35); color: inherit; padding: 0 4px; }

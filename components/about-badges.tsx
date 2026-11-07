@@ -9,6 +9,8 @@ import { BadgeViewer } from "@/components/badge-viewer";
 import { BadgeTip } from "@/components/badge-tip";
 import { SHOW_MAX, type ShownBadge } from "@/lib/badges";
 import type { Stake } from "@/components/encounter";
+import { DrawScene, type DrawKind } from "@/components/draw-scene";
+import { useRouter } from "next/navigation";
 
 /** The strip under the About Me text: the person's token (passed in as children), then up to five
  *  badges of their choosing, smaller. Tap a badge for its name and what it took. On your own page
@@ -24,6 +26,7 @@ export function AboutBadges({
   tradeHref,
   tradeCount,
   scan,
+  draws,
   compact,
   openAtStart,
   token,
@@ -41,6 +44,8 @@ export function AboutBadges({
   tradeCount?: number;
   /** The trade icon opens the camera to scan someone's code instead of going to the trade menu. */
   scan?: boolean;
+  /** Draws waiting to be opened: FIND ONE! (normal) and SUMMON ONE! (main). */
+  draws?: { normal: number; main: number };
   /** The slim version that sits beside the portrait: a small trade icon and a cog at the end. */
   compact?: boolean;
   /** Open the full list of badges, to choose which to show, as soon as it appears. */
@@ -54,6 +59,8 @@ export function AboutBadges({
   // The Historikals menu, the stake picked for an epic battle, and the camera once you've chosen.
   const [menu, setMenu] = useState(false);
   const [staking, setStaking] = useState(false);
+  const [drawing, setDrawing] = useState<DrawKind | null>(null);
+  const router = useRouter();
   const [camera, setScan] = useState<{ intent?: "trade" | "battle"; stake?: Stake } | null>(null);
   const box = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(300);
@@ -126,13 +133,18 @@ export function AboutBadges({
               <div role="menu" className="hk-menu" style={{ top: endPx + 8 }}>
                 {(
                   [
+                    // Draws stack up from quests, helps, wins and birthdays; open them here, a chest at a time.
+                    ["FIND ONE!", () => setDrawing("normal"), draws?.normal ?? 0, "find"],
+                    ["SUMMON ONE!", () => setDrawing("main"), draws?.main ?? 0, "summon"],
                     ["TRADE", () => setScan({ intent: "trade" })],
                     ["EDIT LINEUP", () => setChoosing(true)],
                     ["BATTLE", () => setScan({ intent: "battle" })],
                     ["★ EPIC BATTLE", () => setStaking(true)],
-                  ] as [string, () => void][]
-                ).map(([label, go]) => (
-                  <button key={label} type="button" role="menuitem" className={`px${label.startsWith("★") ? " epic" : ""}`} onClick={() => { setMenu(false); go(); }}>{label}</button>
+                  ] as [string, () => void, number?, string?][]
+                ).map(([label, go, n, cls]) => (
+                  <button key={label} type="button" role="menuitem" disabled={n === 0} className={`px${label.startsWith("★") ? " epic" : ""}${cls ? ` ${cls}` : ""}`} onClick={() => { setMenu(false); go(); }}>
+                    {label}{n !== undefined ? <b className="hk-n">{n}</b> : null}
+                  </button>
                 ))}
               </div>
             </>
@@ -161,6 +173,7 @@ export function AboutBadges({
               </div>
             </div>
           ) : null}
+          {drawing ? <DrawScene kind={drawing} count={drawing === "main" ? draws?.main ?? 0 : draws?.normal ?? 0} onClose={() => { setDrawing(null); router.refresh(); }} /> : null}
           {camera ? <QrScanner onClose={() => setScan(null)} tradesHref={tradeHref} waiting={tradeCount} intent={camera.intent} stake={camera.stake} /> : null}
         </>
       ) : tradeHref ? (

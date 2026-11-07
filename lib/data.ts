@@ -742,7 +742,7 @@ export async function claimBirthdayBadge(): Promise<{ title: string } | null> {
   const supabase = createClient();
   const { data } = await supabase.rpc("cr_birthday_badge");
   const d = data as { ok?: boolean; given?: boolean; title?: string } | null;
-  return d?.ok && d.given && d.title ? { title: d.title } : null;
+  return d?.ok && d.given ? { title: d.title ?? "" } : null;
 }
 
 // ------------------------------------------------------------ the override
@@ -862,6 +862,14 @@ export async function getHistorikals(userId: string): Promise<HeldHistorikal[]> 
     .flatMap((r) => (r.k?.element && r.k.hearts ? [{ id: r.id, slug: r.kind_slug, name: r.k.title, rarity: r.k.rarity, element: r.k.element, hearts: r.k.hearts, hp: Math.min(r.k.hearts, r.hp ?? r.k.hearts), sort: r.k.sort }] : []))
     .sort((a, b) => a.hp / a.hearts - b.hp / b.hearts || a.sort - b.sort)
     .map(({ sort: _s, ...h }) => h);
+}
+
+/** Historikal draws waiting to be opened: normal (FIND ONE!) and main (SUMMON ONE!). */
+export async function getDraws(): Promise<{ normal: number; main: number }> {
+  const supabase = createClient();
+  const { data } = await supabase.rpc("cr_draws_open");
+  const d = data as { normal?: number; main?: number } | null;
+  return { normal: Number(d?.normal ?? 0), main: Number(d?.main ?? 0) };
 }
 
 /** How many pick-any-Historikal gifts you have waiting. */

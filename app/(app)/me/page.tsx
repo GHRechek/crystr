@@ -15,6 +15,7 @@ import {
   getOverride,
   getPeople,
   getPicksOpen,
+  getDraws,
 } from "@/lib/data";
 import { ROMAN, tokenReadyAt, resolveShown, resolveWorking, finishedWorking, goalGrid, questGrid, achievementGrid, firstStepGrid, firstStepsDone, helpingRow } from "@/lib/badges";
 import { Avatar } from "@/components/bits";
@@ -44,7 +45,7 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
   await createClient().rpc("cr_check_badges");
   const { data: progressData } = await createClient().rpc("cr_goal_progress");
   const progress = (progressData ?? {}) as Record<string, number>;
-  const [top, badges, items, token, helps, trades, plaintiffSince, override, people, picks] = await Promise.all([
+  const [top, badges, items, token, helps, trades, plaintiffSince, override, people, picks, draws] = await Promise.all([
     getTopFriends(userId),
     getBadges(userId),
     getBadgeItems(userId),
@@ -55,6 +56,7 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
     getOverride(userId),
     getPeople(userId),
     getPicksOpen(),
+    getDraws(),
   ]);
   const [openReports, openBugs] = profile.is_witch ? await Promise.all([countOpenReports(), countOpenBugs()]) : [0, 0];
   const earnedCount = badges.filter((b) => b.earned_at).length;
@@ -113,7 +115,8 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
             tradable={resolveShown(tradable.map((i) => `i:${i.id}`), badges, items, profile.handle, 10000)}
             aside={null}
             tradeHref="/me/historikals"
-            tradeCount={waiting}
+            draws={draws}
+            tradeCount={draws.normal + draws.main}
             scan
           />
         }

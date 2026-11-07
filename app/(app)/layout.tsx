@@ -61,7 +61,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const flash =
     (await readFlash()) ??
     (gift
-      ? { k: "HAPPY BIRTHDAY", t: `The City gives you a badge for the day: ${gift.title}. Yours to keep or trade.`, e: EDGE.mag }
+      ? { k: "HAPPY BIRTHDAY", t: "The City gives you a Historikal draw for the day. Open it from the monster button beside your portrait: FIND ONE!", e: EDGE.mag }
       : null);
   const mana = profile.mana;
 
