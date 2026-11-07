@@ -52,93 +52,23 @@ function playWhoosh() {
   } catch {}
 }
 
-const GOLD = "#f2b544", GOLD_HI = "#ffd877", GOLD_LO = "#b9761c", WOOD = "#7a3b1f", WOOD_LO = "#4e2312", INK = "#1a0d14", RED = "#e23a3a";
-
-/** An original pixel chest: gold frame and bands, dark wood, side handles, a horned plate. Open or shut. */
+/** The chest: a pixel sprite, silver-blue frame and CRYSTR purple panels. Shut until the key goes in.
+ *  Both states sit on the same baseline so the lid swings up rather than the chest jumping. */
 function Chest({ open }: { open: boolean }) {
   return (
-    <svg viewBox="0 0 48 40" width={216} height={180} shapeRendering="crispEdges" aria-hidden="true" style={{ display: "block", position: "relative", zIndex: 2 }}>
-      {/* handles */}
-      <rect x={0} y={22} width={3} height={8} fill={INK} />
-      <rect x={1} y={23} width={2} height={6} fill={GOLD} />
-      <rect x={45} y={22} width={3} height={8} fill={INK} />
-      <rect x={45} y={23} width={2} height={6} fill={GOLD} />
-      {open ? (
-        <>
-          {/* lid, swung back */}
-          <rect x={4} y={0} width={40} height={9} fill={INK} />
-          <rect x={5} y={1} width={38} height={7} fill={GOLD} />
-          <rect x={7} y={2} width={34} height={5} fill={WOOD} />
-          <rect x={7} y={2} width={34} height={1} fill={GOLD_HI} />
-          <rect x={21} y={2} width={6} height={5} fill={GOLD_LO} />
-          {/* the inside, dark, with a glow */}
-          <rect x={3} y={9} width={42} height={8} fill={INK} />
-          <rect x={5} y={10} width={38} height={6} fill="#3a1220" />
-          <rect x={8} y={11} width={32} height={2} fill="#ffe7a0" opacity={0.5} />
-        </>
-      ) : (
-        <>
-          {/* lid, shut and domed */}
-          <rect x={4} y={6} width={40} height={2} fill={INK} />
-          <rect x={3} y={8} width={42} height={9} fill={INK} />
-          <rect x={4} y={8} width={40} height={8} fill={GOLD} />
-          <rect x={6} y={9} width={36} height={6} fill={WOOD} />
-          <rect x={6} y={9} width={36} height={1} fill="#9c4d26" />
-          <rect x={4} y={7} width={40} height={1} fill={GOLD_HI} />
-          <rect x={12} y={8} width={3} height={8} fill={GOLD_LO} />
-          <rect x={33} y={8} width={3} height={8} fill={GOLD_LO} />
-        </>
-      )}
-      {/* body */}
-      <rect x={3} y={17} width={42} height={21} fill={INK} />
-      <rect x={4} y={17} width={40} height={20} fill={GOLD} />
-      <rect x={6} y={19} width={36} height={16} fill={WOOD} />
-      {[10, 16, 31, 37].map((x) => (
-        <rect key={x} x={x} y={19} width={1} height={16} fill={WOOD_LO} />
-      ))}
-      <rect x={4} y={17} width={40} height={1} fill={GOLD_HI} />
-      <rect x={12} y={17} width={3} height={20} fill={GOLD_LO} />
-      <rect x={33} y={17} width={3} height={20} fill={GOLD_LO} />
-      <rect x={4} y={36} width={40} height={1} fill={GOLD_LO} />
-      {/* the horned plate */}
-      <rect x={19} y={17} width={10} height={11} fill={INK} />
-      <rect x={20} y={18} width={8} height={9} fill={GOLD} />
-      <rect x={17} y={16} width={2} height={3} fill={GOLD} />
-      <rect x={29} y={16} width={2} height={3} fill={GOLD} />
-      <rect x={16} y={15} width={2} height={2} fill={GOLD_HI} />
-      <rect x={30} y={15} width={2} height={2} fill={GOLD_HI} />
-      <rect x={21} y={20} width={2} height={2} fill={open ? GOLD_LO : RED} />
-      <rect x={25} y={20} width={2} height={2} fill={open ? GOLD_LO : RED} />
-      <rect x={23} y={23} width={2} height={3} fill={INK} />
-    </svg>
+    <div style={{ width: 230, height: 195, display: "flex", alignItems: "flex-end", justifyContent: "center", position: "relative", zIndex: 2 }}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src="/ask/chest-closed.png" alt="" width={230} height={165} draggable={false} style={{ display: open ? "none" : "block", imageRendering: "pixelated" }} />
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src="/ask/chest-open.png" alt="" width={225} height={195} draggable={false} style={{ display: open ? "block" : "none", imageRendering: "pixelated" }} />
+    </div>
   );
 }
 
-/** An original ornate gold key, drawn upright: a ring bow with a jewel, a shaft, and teeth at the bottom. */
+/** The key, the same silver as the chest, drawn upright. */
 function Key() {
-  return (
-    <svg viewBox="0 0 14 30" width={56} height={120} shapeRendering="crispEdges" aria-hidden="true" style={{ display: "block", pointerEvents: "none" }}>
-      <rect x={3} y={0} width={8} height={1} fill={INK} />
-      <rect x={2} y={1} width={10} height={8} fill={INK} />
-      <rect x={3} y={1} width={8} height={7} fill={GOLD} />
-      <rect x={3} y={1} width={8} height={1} fill={GOLD_HI} />
-      <rect x={5} y={3} width={4} height={3} fill={INK} />
-      <rect x={6} y={4} width={2} height={1} fill={RED} />
-      <rect x={1} y={4} width={1} height={3} fill={GOLD_LO} />
-      <rect x={12} y={4} width={1} height={3} fill={GOLD_LO} />
-      <rect x={5} y={9} width={4} height={2} fill={INK} />
-      <rect x={6} y={9} width={2} height={18} fill={GOLD} />
-      <rect x={5} y={11} width={1} height={16} fill={INK} />
-      <rect x={8} y={11} width={1} height={16} fill={INK} />
-      <rect x={6} y={10} width={1} height={16} fill={GOLD_HI} />
-      <rect x={9} y={19} width={3} height={2} fill={GOLD} />
-      <rect x={9} y={23} width={2} height={2} fill={GOLD} />
-      <rect x={9} y={26} width={3} height={2} fill={GOLD} />
-      <rect x={9} y={21} width={3} height={1} fill={INK} />
-      <rect x={6} y={27} width={2} height={2} fill={GOLD_LO} />
-      <rect x={5} y={29} width={4} height={1} fill={INK} />
-    </svg>
-  );
+  // eslint-disable-next-line @next/next/no-img-element
+  return <img src="/ask/key.png" alt="" width={49} height={98} draggable={false} style={{ display: "block", imageRendering: "pixelated", pointerEvents: "none" }} />;
 }
 
 /** The background: wide pixel-edged rays in the CRYSTR colours, drawn small and scaled up, turning slowly
