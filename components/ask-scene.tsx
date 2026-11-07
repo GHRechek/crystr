@@ -158,10 +158,10 @@ function Chest({ open, quiet, children }: { open: boolean; /** Stop rattling: th
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img className="ask-shut" src="/ask/chest-closed.png" alt="" width={230} height={165} draggable={false} style={{ display: open ? "none" : "block", imageRendering: "pixelated", animation: quiet ? "none" : undefined }} />
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/ask/chest-open.png" alt="" width={225} height={195} draggable={false} style={{ display: open ? "block" : "none", imageRendering: "pixelated" }} />
+      <img className="ask-drop" src="/ask/chest-open.png" alt="" width={225} height={195} draggable={false} style={{ display: open ? "block" : "none", imageRendering: "pixelated" }} />
       {open ? children : null}
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/ask/chest-open.png" alt="" width={225} height={195} draggable={false} style={{ display: open ? "block" : "none", position: "absolute", left: 2, bottom: 0, zIndex: 2, clipPath: `inset(${RIM}px 0 0 0)`, imageRendering: "pixelated", pointerEvents: "none" }} />
+      <img className="ask-drop" src="/ask/chest-open.png" alt="" width={225} height={195} draggable={false} style={{ display: open ? "block" : "none", position: "absolute", left: 2, bottom: 0, zIndex: 2, clipPath: `inset(${RIM}px 0 0 0)`, imageRendering: "pixelated", pointerEvents: "none" }} />
     </div>
   );
 }
@@ -348,7 +348,7 @@ export function AskScene({
             </div>
           </Chest>
         </div>
-        <div className="px ask-title">{state === "open" ? title.toUpperCase() : ""}</div>
+        <div className="px ask-title">{state === "open" && side === "ask" ? title.toUpperCase() : ""}</div>
       </div>
 
       <div className="ask-bottom">
@@ -378,7 +378,13 @@ export function AskScene({
         ) : null}
 
         {state === "open" ? (
-          <div className="px ask-result is-yes">{side === "wait" ? `YOU EARNED THE ${title.toUpperCase()} BADGE!` : "UNLOCKED!"}</div>
+          <div className="px ask-result is-yes">{side === "wait" ? (
+              <>
+                YOU EARNED THE<span className="ask-earned">{title.toUpperCase()}</span>BADGE!
+              </>
+            ) : (
+              "UNLOCKED!"
+            )}</div>
         ) : state === "thrown" || state === "unlocking" ? null : side === "wait" ? (
           null
         ) : (
