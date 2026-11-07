@@ -22,11 +22,12 @@ export function askLines(slug: string, them: string): AskLines {
   if (s === "make-friends" || s.endsWith("-friend") || s === "meet-witch")
     return { question: `Would you call ${them} a friend?`, waiting: `They're deciding if you're a friend` };
   if (s === "orcish-philosophy") return { question: `Was that a fun conversation about philosophy?`, waiting: `They're deciding if it was a fun conversation` };
-  if (s.startsWith("culture-")) {
-    const who = SPECIES[s.slice(8)];
+  if (s.startsWith("culture-") || s === "culture-five") {
+    const kind = s.slice(8);
+    const name = kind === "forsaken" ? "Forsaken" : kind;
     return {
-      question: who ? `Did ${them} talk ${s.slice(8) === "forsaken" ? "Forsaken" : s.slice(8)} culture with you?` : `Did ${them} talk culture with you?`,
-      waiting: `They're deciding if you talked culture`,
+      question: SPECIES[kind] ? `Did ${them} actually learn anything about ${name} culture?` : `Did ${them} actually learn anything about your culture?`,
+      waiting: `They're deciding if you actually learned anything`,
     };
   }
   if (s.includes("spell")) return { question: `Was ${them}'s spell cool, or at least fun?`, waiting: `They're deciding if your spell was cool` };
