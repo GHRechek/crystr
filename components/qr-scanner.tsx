@@ -132,7 +132,7 @@ export function QrScanner({ onClose, tradesHref, waiting, mode = "general", only
               </div>
               {only === "a-helping-hand" ? (
                 <>
-                  <div style={{ fontSize: 12.5, lineHeight: 1.5, color: "var(--muted)" }}>{found.handle} gets a note asking whether you helped them. If they say yes, it counts, and every ten helps brings a tradable badge.</div>
+                  <div style={{ fontSize: 12.5, lineHeight: 1.5, color: "var(--muted)" }}>{found.handle} gets a note asking whether you helped them. If they say yes, it counts, and every ten helps brings a Historikal.</div>
                   <form action={async (fd) => { await claimHelp(fd); setSent((x) => [...x, "a-helping-hand"]); }}>
                     <input type="hidden" name="other_id" value={found.id} />
                     <button type="submit" disabled={sent.includes("a-helping-hand")} className="btn btn-purple btn-block" style={{ minHeight: 48 }}>{sent.includes("a-helping-hand") ? "ASKED" : "I HELPED THEM"}</button>

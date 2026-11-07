@@ -127,7 +127,7 @@ export function TradeForm({
             <ItemRow item={it} />
           </Row>
         ))}
-        {mine.length === 0 ? <div className="empty">YOU HOLD NO TRADABLE BADGES YET</div> : null}
+        {mine.length === 0 ? <div className="empty">YOU HOLD NO HISTORIKALS YET</div> : null}
       </div>
 
       {give === "token" ? (

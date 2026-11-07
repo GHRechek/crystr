@@ -122,7 +122,7 @@ export default async function TradesPage() {
       </div>
 
       <div>
-        <h1 className="screen-title">BADGE TRADES</h1>
+        <h1 className="screen-title">HISTORIKALS EXCHANGE</h1>
         <div className="screen-intro">
           A badge for a badge, or a badge for nothing. Nothing moves until the other person says yes, and
           both ceilings are worked out again when it does.

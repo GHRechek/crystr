@@ -186,7 +186,7 @@ export function resolveShown(
             ? `Came in a trade from ${it.maker?.handle ?? "someone"}.`
             : it.maker?.handle === owner
               ? "Earned by helping others."
-              : it.kindRow.blurb || "A tradable badge.";
+              : it.kindRow.blurb || "A Historikal.";
       out.push({ key, src: kindArtSrc(it.kindRow.art), title: it.kindRow.title.toUpperCase(), line });
     }
   }
