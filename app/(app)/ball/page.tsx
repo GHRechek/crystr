@@ -142,7 +142,13 @@ export default async function BallPage(
       ) : null}
 
       {visible.map((a) => (
-        <Link key={a.id} href={`/ball/${a.id}`} className="card" style={{ padding: 0, gap: 0, overflow: "hidden", color: "var(--text)" }}>
+        <Link
+          key={a.id}
+          href={`/ball/${a.id}`}
+          className="card"
+          // Motions are a deep dark pink, op-eds grey, news the usual purple.
+          style={{ padding: 0, gap: 0, overflow: "hidden", color: "var(--text)", background: a.kind === "briefing" ? "var(--blk-motion)" : a.kind === "oped" ? "var(--blk-oped)" : undefined }}
+        >
           <div style={{ padding: 12, display: "flex", alignItems: "center", gap: 12 }}>
             <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 6 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 7 }}>

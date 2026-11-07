@@ -106,7 +106,7 @@ export function Open({ motion, mana, decay }: { motion: Motion; mana: number; de
   const urgent = closes.endsWith("M") || (closes.endsWith("H") && parseInt(closes) <= 6);
 
   return (
-    <div className="card" style={{ gap: 10 }}>
+    <div className="card" style={{ gap: 10, background: "var(--blk-motion)" }}>
       <div style={{ display: "flex", alignItems: "flex-start", gap: 9 }}>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div className="px" style={{ fontSize: 11, color: "var(--dim)", marginBottom: 5 }}>
@@ -219,7 +219,7 @@ function Decided({ motion, decay }: { motion: Motion; decay: number }) {
   const passed = motion.votes_for > motion.votes_against;
 
   return (
-    <div className="card" style={{ padding: 12, gap: 8 }}>
+    <div className="card" style={{ padding: 12, gap: 8, background: "var(--blk-motion)" }}>
       <div style={{ display: "flex", alignItems: "flex-start", gap: 9 }}>
         <div
           style={{
