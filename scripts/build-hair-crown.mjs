@@ -42,13 +42,13 @@ const isSides = (x, y) => y >= UNDER || (y >= MID && (x < CORE[0] || x > CORE[1]
  *  cut with nothing below, is a high fade at this row and reads as one, so
  *  it isn't counted: a short top sits on the curly sides that are a few
  *  curls at the nape, and on no sides at all. */
-const MAX_SHELF = Number(process.env.MAX_SHELF ?? 12);
+const MAX_SHELF = Number(process.env.MAX_SHELF ?? Infinity);
 /** ...unless that ending is well out from the head. The skull's edge is at
  *  x 37 on the cut row; hair that stops at the cut more than 7px outside it
  *  isn't a fade, it's a slab hanging in the air — the big dome and the
  *  messy bun over a short side. Counted in boundary pixels past x 30 on
  *  the left and 86 on the right. */
-const MAX_AIR = Number(process.env.MAX_AIR ?? 12);
+const MAX_AIR = Number(process.env.MAX_AIR ?? Infinity);
 const AIR = [30, 86];
 
 /** Styles left out of the builder. 07 was the receding hairline, cut. */
@@ -56,8 +56,10 @@ const EXCLUDE = ["07"];
 /** The shading across the seam is reported (--matrix) but no longer decides
  *  anything: every face is recoloured to its own hair colour, and at the size
  *  faces are shown the jump between two styles' painted shading doesn't read.
- *  The silhouette limits were 3px and blocked combinations that looked fine;
- *  checked by eye across the whole sides x tops grid at 12. */
+ *  The silhouette limits were 3px, then 12px, and both blocked combinations
+ *  that looked fine: checked by eye across the whole sides x tops grid with
+ *  no limit at all, every pair reads as a hairstyle. So by default nothing is
+ *  ruled out; set MAX_SHELF / MAX_AIR to bring a limit back. */
 
 const read = (p) => PNG.sync.read(readFileSync(`${ROOT}/${p}.png`));
 const at = (png, x, y) => (y * SIZE + x) * 4;

@@ -31,7 +31,6 @@ export function AvatarBuilder({ start, fresh }: { start: PortraitConfig; fresh: 
 
   const packed = useMemo(() => packPortrait(c), [c]);
 
-  const [open, setOpen] = useState<string | null>(null);
 
   /** What a control steps through. The top leads: every top is on offer, and
    *  SIDES only offers the sides that take the top you have. */
@@ -43,12 +42,6 @@ export function AvatarBuilder({ start, fresh }: { start: PortraitConfig; fresh: 
     if (key === "top") out.hair_back = sidesFor(value, prev.hair_back);
     return out;
   };
-  const step = (key: string, by: number) =>
-    setC((prev) => {
-      const list = listFor(key, prev);
-      const at = Math.max(0, list.indexOf(prev[key]));
-      return withChoice(prev, key, list[(((at + by) % list.length) + list.length) % list.length]);
-    });
   // The top above the sides: you pick the top, then the sides that suit it.
   const controls = [...CONTROLS].sort((a, b) => (a.key === "top" && b.key === "hair_back" ? -1 : a.key === "hair_back" && b.key === "top" ? 1 : 0));
 
@@ -149,82 +142,42 @@ export function AvatarBuilder({ start, fresh }: { start: PortraitConfig; fresh: 
         </div>
       ))}
 
+      {/* Every choice, on your own face, in a row you scroll. Tap one to wear it. */}
       {controls.map((control) => {
         const list = listFor(control.key, c);
-        const at = Math.max(0, list.indexOf(c[control.key]));
         const optionals = list.includes(NONE) ? 1 : 0;
         return (
-          <div key={control.key}>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-              padding: "6px 0",
-              borderBottom: "1px solid var(--rule-soft)",
-            }}
-          >
-            <button
-              type="button"
-              className="px"
-              onClick={() => setOpen((o) => (o === control.key ? null : control.key))}
-              aria-expanded={open === control.key}
-              style={{ fontSize: 11, color: open === control.key ? "var(--pur-bright)" : "var(--dim)", flex: 1, textAlign: "left", background: "none", border: 0, padding: "8px 0", cursor: "pointer" }}
-            >
-              {control.label} {open === control.key ? "▴" : "▾"}
-            </button>
-            <button
-              type="button"
-              className="btn btn-sm"
-              style={{ minWidth: 40 }}
-              onClick={() => step(control.key, -1)}
-              aria-label={`${control.label} previous`}
-            >
-              ◀
-            </button>
-            <div
-              className="px"
-              style={{ fontSize: 11, color: "var(--muted)", width: 46, textAlign: "center" }}
-            >
-              {c[control.key] === NONE
-                ? "NONE"
-                : control.names?.[c[control.key]] ?? `${at + 1 - optionals}/${list.length - optionals}`}
-            </div>
-            <button
-              type="button"
-              className="btn btn-sm"
-              style={{ minWidth: 40 }}
-              onClick={() => step(control.key, 1)}
-              aria-label={`${control.label} next`}
-            >
-              ▶
-            </button>
-          </div>
-          {open === control.key ? (
-            // Every choice, on your own face, in a row you scroll. Tap one to wear it.
-            <div style={{ display: "flex", gap: 6, overflowX: "auto", padding: "8px 0 10px", scrollbarWidth: "thin" }}>
+          <div key={control.key} style={{ borderBottom: "1px solid var(--rule-soft)", padding: "8px 0 4px" }}>
+            <div className="px" style={{ fontSize: 11, color: "var(--dim)" }}>{control.label}</div>
+            <div style={{ display: "flex", gap: 6, overflowX: "auto", padding: "8px 0 8px", scrollbarWidth: "thin" }}>
               {list.map((v, i) => {
                 const on = c[control.key] === v;
                 const face = withChoice(c, control.key, v);
+                const name = v === NONE ? "NONE" : control.names?.[v] ?? String(i + 1 - optionals);
                 return (
                   <button
                     key={v}
                     type="button"
                     onClick={() => setC(face)}
                     aria-pressed={on}
-                    // Opens on what you're wearing, scrolled into the middle of the row.
-                    ref={on ? (el) => { el?.scrollIntoView({ block: "nearest", inline: "center" }); } : undefined}
-                    aria-label={`${control.label} ${v === NONE ? "none" : control.names?.[v] ?? v}`}
+                    aria-label={`${control.label} ${name}`}
+                    // A row opens with what you're wearing in its middle: sideways only, and
+                    // only the first time, so a row you've scrolled stays where you left it.
+                    ref={on ? (el) => {
+                      const row = el?.parentElement;
+                      if (!el || !row || row.dataset.centred) return;
+                      row.scrollLeft = el.offsetLeft - row.offsetLeft - (row.clientWidth - el.clientWidth) / 2;
+                      row.dataset.centred = "1";
+                    } : undefined}
                     style={{ flex: "none", padding: 0, border: 0, background: "none", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: 3 }}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={`/face/${packPortrait(face)}.png`} alt="" width={72} height={72} loading="lazy" style={{ display: "block", imageRendering: "pixelated", outline: on ? "3px solid var(--pur-bright)" : "none", outlineOffset: -3 }} />
-                    <span className="px" style={{ fontSize: 9, color: on ? "var(--pur-bright)" : "var(--muted)" }}>{v === NONE ? "NONE" : control.names?.[v] ?? i + 1 - optionals}</span>
+                    <span className="px" style={{ fontSize: 9, color: on ? "var(--pur-bright)" : "var(--muted)" }}>{name}</span>
                   </button>
                 );
               })}
             </div>
-          ) : null}
           </div>
         );
       })}
