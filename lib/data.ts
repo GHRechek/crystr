@@ -883,6 +883,13 @@ export async function getPicksOpen(): Promise<number> {
   return typeof data === "number" ? data : 0;
 }
 
+/** Legendaries someone already has: each is one of a kind. */
+export async function getLegendariesTaken(): Promise<string[]> {
+  const supabase = createClient();
+  const { data } = await supabase.rpc("cr_legendaries_taken");
+  return Array.isArray(data) ? (data as string[]) : [];
+}
+
 /** This person's own token design, or null if they have not made one. */
 export async function getToken(userId: string): Promise<TokenRow | null> {
   const supabase = createClient();

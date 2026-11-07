@@ -100,7 +100,7 @@ export const HISTORIKALS: Historikal[] = [
   { slug: "drow-elf", name: "Drow Elf", rarity: "uncommon", element: "dark", hearts: 3, moves: [{ name: "Bone Rattle", kind: "sword" }, { name: "Fade", kind: "armor" }] },
   { slug: "succubus", name: "Succubus", rarity: "rare", element: "fire", hearts: 3, moves: [{ name: "Scorch", kind: "sword" }, { name: "Fireball", kind: "spell" }, { name: "Smoke Veil", kind: "armor" }] },
   { slug: "orb", name: "Orb", rarity: "uncommon", element: "light", hearts: 3, moves: [{ name: "Halo", kind: "spell" }, { name: "Ward", kind: "armor" }] },
-  { slug: "elder-horror", name: "Elder Horror", rarity: "legendary", element: "dark", hearts: 4, moves: [{ name: "Shadow Claw", kind: "sword" }, { name: "Hex", kind: "spell" }, { name: "Grave Guard", kind: "armor" }] },
+  { slug: "elder-horror", name: "Moon Elder", rarity: "legendary", element: "dark", hearts: 4, moves: [{ name: "Shadow Claw", kind: "sword" }, { name: "Hex", kind: "spell" }, { name: "Grave Guard", kind: "armor" }] },
   { slug: "poltergeist", name: "Poltergeist", rarity: "uncommon", element: "dark", hearts: 3, moves: [{ name: "Bone Rattle", kind: "sword" }, { name: "Shroud", kind: "armor" }] },
   { slug: "nightmare", name: "Nightmare", rarity: "rare", element: "dark", hearts: 3, moves: [{ name: "Fang", kind: "sword" }, { name: "Curse", kind: "spell" }, { name: "Shroud", kind: "armor" }] },
   { slug: "drow-spider", name: "Drow Spider", rarity: "uncommon", element: "dark", hearts: 3, moves: [{ name: "Hex", kind: "spell" }, { name: "Grave Guard", kind: "armor" }] },
@@ -154,6 +154,15 @@ export const HISTORIKALS: Historikal[] = [
   { slug: "ghost-spider", name: "Ghost Spider", rarity: "uncommon", element: "dark", hearts: 3, moves: [{ name: "Hex", kind: "spell" }, { name: "Shroud", kind: "armor" }] },
   { slug: "bee", name: "Bee", rarity: "common", element: "grass", hearts: 2, moves: [{ name: "Thorn Lash", kind: "sword" }, { name: "Spore Cloud", kind: "spell" }] },
   { slug: "sorrowsworn", name: "Sorrowsworn", rarity: "rare", element: "dark", hearts: 3, moves: [{ name: "Shadow Claw", kind: "sword" }, { name: "Wail", kind: "spell" }, { name: "Shroud", kind: "armor" }] },
+  // Each legendary's twin: recoloured, another type, its own moves. Like every legendary, one of a kind.
+  { slug: "cosmic-elder", name: "Cosmic Elder", rarity: "legendary", element: "light", hearts: 4, moves: [{ name: "Starfall Claw", kind: "sword" }, { name: "Nova", kind: "spell" }, { name: "Star Ward", kind: "armor" }] },
+  { slug: "dawn-beholder", name: "Dawn Beholder", rarity: "legendary", element: "light", hearts: 4, moves: [{ name: "Glint Bite", kind: "sword" }, { name: "Sunbeam Eye", kind: "spell" }, { name: "Dazzle", kind: "armor" }] },
+  { slug: "ember-knight", name: "Ember Knight", rarity: "legendary", element: "fire", hearts: 4, moves: [{ name: "Brand Blade", kind: "sword" }, { name: "Pyre Oath", kind: "spell" }, { name: "Cinder Plate", kind: "armor" }] },
+  { slug: "fallen-angel", name: "Fallen Angel", rarity: "legendary", element: "dark", hearts: 4, moves: [{ name: "Night Smite", kind: "sword" }, { name: "Black Halo", kind: "spell" }, { name: "Ashen Wings", kind: "armor" }] },
+  { slug: "stone-djinn", name: "Stone Djinn", rarity: "legendary", element: "rock", hearts: 4, moves: [{ name: "Sand Saber", kind: "sword" }, { name: "Dune Wish", kind: "spell" }, { name: "Basalt Veil", kind: "armor" }] },
+  { slug: "tide-couatl", name: "Tide Couatl", rarity: "legendary", element: "water", hearts: 4, moves: [{ name: "Riptide Fang", kind: "sword" }, { name: "Rain Dance", kind: "spell" }, { name: "Coral Coil", kind: "armor" }] },
+  { slug: "jade-dragon", name: "Jade Dragon", rarity: "legendary", element: "grass", hearts: 4, moves: [{ name: "Jade Talon", kind: "sword" }, { name: "Verdant Breath", kind: "spell" }, { name: "Moss Scale", kind: "armor" }] },
+  { slug: "frost-manticore", name: "Frost Manticore", rarity: "legendary", element: "water", hearts: 4, moves: [{ name: "Icicle Sting", kind: "sword" }, { name: "Blizzard Roar", kind: "spell" }, { name: "Frost Wings", kind: "armor" }] },
 ];
 
 export const HISTORIKAL = new Map(HISTORIKALS.map((h) => [h.slug, h]));

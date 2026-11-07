@@ -1245,6 +1245,7 @@ export async function pickHistorikal(fd: FormData) {
   const r = await call("cr_pick_historikal", { p_slug: String(fd.get("slug") ?? "") });
   if (!r.ok) {
     if (r.code === "none") await setFlash("NO PICK LEFT", "That pick has been used already.", EDGE.purple);
+    else if (r.code === "taken") await setFlash("ALREADY TAKEN", "Someone already has that legendary, and there's only one. Pick another.", EDGE.purple);
     else await wentWrong();
     redirect("/me/historikals");
   }
