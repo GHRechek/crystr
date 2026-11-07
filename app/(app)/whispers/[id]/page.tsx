@@ -81,7 +81,9 @@ export default async function ThreadPage(props: {
 
         {thread.messages.length === 0 ? (
           <div className="empty">NOTHING HAS BEEN SAID HERE YET</div>
-        ) : null}
+        ) : (
+          <div style={{ alignSelf: "center", fontSize: 11, color: "var(--dim)" }}>Hold a whisper to react, reply or copy it.</div>
+        )}
 
         {broke ? (
           <div
