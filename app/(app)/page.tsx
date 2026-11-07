@@ -108,8 +108,9 @@ function Card({ item, decay, me }: { item: FeedItem; decay: number; me: string }
             </div>
           </div>
 
-          <Link href={`/ball/${item.id}`} className="btn btn-sm btn-blue" style={{ alignSelf: "flex-start" }}>
-            READ THE DISPATCH · FREE
+          {/* A text link, like the wiki's: a motion's briefing asks for the vote. */}
+          <Link href={`/ball/${item.id}`} className="px" style={{ alignSelf: "flex-start", fontSize: 11, color: "var(--pur-pale)", textDecoration: "none", padding: "4px 0" }}>
+            {item.kicker?.toUpperCase().includes("MOTION") ? "VOTE YAY OR NAY →" : "READ THE DISPATCH →"}
           </Link>
         </div>
       </div>
