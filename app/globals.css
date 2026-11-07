@@ -1763,7 +1763,7 @@ select.input { border: 0; }
   100% { transform: translateY(-166px); }
 }
 /* Shut, the chest rattles now and then, as if something inside wants out. */
-.ask-shut { animation: ask-rattle 2.2s steps(1) infinite; transform-origin: 50% 100%; }
+.ask-shut { animation: ask-rattle 3.2s steps(1) infinite; transform-origin: 50% 100%; }
 @keyframes ask-rattle {
   0%, 45%, 100% { transform: none; }
   48% { transform: translate(-4px, 0) rotate(-3deg); }
