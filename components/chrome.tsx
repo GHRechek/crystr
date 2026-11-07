@@ -27,7 +27,7 @@ export function Clock() {
   return <span suppressHydrationWarning>{now}</span>;
 }
 
-// Posting is not a place to go, so it is not a tab: the NEW POST button sits at the top of
+// Posting is not a place to go, so it is not a tab: the "What's new?" row sits at the top of
 // the feed instead, and the bar has room to breathe.
 const TABS = [
   { href: "/", glyph: "", icon: "feed", label: "FEED" },

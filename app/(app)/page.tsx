@@ -22,12 +22,20 @@ export default async function FeedPage() {
     <>
       <h1 className="sr-only">The feed</h1>
       <div style={{ display: "flex", flexDirection: "column", paddingBottom: 24 }}>
-        {/* Saying something starts here, at the top of the feed, where it used to be a tab. */}
-        <div style={{ padding: "8px 16px 2px" }}>
-          <Link href="/post" className="btn btn-block btn-purple" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, minHeight: 42 }}>
-            ✚ NEW POST <Cost n={COSTS.post} />
-          </Link>
-        </div>
+        {/* Saying something starts here, like Threads: your face, your name, and "What's new?" greyed out.
+            Tapping any of it opens the post maker. */}
+        <Link
+          href="/post"
+          aria-label="Make a post"
+          style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 16px", borderBottom: "1px solid var(--rule)", color: "inherit", textDecoration: "none" }}
+        >
+          <Avatar person={profile} size={40} />
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: 13.5, fontWeight: 600, color: "var(--text)" }}>{profile.handle}</div>
+            <div style={{ fontSize: 13.5, color: "var(--dim)" }}>What&apos;s new?</div>
+          </div>
+          <Cost n={COSTS.post} />
+        </Link>
 
         {items.map((item) => (
           <Card key={`${item.kind}-${item.id}`} item={item} decay={decay} me={userId} />
