@@ -135,19 +135,19 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
         {/* Who you are: the username and character name, left aligned; under them the
             details and the bio. */}
         <div>
-          {/* Your Proof, to the left of your name; it opens your Proof page. */}
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          {/* Your name, then your Proof beside it at the name's own height; the Proof opens your Proof page. */}
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <h1 className="px" style={{ fontSize: 21, fontWeight: 400, lineHeight: 1.4, overflowWrap: "anywhere", minWidth: 0 }}>
+              {profile.handle}
+            </h1>
             <Link
               href="/me/token"
               aria-label={token ? `${tokenTitle(profile.display_name, profile.handle)}: open your Proof` : "Make your Proof"}
               title={token ? tokenTitle(profile.display_name, profile.handle) : "Make your Proof"}
-              style={{ flex: "none", width: 40, height: 40, display: "grid", placeItems: "center", lineHeight: 0, textDecoration: "none", color: "var(--dim)", border: token?.design ? 0 : "1px dashed var(--edge)", borderRadius: "var(--px-r)" }}
+              style={{ flex: "none", width: 28, height: 28, display: "grid", placeItems: "center", lineHeight: 0, textDecoration: "none", color: "var(--dim)", border: token?.design ? 0 : "1px dashed var(--edge)", borderRadius: "var(--px-r)" }}
             >
-              {token?.design ? <TokenImage design={token.design} size={40} /> : <span className="px" style={{ fontSize: 12 }}>?</span>}
+              {token?.design ? <TokenImage design={token.design} size={28} /> : <span className="px" style={{ fontSize: 10 }}>?</span>}
             </Link>
-            <h1 className="px" style={{ fontSize: 21, fontWeight: 400, lineHeight: 1.4, overflowWrap: "anywhere", minWidth: 0 }}>
-              {profile.handle}
-            </h1>
           </div>
           {profile.display_name ? (
             <div className="px" style={{ fontSize: 11, color: "var(--muted)", lineHeight: 1.5, overflowWrap: "anywhere" }}>
