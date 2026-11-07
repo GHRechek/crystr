@@ -4,6 +4,7 @@ import { Avatar } from "@/components/bits";
 import { PostCard } from "@/components/post-card";
 import { Cost } from "@/components/mana";
 import { ArticleIcon } from "@/components/article-icon";
+import { MoreIcon } from "@/components/icons";
 import {
   ago,
   corrupt,
@@ -62,10 +63,12 @@ export default async function FeedPage() {
 
 function Card({ item, decay, me, witch }: { item: FeedItem; decay: number; me: string; witch?: boolean }) {
   if (item.kind === "ball") {
-    const motion = !!item.kicker?.toUpperCase().includes("MOTION");
+    const motion = item.article_kind === "briefing" || !!item.kicker?.toUpperCase().includes("MOTION");
+    // The same colours as their cards in the Ball: motions deep pink, op-eds grey, news purple.
+    const tint = motion ? "var(--blk-motion)" : item.article_kind === "oped" ? "var(--blk-oped)" : "var(--blk)";
     // Laid out like a post: the quill where a face would be, and everything else indented beside it.
     return (
-      <div className="tpost">
+      <div className="tpost" style={{ background: tint, borderBottom: "2px solid var(--device)" }}>
         <div className="tpost-side">
           {motion ? (
             // A motion is put by the City itself: its face is a pixel "!" on the CRYSTR colours.
@@ -103,7 +106,18 @@ function Card({ item, decay, me, witch }: { item: FeedItem; decay: number; me: s
               </div>
             </div>
             <div className="spacer" />
-            <div className="pill pill-ball">◉ BALL</div>
+            {witch ? (
+              <details className="post-menu">
+                <summary aria-label="Witch options" className="btn btn-sm post-menu-btn dots-btn">
+                  <MoreIcon />
+                </summary>
+                <div className="post-menu-panel">
+                  <Link href={`/ball/${item.id}/edit`} className="post-menu-item">
+                    <span>EDIT</span>
+                  </Link>
+                </div>
+              </details>
+            ) : null}
           </div>
 
           <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>

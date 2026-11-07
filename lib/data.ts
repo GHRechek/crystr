@@ -98,6 +98,8 @@ export type FeedPost = {
 export type FeedDispatch = {
   kind: "ball";
   id: number;
+  /** What sort of piece it is: news, a motion's briefing, or a citizen's op-ed. */
+  article_kind?: "dispatch" | "briefing" | "oped";
   byline_name: string | null;
   kicker: string;
   headline: string;
@@ -138,7 +140,7 @@ export async function getFeed(userId: string): Promise<FeedItem[]> {
       .limit(50),
     supabase
       .from("articles")
-      .select(`id, kicker, headline, standfirst, banner, banner_label, banner_icon, created_at, published_at, byline_name, author:profiles!articles_author_id_fkey(${AUTHOR_COLS})`)
+      .select(`id, article_kind:kind, kicker, headline, standfirst, banner, banner_label, banner_icon, created_at, published_at, byline_name, author:profiles!articles_author_id_fkey(${AUTHOR_COLS})`)
       .eq("status", "published")
       .order("published_at", { ascending: false })
       .limit(3),

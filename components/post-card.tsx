@@ -7,6 +7,9 @@ import { ReplyIcon } from "@/components/icons";
 import { COSTS, ago, corrupt } from "@/lib/crystr";
 import type { FeedPost } from "@/lib/data";
 
+/** Edit and delete stay hidden until the database has them (migration 20261108370000_edit_delete_posts). */
+const EDIT_POSTS_ON = false;
+
 /** A post, on the timeline or in a thread. On the timeline the text opens the
  *  thread and REPLY goes straight to its reply box; inside a thread there is
  *  nowhere further to go, so neither is a link. */
@@ -71,7 +74,7 @@ export function PostCard({
             </span>
           </Link>
           <div className="spacer" />
-          <PostMenu kind="post" target={post.id} mine={mine} manage={mine || !!witch} body={post.body} back={inThread && thread ? `/thread/${thread}` : "/"} />
+          <PostMenu kind="post" target={post.id} mine={mine} manage={EDIT_POSTS_ON && (mine || !!witch)} body={post.body} back={inThread && thread ? `/thread/${thread}` : "/"} />
         </div>
 
         {post.badge_title ? (
