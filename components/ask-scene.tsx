@@ -97,7 +97,7 @@ function Chest({ open, children }: { open: boolean; children?: React.ReactNode }
 /** The key, the same silver as the chest, drawn upright. */
 function Key() {
   // eslint-disable-next-line @next/next/no-img-element
-  return <img src="/ask/key.png" alt="" width={63} height={112} draggable={false} style={{ display: "block", imageRendering: "pixelated", pointerEvents: "none" }} />;
+  return <img src="/ask/key.png" alt="" width={59} height={108} draggable={false} style={{ display: "block", imageRendering: "pixelated", pointerEvents: "none" }} />;
 }
 
 /** The background: wide pixel-edged rays in the CRYSTR colours, drawn small and scaled up, turning slowly
