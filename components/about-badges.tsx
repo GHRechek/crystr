@@ -89,15 +89,43 @@ export function AboutBadges({
   // row runs from the portrait to the edge of the page's text column.
   // A size smaller than the token, sitting on the same bottom line as the token and the portrait (the row is
   // lowered 6px under the portrait to make up for the space under the token's drawing, so it rises 6px back).
-  const endPx = px;
+  // The Historikals button leads the row beside the portrait, the size of the Proof.
+  const endPx = compact ? tokPx : px;
   const badgePx = compact ? Math.max(22, Math.min(Math.round(px * 0.82), Math.floor((width - gap * 5 - endPx - tokPx) / 4))) : px;
   const endBtn: React.CSSProperties = compact
-    ? { position: "relative", flex: "none", alignSelf: "flex-end", marginBottom: 6, width: endPx, height: endPx, display: "grid", placeItems: "center", background: "var(--blk-pur)", border: 0, borderRadius: 0, color: "#fff", cursor: "pointer", textDecoration: "none" }
+    ? { position: "relative", flex: "none", width: endPx, height: endPx, display: "grid", placeItems: "center", background: "var(--blk-pur)", border: 0, borderRadius: 0, color: "#fff", cursor: "pointer", textDecoration: "none" }
     : { position: "relative", flex: "none", width: px, height: px, display: "grid", placeItems: "center", background: "none", border: 0, borderRadius: "var(--px-r)", color: "var(--muted)", cursor: "pointer", textDecoration: "none" };
   const tipBadge = tip ? shown.find((b) => b.key === tip.key) : undefined;
+  const iconPx = compact ? Math.round(endPx * 0.5) : 22;
+  const tradeEl = tradeHref && scan ? (
+        <>
+          <button type="button" aria-label="Scan someone's code to trade or battle Historikals" title="Get Historikal" onClick={() => setScanning(true)} style={endBtn}>
+            <TradeIcon size={iconPx} />
+            {tradeCount ? (
+              <span aria-hidden className="px" style={{ position: "absolute", top: -6, right: -6, minWidth: 16, height: 16, display: "grid", placeItems: "center", fontSize: 10, lineHeight: 1, background: "var(--pur)", color: "#fff", borderRadius: 0 }}>{tradeCount}</span>
+            ) : null}
+          </button>
+          {scanning ? <QrScanner onClose={() => setScanning(false)} tradesHref={tradeHref} waiting={tradeCount} /> : null}
+        </>
+      ) : tradeHref ? (
+        <Link
+          href={tradeHref}
+          aria-label="Your Historikals"
+          title="Your Historikals"
+          style={endBtn}
+        >
+          <TradeIcon size={iconPx} />
+          {tradeCount ? (
+            <span aria-hidden className="px" style={{ position: "absolute", top: -6, right: -6, minWidth: 16, height: 16, display: "grid", placeItems: "center", fontSize: 10, lineHeight: 1, background: "var(--pur)", color: "#fff", borderRadius: 0 }}>
+              {tradeCount}
+            </span>
+          ) : null}
+        </Link>
+      ) : null;
 
   return (
     <div ref={box} style={{ position: "relative", display: "flex", flexWrap: compact ? "nowrap" : "wrap", alignItems: "center", justifyContent: compact ? "space-between" : undefined, gap: compact ? gap : 6 }}>
+      {compact ? tradeEl : null}
       {token ? (
         <button
           type="button"
@@ -140,37 +168,13 @@ export function AboutBadges({
           {editable ? "✎" : <EyeIcon />}
         </button>
       ) : null}
-      {tradeHref && scan ? (
-        <>
-          <button type="button" aria-label="Scan someone's code to trade or battle Historikals" title="Get Historikal" onClick={() => setScanning(true)} style={endBtn}>
-            <TradeIcon />
-            {tradeCount ? (
-              <span aria-hidden className="px" style={{ position: "absolute", top: -6, right: -6, minWidth: 16, height: 16, display: "grid", placeItems: "center", fontSize: 10, lineHeight: 1, background: "var(--pur)", color: "#fff", borderRadius: 0 }}>{tradeCount}</span>
-            ) : null}
-          </button>
-          {scanning ? <QrScanner onClose={() => setScanning(false)} tradesHref={tradeHref} waiting={tradeCount} /> : null}
-        </>
-      ) : tradeHref ? (
-        <Link
-          href={tradeHref}
-          aria-label="Your Historikals"
-          title="Your Historikals"
-          style={endBtn}
-        >
-          <TradeIcon />
-          {tradeCount ? (
-            <span aria-hidden className="px" style={{ position: "absolute", top: -6, right: -6, minWidth: 16, height: 16, display: "grid", placeItems: "center", fontSize: 10, lineHeight: 1, background: "var(--pur)", color: "#fff", borderRadius: 0 }}>
-              {tradeCount}
-            </span>
-          ) : null}
-        </Link>
-      ) : null}
+      {compact ? null : tradeEl}
       {compact && !editable && (earned.length || tradable.length) ? (
         <button
           type="button"
           aria-label="See all their badges"
           onClick={() => setChoosing(true)}
-          style={endBtn}
+          style={{ ...endBtn, width: px, height: px }}
         >
           <EyeIcon />
         </button>
@@ -209,12 +213,12 @@ function EyeIcon() {
 }
 
 /** A little pixel monster face: scan someone to trade or battle Historikals. */
-function TradeIcon() {
+function TradeIcon({ size = 22 }: { size?: number }) {
   const rows = ["#.........#", "##.......##", ".#########.", "###########", "##..###..##", "##..###..##", "###########", "##.#.#.#.##", "##.......##", "###########", ".#########."];
   const on = (r: number, c: number) => rows[r][c] === "#";
   const id = `mf${useId().replace(/:/g, "")}`;
   return (
-    <svg width={22} height={22} viewBox="0 0 11 11" shapeRendering="crispEdges" aria-hidden>
+    <svg width={size} height={size} viewBox="0 0 11 11" shapeRendering="crispEdges" aria-hidden>
       <defs><linearGradient id={id} x1="0" y1="0" x2="11" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stopColor="#e0398a" /><stop offset=".52" stopColor="#9184d9" /><stop offset="1" stopColor="#4c7df0" /></linearGradient></defs>
       {rows.flatMap((r, y) => [...r].map((_, x) => (on(y, x) ? <rect key={`${x}${y}`} x={x} y={y} width={1} height={1} fill={`url(#${id})`} /> : null)))}
     </svg>
