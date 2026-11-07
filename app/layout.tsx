@@ -47,6 +47,9 @@ export const metadata: Metadata = {
   title: "CRYSTR",
   description:
     "A social network for The City. Your mana is your strength, so look after it.",
+  // From the home screen it runs as an app, full screen, with no Safari bars.
+  appleWebApp: { capable: true, title: "CRYSTR", statusBarStyle: "black-translucent" },
+  icons: { apple: "/apple-touch-icon.png", icon: "/icon-192.png" },
 };
 
 export const viewport: Viewport = {
