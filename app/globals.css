@@ -1759,8 +1759,8 @@ select.input { border: 0; }
 @keyframes ask-rise {
   0% { transform: translateY(0); }
   15% { transform: translateY(0); }
-  80% { transform: translateY(-178px); }
-  100% { transform: translateY(-166px); }
+  80% { transform: translateY(-154px); }
+  100% { transform: translateY(-144px); }
 }
 /* When the key goes in the world dims quickly (not all the way) while the lock gives, then lifts a little
    as the lid opens. Above the rays, below the chest. */
