@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRef, useState } from "react";
 import { reactToMessage, submitReport, unsendMessage } from "@/lib/actions";
 import { REPORT_REASONS } from "@/lib/terms";
-import { PIXEL_EMOJI, PIXEL_REACTS_ON, QUICK_PIXEL, REACTIONS, TOO_MUCH, TOO_MUCH_ON } from "@/lib/whisper";
+import { PIXEL_EMOJI, PIXEL_NAMES, PIXEL_REACTS_ON, QUICK_PIXEL, REACTIONS, TOO_MUCH, TOO_MUCH_ON } from "@/lib/whisper";
 
 const HOLD_MS = 450;
 
@@ -222,10 +222,10 @@ function PixelReact({ e, thread, id, done }: { e: string; thread: number; id: nu
       <input type="hidden" name="thread_id" value={thread} />
       <input type="hidden" name="message_id" value={id} />
       <input type="hidden" name="emoji" value={e} />
-      <button type="submit" aria-label={`React ${e}`} style={{ flex: "none", width: 40, height: 40, border: 0, background: "none", cursor: "pointer", padding: 0, display: "grid", placeItems: "center" }}>
+      <button type="submit" aria-label={`React ${e.startsWith("pm-") ? PIXEL_NAMES[Number(e.slice(3)) - 1] : e}`} title={e.startsWith("pm-") ? PIXEL_NAMES[Number(e.slice(3)) - 1] : undefined} style={{ flex: "none", width: 40, height: 40, border: 0, background: "none", cursor: "pointer", padding: 0, display: "grid", placeItems: "center" }}>
         {e.startsWith("pm-") ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={`/emoji/${e}.png`} alt="" width={22} height={24} style={{ imageRendering: "pixelated", objectFit: "contain" }} />
+          <img src={`/emoji/${e}.png`} alt="" width={24} height={24} style={{ imageRendering: "pixelated" }} />
         ) : (
           <span style={{ fontSize: 22, lineHeight: 1 }}>{e}</span>
         )}

@@ -173,7 +173,7 @@ export function Bubble({
             >
               {isPixelEmoji(r.emoji) ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={`/emoji/${r.emoji}.png`} alt="" width={14} height={15} style={{ imageRendering: "pixelated", objectFit: "contain", verticalAlign: "-3px" }} />
+                <img src={`/emoji/${r.emoji}.png`} alt="" width={16} height={16} style={{ imageRendering: "pixelated", verticalAlign: "-3px" }} />
               ) : (
                 r.emoji
               )}

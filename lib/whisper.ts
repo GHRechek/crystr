@@ -1,10 +1,13 @@
 /** The reactions a whisper can get. Six, and the database accepts only these. */
 export const REACTIONS = ["❤️", "😂", "😮", "😢", "👍", "🔥"] as const;
 
-/** Pixel emoji reactions (the Pixelmeadow pack): stored as "pm-<n>", drawn from /emoji/pm-<n>.png. The quick row
- *  under a held whisper shows six; + opens all seventy. */
+/** Pixel emoji reactions (the Pixel Emojis Set, from Figma Community): stored as "pm-<n>", drawn from
+ *  /emoji/pm-<n>.png. The quick row under a held whisper shows six; + opens all seventy. */
 export const PIXEL_EMOJI = Array.from({ length: 70 }, (_, i) => `pm-${i + 1}`);
-export const QUICK_PIXEL = ["pm-54", "pm-65", "pm-46", "pm-37", "pm-8", "pm-6"];
+export const QUICK_PIXEL = ["pm-41", "pm-6", "pm-5", "pm-3", "pm-54", "pm-59"];
+
+/** What each pixel emoji is, for screen readers and tooltips. */
+export const PIXEL_NAMES: string[] = ["Angry Face with Horns", "Beaming Face with Smiling Eyes", "Downcast Face with Sweat", "Face Blowing a Kiss", "Face Screaming in Fear", "Face with Tears of Joy", "Flushed Face", "Grimacing Face", "Grinning Face", "Grinning Face with Big Eyes", "Grinning Face with Smiling Eyes", "Grinning Face with Sweat", "Grinning Squinting Face", "Hot Face", "Kissing Face", "Nauseated Face", "Nerd Face", "Pouting Face", "Rolling on the Floor Laughing", "Saluting Face", "Slightly Smiling Face", "Smiling Face with Heart-Eyes", "Smiling Face with Hearts", "Smiling Face with Horns", "Smiling Face with Smiling Eyes", "Smiling Face with Sunglasses", "Upside-Down Face", "Zany Face", "Black Heart", "Blue Heart", "Broken Heart", "Check Mark Button", "Green Heart", "Heart with Arrow", "High Voltage", "Hundred Points", "Orange Heart", "Party Popper", "Pile of Poo", "Purple Heart", "Red Heart", "Sparkles", "Two Hearts", "Yellow Heart", "Clapping Hands", "Flexed Biceps", "Folded Hands", "Handshake", "Heart Hands", "OK Hand", "Raising Hands", "Sign of the Horns", "Thumbs Down", "Thumbs Up", "Waving Hand", "Alien", "Cat Face", "Eyes", "Fire", "Herb", "Rainbow", "See-No-Evil Monkey", "Skull", "Alien Monster", "Collision", "Joystick", "Kiss Mark", "Money Bag", "Peach", "Rocket"];
 export const isPixelEmoji = (e: string) => /^pm-([1-9]|[1-6][0-9]|70)$/.test(e);
 
 /** The safety word on a whisper: "this caused off-game discomfort". Stored as a reaction. */
