@@ -10,7 +10,7 @@ import { EmojiText } from "@/components/emoji-text";
 import { skinOf } from "@/lib/emoji-skin";
 
 /** Edit and delete stay hidden until the database has them (migration 20261108370000_edit_delete_posts). */
-const EDIT_POSTS_ON = false;
+const EDIT_POSTS_ON = true;
 
 /** A post, on the timeline or in a thread. On the timeline the text opens the
  *  thread and REPLY goes straight to its reply box; inside a thread there is
