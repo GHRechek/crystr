@@ -70,6 +70,9 @@ export function QuestRow({ b, face, rest, scan, bare }: { b: ShownBadge; face: R
   const kind = b.target ? `${article(targetLabel(b.target))} ${targetLabel(b.target).toLowerCase()}` : null;
   const delay = (Array.from(slug).reduce((n, c) => n + c.charCodeAt(0), 0) % 7) * 0.9;
   const open = () => setTip(true);
+  // Helping never runs out: every three confirmed helps bring a Historikal, so it can always be scanned.
+  const again = b.key === "a:a-helping-hand";
+  const canScan = !!scan && (b.locked || again);
 
   return (
     <>
@@ -88,10 +91,10 @@ export function QuestRow({ b, face, rest, scan, bare }: { b: ShownBadge; face: R
             <BadgeFace b={b} size={64} />
             <div className="px" style={{ fontSize: 12, lineHeight: 1.5, color: "var(--text)" }}>{b.title}</div>
             <div style={{ fontSize: 12.5, lineHeight: 1.5, color: "var(--muted)" }}>{b.line}</div>
-            {b.locked ? (
+            {b.locked || canScan ? (
               <div style={{ fontSize: 12, lineHeight: 1.5, color: "var(--muted)" }}>
-                {scan
-                  ? b.key === "a:a-helping-hand"
+                {canScan
+                  ? again
                     ? "Scan the QR of the person you helped. They get a note asking whether you did, and if they say yes it counts. Every three helps bring a good Historikal."
                     : `${kind ? `It has to be ${kind}. ` : ""}Scan ${kind ? `${kind}'s` : "their"} QR code. ${b.instant ? "That is all: it completes the moment you scan." : "They get a whisper asking whether it happened, and if they say yes it counts."}`
                   : b.request
@@ -104,7 +107,7 @@ export function QuestRow({ b, face, rest, scan, bare }: { b: ShownBadge; face: R
               </div>
             ) : null}
             <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "center", marginTop: 4 }}>
-              {b.locked && scan ? (
+              {canScan ? (
                 <button type="button" className="btn btn-purple" onClick={() => { setTip(false); setScanning(true); }} style={{ minHeight: 44 }}>
                   SCAN A CODE
                 </button>
