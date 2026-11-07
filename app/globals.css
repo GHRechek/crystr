@@ -1546,3 +1546,13 @@ select {
   color: #ef4444;
   text-shadow: 1px 0 0 rgba(239, 68, 68, 0.45), -1px 0 0 rgba(239, 68, 68, 0.45), 0 1px 0 rgba(239, 68, 68, 0.45), 0 -1px 0 rgba(239, 68, 68, 0.45);
 }
+
+/* The cassette's reels turn in quarter steps, like a sprite, while it plays. */
+@keyframes cassette-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.cassette-spin { animation: cassette-spin 1.2s steps(8) infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .cassette-spin { animation: none; }
+}
