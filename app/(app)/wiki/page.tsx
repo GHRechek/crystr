@@ -12,7 +12,8 @@ export default async function WikiIndex(props: { searchParams: Promise<{ q?: str
   const searchParams = await props.searchParams;
   const { profile, userId } = await requireMe();
   const witch = profile.is_witch;
-  const decay = decayLevel(profile.mana, capOf(profile));
+  // Signing up, the wiki is where the codes are: it reads clean until they're registered.
+  const decay = profile.onboarded === false ? 0 : decayLevel(profile.mana, capOf(profile));
   const q = cleanQuery(searchParams.q);
   const hits = q ? await searchWikiPages(q) : null;
   const pages = hits ? [] : await getWikiPages(witch);
