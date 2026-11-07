@@ -1159,7 +1159,7 @@ export async function deleteBadge(fd: FormData) {
 export async function claimBadge(fd: FormData) {
   const r = await call("cr_badge_claim", { p_slug: str(fd, "slug"), p_other: str(fd, "other_id") });
   if (!r.ok) {
-    if (r.code === "already") await setFlash("ALREADY ASKED", "They already have that question waiting.", EDGE.purple);
+    if (r.code === "already") await setFlash("ALREADY COUNTED", "You've done this one with them already.", EDGE.purple);
     else if (r.code === "not_picked") await setFlash("PICK IT FIRST", "Pick this main quest first. Only people who say yes after you pick it count.", EDGE.purple);
     else if (r.code === "have_it") await setFlash("ALREADY YOURS", "You have that badge already.", EDGE.purple);
     else if (r.code === "wrong_kind") await setFlash("NOT THE RIGHT KIND", "That quest is for a different kind of person. Pick someone who fits.", EDGE.purple);
@@ -1168,7 +1168,7 @@ export async function claimBadge(fd: FormData) {
   } else if ((r as { instant?: boolean }).instant) {
     await setFlash("DONE", `That one is complete.${await newBadges()}`, EDGE.blue);
   } else {
-    await setFlash("ASKED", "They have a whisper asking whether it happened. If they say yes, the badge is yours.", EDGE.blue);
+    await setFlash("DONE", `That one counted.${await newBadges()}`, EDGE.blue);
   }
   revalidatePath("/me");
   revalidatePath("/", "layout");
@@ -1204,10 +1204,10 @@ export async function witchGrant(fd: FormData) {
 export async function claimHelp(fd: FormData) {
   const r = await call("cr_scan_help", { p_other: str(fd, "other_id") });
   if (!r.ok) {
-    if (r.code === "already") await setFlash("ALREADY SAID", "That one is already waiting, or already confirmed.", EDGE.purple);
+    if (r.code === "already") await setFlash("ALREADY COUNTED", "You've already said you helped them.", EDGE.purple);
     else await wentWrong();
   } else {
-    await setFlash("ASKED", "They will see a note asking whether you helped. If they say yes, it counts: every three helps earn a good Historikal.", EDGE.blue);
+    await setFlash("COUNTED", `They showed you their code, so it counts. Every three helps earn a good Historikal.${await newBadges()}`, EDGE.blue);
   }
   revalidatePath("/", "layout");
 }

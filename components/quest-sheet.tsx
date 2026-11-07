@@ -49,7 +49,7 @@ const CUSTOM: Record<string, { text: string; link?: [string, string] }> = {
   "well-regular": { text: "Answer a Well quest on five different days.", link: ["/well", "GO TO THE WELL"] },
   "daily-whisper": { text: "Send a whisper every day for five days in a row.", link: ["/whispers", "GO TO WHISPERS"] },
   "pen-pal": { text: "Keep a whisper going with one person until you have traded twenty messages.", link: ["/whispers", "GO TO WHISPERS"] },
-  "open-hand": { text: "Help someone on five different days, and have them say yes by scanning their QR on I'm a Helper.", link: ["/quests", "GO TO YOUR QUESTS"] },
+  "open-hand": { text: "Help someone on five different days, and scan their QR on I'm a Helper each time.", link: ["/quests", "GO TO YOUR QUESTS"] },
   "town-talk": { text: "Reply to posts from ten different people.", link: ["/", "GO TO THE FEED"] },
   "spread-the-love": { text: "Like posts from ten different people.", link: ["/", "GO TO THE FEED"] },
   "conversation-starter": { text: "Write three posts that each get three replies.", link: ["/post", "MAKE A POST"] },
@@ -95,8 +95,8 @@ export function QuestRow({ b, face, rest, scan, bare }: { b: ShownBadge; face: R
               <div style={{ fontSize: 12, lineHeight: 1.5, color: "var(--muted)" }}>
                 {canScan
                   ? again
-                    ? "Scan the QR of the person you helped. They get a note asking whether you did, and if they say yes it counts. Every three helps bring a good Historikal."
-                    : `${kind ? `It has to be ${kind}. ` : ""}Scan ${kind ? `${kind}'s` : "their"} QR code. ${b.instant ? "That is all: it completes the moment you scan." : "They get a whisper asking whether it happened, and if they say yes it counts."}`
+                    ? "Scan the QR of the person you helped: them showing you their code is the yes, so it counts straight away. Every three helps bring a good Historikal."
+                    : `${kind ? `It has to be ${kind}. ` : ""}Scan ${kind ? `${kind}'s` : "their"} QR code. That is all: it completes the moment you scan.`
                   : b.request
                     ? "Make a post that shows it. It is marked as a badge request, and when a witch likes it, the badge is yours."
                     : custom

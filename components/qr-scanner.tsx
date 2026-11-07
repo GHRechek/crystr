@@ -142,10 +142,10 @@ export function QrScanner({ onClose, tradesHref, waiting, mode = "general", only
               </div>
               {only === "a-helping-hand" ? (
                 <>
-                  <div style={{ fontSize: 12.5, lineHeight: 1.5, color: "var(--muted)" }}>{found.handle} gets a note asking whether you helped them. If they say yes, it counts, and every three helps bring a good Historikal.</div>
+                  <div style={{ fontSize: 12.5, lineHeight: 1.5, color: "var(--muted)" }}>They showed you their code, so it counts straight away. Every three helps bring a good Historikal.</div>
                   <form action={async (fd) => { await claimHelp(fd); setSent((x) => [...x, "a-helping-hand"]); }}>
                     <input type="hidden" name="other_id" value={found.id} />
-                    <button type="submit" disabled={sent.includes("a-helping-hand")} className="btn btn-purple btn-block" style={{ minHeight: 48 }}>{sent.includes("a-helping-hand") ? "ASKED" : "I HELPED THEM"}</button>
+                    <button type="submit" disabled={sent.includes("a-helping-hand")} className="btn btn-purple btn-block" style={{ minHeight: 48 }}>{sent.includes("a-helping-hand") ? "COUNTED ✓" : "I HELPED THEM"}</button>
                   </form>
                 </>
               ) : shown.length === 0 ? (
@@ -172,7 +172,7 @@ export function QrScanner({ onClose, tradesHref, waiting, mode = "general", only
                               <span className="px" style={{ display: "block", fontSize: 11, lineHeight: 1.5 }}>{q.title}</span>
                               <span style={{ display: "block", fontSize: 12, lineHeight: 1.4, color: "var(--muted)" }}>{q.how}</span>
                             </span>
-                            <span className="px" style={{ flex: "none", fontSize: 11, color: "var(--pur-pale)" }}>{done ? (q.instant ? "DONE" : "ASKED") : q.instant ? "COMPLETE →" : "ASK →"}</span>
+                            <span className="px" style={{ flex: "none", fontSize: 11, color: "var(--pur-pale)" }}>{done ? "DONE ✓" : "COMPLETE →"}</span>
                           </button>
                         </form>
                       </li>
@@ -190,7 +190,7 @@ export function QrScanner({ onClose, tradesHref, waiting, mode = "general", only
       </div>
       )}
       <div style={{ padding: "14px 16px 22px", fontSize: 12.5, lineHeight: 1.5, color: err ? "var(--mag-soft)" : "var(--pur-pale)", textAlign: "center", background: "#2b1f4f" }}>
-        {found ? (view === "quests" ? "One at a time. They get a whisper and say yes or no." : "") : err ?? (mode === "quest" ? (title ? `${title}: ${how ?? ""} Point the camera at their code.` : "Point the camera at their code to see which quests you can do with them.") : "Point the camera at the code on someone's profile menu.")}
+        {found ? (view === "quests" ? "They showed you their code: whatever you pick counts right away." : "") : err ?? (mode === "quest" ? (title ? `${title}: ${how ?? ""} Point the camera at their code.` : "Point the camera at their code to see which quests you can do with them.") : "Point the camera at the code on someone's profile menu.")}
       </div>
     </div>
   );
