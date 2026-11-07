@@ -7,7 +7,7 @@ import { HANDLE_PATTERN, KEY_PATTERN } from "@/lib/breach";
 /** The camera, full screen, looking for a witch's key: a witch's own profile QR (…/u/<handle>), as
  *  the registry takes it, or an old override key (…/override/<code>). Found, it hands the handle or
  *  code over. Nothing is checked here: the database decides whether it's a witch's. */
-export function WitchKeyScanner({ title, why, onKey, onClose }: { title: string; why: string; onKey: (code: string) => void; onClose: () => void }) {
+export function WitchKeyScanner({ title, why, problem, onKey, onClose }: { title: string; why: string; /** Said after a scan that didn't take. */ problem?: string | null; onKey: (code: string) => void; onClose: () => void }) {
   const video = useRef<HTMLVideoElement>(null);
   const [err, setErr] = useState<string | null>(null);
 
@@ -89,7 +89,7 @@ export function WitchKeyScanner({ title, why, onKey, onClose }: { title: string;
         <video ref={video} playsInline muted style={{ width: "100%", height: "100%", objectFit: "cover" }} />
         <div aria-hidden style={{ position: "absolute", inset: "18% 14%", boxShadow: "0 0 0 2px #9184d9, 0 0 0 9999px rgba(18,14,36,.45)" }} />
       </div>
-      <div style={{ padding: "14px 16px 22px", fontSize: 12.5, lineHeight: 1.5, color: err ? "#ffb3cf" : "var(--muted)" }}>{err ?? why}</div>
+      <div style={{ padding: "14px 16px 22px", fontSize: 12.5, lineHeight: 1.5, color: err || problem ? "#ffb3cf" : "var(--muted)" }}>{err ?? problem ?? why}</div>
     </div>
   );
 }

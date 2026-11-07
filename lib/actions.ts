@@ -496,6 +496,24 @@ export async function acceptTerms(fd: FormData) {
 
 // ---------------------------------------------------------------- the override
 
+/** A witch's key scanned from the registry (CONTACT YOUR LOCAL CRYSTR ADMINISTRATOR): it goes in the
+ *  cookie the breach reads, as if they'd opened the witch's code with their own camera, and on to the
+ *  breach, which checks it's a witch's. A profile scan is a handle; an old override key is a code. */
+export async function scanRegistryKey(key: string): Promise<string | null> {
+  const jar = await cookies();
+  const opts = { path: "/", maxAge: 30 * 60, httpOnly: true, sameSite: "lax" as const };
+  if (KEY_PATTERN.test(key)) {
+    jar.set(BREACH_COOKIE, key, opts);
+  } else if (/^[a-z0-9_.-]{1,40}$/.test(key)) {
+    const { data: w } = await createClient().from("profiles").select("handle").eq("handle", key).eq("is_witch", true).maybeSingle();
+    if (!w) return "That code isn't a witch's. Only a witch's code opens the City this way.";
+    jar.set("crystr.scan", key, opts);
+  } else {
+    return "That isn't a CRYSTR code.";
+  }
+  redirect("/breach");
+}
+
 /** The break-in: the key waiting in the cookie (put there by /override/<code>) lets this
  *  person into the City with no form filled. On a witch's key they go straight in; on a
  *  code the City does not know, the page says so. */

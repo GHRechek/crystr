@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState, useTransition } from "react";
-import { completeWelcome } from "@/lib/actions";
+import { useCallback, useEffect, useRef, useState, useTransition } from "react";
+import { completeWelcome, scanRegistryKey } from "@/lib/actions";
+import { WitchKeyScanner } from "@/components/witch-key-scanner";
 import { ADC_EXAMPLES, DISTRICTS, SDC_NOTE, SPECIES, type PlaintiffError } from "@/lib/plaintiff";
 import { BirthdayPicker } from "@/components/birthday-picker";
 import { corrupt } from "@/lib/crystr";
@@ -31,6 +32,14 @@ export function WelcomeForm({
   const [species, setSpecies] = useState("");
   const [caster, setCaster] = useState(false);
   const [error, setError] = useState<PlaintiffError | null>(null);
+  // The administrator's way in: a witch's code, scanned from the form.
+  const [scanning, setScanning] = useState(false);
+  const [keyProblem, setKeyProblem] = useState<string | null>(null);
+  const onKey = useCallback(async (key: string) => {
+    const why = await scanRegistryKey(key);
+    // Didn't take: back to the form, which says why; tapping again scans again.
+    if (why) { setKeyProblem(why); setScanning(false); }
+  }, []);
   const [pending, start] = useTransition();
   const form = useRef<HTMLFormElement>(null);
   const draftKey = `crystr.welcome.${userId}`;
@@ -83,6 +92,7 @@ export function WelcomeForm({
   const t = (text: string) => (haywire ? corrupt(text, 3) : text);
 
   return (
+    <>
     <form
       ref={form}
       className={haywire ? "haywire" : undefined}
@@ -190,9 +200,12 @@ export function WelcomeForm({
       </div>
 
       {haywire ? (
-        <div className="banner-note banner-mag haywire-note" role="alert">
+        // The way through: a witch's code, scanned right here.
+        <button type="button" className="banner-note banner-mag haywire-note" role="alert" onClick={() => { setKeyProblem(null); setScanning(true); }} style={{ cursor: "pointer", width: "100%", color: "inherit" }}>
           CONTACT YOUR LOCAL CRYSTR ADMINISTRATOR.
-        </div>
+          <span style={{ display: "block", marginTop: 4, fontSize: 10.5, opacity: 0.85 }}>⚿ TAP TO SCAN A WITCH&apos;S CODE</span>
+          {keyProblem ? <span style={{ display: "block", marginTop: 6, fontSize: 11 }}>{keyProblem}</span> : null}
+        </button>
       ) : null}
 
       {district === "enclave" && species && species !== "elf" && !haywire ? (
@@ -242,5 +255,15 @@ export function WelcomeForm({
         {haywire ? t("NOT ON THE BOOKS") : pending ? "CHECKING…" : "REGISTER AND ENTER THE CITY"}
       </button>
     </form>
+    {/* Outside the form: the haywire filter would pin a full-screen layer inside it. */}
+    {scanning ? (
+      <WitchKeyScanner
+        title="A WITCH'S CODE"
+        why="The registry has no line for you. A licensed witch can let you in: ask one to show you the QR code on their profile, and point the camera at it."
+        onKey={onKey}
+        onClose={() => setScanning(false)}
+      />
+    ) : null}
+    </>
   );
 }
