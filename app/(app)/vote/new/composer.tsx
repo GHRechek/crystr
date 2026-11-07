@@ -9,6 +9,7 @@ const WINDOWS = [
   { hours: 4, label: "4 HOURS" },
   { hours: 24, label: "A DAY" },
   { hours: 72, label: "THREE DAYS" },
+  { hours: 336, label: "TWO WEEKS" },
 ];
 
 /** One page: the briefing is the motion. Its headline is what the City says YAY or NAY to, its
