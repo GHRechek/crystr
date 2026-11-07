@@ -1754,8 +1754,10 @@ select.input { border: 0; }
   /* Starts sunk below the chest's front rim (105px down), hidden by the front wall drawn over it,
      then climbs out of the mouth, in front of the lid, overshoots and settles. */
   position: absolute; z-index: 1; top: 105px; left: 50%; margin-left: -42px; line-height: 0;
-  animation: ask-rise 2.4s steps(16) both;
+  animation: ask-rise 2.4s steps(16) both, ask-hover 2s steps(8) 2.4s infinite;
 }
+/* Once up, it keeps bobbing gently at the top. `translate` is separate from `transform`, so the two stack. */
+@keyframes ask-hover { 0%, 100% { translate: 0 0; } 50% { translate: 0 -7px; } }
 @keyframes ask-rise {
   0% { transform: translateY(0); }
   15% { transform: translateY(0); }
@@ -1826,4 +1828,5 @@ select.input { border: 0; }
 .ask-close { background: none; border: 0; color: #d2cefd; font-size: 11px; cursor: pointer; }
 @media (prefers-reduced-motion: reduce) {
   .ask-badge, .ask-hint, .ask-hint b, .ask-hint span, .ask-glint, .ask-dots i, .ask-key img, .ask-shut { animation: none; }
+  .ask-badge { transform: translateY(-144px); } /* already up, out of the chest */
 }
