@@ -457,7 +457,7 @@ export async function claimVouch(fd: FormData) {
       "ASKED",
       kind === "meetup"
         ? "They will see a note asking whether you met up. If they say yes, you both earn a badge."
-        : "They will see a note asking whether you helped. If they say yes, it counts: every three helps earn a rare Historikal.",
+        : "They will see a note asking whether you helped. If they say yes, it counts: every three helps earn a good Historikal.",
       EDGE.blue,
     );
   }
@@ -1114,7 +1114,7 @@ export async function vouchFromProfile(fd: FormData) {
     if (r.code === "already") await setFlash("ALREADY SAID", "That one is already counted, or already waiting.", EDGE.purple);
     else await wentWrong();
   } else if (kind === "helped") {
-    await setFlash("THANK YOU", `Counted. Every three helps earn them a rare Historikal.${await newBadges()}`, EDGE.blue);
+    await setFlash("THANK YOU", `Counted. Every three helps earn them a good Historikal.${await newBadges()}`, EDGE.blue);
   } else {
     await setFlash("ASKED", "They will see a note asking whether you met up. If they say yes, you both earn a badge.", EDGE.blue);
   }
@@ -1211,7 +1211,7 @@ export async function claimHelp(fd: FormData) {
     if (r.code === "already") await setFlash("ALREADY SAID", "That one is already waiting, or already confirmed.", EDGE.purple);
     else await wentWrong();
   } else {
-    await setFlash("ASKED", "They will see a note asking whether you helped. If they say yes, it counts: every three helps earn a rare Historikal.", EDGE.blue);
+    await setFlash("ASKED", "They will see a note asking whether you helped. If they say yes, it counts: every three helps earn a good Historikal.", EDGE.blue);
   }
   revalidatePath("/", "layout");
 }

@@ -92,7 +92,7 @@ export function QuestRow({ b, face, rest, scan, bare }: { b: ShownBadge; face: R
               <div style={{ fontSize: 12, lineHeight: 1.5, color: "var(--muted)" }}>
                 {scan
                   ? b.key === "a:a-helping-hand"
-                    ? "Scan the QR of the person you helped. They get a note asking whether you did, and if they say yes it counts. Every three helps bring a rare Historikal."
+                    ? "Scan the QR of the person you helped. They get a note asking whether you did, and if they say yes it counts. Every three helps bring a good Historikal."
                     : `${kind ? `It has to be ${kind}. ` : ""}Scan ${kind ? `${kind}'s` : "their"} QR code. ${b.instant ? "That is all: it completes the moment you scan." : "They get a whisper asking whether it happened, and if they say yes it counts."}`
                   : b.request
                     ? "Make a post that shows it. It is marked as a badge request, and when a witch likes it, the badge is yours."
