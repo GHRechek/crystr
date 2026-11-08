@@ -1155,24 +1155,6 @@ export async function deleteBadge(fd: FormData) {
   revalidatePath("/", "layout");
 }
 
-/** From a quest that someone else confirms: ask them, in a whisper, whether it happened. */
-export async function claimBadge(fd: FormData) {
-  const r = await call("cr_badge_claim", { p_slug: str(fd, "slug"), p_other: str(fd, "other_id") });
-  if (!r.ok) {
-    if (r.code === "already") await setFlash("ALREADY COUNTED", "You've done this one with them already.", EDGE.purple);
-    else if (r.code === "not_picked") await setFlash("PICK IT FIRST", "Pick this main quest first. Only people who say yes after you pick it count.", EDGE.purple);
-    else if (r.code === "have_it") await setFlash("ALREADY YOURS", "You have that badge already.", EDGE.purple);
-    else if (r.code === "wrong_kind") await setFlash("NOT THE RIGHT KIND", "That quest is for a different kind of person. Pick someone who fits.", EDGE.purple);
-    else if (r.code === "too_many") await setFlash("TOO MANY WAITING", "Wait for some of your questions to be answered first.", EDGE.mag);
-    else await wentWrong();
-  } else if ((r as { instant?: boolean }).instant) {
-    await setFlash("DONE", `That one is complete.${await newBadges()}`, EDGE.blue);
-  } else {
-    await setFlash("DONE", `That one counted.${await newBadges()}`, EDGE.blue);
-  }
-  revalidatePath("/me");
-  revalidatePath("/", "layout");
-}
 
 /** The other person says yes or no to a quest question in a whisper. */
 export async function answerBadgeClaim(fd: FormData) {
@@ -1215,17 +1197,6 @@ export async function witchSetSpecies(fd: FormData) {
   revalidatePath("/", "layout");
 }
 
-/** Help Someone Else, from a scan: ask the person you helped to say yes. */
-export async function claimHelp(fd: FormData) {
-  const r = await call("cr_scan_help", { p_other: str(fd, "other_id") });
-  if (!r.ok) {
-    if (r.code === "already") await setFlash("ALREADY COUNTED", "You've already said you helped them.", EDGE.purple);
-    else await wentWrong();
-  } else {
-    await setFlash("COUNTED", `They showed you their code, so it counts. Every three helps earn a good Historikal.${await newBadges()}`, EDGE.blue);
-  }
-  revalidatePath("/", "layout");
-}
 
 export type ScanQuest = { slug: string; title: string; how: string; art: string; tiers: number; tier: number; epic: boolean; instant: boolean };
 export type Scanned = { id: string; handle: string; name: string | null; species: string | null; spellcaster: boolean; face: string; quests: ScanQuest[] };

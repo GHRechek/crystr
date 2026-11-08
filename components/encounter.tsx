@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { QuestAskScreen, type QuestView } from "@/components/quest-ask";
 import { Rays, playBuildUp, playClick, playFanfare, playLidOpen, playWhoosh } from "@/components/ask-scene";
 import { ELEMENT_COLOR, historikalSrc, type Element, type MoveKind, type Rarity } from "@/lib/historikals";
 import { normalizeToken, tokenSrc } from "@/lib/token";
@@ -55,28 +56,47 @@ export const START_PROBLEM: Record<string, string> = {
 };
 /** Start one with someone you have just scanned; their phone and yours both open it. A battle with a
  *  stake is an epic one. Returns null when it started, else why not. */
+/** Why a quest ask couldn't start, in words. */
+const QUEST_PROBLEM: Record<string, string> = {
+  wrong_kind: "They aren't the kind of person this quest asks for.",
+  have_it: "You have this one already.",
+  not_picked: "Pick this main quest first.",
+  already: "That one already counted with them.",
+  bad_person: "That's you. Scan someone else's code.",
+  bad_badge: "That quest can't be done with someone.",
+};
+/** Ask someone, face to face, to say a quest happened with them: it opens on both phones. */
+export async function startQuestAsk(slug: string, otherId: string): Promise<string | null> {
+  const { data } = await supabase().rpc("cr_quest_ask", { p_slug: slug, p_other: otherId });
+  const r = data as { ok: boolean; id?: number; code?: string } | null;
+  if (r?.ok && r.id) { window.dispatchEvent(new CustomEvent("crystr:encounter", { detail: { id: r.id, kind: "quest" } })); return null; }
+  return QUEST_PROBLEM[r?.code ?? ""] ?? "That didn't start. Try again.";
+}
+
 export async function startEncounter(kind: "trade" | "battle", otherId: string, stake?: Stake): Promise<string | null> {
   const { data } = await supabase().rpc("cr_enc_start", stake ? { p_kind: kind, p_other: otherId, p_stake: stake } : { p_kind: kind, p_other: otherId });
   const r = data as { ok: boolean; id?: number; code?: string } | null;
-  if (r?.ok && r.id) { window.dispatchEvent(new CustomEvent("crystr:encounter", { detail: r.id })); return null; }
+  if (r?.ok && r.id) { window.dispatchEvent(new CustomEvent("crystr:encounter", { detail: { id: r.id, kind } })); return null; }
   return START_PROBLEM[r?.code ?? ""] ?? "That didn't start. Try again.";
 }
 
 export function EncounterHost() {
   const [id, setId] = useState<number | null>(null);
+  const [kind, setKind] = useState<string>("trade");
   const [view, setView] = useState<View | null>(null);
+  const [quest, setQuest] = useState<QuestView | null>(null);
   const closed = useRef(new Set<number>());
 
   // Is anyone starting one with me? Checked every few seconds while the page is in front of you.
   useEffect(() => {
-    const open = (n: number) => { if (!closed.current.has(n)) setId(n); };
-    const onStart = (e: Event) => open((e as CustomEvent<number>).detail);
+    const open = (n: number, k: string) => { if (!closed.current.has(n)) { setKind(k); setId(n); } };
+    const onStart = (e: Event) => { const d = (e as CustomEvent<{ id: number; kind: string }>).detail; open(d.id, d.kind); };
     window.addEventListener("crystr:encounter", onStart);
     const look = async () => {
       if (document.hidden) return;
       const { data } = await supabase().rpc("cr_enc_mine");
-      const r = data as { id: number } | null;
-      if (r?.id) open(r.id);
+      const r = data as { id: number; kind: string } | null;
+      if (r?.id) open(r.id, r.kind);
     };
     look();
     const t = window.setInterval(look, 3500);
@@ -85,10 +105,16 @@ export function EncounterHost() {
 
   const refresh = useCallback(async () => {
     if (!id) return;
+    if (kind === "quest") {
+      const { data } = await supabase().rpc("cr_quest_view", { p_id: id });
+      const q = data as QuestView | null;
+      if (q?.ok) setQuest((old) => (old && old.id === q.id && old.seq === q.seq ? old : q));
+      return;
+    }
     const { data } = await supabase().rpc("cr_enc_view", { p_id: id });
     const v = data as View | null;
     if (v?.ok) setView((old) => (old && old.id === v.id && old.seq === v.seq && v.stage !== "shadow" ? old : v));
-  }, [id]);
+  }, [id, kind]);
 
   useEffect(() => {
     if (!id) return;
@@ -108,8 +134,19 @@ export function EncounterHost() {
     if (id) closed.current.add(id);
     setId(null);
     setView(null);
+    setQuest(null);
+  }, [id]);
+  const answer = useCallback(async (yes: boolean) => {
+    if (!id) return;
+    await supabase().rpc("cr_quest_answer", { p_id: id, p_yes: yes });
+    await refresh();
+  }, [id, refresh]);
+  const end = useCallback(async () => {
+    if (!id) return;
+    await supabase().rpc("cr_quest_end", { p_id: id });
   }, [id]);
 
+  if (id && kind === "quest") return quest && quest.id === id ? <QuestAskScreen v={quest} close={close} answer={answer} end={end} /> : null;
   if (!id || !view || view.id !== id) return null;
   return view.kind === "trade" ? <TradeScreen v={view} act={act} close={close} /> : <BattleScreen v={view} act={act} close={close} />;
 }

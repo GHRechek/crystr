@@ -2060,3 +2060,18 @@ select.input { border: 0; }
 .nudge-bar:focus-visible { outline: 2px solid var(--pur-bright); outline-offset: 2px; }
 .nudge-mid { position: absolute; left: 4px; right: 4px; top: 50%; height: 2px; margin-top: -1px; background: var(--edge); }
 .nudge-knob { position: absolute; left: 2px; right: 2px; top: var(--at); height: 12px; margin-top: -6px; background: var(--pur-bright); box-shadow: 2px 2px 0 #0a0616; }
+
+/* The quest ask: the one asked sees the asker's head, gently rocking, and holds the key. */
+.qa-middle { position: relative; z-index: 3; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.qa-head { line-height: 0; transform-origin: 50% 85%; }
+.qa-head img { display: block; width: 220px; height: 220px; image-rendering: pixelated; filter: drop-shadow(4px 4px 0 #160b2e); pointer-events: none; }
+.qa-rock { animation: qa-rock 3.6s ease-in-out infinite; }
+@keyframes qa-rock { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } }
+.qa-bounce { animation: qa-bounce .9s steps(4) infinite; }
+@keyframes qa-bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+.qa-note { font-size: 12px; color: #ffe38b; text-align: center; line-height: 1.6; text-shadow: 2px 2px 0 #160b2e; }
+.qa-quest { display: flex; align-items: center; gap: 10px; background: rgba(22, 11, 46, .55); padding: 8px 12px; max-width: 320px; }
+.qa-timer { width: 160px; height: 6px; background: rgba(22, 11, 46, .6); position: relative; z-index: 4; }
+.qa-timer i { display: block; height: 100%; background: #ffe38b; transition: width 1s linear; }
+.qa-done { background: #3a64cc; color: #fff; border: 0; font-size: 13px; padding: 12px 34px; box-shadow: 3px 3px 0 #160b2e; cursor: pointer; }
+@media (prefers-reduced-motion: reduce) { .qa-rock, .qa-bounce { animation: none; } }

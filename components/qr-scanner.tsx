@@ -5,8 +5,8 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import jsQR from "jsqr";
 import { BadgeArt } from "@/components/badges";
-import { claimBadge, claimHelp, scanPerson, type Scanned } from "@/lib/actions";
-import { startEncounter, type Stake } from "@/components/encounter";
+import { scanPerson, type Scanned } from "@/lib/actions";
+import { startEncounter, startQuestAsk, type Stake } from "@/components/encounter";
 import { targetLabel } from "@/lib/species";
 
 /** The camera, full screen, looking for another person's CRYSTR code. A code that points at a
@@ -52,9 +52,16 @@ export function QrScanner({ onClose, tradesHref, waiting, mode = "general", only
           if (h) {
             stop = true;
             stream?.getTracks().forEach((t) => t.stop());
-            scanPerson(h, mode === "quest").then(async (p) => {
+            scanPerson(h, mode === "quest" && !only).then(async (p) => {
               if (p === "self") return setErr("That is your own code. Scan someone else's. Close this and try again.");
               if (!p) return setErr("That person is not in the City. Close this and scan again.");
+              // A quest picked first: ask them straight away, on both phones.
+              if (mode === "quest" && only) {
+                const why = await startQuestAsk(only, p.id);
+                if (why) setErr(why);
+                else onClose();
+                return;
+              }
               if (!intent) return setFound(p);
               const why = await startEncounter(intent, p.id, stake);
               if (why) setErr(why);
@@ -140,15 +147,7 @@ export function QrScanner({ onClose, tradesHref, waiting, mode = "general", only
                 {mode === "quest" ? null : <button type="button" className="btn btn-sm" onClick={() => setView("pick")} style={{ minHeight: 36 }}>← BACK</button>}
                 <span className="px" style={{ fontSize: 11, color: "var(--pur-soft)" }}>WHAT HAPPENED WITH THEM?</span>
               </div>
-              {only === "a-helping-hand" ? (
-                <>
-                  <div style={{ fontSize: 12.5, lineHeight: 1.5, color: "var(--muted)" }}>They showed you their code, so it counts straight away. Every three helps bring a good Historikal.</div>
-                  <form action={async (fd) => { await claimHelp(fd); setSent((x) => [...x, "a-helping-hand"]); }}>
-                    <input type="hidden" name="other_id" value={found.id} />
-                    <button type="submit" disabled={sent.includes("a-helping-hand")} className="btn btn-purple btn-block" style={{ minHeight: 48 }}>{sent.includes("a-helping-hand") ? "COUNTED ✓" : "I HELPED THEM"}</button>
-                  </form>
-                </>
-              ) : shown.length === 0 ? (
+              {shown.length === 0 ? (
                 <div className="empty">{only ? `${found.handle.toUpperCase()} CANNOT BE PART OF THIS ONE` : "NO QUESTS YOU CAN DO WITH THEM RIGHT NOW"}</div>
               ) : (
                 <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: 6 }}>
@@ -157,13 +156,12 @@ export function QrScanner({ onClose, tradesHref, waiting, mode = "general", only
                     return (
                       <li key={q.slug}>
                         <form
-                          action={async (fd) => {
-                            await claimBadge(fd);
-                            setSent((x) => [...x, q.slug]);
+                          action={async () => {
+                            const why = await startQuestAsk(q.slug, found.id);
+                            if (why) setErr(why);
+                            else { setSent((x) => [...x, q.slug]); onClose(); }
                           }}
                         >
-                          <input type="hidden" name="slug" value={q.slug} />
-                          <input type="hidden" name="other_id" value={found.id} />
                           <button type="submit" disabled={done} style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, textAlign: "left", padding: "8px 10px", background: "var(--blk)", border: `1px solid ${done ? "var(--pur)" : "var(--edge)"}`, borderRadius: "var(--px-r)", color: "inherit", font: "inherit", cursor: done ? "default" : "pointer", opacity: done ? 0.7 : 1 }}>
                             <span style={{ flex: "none", lineHeight: 0 }}>
                               <BadgeArt b={{ art: q.art, slug: q.slug, tiers: q.tiers }} got={false} tier={0} size={42} />
@@ -172,7 +170,7 @@ export function QrScanner({ onClose, tradesHref, waiting, mode = "general", only
                               <span className="px" style={{ display: "block", fontSize: 11, lineHeight: 1.5 }}>{q.title}</span>
                               <span style={{ display: "block", fontSize: 12, lineHeight: 1.4, color: "var(--muted)" }}>{q.how}</span>
                             </span>
-                            <span className="px" style={{ flex: "none", fontSize: 11, color: "var(--pur-pale)" }}>{done ? "DONE ✓" : "COMPLETE →"}</span>
+                            <span className="px" style={{ flex: "none", fontSize: 11, color: "var(--pur-pale)" }}>{done ? "ASKED" : "ASK →"}</span>
                           </button>
                         </form>
                       </li>
@@ -190,7 +188,7 @@ export function QrScanner({ onClose, tradesHref, waiting, mode = "general", only
       </div>
       )}
       <div style={{ padding: "14px 16px 22px", fontSize: 12.5, lineHeight: 1.5, color: err ? "var(--mag-soft)" : "var(--pur-pale)", textAlign: "center", background: "#2b1f4f" }}>
-        {found ? (view === "quests" ? "They showed you their code: whatever you pick counts right away." : "") : err ?? (mode === "quest" ? (title ? `${title}: ${how ?? ""} Point the camera at their code.` : "Point the camera at their code to see which quests you can do with them.") : "Point the camera at the code on someone's profile menu.")}
+        {found ? (view === "quests" ? err ?? "Pick one: it opens on their phone, and they hold the key." : "") : err ?? (mode === "quest" ? (title ? `${title}: ${how ?? ""} Point the camera at their code: it opens on their phone, and they have thirty seconds to give you the key. (They show their code from ME: tap their picture.)` : "Point the camera at their code to see which quests you can do with them.") : "Point the camera at the code on someone's profile menu.")}
       </div>
     </div>
   );

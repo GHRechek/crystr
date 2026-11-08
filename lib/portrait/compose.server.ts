@@ -38,7 +38,8 @@ function cell(relPath: string): Uint8ClampedArray | null {
   return out;
 }
 
-export function composePortrait(config: PortraitConfig): Buffer {
+/** The face, drawn. `bare`: just the head, on nothing (no background colour). */
+export function composePortrait(config: PortraitConfig, { bare = false }: { bare?: boolean } = {}): Buffer {
   const sw = swatchesOf(config);
   const palette = paletteFor(sw);
   const scalp = scalpFor(sw);
@@ -54,7 +55,7 @@ export function composePortrait(config: PortraitConfig): Buffer {
     out[i] = br;
     out[i + 1] = bgg;
     out[i + 2] = bb;
-    out[i + 3] = 255;
+    out[i + 3] = bare ? 0 : 255;
   }
 
   for (const path of drawPlan(config)) {
@@ -93,12 +94,18 @@ export function composePortrait(config: PortraitConfig): Buffer {
           out[d] = r;
           out[d + 1] = g;
           out[d + 2] = b;
+          out[d + 3] = 255;
           continue;
         }
+        // Over what's there: on the background (opaque) this is the plain blend it always was; on
+        // nothing (a bare head) the colour is the art's own and it takes on the art's alpha.
         const al = a / 255;
-        out[d] = r * al + out[d] * (1 - al);
-        out[d + 1] = g * al + out[d + 1] * (1 - al);
-        out[d + 2] = b * al + out[d + 2] * (1 - al);
+        const da = out[d + 3] / 255;
+        const oa = al + da * (1 - al);
+        out[d] = (r * al + out[d] * da * (1 - al)) / oa;
+        out[d + 1] = (g * al + out[d + 1] * da * (1 - al)) / oa;
+        out[d + 2] = (b * al + out[d + 2] * da * (1 - al)) / oa;
+        out[d + 3] = Math.round(oa * 255);
       }
     }
   }
