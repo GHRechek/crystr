@@ -156,6 +156,28 @@ export function BadgeViewer({
                   : "Drag between slots to rearrange. Drag one out, or tap it, to take it off.")}
             </div>
           </div>
+        ) : pick.length ? (
+          // Someone else's: their display as they set it, badges and Historikals, the lineup numbered. Tap one to read it.
+          <div style={{ padding: inline ? "0 0 10px" : "0 16px 10px", display: "flex", flexDirection: "column", gap: 6 }}>
+            <div className="px" style={{ fontSize: 10, color: "#e0398a" }}>THEIR DISPLAY{lineup.length ? ` · LINEUP ${lineup.length}/${LINEUP}` : ""}</div>
+            <div style={{ display: "flex", gap: 6, justifyContent: "space-between", paddingBottom: 12 }}>
+              {slots.map((k, i) => {
+                const b = byKey(k);
+                const ko = (b?.hk?.hp ?? 1) <= 0;
+                const n = k ? lineup.indexOf(k) : -1;
+                return (
+                  <div key={i} className="bv-slot" style={{ outline: b ? "none" : undefined }}>
+                    {b ? (
+                      <button type="button" onClick={() => tap(b)} aria-label={`${b.title}. ${b.line}`} className="bv-item" style={{ filter: ko ? "grayscale(1) brightness(.6)" : undefined }}>
+                        <BadgeFace b={b} size={50} />
+                      </button>
+                    ) : null}
+                    {n >= 0 ? <span className="px bv-n" style={{ color: ko ? "#ff5a7a" : "#e0398a" }}>{ko ? "KO" : `LINEUP ${n + 1}`}</span> : null}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         ) : null}
 
         <div className="seg" style={{ margin: inline ? 0 : "0 16px" }}>
@@ -187,7 +209,8 @@ export function BadgeViewer({
           {list.length ? (
             <div style={{ display: "flex", flexWrap: "wrap", gap: "14px 10px" }}>
               {list.map((b, i) => {
-                const on = pick.includes(b.key);
+                // Already in your display: faded in the grid, while you are choosing.
+                const on = !!editable && pick.includes(b.key);
                 return (
                   <div key={b.key} style={{ position: "relative", flex: "none", width: 80, display: "flex", flexDirection: "column", alignItems: "center", gap: 6, opacity: on ? 0.35 : 1 }}>
                     <button
