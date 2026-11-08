@@ -180,13 +180,16 @@ export function BadgeViewer({
           </div>
         ) : null}
 
+        {/* Someone else's Historikals stay private beyond the ones in their display: no tab for the rest. */}
         <div className="seg" style={{ margin: inline ? 0 : "0 16px" }}>
           <button type="button" data-on={tab === 0} onClick={() => setTab(0)}>
             EARNED · {earned.length}
           </button>
-          <button type="button" data-on={tab === 1} onClick={() => setTab(1)}>
-            HISTORIKALS · {tradable.length}
-          </button>
+          {editable ? (
+            <button type="button" data-on={tab === 1} onClick={() => setTab(1)}>
+              HISTORIKALS · {tradable.length}
+            </button>
+          ) : null}
         </div>
 
         <div style={{ minHeight: 56, padding: inline ? "10px 0 4px" : "10px 16px 4px" }} aria-live="polite">

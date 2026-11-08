@@ -85,7 +85,8 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
                 compact
                 shown={shown}
                 earned={achievementGrid(earned)}
-                tradable={resolveShown(items.filter((i) => i.kind === "tradable").map((i) => `i:${i.id}`), badges, items, person.handle, 10000)}
+                // Only the Historikals they show (their front three): the rest of their collection is theirs to keep to themselves.
+                tradable={shown.filter((b) => b.hk)}
               />
           </div>
         </div>
