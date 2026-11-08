@@ -59,6 +59,7 @@
 
 html,
 body {
+  overscroll-behavior: none;
   touch-action: manipulation;
   -webkit-text-size-adjust: 100%;
   margin: 0;
@@ -265,6 +266,8 @@ select {
   overflow-y: auto;
   position: relative;
   scrollbar-width: none;
+  /* No rubber band: pulling down at the top doesn't drag the page (a profile's banner) away from the header. */
+  overscroll-behavior-y: none;
 }
 .screen::-webkit-scrollbar {
   width: 0;
