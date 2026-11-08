@@ -879,6 +879,9 @@ select {
   background: var(--surface-2);
   box-shadow: 0 0 0 1px var(--edge-hover);
 }
+/* Someone else's thought: the same bubble, but it's only to read. */
+.thought-still { cursor: default; }
+.thought-still:hover { background: var(--surface); box-shadow: 0 0 0 1px var(--edge); }
 .thought::before,
 .thought::after {
   content: "";

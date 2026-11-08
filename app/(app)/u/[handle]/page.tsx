@@ -61,9 +61,17 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
 
   return (
     <div style={{ paddingBottom: 24 }}>
-      <div style={{ height: 96, ...bannerStyle(bannerOf(person)) }} />
+      {/* The banner, and their thought floating in it with its tail stepping down to the face, as on your own. */}
+      <div style={{ position: "relative" }}>
+        <div style={{ height: 112, ...bannerStyle(bannerOf(person)) }} />
+        {person.mood ? (
+          <div className="thought thought-still" style={{ position: "absolute", left: 104 + 28, right: 16, bottom: 30 }}>
+            <span>{corrupt(person.mood, decay)}</span>
+          </div>
+        ) : null}
+      </div>
 
-      <div style={{ padding: "0 16px", marginTop: -44, position: "relative", display: "flex", flexDirection: "column", gap: 12 }}>
+      <div style={{ padding: "0 16px", marginTop: -52, position: "relative", zIndex: 1, display: "flex", flexDirection: "column", gap: 12 }}>
         <div style={{ display: "flex", alignItems: "flex-end", gap: 12 }}>
           {me.is_witch ? (
             <WitchFace person={person} species={person.species} quests={questGrid(badges).filter((b) => b.locked)} />
@@ -81,10 +89,6 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
               />
           </div>
         </div>
-
-        {person.mood ? (
-          <div style={{ fontSize: 13, fontStyle: "italic", color: "var(--text-3)" }}>“{corrupt(person.mood, decay)}”</div>
-        ) : null}
 
         <div style={{ display: "flex", gap: 8 }}>
           <Link href="/" className="btn btn-sm" style={{ minHeight: 40 }}>
