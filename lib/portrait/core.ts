@@ -245,10 +245,10 @@ export const NUDGES: { control: string; key: string; sheets: string[] }[] = [
   { control: "mouth", key: "mouth_y", sheets: ["Mouths"] },
 ];
 /** How far a part can move, each way. */
-export const NUDGE_MAX = 4;
+export const NUDGE_MAX = 3;
 const nudgeOf = (c: PortraitConfig, key: string) => {
   const n = Number(c[key] ?? 0);
-  return Number.isInteger(n) && Math.abs(n) <= NUDGE_MAX ? n : 0;
+  return Number.isInteger(n) ? Math.max(-NUDGE_MAX, Math.min(NUDGE_MAX, n)) : 0;
 };
 /** How far a sheet's cell is drawn from its place on this face, in pixels down. */
 export function sheetOffset(c: PortraitConfig, sheet: string): number {
