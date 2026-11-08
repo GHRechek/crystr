@@ -126,8 +126,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         )}
 
         <main className="screen">
-          {/* Signing up, nothing fades: they need to read the codes. */}
-          {welcoming ? children : <DecayFrame mana={mana} cap={cap}>{children}</DecayFrame>}
+          {/* Signing up, the card stays away (it would sit over the registry), but the fade still follows the meter. */}
+          <DecayFrame mana={mana} cap={cap} card={!welcoming}>{children}</DecayFrame>
         </main>
 
         {flash ? <Toast flash={flash} /> : null}

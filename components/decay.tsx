@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { DECAY_FILTER, DECAY_NOTE, SCAN_OPACITY, decayLevel } from "@/lib/crystr";
 
 const DISMISSED = "crystr.signal-dismissed";
@@ -19,6 +19,10 @@ const DISMISSED = "crystr.signal-dismissed";
  *  the scanlines still come, but not the card: before registering the Well is
  *  closed, so RECOVER would lead nowhere, and a new arrival's 5 of 10 would
  *  otherwise put the card over the registry and over the breach. */
+/** How far gone the signal is (0 to 3), for anything on the page that eats its own letters: corrupt(text, useDecay()). */
+const DecayLevel = createContext(0);
+export const useDecay = () => useContext(DecayLevel);
+
 export function DecayFrame({ mana, cap, card = true, children }: { mana: number; cap?: number; card?: boolean; children: ReactNode }) {
   const level = decayLevel(mana, cap);
   // Hidden until we know it was not already put away, so it never flashes on.
@@ -43,10 +47,10 @@ export function DecayFrame({ mana, cap, card = true, children }: { mana: number;
     }
   }
 
-  if (level === 0) return <>{children}</>;
+  if (level === 0) return <DecayLevel.Provider value={0}>{children}</DecayLevel.Provider>;
 
   return (
-    <>
+    <DecayLevel.Provider value={level}>
       <div className="scanlines" style={{ opacity: SCAN_OPACITY[level] }} />
       {shown ? (
         <div className="signal-float">
@@ -78,6 +82,6 @@ export function DecayFrame({ mana, cap, card = true, children }: { mana: number;
       ) : null}
       {/* A page that fills the screen (the face maker, which keeps its face pinned that way) makes this as tall as the screen. */}
       <div className="decay-wrap" style={{ filter: DECAY_FILTER[level] }}>{children}</div>
-    </>
+    </DecayLevel.Provider>
   );
 }

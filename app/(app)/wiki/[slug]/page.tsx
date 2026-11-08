@@ -75,8 +75,7 @@ export default async function WikiPageView(props: { params: Promise<{ slug: stri
   }
   const homes = shelf.filter((p) => !below.has(p.id) && !p.archived).sort((a, b) => a.title.localeCompare(b.title, undefined, { sensitivity: "base" }));
   const witch = profile.is_witch;
-  // Signing up, the wiki is where the codes are: it reads clean until they're registered.
-  const decay = profile.onboarded === false ? 0 : decayLevel(profile.mana, capOf(profile));
+  const decay = decayLevel(profile.mana, capOf(profile));
   const paused = page.locked && !witch;
   // Low on mana, numbers break first, then letters; witches read everything (lib/wiki-mask.ts).
   const mask = (t: string) => wikiText(t, decay, witch);

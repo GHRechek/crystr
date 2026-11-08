@@ -5,6 +5,8 @@ import { BadgeFace } from "@/components/badge-chooser";
 import { setShownBadges } from "@/lib/actions";
 import { HistorikalCard } from "@/components/historikal-card";
 import { SHOW_MAX, type ShownBadge } from "@/lib/badges";
+import { useDecay } from "@/components/decay";
+import { corrupt } from "@/lib/crystr";
 
 /** Historikals in the display are your lineup: the three you battle with. */
 const LINEUP = 3;
@@ -34,6 +36,7 @@ export function BadgeViewer({
   /** Sit in the page instead of covering it: no close button, and the page scrolls. */
   inline?: boolean;
 }) {
+  const decay = useDecay();
   const [tab, setTab] = useState(0);
   const [slots, setSlots] = useState<(string | null)[]>(() => Array.from({ length: SHOW_MAX }, (_, i) => current[i] ?? null));
   const [last, setLast] = useState<ShownBadge | null>(null);
@@ -168,10 +171,10 @@ export function BadgeViewer({
           {last ? (
             <>
               <div className="px" style={{ fontSize: 11, color: "var(--text)", display: "flex", alignItems: "center", gap: 8 }}>
-                {last.title}
+                {corrupt(last.title, decay)}
                 {last.hk ? <button type="button" className="btn btn-sm" onClick={() => setCard(last)} style={{ minHeight: 26, fontSize: 9, padding: "0 8px" }}>VIEW CARD</button> : null}
               </div>
-              <div style={{ fontSize: 12, lineHeight: 1.4, color: "var(--muted)" }}>{last.line}</div>
+              <div style={{ fontSize: 12, lineHeight: 1.4, color: "var(--muted)" }}>{corrupt(last.line, decay)}</div>
             </>
           ) : (
             <div style={{ fontSize: 12, lineHeight: 1.4, color: "var(--muted)" }}>
@@ -196,7 +199,7 @@ export function BadgeViewer({
                     >
                       <BadgeFace b={b} size={63} />
                     </button>
-                    <span className="px" style={{ fontSize: 10, lineHeight: 1.35, color: "var(--muted)", textAlign: "center", overflowWrap: "anywhere" }}>{b.title}</span>
+                    <span className="px" style={{ fontSize: 10, lineHeight: 1.35, color: "var(--muted)", textAlign: "center", overflowWrap: "anywhere" }}>{corrupt(b.title, decay)}</span>
                   </div>
                 );
               })}

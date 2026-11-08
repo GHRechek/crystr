@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { Creature, MoveIcon, Stats } from "@/components/encounter";
 import { HistorikalCard } from "@/components/historikal-card";
+import { useDecay } from "@/components/decay";
+import { corrupt } from "@/lib/crystr";
 import { HISTORIKAL, RARITY_COLOR, type Element, type Rarity } from "@/lib/historikals";
 
 export type HeldHk = { id: number; slug: string; name: string; rarity: Rarity; element: Element; hearts: number; hp: number };
@@ -12,6 +14,7 @@ const RARITIES: Rarity[] = ["legendary", "rare", "uncommon", "common"];
 /** Every Historikal you hold, to look through: your lineup first, then the rest, rarest first. Filter by
  *  rarity; tap one for its card (moves, type, hearts, and healing). */
 export function HistorikalCollection({ list, lineup }: { list: HeldHk[]; lineup: number[] }) {
+  const decay = useDecay();
   const [only, setOnly] = useState<Rarity | null>(null);
   const [card, setCard] = useState<HeldHk | null>(null);
   const rank = (h: HeldHk) => (lineup.includes(h.id) ? -10 + lineup.indexOf(h.id) : RARITIES.indexOf(h.rarity));
@@ -36,7 +39,7 @@ export function HistorikalCollection({ list, lineup }: { list: HeldHk[]; lineup:
               <button type="button" onClick={() => setCard(h)} aria-label={`${h.name}: open its card`} style={{ width: "100%", border: 0, background: "none", color: "inherit", cursor: "pointer", padding: "4px 2px", display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
                 <span className="px" style={{ fontSize: 8.5, color: "#e0398a", minHeight: 10 }}>{n >= 0 ? `LINEUP · ${n + 1}` : ""}</span>
                 <Creature slug={h.slug} size={64} ko={h.hp <= 0} />
-                <span className="px" style={{ fontSize: 10, textAlign: "center", lineHeight: 1.35 }}>{h.name.toUpperCase()}</span>
+                <span className="px" style={{ fontSize: 10, textAlign: "center", lineHeight: 1.35 }}>{corrupt(h.name.toUpperCase(), decay)}</span>
                 <Stats h={h} hp={h.hp} k={2} />
                 <span style={{ display: "flex", gap: 6 }} aria-hidden>
                   {(HISTORIKAL.get(h.slug)?.moves ?? []).map((m) => <MoveIcon key={m.name} kind={m.kind} fill="var(--muted)" />)}

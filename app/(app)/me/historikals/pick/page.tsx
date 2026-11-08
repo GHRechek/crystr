@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { requireMe, getPicksOpen, getLegendariesTaken } from "@/lib/data";
+import { capOf, corrupt, decayLevel } from "@/lib/crystr";
 import { pickHistorikal } from "@/lib/actions";
 import { Creature, Stats } from "@/components/encounter";
 import { HISTORIKALS, HISTORIKAL, type Rarity } from "@/lib/historikals";
@@ -9,7 +10,10 @@ const ORDER: Rarity[] = ["legendary", "rare", "uncommon", "common"];
 
 /** Spending a gifted pick: every Historikal there is, and you choose one. */
 export default async function PickPage({ searchParams }: { searchParams: Promise<{ s?: string }> }) {
-  await requireMe();
+  const { profile } = await requireMe();
+  // Low on mana, the names go the way of every other word in the City.
+  const decay = decayLevel(profile.mana, capOf(profile));
+  const eat = (t: string) => corrupt(t, decay);
   const [picks, taken] = await Promise.all([getPicksOpen(), getLegendariesTaken()]);
   if (picks < 1) redirect("/me/historikals");
   // A legendary someone already has can't be picked: there's only one of each.
@@ -28,9 +32,9 @@ export default async function PickPage({ searchParams }: { searchParams: Promise
       {chosen ? (
         <div style={{ padding: 16, display: "flex", flexDirection: "column", alignItems: "center", gap: 10 }}>
           <Creature slug={chosen.slug} size={96} />
-          <div className="px" style={{ fontSize: 14 }}>{chosen.name.toUpperCase()}</div>
+          <div className="px" style={{ fontSize: 14 }}>{eat(chosen.name.toUpperCase())}</div>
           <Stats h={{ ...chosen, id: 0, hp: chosen.hearts }} />
-          <div className="px" style={{ fontSize: 9.5, color: "var(--muted)", textAlign: "center", lineHeight: 1.6 }}>{chosen.moves.map((m) => m.name.toUpperCase()).join(" · ")}</div>
+          <div className="px" style={{ fontSize: 9.5, color: "var(--muted)", textAlign: "center", lineHeight: 1.6 }}>{eat(chosen.moves.map((m) => m.name.toUpperCase()).join(" · "))}</div>
           <form action={pickHistorikal}>
             <input type="hidden" name="slug" value={chosen.slug} />
             <button type="submit" className="btn" style={{ background: "#e0398a", color: "#fff" }}>TAKE {chosen.name.toUpperCase()}</button>
@@ -44,14 +48,14 @@ export default async function PickPage({ searchParams }: { searchParams: Promise
             {HISTORIKALS.filter((h) => h.rarity === r).map((h) => gone.has(h.slug) ? (
               <li key={h.slug} aria-label={`${h.name}: taken`} style={{ padding: "10px 4px", display: "flex", flexDirection: "column", alignItems: "center", gap: 6, opacity: 0.45 }}>
                 <Creature slug={h.slug} size={56} ko />
-                <span className="px" style={{ fontSize: 9.5, textAlign: "center", lineHeight: 1.4 }}>{h.name}</span>
+                <span className="px" style={{ fontSize: 9.5, textAlign: "center", lineHeight: 1.4 }}>{eat(h.name)}</span>
                 <span className="px" style={{ fontSize: 9, color: "var(--muted)" }}>TAKEN</span>
               </li>
             ) : (
               <li key={h.slug}>
                 <Link href={`/me/historikals/pick?s=${h.slug}`} scroll aria-current={chosen?.slug === h.slug ? "true" : undefined} style={{ textDecoration: "none", color: "inherit", padding: "10px 4px", display: "flex", flexDirection: "column", alignItems: "center", gap: 6, filter: chosen?.slug === h.slug ? "drop-shadow(0 0 6px #f2b544)" : undefined }}>
                     <Creature slug={h.slug} size={56} />
-                    <span className="px" style={{ fontSize: 9.5, textAlign: "center", lineHeight: 1.4 }}>{h.name}</span>
+                    <span className="px" style={{ fontSize: 9.5, textAlign: "center", lineHeight: 1.4 }}>{eat(h.name)}</span>
                     <Stats h={{ ...h, id: 0, hp: h.hearts }} k={2} />
                 </Link>
               </li>
