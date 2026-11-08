@@ -10,6 +10,7 @@ import {
   drawPlan,
   paletteFor,
   scalpFor,
+  sheetOffset,
   swatchesOf,
   type PortraitConfig,
 } from "./core";
@@ -64,9 +65,11 @@ export function composePortrait(config: PortraitConfig): Buffer {
     const layer = path.slice(0, path.indexOf("/"));
     const buzz = scalp && layer === "Cranium" ? scalp : null;
     const alias = LAYER_ALIASES[layer];
+    // A part nudged up or down (the Portrait Maker's sliders) is drawn that far from its place.
+    const shift = sheetOffset(config, layer);
 
     for (let y = 0; y < SIZE; y++) {
-      const dy = y + ART.y;
+      const dy = y + ART.y + shift;
       if (dy < 0 || dy >= FRAME) continue;
 
       for (let x = 0; x < SIZE; x++) {

@@ -7,6 +7,8 @@ import {
   ALLOWED,
   BG_CHOICES,
   CONTROLS,
+  NUDGES,
+  NUDGE_MAX,
   EYE_CHOICES,
   HAIR_CHOICES,
   NONE,
@@ -41,6 +43,12 @@ export function AvatarBuilder({ start, fresh }: { start: PortraitConfig; fresh: 
   }, [c]);
   const scroller = useRef<HTMLDivElement>(null);
   const pick = useCallback((key: string, v: string) => setC((p) => withChoice(p, key, v)), []);
+  // Up or down a few pixels; back to 0 is no nudge at all.
+  const nudge = useCallback((key: string, n: number) => setC((p) => {
+    const out = { ...p };
+    if (n) out[key] = String(n); else delete out[key];
+    return out;
+  }), []);
   // The top above the sides: you pick the top, then the sides that suit it.
   const controls = [...CONTROLS].sort((a, b) => (a.key === "top" && b.key === "hair_back" ? -1 : a.key === "hair_back" && b.key === "top" ? 1 : 0));
 
@@ -106,7 +114,8 @@ export function AvatarBuilder({ start, fresh }: { start: PortraitConfig; fresh: 
 
         {/* Every choice, on your own face, in a row you scroll. Tap one to wear it. */}
         {controls.map((control) => (
-          <ThumbRow key={control.key} control={control} list={listFor(control.key, thumbFace)} selected={c[control.key]} face={thumbFace} onPick={pick} root={scroller} />
+          <ThumbRow key={control.key} control={control} list={listFor(control.key, thumbFace)} selected={c[control.key]} face={thumbFace} onPick={pick} root={scroller}
+            nudge={NUDGES.find((x) => x.control === control.key)?.key} nudged={Number(c[NUDGES.find((x) => x.control === control.key)?.key ?? ""] ?? 0) || 0} onNudge={nudge} />
         ))}
 
         <button type="submit" className="btn btn-lg btn-purple btn-block">
@@ -135,7 +144,7 @@ const STEP = 78;
  *  screen (rows far down don't load until you scroll to them), and only redrawn when the face it
  *  shows, its choices or the one you're wearing change. */
 const ThumbRow = memo(
-  function ThumbRow({ control, list, selected, face, onPick, root }: { control: Control; list: string[]; selected: string; face: PortraitConfig; onPick: (key: string, v: string) => void; root: React.RefObject<HTMLDivElement | null> }) {
+  function ThumbRow({ control, list, selected, face, onPick, root, nudge, nudged = 0, onNudge }: { control: Control; list: string[]; selected: string; face: PortraitConfig; onPick: (key: string, v: string) => void; root: React.RefObject<HTMLDivElement | null>; /** Its up/down key, for a part that moves. */ nudge?: string; nudged?: number; onNudge?: (key: string, n: number) => void }) {
     const ref = useRef<HTMLDivElement>(null);
     const rowRef = useRef<HTMLDivElement>(null);
     // Drawn while near the screen (and not after it scrolls well away), and only the thumbnails in view
@@ -160,7 +169,9 @@ const ThumbRow = memo(
     return (
       <div ref={ref} style={{ borderBottom: "1px solid var(--rule-soft)", padding: "8px 0 4px" }}>
         <div className="px" style={{ fontSize: 11, color: "var(--dim)" }}>{control.label}</div>
-        <div ref={rowRef} onScroll={() => requestAnimationFrame(measure)} style={{ display: "flex", gap: 6, overflowX: "auto", padding: "8px 0 8px", scrollbarWidth: "thin", minHeight: 98 }}>
+        <div style={{ display: "flex", alignItems: "stretch", gap: 8 }}>
+        {nudge && onNudge ? <NudgeBar label={control.label} value={nudged} onChange={(n) => onNudge(nudge, n)} /> : null}
+        <div ref={rowRef} onScroll={() => requestAnimationFrame(measure)} style={{ flex: 1, minWidth: 0, display: "flex", gap: 6, overflowX: "auto", padding: "8px 0 8px", scrollbarWidth: "thin", minHeight: 98 }}>
           {near ? list.map((v, i) => {
             const on = selected === v;
             const name = v === NONE ? "NONE" : control.names?.[v] ?? String(i + 1 - optionals);
@@ -189,8 +200,46 @@ const ThumbRow = memo(
             );
           }) : null}
         </div>
+        </div>
       </div>
     );
   },
-  (a, b) => a.face === b.face && a.selected === b.selected && a.control === b.control && a.list.join() === b.list.join(),
+  (a, b) => a.face === b.face && a.selected === b.selected && a.control === b.control && a.list.join() === b.list.join() && a.nudged === b.nudged,
 );
+
+/** Up or down, as the Portrait Maker's sliders move a part: a bar beside the row. Drag the knob or tap
+ *  the bar; the middle is where the part is drawn. */
+function NudgeBar({ label, value, onChange }: { label: string; value: number; onChange: (n: number) => void }) {
+  const bar = useRef<HTMLDivElement>(null);
+  const steps = NUDGE_MAX * 2;
+  const at = (clientY: number) => {
+    const r = bar.current!.getBoundingClientRect();
+    const f = Math.min(1, Math.max(0, (clientY - r.top) / r.height));
+    onChange(Math.round(f * steps) - NUDGE_MAX);
+  };
+  return (
+    <div
+      ref={bar}
+      role="slider"
+      tabIndex={0}
+      aria-label={`${label} position: up or down`}
+      aria-orientation="vertical"
+      aria-valuemin={-NUDGE_MAX}
+      aria-valuemax={NUDGE_MAX}
+      aria-valuenow={-value}
+      aria-valuetext={value === 0 ? "where it's drawn" : `${Math.abs(value)} ${value < 0 ? "up" : "down"}`}
+      onPointerDown={(e) => { (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId); at(e.clientY); }}
+      onPointerMove={(e) => { if (e.buttons) at(e.clientY); }}
+      onKeyDown={(e) => {
+        if (e.key === "ArrowUp") { e.preventDefault(); onChange(Math.max(-NUDGE_MAX, value - 1)); }
+        if (e.key === "ArrowDown") { e.preventDefault(); onChange(Math.min(NUDGE_MAX, value + 1)); }
+      }}
+      onDoubleClick={() => onChange(0)}
+      className="nudge-bar"
+      style={{ ["--at" as string]: `${((value + NUDGE_MAX) / steps) * 100}%` }}
+    >
+      <span className="nudge-mid" aria-hidden />
+      <span className="nudge-knob" aria-hidden />
+    </div>
+  );
+}

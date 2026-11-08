@@ -235,6 +235,27 @@ export const SHEET_ORDER = [
   "LayeredAccessories",
 ];
 
+/** Parts you can nudge up or down, as the Portrait Maker's sliders do: the control, the sheets that
+ *  move with it, and the key the nudge is kept under (pixels, up negative). */
+export const NUDGES: { control: string; key: string; sheets: string[] }[] = [
+  { control: "ears", key: "ears_y", sheets: ["EarsBack", "EarsFront", "Earrings"] },
+  { control: "eyes", key: "eyes_y", sheets: ["Eyes", "pupils", "Eyeshadow"] },
+  { control: "eyebrows", key: "eyebrows_y", sheets: ["Eyebrows"] },
+  { control: "nose", key: "nose_y", sheets: ["Noses"] },
+  { control: "mouth", key: "mouth_y", sheets: ["Mouths"] },
+];
+/** How far a part can move, each way. */
+export const NUDGE_MAX = 4;
+const nudgeOf = (c: PortraitConfig, key: string) => {
+  const n = Number(c[key] ?? 0);
+  return Number.isInteger(n) && Math.abs(n) <= NUDGE_MAX ? n : 0;
+};
+/** How far a sheet's cell is drawn from its place on this face, in pixels down. */
+export function sheetOffset(c: PortraitConfig, sheet: string): number {
+  const n = NUDGES.find((x) => x.sheets.includes(sheet));
+  return n ? nudgeOf(c, n.key) : 0;
+}
+
 /** The tool's own controls, in the order it lists them. `names` gives an
  *  option a word in the builder instead of a number, where numbers would
  *  mean nothing. */
@@ -368,6 +389,12 @@ export function normalizePortrait(raw: unknown): PortraitConfig {
   // A top that doesn't sit on this back (the pairs can change with the art)
   // falls back to the back's own.
   settleTop(out);
+  // Nudged parts keep their nudge; one left where it was drawn isn't kept at all, so a face nobody
+  // nudged is exactly the face it was.
+  for (const { key } of NUDGES) {
+    const n = nudgeOf(c as PortraitConfig, key);
+    if (n) out[key] = String(n);
+  }
   return out;
 }
 
@@ -510,12 +537,25 @@ export const RENDER = "30";
 
 export function packPortrait(config: PortraitConfig): string {
   const c = normalizePortrait(config);
-  return [RENDER, ...PACK_ORDER.map((k) => ALLOWED[k].indexOf(c[k]).toString(36))].join(".");
+  const parts = [RENDER, ...PACK_ORDER.map((k) => ALLOWED[k].indexOf(c[k]).toString(36))];
+  // Nudges ride on the end, one digit each (0 is NUDGE_MAX up), only when there are any: a face
+  // nobody nudged keeps the address it always had.
+  if (NUDGES.some(({ key }) => nudgeOf(c, key))) parts.push("p" + NUDGES.map(({ key }) => nudgeOf(c, key) + NUDGE_MAX).join(""));
+  return parts.join(".");
 }
 
 export function unpackPortrait(packed: string): PortraitConfig | null {
   if (packed.length > 80) return null;
   const parts = packed.split(".");
+  // The nudges, if this face has any. All zero would be a second address for the plain face.
+  let nudges: number[] | null = null;
+  const last = parts[parts.length - 1];
+  // (A plain field can be "p" too, so only the full nudge shape counts as one.)
+  if (new RegExp(`^p[0-${2 * NUDGE_MAX}]{${NUDGES.length}}$`).test(last ?? "")) {
+    nudges = [...last.slice(1)].map((d) => Number(d) - NUDGE_MAX);
+    if (nudges.every((n) => n === 0)) return null;
+    parts.pop();
+  }
   // Links made before the render was versioned are one segment short; they
   // still describe a real face, so draw it rather than 404.
   if (parts.length === PACK_ORDER.length + 1) {
@@ -535,6 +575,7 @@ export function unpackPortrait(packed: string): PortraitConfig | null {
     if (!Number.isFinite(at) || at < 0 || at >= list.length || parts[i] !== at.toString(36)) return null;
     out[key] = list[at];
   }
+  if (nudges) NUDGES.forEach(({ key }, i) => { if (nudges![i]) out[key] = String(nudges![i]); });
   return out;
 }
 
