@@ -109,12 +109,13 @@ export function AboutBadges({
   const LEAD_PX = 104 / 2 - EVEN;
   const endPx = leads ? LEAD_PX : compact ? Math.round(px * 1.35) : px;
   const nItems = (leads ? 1 : 0) + (token ? 1 : 0) + nBadges + (eyeEnd ? 1 : 0);
-  const shared = leads ? Math.max(22, Math.min(Math.round(px * 0.78), Math.floor((width + PORTRAIT_GAP - EVEN * nItems - endPx - (eyeEnd ? px : 0)) / Math.max(1, nBadges + (token ? 1 : 0))))) : 0;
+  // Four Historikals now: each as tall as the button, packed beside it, rather than spread thin across the row.
+  const shared = leads ? Math.max(22, Math.min(endPx, Math.floor((width + PORTRAIT_GAP - EVEN * nItems - endPx - (eyeEnd ? px : 0)) / Math.max(1, nBadges + (token ? 1 : 0))))) : 0;
   // Elsewhere (someone else's profile) the Proof leads, a size up, and the badges step down to fit.
   const tokPx = leads ? shared : compact ? Math.round(px * 1.35) : px;
   const badgePx = leads
     ? shared
-    : compact ? Math.max(22, Math.min(Math.round(px * 0.82), Math.floor((width - gap * (Math.max(4, nBadges) + 1) - endPx - (token ? tokPx : 0)) / Math.max(4, nBadges)))) : px;
+    : compact ? Math.max(22, Math.min(px, Math.floor((width - EVEN * (Math.max(4, nBadges) + 1) - endPx - (token ? tokPx : 0)) / Math.max(4, nBadges)))) : px;
   const endBtn: React.CSSProperties = compact
     ? // Its bottom sits on the portrait's (the row is lowered 6px, so it rises 6px back), and the space after
       // it matches the 11px between it and the portrait.
@@ -200,7 +201,7 @@ export function AboutBadges({
       ) : null;
 
   return (
-    <div ref={box} style={{ position: "relative", display: "flex", flexWrap: compact ? "nowrap" : "wrap", alignItems: "center", justifyContent: compact ? "space-between" : undefined, gap: leads ? EVEN : compact ? gap : 6 }}>
+    <div ref={box} style={{ position: "relative", display: "flex", flexWrap: compact ? "nowrap" : "wrap", alignItems: "center", gap: compact ? EVEN : 6 }}>
       {compact ? tradeEl : null}
       {token ? (
         <button
