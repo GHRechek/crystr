@@ -140,263 +140,262 @@ knight|KNIGHT|rare|ward|spirit|3|1138|0|0|Boulder Fist:sword;Halo:spell;Brace:ar
 monk|MONK|common|spirit|fire|2|1139|0|0|Halo Strike:sword;Heat Haze:armor
 hedge-witch|HEDGE WITCH|uncommon|dark|spirit|3|1140|0|0|Shadow Claw:sword;Ether Guard:armor
 blacksmith|BLACKSMITH|uncommon|ward|fire|3|1141|0|0|Strike:sword;Kindle:spell
-jesterae|JESTERAE|rare|spirit|dark|3|1142|0|0|Smite:sword;Curse:spell;Ether Guard:armor
-jester|MAEJESTRE|rare|spirit|dark|3|1143|0|0|Ghost Touch:sword;Wail:spell;Ether Guard:armor
-the-king|THE KING|legendary|spirit|fire|4|1144|0|0|Smite:sword;Fireball:spell;Aegis:armor
-elf-archer|ELF ARCHER|common|spirit|nature|2|1145|0|0|Halo Strike:sword;Burrow:armor
-elf-lancer|ELF LANCER|rare|spirit|ward|3|1146|0|0|Spirit Lance:sword;War Cry:spell;Glow Veil:armor
-wood-elf|WOOD ELF|common|feral|nature|2|1147|0|0|Maul:sword;Husk:armor
-basic-ass-elf|BASIC ASS ELF|uncommon|spirit|nature|3|1148|0|0|Spirit Lance:sword;Thorn Rain:spell
-moss-elf|MOSS ELF|uncommon|nature|dark|3|1149|0|0|Leaf Blade:sword;Blight:spell
-drow-hunter|DROW HUNTER|rare|dark|tide|3|1150|0|0|Bone Rattle:sword;Tidal Wave:spell;Grave Guard:armor
-elf-priestess|ELF PRIESTESS|rare|spirit|fire|3|1151|0|0|Spirit Lance:sword;Pyre:spell;Sanctuary:armor
-the-oldest-elf|THE OLDEST ELF|legendary|spirit|nature|4|1152|0|0|Halo Strike:sword;Thorn Rain:spell;Phase:armor
-a-single-gorilla|A SINGLE GORILLA|rare|ward|feral|3|1153|0|0|Hammer Down:sword;Snarl:spell;Bulwark:armor
-troll|TROLL|common|feral|ward|2|1154|0|0|Rumble:spell;Stone Wall:armor
-hulking-troll|HULKING TROLL|uncommon|feral|ward|3|1155|0|0|Gnaw:sword;Stone Hex:spell
-skinny-troll|SKINNY TROLL|common|feral|ward|2|1156|1|0|Rend:sword;Battle Hymn:spell
-redmane-troll|REDMANE TROLL|rare|feral|ward|3|1157|0|0|Rend:sword;Rune Rock:spell;Dodge:armor
-big-nose-troll|BIG-NOSE TROLL|uncommon|feral|ward|3|1158|0|0|Gnaw:sword;War Cry:spell
-boulder-troll|BOULDER TROLL|uncommon|feral|ward|3|1159|0|0|Fang:sword;Stone Wall:armor
-frost-troll|FROST TROLL|rare|tide|feral|3|1160|0|0|Splash Jab:sword;Roar:spell;Shell Up:armor
-four-eyed-troll|FOUR-EYED TROLL|epic|feral||4|1161|0|0|Tusk:sword;Snarl:spell;Bristle:armor
-demon|DEMON|common|dark|fire|2|1162|0|0|Grim Reap:sword;Smoke Veil:armor
-devil|DEVIL|common|fire|dark|2|1163|0|0|Flare Kick:sword;Curse:spell
-blue-devil|BLUE DEVIL|common|feral|tide|2|1164|0|0|Bite:sword;Frost Coat:armor
-winged-devil|WINGED DEVIL|rare|fire|feral|3|1165|0|0|Ember Claw:sword;Frenzy:spell;Soot Screen:armor
-pitchy-devil|PITCHY DEVIL|uncommon|fire|feral|3|1166|0|0|Flame Slash:sword;Snarl:spell
-little-devil|LITTLE DEVIL|common|fire|feral|2|1167|0|0|Flame Slash:sword;Bristle:armor
-forky-devil|FORKY DEVIL|common|fire|feral|2|1168|0|0|Searing Jab:sword;Musk:spell
-contract-devil|CONTRACT DEVIL|uncommon|fire|dark|3|1169|0|0|Ember Claw:sword;Veil:armor
-stone-devil|STONE DEVIL|common|ward|fire|2|1170|0|0|Strike:sword;Ember Rain:spell
-dragondra|DRAGONDRA|epic|fire|ward|4|1171|1|0|Blaze Fang:sword;Rune Rock:spell;Cinder Wall:armor
-red-dragon|ANCIENT WYRM|legendary|fire|ward|4|1172|1|0|Flame Slash:sword;Inferno:spell;Smoke Veil:armor
-griffin|GRIFFIN|rare|feral|spirit|3|1173|0|0|Bite:sword;Sun Flare:spell;Bristle:armor
-peryton|PERYTON|uncommon|dark|feral|3|1174|0|0|Gloom Jab:sword;Bristle:armor
-gremlin|GREMLIN|common|dark|spirit|2|1175|0|0|Hex:spell;Shroud:armor
-shadow-gremlin|SHADOW GREMLIN|common|dark|fire|2|1176|0|0|Shadow Claw:sword;Ember Guard:armor
-little-gremlin|LITTLE GREMLIN|common|dark|fire|2|1177|0|0|Shadow Claw:sword;Soot Screen:armor
-gun-gremlin|GUN GREMLIN|rare|ward|fire|3|1178|0|0|Hammer Down:sword;Inferno:spell;Iron Skin:armor
-sneaky-gremlin|SNEAKY GREMLIN|common|dark|spirit|2|1179|0|0|Dusk Fang:sword;Blessing:spell
-frosty-gremlin|FROSTY GREMLIN|uncommon|dark|tide|3|1180|0|0|Night Slash:sword;Tidal Wave:spell
-chubby-gremlin|CHUBBY GREMLIN|rare|dark|fire|3|1181|0|0|Dusk Fang:sword;Heat Wave:spell;Shroud:armor
-aquaticman|FISHMAN|common|tide|feral|2|1182|0|0|Lash:sword;Tidal Wave:spell
-mermaid|MERMAID|common|tide|spirit|2|1183|0|0|Undertow:sword;Sanctuary:armor
-mermiss|MERMISS|common|tide|spirit|2|1184|0|0|Wave Cut:sword;Radiance:spell
-eely-fishman|EELY FISHMAN|uncommon|nature|tide|3|1185|0|0|Sting:sword;Rain Call:spell
-brawny-fishman|BRAWNY FISHMAN|uncommon|tide|feral|3|1186|0|0|Undertow:sword;Howl:spell
-siren|SIREN|common|tide|dark|2|1187|0|0|Lash:sword;Shroud:armor
-manfish|MANFISH|rare|tide|dark|3|1188|0|0|Riptide:sword;Wail:spell;Foam Shield:armor
-yeti|LIL YETI|common|tide|feral|2|1189|0|0|Brine Bite:sword;Scurry:armor
-fluffy-yeti|FLUFFY YETI|common|tide|feral|2|1190|0|0|Wave Cut:sword;Screech:spell
-horned-yeti|HORNED YETI|common|tide|ward|2|1191|0|0|Brine Bite:sword;Sandstorm:spell
-abominable-yeti|ABOMINABLE YETI|rare|tide|fire|3|1192|0|0|Lash:sword;Pyre:spell;Wave Guard:armor
-nightmare|NIGHTMARE|common|dark|spirit|2|1193|0|0|Gloom Jab:sword;Phase:armor
-three-eyed-nightmare|THREE-EYED NIGHTMARE|uncommon|dark|spirit|3|1194|0|0|Dusk Fang:sword;Blessing:spell
-horned-nightmare|HORNED NIGHTMARE|common|dark|spirit|2|1195|0|0|Shadow Claw:sword;Blessing:spell
-grinning-nightmare|GRINNING NIGHTMARE|common|dark|spirit|2|1196|0|0|Grim Reap:sword;Sun Flare:spell
-snake-01|GREEN SNAKE|common|nature|spirit|2|1197|0|0|Pounce:sword;Leaf Guard:armor
-snake-02|VIPER|common|feral|nature|2|1198|0|0|Thorn Lash:sword;Vine Hex:spell
-snake-blue|BLUE SNAKE|common|tide|ward|2|1199|0|0|Tide Strike:sword;Ice Wall:armor
-snake-brown|BROWN SNAKE|common|feral|nature|2|1200|0|0|Thorn Lash:sword;Spore Cloud:spell
-burning-skeleton|BURNING SNAKE|uncommon|fire|nature|3|1201|0|0|Fireball:spell;Smoke Veil:armor
-gargoyle|LIL GARGOYLE|common|ward|dark|2|1202|0|0|Quake Stomp:sword;Sandstorm:spell
-gargoyle-2010|GARGOYLE|uncommon|ward|dark|3|1203|0|0|Hammer Down:sword;Hex:spell
-perched-gargoyle|PERCHED GARGOYLE|rare|ward|dark|3|1204|0|0|Quake Stomp:sword;Dread:spell;Hunker:armor
-ant|ANT|common|nature|feral|2|1205|0|0|Thorn Lash:sword;Spore Cloud:spell
-aquatic-elf|AQUATIC ELF|uncommon|tide|nature|3|1206|0|0|Tide Strike:sword;Ice Wall:armor
-axe-minotaur|AXE MINOTAUR|rare|ward|feral|3|1207|0|0|Strike:sword;Roar:spell;Bulwark:armor
-banshee|BANSHEE|uncommon|dark|tide|3|1208|0|0|Hex:spell;Grave Guard:armor
-bat|BAT|common|dark|feral|2|1209|0|0|Bite:sword;Screech:spell
-bee|BEE|common|feral|spirit|2|1210|0|0|Thorn Lash:sword;Spore Cloud:spell
-blood-fiend|BLOOD FIEND|rare|fire|dark|3|1211|0|0|Scorch:sword;Wail:spell;Flame Cloak:armor
-bone-shaman|BONE SHAMAN|rare|dark|ward|3|1212|0|0|Bone Rattle:sword;Rally:spell;Gloom Wall:armor
-bone-weaver|BONE WEAVER|rare|spirit|ward|3|1213|0|0|Radiant Jab:sword;War Cry:spell;Ether Guard:armor
-brain-sucker|BRAIN SUCKER|uncommon|dark|tide|3|1214|0|0|Fang:sword;Hex:spell
-bronze-golem|BRONZE GOLEM|rare|fire|ward|3|1215|0|0|Searing Jab:sword;Battle Hymn:spell;Heat Haze:armor
-man-bull|MAN BULL|rare|feral|spirit|3|1216|0|0|Tusk:sword;Halo:spell;Curl Up:armor
-chaos-screamer|CHAOS SCREAMER|uncommon|dark|feral|3|1217|0|0|Ember Claw:sword;Inferno:spell
-manchimera|MANCHIMERA|legendary|fire|nature|4|1218|0|0|Cinder Bite:sword;Pollen Burst:spell;Smoke Veil:armor
-clockwork-knight|CLOCKWORK KNIGHT|rare|ward|fire|3|1219|0|0|Lunge:sword;Pyre:spell;Parry:armor
-crabman|CRABMAN|uncommon|fire|tide|3|1220|0|0|Bubble Hex:spell;Ice Wall:armor
-thick-demon|THICK DEMON|rare|fire|dark|3|1221|0|0|Flare Kick:sword;Wail:spell;Ember Guard:armor
-dark-elf-mage|ELF MAGE|uncommon|tide|spirit|3|1222|0|0|Hex:spell;Fade:armor
-dark-knight|DARK KNIGHT|legendary|dark|feral|4|1223|0|0|Dusk Fang:sword;Roar:spell;Shroud:armor
-death-knight|DEATH KNIGHT|legendary|dark|feral|4|1224|0|0|Fang:sword;Wail:spell;Grave Guard:armor
-deep-kraken|DEEP KRAKEN|rare|tide|nature|3|1225|0|0|Brine Bite:sword;Pollen Burst:spell;Wave Guard:armor
-the-deep-one|THE DEEP ONE|legendary|dark|tide|4|1226|0|0|Bone Rattle:sword;Ice Shard:spell;Grave Guard:armor
-demon-queen|DEMON QUEEN|legendary|fire|dark|4|1227|0|0|Blaze Fang:sword;Curse:spell;Soot Screen:armor
-bill|BILL|legendary|feral|fire|4|1228|0|0|Fang:sword;Inferno:spell;Dodge:armor
-displacer-beast|DISPLACER BEAST|rare|feral|dark|3|1229|0|0|Shadow Claw:sword;Hex:spell;Shroud:armor
-the-captain|THE CAPTAIN|legendary|tide|feral|4|1230|0|0|Riptide:sword;Frenzy:spell;Shell Up:armor
-lord-of-all-eagles|LORD OF ALL EAGLES|legendary|spirit|feral|4|1231|0|0|Glint:sword;Howl:spell;Ether Guard:armor
-earth-elemental|EARTH ELEMENTAL|rare|ward|nature|3|1232|0|0|Quake Stomp:sword;Rune Rock:spell;Granite Hide:armor
-elder-squid|ELDER SQUID|rare|dark|tide|3|1233|0|0|Bone Rattle:sword;Rain Call:spell;Cloak:armor
-treant|TREANT|rare|nature||3|1234|0|0|Pounce:sword;Bloom:spell;Husk:armor
-electric-elemental|ELECTRIC ELEMENTAL|rare|spirit|tide|3|1235|0|0|Smite:sword;Halo:spell;Aegis:armor
-ember-knight|DEATH KNIGHT|legendary|fire|dark|4|1236|0|0|Brand Blade:sword;Pyre Oath:spell;Cinder Plate:armor
-emerald-colossus|EMERALD COLOSSUS|legendary|nature|ward|4|1237|0|0|Bramble Jab:sword;Rune Rock:spell;Husk:armor
-emerald-widow|EMERALD WIDOW|rare|nature|dark|3|1238|0|0|Thorn Lash:sword;Wail:spell;Moss Coat:armor
-eyehorror|EYE HORROR|uncommon|dark|feral|3|1239|0|0|Hex:spell;Fade:armor
-fire-elemental|FIRE ELEMENTAL|rare|fire|spirit|3|1240|0|0|Flare:sword;Blaze:spell;Smoke:armor
-the-everburn|THE EVERBURN|legendary|fire|nature|4|1241|0|0|Blaze Fang:sword;Vine Hex:spell;Soot Screen:armor
-mosquito|FLY|common|dark|feral|2|1242|0|0|Pounce:sword;Leaf Guard:armor
-flying-skull|FLYING SKULL|common|dark|spirit|2|1243|0|0|Bone Rattle:sword;Fade:armor
-frost-widow|FROST WIDOW|rare|tide|dark|3|1244|0|0|Wave Cut:sword;Dread:spell;Mist Veil:armor
-glacier-wraith|GLACIER WRAITH|rare|tide|dark|3|1245|0|0|Riptide:sword;Hex:spell;Frost Coat:armor
-gargant|GARGANT|rare|nature|ward|3|1246|0|0|Bramble Jab:sword;Rumble:spell;Burrow:armor
-gargoyle-lawd|GARGOYLE LAWD|epic|ward|dark|4|1247|0|0|Hammer Down:sword;Curse:spell;Parry:armor
-gazer|GAZER|rare|dark|spirit|3|1248|0|0|Grim Reap:sword;Halo:spell;Shroud:armor
-beholder|BEHOLDER|legendary|tide|dark|4|1249|0|0|Bite:sword;Eye Beam:spell;Glare:armor
-ghoul-king|GHOUL KING|rare|feral|ward|3|1250|0|0|Fang:sword;War Cry:spell;Curl Up:armor
-drow-spider|GIANT MANTIS|uncommon|feral|nature|3|1251|0|0|Hex:spell;Grave Guard:armor
-the-glacier-titan|THE GLACIER TITAN|legendary|tide|ward|4|1252|0|0|Splash Jab:sword;War Cry:spell;Mist Veil:armor
-steamer|STEAMER|rare|ward|fire|3|1253|0|0|Lunge:sword;Kindle:spell;Parry:armor
-the-gold-spinner|THE GOLD SPINNER|legendary|spirit|nature|4|1254|0|0|Smite:sword;Spore Cloud:spell;Blink:armor
-grave-knight|GRAVE KNIGHT|rare|dark|ward|3|1255|0|0|Soul Bite:sword;War Cry:spell;Murk:armor
-great-ape|GREAT APE|rare|ward|feral|3|1256|0|0|Smash:sword;Screech:spell;Parry:armor
-griffin-2189|GRIFFIN|rare|spirit|feral|3|1257|0|0|Ghost Touch:sword;Roar:spell;Blink:armor
-the-druking|THE DRUKING|legendary|nature|spirit|4|1258|0|0|Thorn Lash:sword;Haunt:spell;Moss Coat:armor
-druwood|DRUWOOD|rare|nature|spirit|3|1259|0|0|Vine Whip:sword;Haunt:spell;Husk:armor
-harpy|HARPY|uncommon|spirit|tide|3|1260|0|0|Halo:spell;Ward:armor
-holy-knight|HOLY KNIGHT|legendary|spirit|ward|4|1261|0|0|Radiant Jab:sword;Stone Hex:spell;Aegis:armor
-evil-wizard|EVIL WIZARD|rare|fire|dark|3|1262|1|0|Ember Claw:sword;Blight:spell;Cinder Wall:armor
-shade|SHADE|epic|fire|dark|4|1263|1|0|Cinder Bite:sword;Curse:spell;Ash Shield:armor
-hydra|HYDRA|rare|nature|feral|3|1264|0|0|Bramble Jab:sword;Screech:spell;Briar Wall:armor
-artikino|ARTIKINO|legendary|tide|spirit|4|1265|0|0|Brine Bite:sword;Haunt:spell;Wave Guard:armor
-brain-taker|BRAIN TAKER|rare|dark|tide|3|1266|0|0|Dusk Fang:sword;Ice Shard:spell;Cloak:armor
-imp|IMP|uncommon|dark|feral|3|1267|0|0|Ember Claw:sword;Blaze:spell
-infernus|INFERNUS|legendary|fire|spirit|4|1268|0|0|Flame Slash:sword;Haunt:spell;Flame Cloak:armor
-iron-golem|IRON GOLEM|rare|ward|spirit|3|1269|0|0|Shield Bash:sword;Aura Burst:spell;Brace:armor
-iron-knight|IRON KNIGHT|rare|ward|spirit|3|1270|0|0|Quake Stomp:sword;Halo:spell;Bulwark:armor
-the-kraken|THE KRAKEN|legendary|tide|dark|4|1271|0|0|Tide Strike:sword;Dread:spell;Shell Up:armor
-lava-fiend|LAVA FIEND|epic|fire|ward|4|1272|0|0|Blaze Fang:sword;Stone Hex:spell;Heat Haze:armor
-lich|LICH|epic|dark|feral|4|1273|0|0|Bone Rattle:sword;Howl:spell;Murk:armor
-the-lich-king|THE LICH KING|legendary|dark|feral|4|1274|0|0|Dusk Fang:sword;Frenzy:spell;Grave Guard:armor
-mind-shaker|MIND SHAKER|rare|dark|tide|3|1275|0|0|Gloom Jab:sword;Tidal Wave:spell;Shroud:armor
-minotaur-2228|MINOTAUR|rare|feral|ward|3|1276|0|0|Bite:sword;War Cry:spell;Curl Up:armor
-minotaura|MINOTAURA|rare|feral|ward|3|1277|0|0|Bite:sword;Rune Rock:spell;Dodge:armor
-minotauraga|MINOTAURAGA|rare|feral|ward|3|1278|0|0|Rend:sword;Sandstorm:spell;Hide:armor
-elder-horror|MOON ELDER|legendary|dark|spirit|4|1279|0|0|Shadow Claw:sword;Hex:spell;Grave Guard:armor
-moss-golem|MOSS GOLEM|rare|nature|ward|3|1280|0|0|Bramble Jab:sword;Rally:spell;Petal Shield:armor
-sprite|MOTE|uncommon|spirit|fire|3|1281|0|0|Dive:sword;Radiance:spell
-moth|MOTHIE|common|spirit|feral|2|1282|0|0|Pounce:sword;Burrow:armor
-mudman|MUDDE|common|feral|tide|2|1283|0|0|Quake Stomp:sword;Sandstorm:spell
-mummy-2176|MUMMY|rare|ward|dark|3|1284|0|0|Shield Bash:sword;Wail:spell;Stone Wall:armor
-queen-dopplepop|QUEEN DOPPLEPOP|legendary|tide|dark|4|1285|0|0|Riptide:sword;Hex:spell;Wave Guard:armor
-eternus|ETERNUS|legendary|dark|feral|4|1286|0|0|Bone Rattle:sword;Frenzy:spell;Murk:armor
-the-pit-master|THE PIT MASTER|legendary|dark|fire|4|1287|0|0|Shadow Claw:sword;Pyre:spell;Fade:armor
-night-gargoyle|NIGHT GARGOYLE|rare|dark|ward|3|1288|0|0|Dusk Fang:sword;War Cry:spell;Grave Guard:armor
-witch|NIGHT HAG|uncommon|dark|tide|3|1289|0|0|Fang:sword;Hex:spell
-thagg|THAGG THE MIGHTY|legendary|ward|feral|4|1290|0|0|Strike:sword;Roar:spell;Granite Hide:armor
-paladin|PALADIN|rare|fire|spirit|3|1291|1|0|Ember Claw:sword;Radiance:spell;Ember Guard:armor
-pale-revenant|PALE REVENANT|rare|dark|spirit|3|1292|0|0|Bone Rattle:sword;Gleam:spell;Gloom Wall:armor
-phasespawn|PHASE SPAWN|uncommon|dark|fire|3|1293|0|0|Bone Rattle:sword;Grave Guard:armor
-the-pit-boss|THE PIT BOSS|legendary|fire|dark|4|1294|0|0|Cinder Bite:sword;Doom:spell;Ash Shield:armor
-steve|STEVE|legendary|dark||4|1295|0|0|Bone Rattle:sword;Wail:spell;Grave Guard:armor
-white-rabbit|RABBIT|common|feral|nature|2|1296|0|0|Pounce:sword;Leaf Guard:armor
-king-griffon|KING GRIFFON|legendary|spirit|ward|4|1297|0|0|Radiant Jab:sword;War Cry:spell;Sanctuary:armor
-salamander|SALAMANDER|uncommon|fire|tide|3|1298|0|0|Ember Claw:sword;Fireball:spell
-scarab|SCARAB|common|fire|nature|2|1299|0|0|Thorn Lash:sword;Spore Cloud:spell
-scorpion|SCORPION|common|fire|nature|2|1300|0|0|Quake Stomp:sword;Sandstorm:spell
-shadow-assassin|SHADOW ASSASSIN|rare|dark|feral|3|1301|0|0|Night Slash:sword;Snarl:spell;Fade:armor
-her|HER|legendary|dark|feral|4|1302|0|0|Bone Rattle:sword;Stampede:spell;Shroud:armor
-gottesixe|GOTTESIXE|legendary|fire|ward|4|1303|0|0|Flame Slash:sword;Rally:spell;Cinder Wall:armor
-snail|SNAILY|common|tide|ward|2|1304|1|0|Bubble Hex:spell;Shell Up:armor
-sorceress|SORCERESS|rare|tide|dark|3|1305|1|0|Undertow:sword;Blight:spell;Tide Pool:armor
-the-sphinx|THE SPHINX|legendary|spirit|ward|4|1306|0|0|Halo Strike:sword;Rune Rock:spell;Shield:armor
-the-azure-queen|THE AZURE QUEEN|legendary|dark|nature|4|1307|0|0|Dusk Fang:sword;Vine Hex:spell;Murk:armor
-swamp-lord|SWAMP LORD|rare|tide|nature|3|1308|0|0|Splash Jab:sword;Bloom:spell;Shell Up:armor
-guard-sword|GUARD|uncommon|ward|spirit|3|1309|0|0|Dive:sword;Sun Flare:spell
-thunderhead|THUNDERHEAD|rare|spirit|tide|3|1310|0|0|Halo Strike:sword;Bubble Hex:spell;Aegis:armor
-moose|UNIBOAR|common|feral|nature|2|1311|0|0|Pounce:sword;Burrow:armor
-wasp|WASP|common|nature|feral|2|1312|0|0|Pounce:sword;Bark Skin:armor
-water-elemental|WATER ELEMENTAL|rare|tide|nature|3|1313|0|0|Tide Strike:sword;Tidal Wave:spell;Ice Wall:armor
-oceanis|OCEANIS|legendary|tide|spirit|4|1314|0|0|Wave Cut:sword;Radiance:spell;Mist Veil:armor
-mister-beast|MISTER BEAST|rare|dark|feral|3|1315|0|0|Gloom Jab:sword;Snarl:spell;Fade:armor
-warewolf|WEREWOLF|uncommon|dark|feral|3|1316|0|0|Thorn Lash:sword;Vine Hex:spell
-wolf|WOLF|uncommon|feral|nature|3|1317|0|0|Thorn Lash:sword;Vine Hex:spell
-worm|WORM|common|feral|dark|2|1318|0|0|Pounce:sword;Burrow:armor
-sentient-lettuce|SENTIENT LETTUCE|uncommon|feral|nature|3|1319|0|0|Fang:sword;Leaf Guard:armor
-magmrexe|MAGMREXE|legendary|fire|spirit|4|1320|0|0|Cinder Bite:sword;Halo:spell;Cinder Wall:armor
-frost-giant|FROST GIANT|rare|tide|ward|3|1321|0|0|Splash Jab:sword;Rumble:spell;Shell Up:armor
-sparkle-unicorn|SPARKLE UNICORN|rare|spirit|dark|3|1322|0|0|Spirit Lance:sword;Shade Bolt:spell;Shield:armor
-tide-ketos|TIDE KETOS|uncommon|dark|tide|3|1323|0|0|Bone Rattle:sword;Frost Coat:armor
-snow-griffin|SNOW GRIFFIN|rare|spirit|tide|3|1324|0|0|Radiant Jab:sword;Mist Hex:spell;Ether Guard:armor
-centaur-2347|CENTAUR|uncommon|spirit|feral|3|1325|0|0|Halo Strike:sword;Bristle:armor
-cerbeross|CERBEROSS|legendary|fire|dark|4|1326|0|0|Ember Claw:sword;Curse:spell;Flame Cloak:armor
-bullsaxe|BULLSAXE|rare|ward|feral|3|1327|0|0|Boulder Fist:sword;Snarl:spell;Stone Wall:armor
-nine-tail-fox|NINE-TAIL FOX|rare|fire|feral|3|1328|0|0|Blaze Fang:sword;Screech:spell;Cinder Wall:armor
-thunderbird|THUNDERBIRD|rare|spirit|tide|3|1329|0|0|Radiant Jab:sword;Rain Call:spell;Glow Veil:armor
-eagle-griffin|EAGLE GRIFFIN|uncommon|feral|spirit|3|1330|0|0|Maul:sword;Radiance:spell
-mist-drake|MIST DRAKE|rare|tide|spirit|3|1331|0|0|Brine Bite:sword;Gleam:spell;Foam Shield:armor
-basilisk|BASILISK|rare|nature|dark|3|1332|0|0|Pounce:sword;Doom:spell;Bark Skin:armor
-slappras|SLAPPRAS|uncommon|tide|ward|3|1333|0|0|Riptide:sword;Sandstorm:spell
-shadow-wyvern|SHADOW WYVERN|rare|fire|dark|3|1334|0|0|Scorch:sword;Doom:spell;Ash Shield:armor
-warlock|WARLOCK|uncommon|dark|fire|3|1335|0|0|Night Slash:sword;Ember Guard:armor
-rockclopse|ROCKCLOPSE|rare|ward|feral|3|1336|0|0|Strike:sword;Screech:spell;Granite Hide:armor
-sea-serpent|SEA SERPENT|uncommon|tide|nature|3|1337|0|0|Riptide:sword;Petal Shield:armor
-manticub|MANTICUB|common|feral|nature|2|1338|0|0|Fang:sword;Bark Skin:armor
-silver-simurgh|SILVER SIMURGH|rare|spirit|tide|3|1339|0|0|Ghost Touch:sword;Mist Hex:spell;Sanctuary:armor
-satyr-2342|SATYR|common|feral|nature|2|1340|0|0|Maul:sword;Husk:armor
-jade-qilin|JADE QILIN|rare|tide|nature|3|1341|0|0|Wave Cut:sword;Pollen Burst:spell;Wave Guard:armor
-moon-wolf|MOON WOLF|uncommon|spirit|dark|3|1342|0|0|Ghost Touch:sword;Curse:spell
-lamassu|LAMASSU|rare|spirit|feral|3|1343|0|0|Ghost Touch:sword;Screech:spell;Sanctuary:armor
-monolith|MONOLITH|uncommon|ward|feral|3|1344|0|0|Smash:sword;Howl:spell
-kitte|KITTE|common|nature|dark|2|1345|0|0|Leaf Blade:sword;Fade:armor
-pink-jelly|SLIME|common|tide||2|1346|1|0|Splash:spell;Wobble:armor
-googly-slime|GOOGLY SLIME|common|tide||2|1347|1|0|Brine Bite:sword;Tidal Wave:spell
-cube-slime|CUBE SLIME|uncommon|fire|ward|3|1348|1|0|Cinder Bite:sword;Stone Hex:spell
-chef-slime|CHEF SLIME|epic|tide|feral|4|1349|1|0|Splash Jab:sword;Frenzy:spell;Mist Veil:armor
-batwing-slime|BATWING SLIME|uncommon|tide|dark|3|1350|1|0|Wave Cut:sword;Cloak:armor
-daytona|DAYTONA|legendary|tide|dark|4|1351|0|0|Undertow:sword;Hex:spell;Shell Up:armor
-glass-slime|GLASS SLIME|uncommon|spirit|ward|3|1352|0|0|Glint:sword;Bulwark:armor
-swamp-ooze|SWAMP OOZE|uncommon|tide|nature|3|1353|0|0|Undertow:sword;Thorn Rain:spell
-metal-slime|METAL SLIME|uncommon|ward|tide|3|1354|0|0|Shield Bash:sword;Ice Shard:spell
-devil-slime|DEVIL SLIME|rare|fire|dark|3|1355|0|0|Scorch:sword;Curse:spell;Cinder Wall:armor
-ember-fiend|EMBER FIEND|uncommon|fire|dark|3|1356|0|0|Ember Claw:sword;Doom:spell
-feyre|FEYRE|uncommon|fire|spirit|3|1357|0|0|Flame Slash:sword;Phase:armor
-blazard|BLAZARD|rare|fire|feral|3|1358|0|0|Searing Jab:sword;Musk:spell;Ash Shield:armor
-sunfire-stag|SUNFIRE STAG|rare|fire|feral|3|1359|0|0|Searing Jab:sword;Snarl:spell;Ember Guard:armor
-frostfire-ghoul|FROSTFIRE GHOUL|rare|fire|tide|3|1360|0|0|Flame Slash:sword;Rain Call:spell;Soot Screen:armor
-frost-ettin|FROST ETTIN|uncommon|tide|ward|3|1361|0|0|Tide Strike:sword;Stone Wall:armor
-frost-wasp|FROST WASP|common|tide|nature|2|1362|0|0|Riptide:sword;Bloom:spell
-snow-globe|SNOW GLOBE|common|tide|spirit|2|1363|0|0|Wave Cut:sword;Sanctuary:armor
-icenewte|ICENEWTE|common|tide|feral|2|1364|0|0|Riptide:sword;Frenzy:spell
-storm-wraith|STORM WRAITH|rare|dark|spirit|3|1365|0|0|Dusk Fang:sword;Haunt:spell;Gloom Wall:armor
-pixies|PIXIES|common|spirit|tide|2|1366|0|0|Radiant Jab:sword;Mist Hex:spell
-volt-beetle|VOLT BEETLE|uncommon|spirit|nature|3|1367|0|0|Ghost Touch:sword;Petal Shield:armor
-storm-eagle|STORM EAGLE|uncommon|spirit|feral|3|1368|0|0|Ghost Touch:sword;Musk:spell
-gust-ghost|GUST GHOST|uncommon|tide|dark|3|1369|0|0|Tide Strike:sword;Cloak:armor
-lil-star|LIL' STAR|common|spirit|fire|2|1370|0|0|Dive:sword;Kindle:spell
-pastel-phantom|PASTEL PHANTOM|common|spirit|tide|2|1371|0|0|Ghost Touch:sword;Foam Shield:armor
-cherub-wisp|CHERUB WISP|uncommon|spirit|tide|3|1372|0|0|Radiant Jab:sword;Tide Pool:armor
-spark-sprite|SPARK SPRITE|uncommon|spirit|fire|3|1373|0|0|Halo Strike:sword;Heat Haze:armor
-feathered-wyrmling|FEATHERED WYRMLING|rare|tide|spirit|3|1374|1|0|Tide Strike:sword;Gleam:spell;Mist Veil:armor
-gilt-wing|GILT WING|rare|spirit|ward|3|1375|0|0|Smite:sword;Battle Hymn:spell;Blink:armor
-glass-dragon|GLASS DRAGON|rare|tide|spirit|3|1376|0|0|Tide Strike:sword;Blessing:spell;Shell Up:armor
-rainbow-dragon|RAINBOW DRAGON|rare|spirit|nature|3|1377|0|1|Dive:sword;Vine Hex:spell;Glow Veil:armor
-feathered-wyrm|FEATHERED WYRM|epic|feral|spirit|4|1378|1|0|Tusk:sword;Aura Burst:spell;Bristle:armor
-rainbow-wyrm|RAINBOW WYRM|epic|spirit|nature|4|1379|0|1|Halo Strike:sword;Bloom:spell;Shield:armor
-pearl-serpent|PEARL SERPENT|uncommon|tide|spirit|3|1380|0|0|Lash:sword;Halo:spell
-goldy|GOLDY|legendary|spirit|feral|4|1381|0|0|Smite:sword;Frenzy:spell;Shield:armor
-nessie|NESSIE|legendary|tide|feral|4|1382|0|0|Tide Strike:sword;Screech:spell;Mist Veil:armor
-silver-eel|SILVER EEL|common|tide|spirit|2|1383|0|0|Undertow:sword;Gleam:spell
-reef-dragon|REEF DRAGON|rare|tide|nature|3|1384|0|0|Undertow:sword;Bloom:spell;Frost Coat:armor
-patchwork-zombie|PATCHWORK ZOMBIE|uncommon|ward|dark|3|1385|0|0|Boulder Fist:sword;Curse:spell
-shambling-zombie|SHAMBLING ZOMBIE|common|ward|dark|2|1386|0|0|Quake Stomp:sword;Doom:spell
-wrapped-pharaoh|MUMRAH|legendary|dark|spirit|4|1387|0|0|Grim Reap:sword;Aura Burst:spell;Murk:armor
-sackcloth-ghoul|SACKCLOTH GHOUL|uncommon|dark|ward|3|1388|0|0|Dusk Fang:sword;Rally:spell
-gilded-mummy|GILDED MUMMY|epic|spirit|ward|4|1389|0|0|Dive:sword;Rally:spell;Ether Guard:armor
-shadow-bear|SHADOW BEAR|uncommon|dark|feral|3|1390|0|0|Night Slash:sword;Scurry:armor
-frost-wolf|FROST WOLF|uncommon|tide|feral|3|1391|0|0|Wave Cut:sword;Bristle:armor
-ice-wyrm|ICE WYRM|rare|tide|fire|3|1392|0|0|Brine Bite:sword;Blaze:spell;Wave Guard:armor
-flower-gnome|FLOWER GNOME|uncommon|spirit|nature|3|1393|0|0|Glint:sword;Vine Hex:spell
-miner-gnome|MINER GNOME|common|dark|ward|2|1394|0|0|Gloom Jab:sword;Battle Hymn:spell
-watering-gnome|WATERING GNOME|common|spirit|tide|2|1395|0|0|Halo Strike:sword;Rain Call:spell
-young-dragon|YOUNG DRAGON|uncommon|spirit||3|1396|1|0|Glint:sword;Gleam:spell
-dragon|DRAGON|rare|fire||3|1397|1|0|Scorch:sword;Ember Rain:spell;Soot Screen:armor
-elder-dragon|ELDER DRAGON|epic|fire||4|1398|1|0|Searing Jab:sword;Fireball:spell;Soot Screen:armor
-young-drake|YOUNG DRAKE|common|feral||2|1399|1|0|Maul:sword;Roar:spell
-drake|DRAKE|uncommon|tide||3|1400|1|0|Brine Bite:sword;Frost Coat:armor
-elder-drake|ELDER DRAKE|rare|tide||3|1401|1|0|Lash:sword;Bubble Hex:spell;Wave Guard:armor
+jesterae|MAEJESTRE|rare|spirit|dark|3|1142|0|0|Smite:sword;Curse:spell;Ether Guard:armor
+the-king|THE KING|legendary|spirit|fire|4|1143|0|0|Smite:sword;Fireball:spell;Aegis:armor
+elf-archer|ELF ARCHER|common|spirit|nature|2|1144|0|0|Halo Strike:sword;Burrow:armor
+elf-lancer|ELF LANCER|rare|spirit|ward|3|1145|0|0|Spirit Lance:sword;War Cry:spell;Glow Veil:armor
+wood-elf|WOOD ELF|common|feral|nature|2|1146|0|0|Maul:sword;Husk:armor
+basic-ass-elf|BASIC ASS ELF|uncommon|spirit|nature|3|1147|0|0|Spirit Lance:sword;Thorn Rain:spell
+moss-elf|MOSS ELF|uncommon|nature|dark|3|1148|0|0|Leaf Blade:sword;Blight:spell
+drow-hunter|DROW HUNTER|rare|dark|tide|3|1149|0|0|Bone Rattle:sword;Tidal Wave:spell;Grave Guard:armor
+elf-priestess|ELF PRIESTESS|rare|spirit|fire|3|1150|0|0|Spirit Lance:sword;Pyre:spell;Sanctuary:armor
+the-oldest-elf|THE OLDEST ELF|legendary|spirit|nature|4|1151|0|0|Halo Strike:sword;Thorn Rain:spell;Phase:armor
+a-single-gorilla|A SINGLE GORILLA|rare|ward|feral|3|1152|0|0|Hammer Down:sword;Snarl:spell;Bulwark:armor
+troll|TROLL|common|feral|ward|2|1153|0|0|Rumble:spell;Stone Wall:armor
+hulking-troll|HULKING TROLL|uncommon|feral|ward|3|1154|0|0|Gnaw:sword;Stone Hex:spell
+skinny-troll|SKINNY TROLL|common|feral|ward|2|1155|1|0|Rend:sword;Battle Hymn:spell
+redmane-troll|REDMANE TROLL|rare|feral|ward|3|1156|0|0|Rend:sword;Rune Rock:spell;Dodge:armor
+big-nose-troll|BIG-NOSE TROLL|uncommon|feral|ward|3|1157|0|0|Gnaw:sword;War Cry:spell
+boulder-troll|BOULDER TROLL|uncommon|feral|ward|3|1158|0|0|Fang:sword;Stone Wall:armor
+frost-troll|FROST TROLL|rare|tide|feral|3|1159|0|0|Splash Jab:sword;Roar:spell;Shell Up:armor
+four-eyed-troll|FOUR-EYED TROLL|epic|feral||4|1160|0|0|Tusk:sword;Snarl:spell;Bristle:armor
+demon|DEMON|common|dark|fire|2|1161|0|0|Grim Reap:sword;Smoke Veil:armor
+devil|DEVIL|common|fire|dark|2|1162|0|0|Flare Kick:sword;Curse:spell
+blue-devil|BLUE DEVIL|common|feral|tide|2|1163|0|0|Bite:sword;Frost Coat:armor
+winged-devil|WINGED DEVIL|rare|fire|feral|3|1164|0|0|Ember Claw:sword;Frenzy:spell;Soot Screen:armor
+pitchy-devil|PITCHY DEVIL|uncommon|fire|feral|3|1165|0|0|Flame Slash:sword;Snarl:spell
+little-devil|LITTLE DEVIL|common|fire|feral|2|1166|0|0|Flame Slash:sword;Bristle:armor
+forky-devil|FORKY DEVIL|common|fire|feral|2|1167|0|0|Searing Jab:sword;Musk:spell
+contract-devil|CONTRACT DEVIL|uncommon|fire|dark|3|1168|0|0|Ember Claw:sword;Veil:armor
+stone-devil|STONE DEVIL|common|ward|fire|2|1169|0|0|Strike:sword;Ember Rain:spell
+dragondra|DRAGONDRA|epic|fire|ward|4|1170|1|0|Blaze Fang:sword;Rune Rock:spell;Cinder Wall:armor
+red-dragon|ANCIENT WYRM|legendary|fire|ward|4|1171|1|0|Flame Slash:sword;Inferno:spell;Smoke Veil:armor
+griffin|GRIFFIN|rare|feral|spirit|3|1172|0|0|Bite:sword;Sun Flare:spell;Bristle:armor
+peryton|PERYTON|uncommon|dark|feral|3|1173|0|0|Gloom Jab:sword;Bristle:armor
+gremlin|GREMLIN|common|dark|spirit|2|1174|0|0|Hex:spell;Shroud:armor
+shadow-gremlin|SHADOW GREMLIN|common|dark|fire|2|1175|0|0|Shadow Claw:sword;Ember Guard:armor
+little-gremlin|LITTLE GREMLIN|common|dark|fire|2|1176|0|0|Shadow Claw:sword;Soot Screen:armor
+gun-gremlin|GUN GREMLIN|rare|ward|fire|3|1177|0|0|Hammer Down:sword;Inferno:spell;Iron Skin:armor
+sneaky-gremlin|SNEAKY GREMLIN|common|dark|spirit|2|1178|0|0|Dusk Fang:sword;Blessing:spell
+frosty-gremlin|FROSTY GREMLIN|uncommon|dark|tide|3|1179|0|0|Night Slash:sword;Tidal Wave:spell
+chubby-gremlin|CHUBBY GREMLIN|rare|dark|fire|3|1180|0|0|Dusk Fang:sword;Heat Wave:spell;Shroud:armor
+aquaticman|FISHMAN|common|tide|feral|2|1181|0|0|Lash:sword;Tidal Wave:spell
+mermaid|MERMAID|common|tide|spirit|2|1182|0|0|Undertow:sword;Sanctuary:armor
+mermiss|MERMISS|common|tide|spirit|2|1183|0|0|Wave Cut:sword;Radiance:spell
+eely-fishman|EELY FISHMAN|uncommon|nature|tide|3|1184|0|0|Sting:sword;Rain Call:spell
+brawny-fishman|BRAWNY FISHMAN|uncommon|tide|feral|3|1185|0|0|Undertow:sword;Howl:spell
+siren|SIREN|common|tide|dark|2|1186|0|0|Lash:sword;Shroud:armor
+manfish|MANFISH|rare|tide|dark|3|1187|0|0|Riptide:sword;Wail:spell;Foam Shield:armor
+yeti|LIL YETI|common|tide|feral|2|1188|0|0|Brine Bite:sword;Scurry:armor
+fluffy-yeti|FLUFFY YETI|common|tide|feral|2|1189|0|0|Wave Cut:sword;Screech:spell
+horned-yeti|HORNED YETI|common|tide|ward|2|1190|0|0|Brine Bite:sword;Sandstorm:spell
+abominable-yeti|ABOMINABLE YETI|rare|tide|fire|3|1191|0|0|Lash:sword;Pyre:spell;Wave Guard:armor
+nightmare|NIGHTMARE|common|dark|spirit|2|1192|0|0|Gloom Jab:sword;Phase:armor
+three-eyed-nightmare|THREE-EYED NIGHTMARE|uncommon|dark|spirit|3|1193|0|0|Dusk Fang:sword;Blessing:spell
+horned-nightmare|HORNED NIGHTMARE|common|dark|spirit|2|1194|0|0|Shadow Claw:sword;Blessing:spell
+grinning-nightmare|GRINNING NIGHTMARE|common|dark|spirit|2|1195|0|0|Grim Reap:sword;Sun Flare:spell
+snake-01|GREEN SNAKE|common|nature|spirit|2|1196|0|0|Pounce:sword;Leaf Guard:armor
+snake-02|VIPER|common|feral|nature|2|1197|0|0|Thorn Lash:sword;Vine Hex:spell
+snake-blue|BLUE SNAKE|common|tide|ward|2|1198|0|0|Tide Strike:sword;Ice Wall:armor
+snake-brown|BROWN SNAKE|common|feral|nature|2|1199|0|0|Thorn Lash:sword;Spore Cloud:spell
+burning-skeleton|BURNING SNAKE|uncommon|fire|nature|3|1200|0|0|Fireball:spell;Smoke Veil:armor
+gargoyle|LIL GARGOYLE|common|ward|dark|2|1201|0|0|Quake Stomp:sword;Sandstorm:spell
+gargoyle-2010|GARGOYLE|uncommon|ward|dark|3|1202|0|0|Hammer Down:sword;Hex:spell
+perched-gargoyle|PERCHED GARGOYLE|rare|ward|dark|3|1203|0|0|Quake Stomp:sword;Dread:spell;Hunker:armor
+ant|ANT|common|nature|feral|2|1204|0|0|Thorn Lash:sword;Spore Cloud:spell
+aquatic-elf|AQUATIC ELF|uncommon|tide|nature|3|1205|0|0|Tide Strike:sword;Ice Wall:armor
+axe-minotaur|AXE MINOTAUR|rare|ward|feral|3|1206|0|0|Strike:sword;Roar:spell;Bulwark:armor
+banshee|BANSHEE|uncommon|dark|tide|3|1207|0|0|Hex:spell;Grave Guard:armor
+bat|BAT|common|dark|feral|2|1208|0|0|Bite:sword;Screech:spell
+bee|BEE|common|feral|spirit|2|1209|0|0|Thorn Lash:sword;Spore Cloud:spell
+blood-fiend|BLOOD FIEND|rare|fire|dark|3|1210|0|0|Scorch:sword;Wail:spell;Flame Cloak:armor
+bone-shaman|BONE SHAMAN|rare|dark|ward|3|1211|0|0|Bone Rattle:sword;Rally:spell;Gloom Wall:armor
+bone-weaver|BONE WEAVER|rare|spirit|ward|3|1212|0|0|Radiant Jab:sword;War Cry:spell;Ether Guard:armor
+brain-sucker|BRAIN SUCKER|uncommon|dark|tide|3|1213|0|0|Fang:sword;Hex:spell
+bronze-golem|BRONZE GOLEM|rare|fire|ward|3|1214|0|0|Searing Jab:sword;Battle Hymn:spell;Heat Haze:armor
+man-bull|MAN BULL|rare|feral|spirit|3|1215|0|0|Tusk:sword;Halo:spell;Curl Up:armor
+chaos-screamer|CHAOS SCREAMER|uncommon|dark|feral|3|1216|0|0|Ember Claw:sword;Inferno:spell
+manchimera|MANCHIMERA|legendary|fire|nature|4|1217|0|0|Cinder Bite:sword;Pollen Burst:spell;Smoke Veil:armor
+clockwork-knight|CLOCKWORK KNIGHT|rare|ward|fire|3|1218|0|0|Lunge:sword;Pyre:spell;Parry:armor
+crabman|CRABMAN|uncommon|fire|tide|3|1219|0|0|Bubble Hex:spell;Ice Wall:armor
+thick-demon|THICK DEMON|rare|fire|dark|3|1220|0|0|Flare Kick:sword;Wail:spell;Ember Guard:armor
+dark-elf-mage|ELF MAGE|uncommon|tide|spirit|3|1221|0|0|Hex:spell;Fade:armor
+dark-knight|DARK KNIGHT|legendary|dark|feral|4|1222|0|0|Dusk Fang:sword;Roar:spell;Shroud:armor
+death-knight|DEATH KNIGHT|legendary|dark|feral|4|1223|0|0|Fang:sword;Wail:spell;Grave Guard:armor
+deep-kraken|DEEP KRAKEN|rare|tide|nature|3|1224|0|0|Brine Bite:sword;Pollen Burst:spell;Wave Guard:armor
+the-deep-one|THE DEEP ONE|legendary|dark|tide|4|1225|0|0|Bone Rattle:sword;Ice Shard:spell;Grave Guard:armor
+demon-queen|DEMON QUEEN|legendary|fire|dark|4|1226|0|0|Blaze Fang:sword;Curse:spell;Soot Screen:armor
+bill|BILL|legendary|feral|fire|4|1227|0|0|Fang:sword;Inferno:spell;Dodge:armor
+displacer-beast|DISPLACER BEAST|rare|feral|dark|3|1228|0|0|Shadow Claw:sword;Hex:spell;Shroud:armor
+the-captain|THE CAPTAIN|legendary|tide|feral|4|1229|0|0|Riptide:sword;Frenzy:spell;Shell Up:armor
+lord-of-all-eagles|LORD OF ALL EAGLES|legendary|spirit|feral|4|1230|0|0|Glint:sword;Howl:spell;Ether Guard:armor
+earth-elemental|EARTH ELEMENTAL|rare|ward|nature|3|1231|0|0|Quake Stomp:sword;Rune Rock:spell;Granite Hide:armor
+elder-squid|ELDER SQUID|rare|dark|tide|3|1232|0|0|Bone Rattle:sword;Rain Call:spell;Cloak:armor
+treant|TREANT|rare|nature||3|1233|0|0|Pounce:sword;Bloom:spell;Husk:armor
+electric-elemental|ELECTRIC ELEMENTAL|rare|spirit|tide|3|1234|0|0|Smite:sword;Halo:spell;Aegis:armor
+ember-knight|DEATH KNIGHT|legendary|fire|dark|4|1235|0|0|Brand Blade:sword;Pyre Oath:spell;Cinder Plate:armor
+emerald-colossus|EMERALD COLOSSUS|legendary|nature|ward|4|1236|0|0|Bramble Jab:sword;Rune Rock:spell;Husk:armor
+emerald-widow|EMERALD WIDOW|rare|nature|dark|3|1237|0|0|Thorn Lash:sword;Wail:spell;Moss Coat:armor
+eyehorror|EYE HORROR|uncommon|dark|feral|3|1238|0|0|Hex:spell;Fade:armor
+fire-elemental|FIRE ELEMENTAL|rare|fire|spirit|3|1239|0|0|Flare:sword;Blaze:spell;Smoke:armor
+the-everburn|THE EVERBURN|legendary|fire|nature|4|1240|0|0|Blaze Fang:sword;Vine Hex:spell;Soot Screen:armor
+mosquito|FLY|common|dark|feral|2|1241|0|0|Pounce:sword;Leaf Guard:armor
+flying-skull|FLYING SKULL|common|dark|spirit|2|1242|0|0|Bone Rattle:sword;Fade:armor
+frost-widow|FROST WIDOW|rare|tide|dark|3|1243|0|0|Wave Cut:sword;Dread:spell;Mist Veil:armor
+glacier-wraith|GLACIER WRAITH|rare|tide|dark|3|1244|0|0|Riptide:sword;Hex:spell;Frost Coat:armor
+gargant|GARGANT|rare|nature|ward|3|1245|0|0|Bramble Jab:sword;Rumble:spell;Burrow:armor
+gargoyle-lawd|GARGOYLE LAWD|epic|ward|dark|4|1246|0|0|Hammer Down:sword;Curse:spell;Parry:armor
+gazer|GAZER|rare|dark|spirit|3|1247|0|0|Grim Reap:sword;Halo:spell;Shroud:armor
+beholder|BEHOLDER|legendary|tide|dark|4|1248|0|0|Bite:sword;Eye Beam:spell;Glare:armor
+ghoul-king|GHOUL KING|rare|feral|ward|3|1249|0|0|Fang:sword;War Cry:spell;Curl Up:armor
+drow-spider|GIANT MANTIS|uncommon|feral|nature|3|1250|0|0|Hex:spell;Grave Guard:armor
+the-glacier-titan|THE GLACIER TITAN|legendary|tide|ward|4|1251|0|0|Splash Jab:sword;War Cry:spell;Mist Veil:armor
+steamer|STEAMER|rare|ward|fire|3|1252|0|0|Lunge:sword;Kindle:spell;Parry:armor
+the-gold-spinner|THE GOLD SPINNER|legendary|spirit|nature|4|1253|0|0|Smite:sword;Spore Cloud:spell;Blink:armor
+grave-knight|GRAVE KNIGHT|rare|dark|ward|3|1254|0|0|Soul Bite:sword;War Cry:spell;Murk:armor
+great-ape|GREAT APE|rare|ward|feral|3|1255|0|0|Smash:sword;Screech:spell;Parry:armor
+griffin-2189|GRIFFIN|rare|spirit|feral|3|1256|0|0|Ghost Touch:sword;Roar:spell;Blink:armor
+the-druking|THE DRUKING|legendary|nature|spirit|4|1257|0|0|Thorn Lash:sword;Haunt:spell;Moss Coat:armor
+druwood|DRUWOOD|rare|nature|spirit|3|1258|0|0|Vine Whip:sword;Haunt:spell;Husk:armor
+harpy|HARPY|uncommon|spirit|tide|3|1259|0|0|Halo:spell;Ward:armor
+holy-knight|HOLY KNIGHT|legendary|spirit|ward|4|1260|0|0|Radiant Jab:sword;Stone Hex:spell;Aegis:armor
+evil-wizard|EVIL WIZARD|rare|fire|dark|3|1261|1|0|Ember Claw:sword;Blight:spell;Cinder Wall:armor
+shade|SHADE|epic|fire|dark|4|1262|1|0|Cinder Bite:sword;Curse:spell;Ash Shield:armor
+hydra|HYDRA|rare|nature|feral|3|1263|0|0|Bramble Jab:sword;Screech:spell;Briar Wall:armor
+artikino|ARTIKINO|legendary|tide|spirit|4|1264|0|0|Brine Bite:sword;Haunt:spell;Wave Guard:armor
+brain-taker|BRAIN TAKER|rare|dark|tide|3|1265|0|0|Dusk Fang:sword;Ice Shard:spell;Cloak:armor
+imp|IMP|uncommon|dark|feral|3|1266|0|0|Ember Claw:sword;Blaze:spell
+infernus|INFERNUS|legendary|fire|spirit|4|1267|0|0|Flame Slash:sword;Haunt:spell;Flame Cloak:armor
+iron-golem|IRON GOLEM|rare|ward|spirit|3|1268|0|0|Shield Bash:sword;Aura Burst:spell;Brace:armor
+iron-knight|IRON KNIGHT|rare|ward|spirit|3|1269|0|0|Quake Stomp:sword;Halo:spell;Bulwark:armor
+the-kraken|THE KRAKEN|legendary|tide|dark|4|1270|0|0|Tide Strike:sword;Dread:spell;Shell Up:armor
+lava-fiend|LAVA FIEND|epic|fire|ward|4|1271|0|0|Blaze Fang:sword;Stone Hex:spell;Heat Haze:armor
+lich|LICH|epic|dark|feral|4|1272|0|0|Bone Rattle:sword;Howl:spell;Murk:armor
+the-lich-king|THE LICH KING|legendary|dark|feral|4|1273|0|0|Dusk Fang:sword;Frenzy:spell;Grave Guard:armor
+mind-shaker|MIND SHAKER|rare|dark|tide|3|1274|0|0|Gloom Jab:sword;Tidal Wave:spell;Shroud:armor
+minotaur-2228|MINOTAUR|rare|feral|ward|3|1275|0|0|Bite:sword;War Cry:spell;Curl Up:armor
+minotaura|MINOTAURA|rare|feral|ward|3|1276|0|0|Bite:sword;Rune Rock:spell;Dodge:armor
+minotauraga|MINOTAURAGA|rare|feral|ward|3|1277|0|0|Rend:sword;Sandstorm:spell;Hide:armor
+elder-horror|MOON ELDER|legendary|dark|spirit|4|1278|0|0|Shadow Claw:sword;Hex:spell;Grave Guard:armor
+moss-golem|MOSS GOLEM|rare|nature|ward|3|1279|0|0|Bramble Jab:sword;Rally:spell;Petal Shield:armor
+sprite|MOTE|uncommon|spirit|fire|3|1280|0|0|Dive:sword;Radiance:spell
+moth|MOTHIE|common|spirit|feral|2|1281|0|0|Pounce:sword;Burrow:armor
+mudman|MUDDE|common|feral|tide|2|1282|0|0|Quake Stomp:sword;Sandstorm:spell
+mummy-2176|MUMMY|rare|ward|dark|3|1283|0|0|Shield Bash:sword;Wail:spell;Stone Wall:armor
+queen-dopplepop|QUEEN DOPPLEPOP|legendary|tide|dark|4|1284|0|0|Riptide:sword;Hex:spell;Wave Guard:armor
+eternus|ETERNUS|legendary|dark|feral|4|1285|0|0|Bone Rattle:sword;Frenzy:spell;Murk:armor
+the-pit-master|THE PIT MASTER|legendary|dark|fire|4|1286|0|0|Shadow Claw:sword;Pyre:spell;Fade:armor
+night-gargoyle|NIGHT GARGOYLE|rare|dark|ward|3|1287|0|0|Dusk Fang:sword;War Cry:spell;Grave Guard:armor
+witch|NIGHT HAG|uncommon|dark|tide|3|1288|0|0|Fang:sword;Hex:spell
+thagg|THAGG THE MIGHTY|legendary|ward|feral|4|1289|0|0|Strike:sword;Roar:spell;Granite Hide:armor
+paladin|PALADIN|rare|fire|spirit|3|1290|1|0|Ember Claw:sword;Radiance:spell;Ember Guard:armor
+pale-revenant|PALE REVENANT|rare|dark|spirit|3|1291|0|0|Bone Rattle:sword;Gleam:spell;Gloom Wall:armor
+phasespawn|PHASE SPAWN|uncommon|dark|fire|3|1292|0|0|Bone Rattle:sword;Grave Guard:armor
+the-pit-boss|THE PIT BOSS|legendary|fire|dark|4|1293|0|0|Cinder Bite:sword;Doom:spell;Ash Shield:armor
+steve|STEVE|legendary|dark||4|1294|0|0|Bone Rattle:sword;Wail:spell;Grave Guard:armor
+white-rabbit|RABBIT|common|feral|nature|2|1295|0|0|Pounce:sword;Leaf Guard:armor
+king-griffon|KING GRIFFON|legendary|spirit|ward|4|1296|0|0|Radiant Jab:sword;War Cry:spell;Sanctuary:armor
+salamander|SALAMANDER|uncommon|fire|tide|3|1297|0|0|Ember Claw:sword;Fireball:spell
+scarab|SCARAB|common|fire|nature|2|1298|0|0|Thorn Lash:sword;Spore Cloud:spell
+scorpion|SCORPION|common|fire|nature|2|1299|0|0|Quake Stomp:sword;Sandstorm:spell
+shadow-assassin|SHADOW ASSASSIN|rare|dark|feral|3|1300|0|0|Night Slash:sword;Snarl:spell;Fade:armor
+her|HER|legendary|dark|feral|4|1301|0|0|Bone Rattle:sword;Stampede:spell;Shroud:armor
+gottesixe|GOTTESIXE|legendary|fire|ward|4|1302|0|0|Flame Slash:sword;Rally:spell;Cinder Wall:armor
+snail|SNAILY|common|tide|ward|2|1303|1|0|Bubble Hex:spell;Shell Up:armor
+sorceress|SORCERESS|rare|tide|dark|3|1304|1|0|Undertow:sword;Blight:spell;Tide Pool:armor
+the-sphinx|THE SPHINX|legendary|spirit|ward|4|1305|0|0|Halo Strike:sword;Rune Rock:spell;Shield:armor
+the-azure-queen|THE AZURE QUEEN|legendary|dark|nature|4|1306|0|0|Dusk Fang:sword;Vine Hex:spell;Murk:armor
+swamp-lord|SWAMP LORD|rare|tide|nature|3|1307|0|0|Splash Jab:sword;Bloom:spell;Shell Up:armor
+guard-sword|GUARD|uncommon|ward|spirit|3|1308|0|0|Dive:sword;Sun Flare:spell
+thunderhead|THUNDERHEAD|rare|spirit|tide|3|1309|0|0|Halo Strike:sword;Bubble Hex:spell;Aegis:armor
+moose|UNIBOAR|common|feral|nature|2|1310|0|0|Pounce:sword;Burrow:armor
+wasp|WASP|common|nature|feral|2|1311|0|0|Pounce:sword;Bark Skin:armor
+water-elemental|WATER ELEMENTAL|rare|tide|nature|3|1312|0|0|Tide Strike:sword;Tidal Wave:spell;Ice Wall:armor
+oceanis|OCEANIS|legendary|tide|spirit|4|1313|0|0|Wave Cut:sword;Radiance:spell;Mist Veil:armor
+mister-beast|MISTER BEAST|rare|dark|feral|3|1314|0|0|Gloom Jab:sword;Snarl:spell;Fade:armor
+warewolf|WEREWOLF|uncommon|dark|feral|3|1315|0|0|Thorn Lash:sword;Vine Hex:spell
+wolf|WOLF|uncommon|feral|nature|3|1316|0|0|Thorn Lash:sword;Vine Hex:spell
+worm|WORM|common|feral|dark|2|1317|0|0|Pounce:sword;Burrow:armor
+sentient-lettuce|SENTIENT LETTUCE|uncommon|feral|nature|3|1318|0|0|Fang:sword;Leaf Guard:armor
+magmrexe|MAGMREXE|legendary|fire|spirit|4|1319|0|0|Cinder Bite:sword;Halo:spell;Cinder Wall:armor
+frost-giant|FROST GIANT|rare|tide|ward|3|1320|0|0|Splash Jab:sword;Rumble:spell;Shell Up:armor
+sparkle-unicorn|SPARKLE UNICORN|rare|spirit|dark|3|1321|0|0|Spirit Lance:sword;Shade Bolt:spell;Shield:armor
+tide-ketos|TIDE KETOS|uncommon|dark|tide|3|1322|0|0|Bone Rattle:sword;Frost Coat:armor
+snow-griffin|SNOW GRIFFIN|rare|spirit|tide|3|1323|0|0|Radiant Jab:sword;Mist Hex:spell;Ether Guard:armor
+centaur-2347|CENTAUR|uncommon|spirit|feral|3|1324|0|0|Halo Strike:sword;Bristle:armor
+cerbeross|CERBEROSS|legendary|fire|dark|4|1325|0|0|Ember Claw:sword;Curse:spell;Flame Cloak:armor
+bullsaxe|BULLSAXE|rare|ward|feral|3|1326|0|0|Boulder Fist:sword;Snarl:spell;Stone Wall:armor
+nine-tail-fox|NINE-TAIL FOX|rare|fire|feral|3|1327|0|0|Blaze Fang:sword;Screech:spell;Cinder Wall:armor
+thunderbird|THUNDERBIRD|rare|spirit|tide|3|1328|0|0|Radiant Jab:sword;Rain Call:spell;Glow Veil:armor
+eagle-griffin|EAGLE GRIFFIN|uncommon|feral|spirit|3|1329|0|0|Maul:sword;Radiance:spell
+mist-drake|MIST DRAKE|rare|tide|spirit|3|1330|0|0|Brine Bite:sword;Gleam:spell;Foam Shield:armor
+basilisk|BASILISK|rare|nature|dark|3|1331|0|0|Pounce:sword;Doom:spell;Bark Skin:armor
+slappras|SLAPPRAS|uncommon|tide|ward|3|1332|0|0|Riptide:sword;Sandstorm:spell
+shadow-wyvern|SHADOW WYVERN|rare|fire|dark|3|1333|0|0|Scorch:sword;Doom:spell;Ash Shield:armor
+warlock|WARLOCK|uncommon|dark|fire|3|1334|0|0|Night Slash:sword;Ember Guard:armor
+rockclopse|ROCKCLOPSE|rare|ward|feral|3|1335|0|0|Strike:sword;Screech:spell;Granite Hide:armor
+sea-serpent|SEA SERPENT|uncommon|tide|nature|3|1336|0|0|Riptide:sword;Petal Shield:armor
+manticub|MANTICUB|common|feral|nature|2|1337|0|0|Fang:sword;Bark Skin:armor
+silver-simurgh|SILVER SIMURGH|rare|spirit|tide|3|1338|0|0|Ghost Touch:sword;Mist Hex:spell;Sanctuary:armor
+satyr-2342|SATYR|common|feral|nature|2|1339|0|0|Maul:sword;Husk:armor
+jade-qilin|JADE QILIN|rare|tide|nature|3|1340|0|0|Wave Cut:sword;Pollen Burst:spell;Wave Guard:armor
+moon-wolf|MOON WOLF|uncommon|spirit|dark|3|1341|0|0|Ghost Touch:sword;Curse:spell
+lamassu|LAMASSU|rare|spirit|feral|3|1342|0|0|Ghost Touch:sword;Screech:spell;Sanctuary:armor
+monolith|MONOLITH|uncommon|ward|feral|3|1343|0|0|Smash:sword;Howl:spell
+kitte|KITTE|common|nature|dark|2|1344|0|0|Leaf Blade:sword;Fade:armor
+pink-jelly|SLIME|common|tide||2|1345|1|0|Splash:spell;Wobble:armor
+googly-slime|GOOGLY SLIME|common|tide||2|1346|1|0|Brine Bite:sword;Tidal Wave:spell
+cube-slime|CUBE SLIME|uncommon|fire|ward|3|1347|1|0|Cinder Bite:sword;Stone Hex:spell
+chef-slime|CHEF SLIME|epic|tide|feral|4|1348|1|0|Splash Jab:sword;Frenzy:spell;Mist Veil:armor
+batwing-slime|BATWING SLIME|uncommon|tide|dark|3|1349|1|0|Wave Cut:sword;Cloak:armor
+daytona|DAYTONA|legendary|tide|dark|4|1350|0|0|Undertow:sword;Hex:spell;Shell Up:armor
+glass-slime|GLASS SLIME|uncommon|spirit|ward|3|1351|0|0|Glint:sword;Bulwark:armor
+swamp-ooze|SWAMP OOZE|uncommon|tide|nature|3|1352|0|0|Undertow:sword;Thorn Rain:spell
+metal-slime|METAL SLIME|uncommon|ward|tide|3|1353|0|0|Shield Bash:sword;Ice Shard:spell
+devil-slime|DEVIL SLIME|rare|fire|dark|3|1354|0|0|Scorch:sword;Curse:spell;Cinder Wall:armor
+ember-fiend|EMBER FIEND|uncommon|fire|dark|3|1355|0|0|Ember Claw:sword;Doom:spell
+feyre|FEYRE|uncommon|fire|spirit|3|1356|0|0|Flame Slash:sword;Phase:armor
+blazard|BLAZARD|rare|fire|feral|3|1357|0|0|Searing Jab:sword;Musk:spell;Ash Shield:armor
+sunfire-stag|SUNFIRE STAG|rare|fire|feral|3|1358|0|0|Searing Jab:sword;Snarl:spell;Ember Guard:armor
+frostfire-ghoul|FROSTFIRE GHOUL|rare|fire|tide|3|1359|0|0|Flame Slash:sword;Rain Call:spell;Soot Screen:armor
+frost-ettin|FROST ETTIN|uncommon|tide|ward|3|1360|0|0|Tide Strike:sword;Stone Wall:armor
+frost-wasp|FROST WASP|common|tide|nature|2|1361|0|0|Riptide:sword;Bloom:spell
+snow-globe|SNOW GLOBE|common|tide|spirit|2|1362|0|0|Wave Cut:sword;Sanctuary:armor
+icenewte|ICENEWTE|common|tide|feral|2|1363|0|0|Riptide:sword;Frenzy:spell
+storm-wraith|STORM WRAITH|rare|dark|spirit|3|1364|0|0|Dusk Fang:sword;Haunt:spell;Gloom Wall:armor
+pixies|PIXIES|common|spirit|tide|2|1365|0|0|Radiant Jab:sword;Mist Hex:spell
+volt-beetle|VOLT BEETLE|uncommon|spirit|nature|3|1366|0|0|Ghost Touch:sword;Petal Shield:armor
+storm-eagle|STORM EAGLE|uncommon|spirit|feral|3|1367|0|0|Ghost Touch:sword;Musk:spell
+gust-ghost|GUST GHOST|uncommon|tide|dark|3|1368|0|0|Tide Strike:sword;Cloak:armor
+lil-star|LIL' STAR|common|spirit|fire|2|1369|0|0|Dive:sword;Kindle:spell
+pastel-phantom|PASTEL PHANTOM|common|spirit|tide|2|1370|0|0|Ghost Touch:sword;Foam Shield:armor
+cherub-wisp|CHERUB WISP|uncommon|spirit|tide|3|1371|0|0|Radiant Jab:sword;Tide Pool:armor
+spark-sprite|SPARK SPRITE|uncommon|spirit|fire|3|1372|0|0|Halo Strike:sword;Heat Haze:armor
+feathered-wyrmling|FEATHERED WYRMLING|rare|tide|spirit|3|1373|1|0|Tide Strike:sword;Gleam:spell;Mist Veil:armor
+gilt-wing|GILT WING|rare|spirit|ward|3|1374|0|0|Smite:sword;Battle Hymn:spell;Blink:armor
+glass-dragon|GLASS DRAGON|rare|tide|spirit|3|1375|0|0|Tide Strike:sword;Blessing:spell;Shell Up:armor
+rainbow-dragon|RAINBOW DRAGON|rare|spirit|nature|3|1376|0|1|Dive:sword;Vine Hex:spell;Glow Veil:armor
+feathered-wyrm|FEATHERED WYRM|epic|feral|spirit|4|1377|1|0|Tusk:sword;Aura Burst:spell;Bristle:armor
+rainbow-wyrm|RAINBOW WYRM|epic|spirit|nature|4|1378|0|1|Halo Strike:sword;Bloom:spell;Shield:armor
+pearl-serpent|PEARL SERPENT|uncommon|tide|spirit|3|1379|0|0|Lash:sword;Halo:spell
+goldy|GOLDY|legendary|spirit|feral|4|1380|0|0|Smite:sword;Frenzy:spell;Shield:armor
+nessie|NESSIE|legendary|tide|feral|4|1381|0|0|Tide Strike:sword;Screech:spell;Mist Veil:armor
+silver-eel|SILVER EEL|common|tide|spirit|2|1382|0|0|Undertow:sword;Gleam:spell
+reef-dragon|REEF DRAGON|rare|tide|nature|3|1383|0|0|Undertow:sword;Bloom:spell;Frost Coat:armor
+patchwork-zombie|PATCHWORK ZOMBIE|uncommon|ward|dark|3|1384|0|0|Boulder Fist:sword;Curse:spell
+shambling-zombie|SHAMBLING ZOMBIE|common|ward|dark|2|1385|0|0|Quake Stomp:sword;Doom:spell
+wrapped-pharaoh|MUMRAH|legendary|dark|spirit|4|1386|0|0|Grim Reap:sword;Aura Burst:spell;Murk:armor
+sackcloth-ghoul|SACKCLOTH GHOUL|uncommon|dark|ward|3|1387|0|0|Dusk Fang:sword;Rally:spell
+gilded-mummy|GILDED MUMMY|epic|spirit|ward|4|1388|0|0|Dive:sword;Rally:spell;Ether Guard:armor
+shadow-bear|SHADOW BEAR|uncommon|dark|feral|3|1389|0|0|Night Slash:sword;Scurry:armor
+frost-wolf|FROST WOLF|uncommon|tide|feral|3|1390|0|0|Wave Cut:sword;Bristle:armor
+ice-wyrm|ICE WYRM|rare|tide|fire|3|1391|0|0|Brine Bite:sword;Blaze:spell;Wave Guard:armor
+flower-gnome|FLOWER GNOME|uncommon|spirit|nature|3|1392|0|0|Glint:sword;Vine Hex:spell
+miner-gnome|MINER GNOME|common|dark|ward|2|1393|0|0|Gloom Jab:sword;Battle Hymn:spell
+watering-gnome|WATERING GNOME|common|spirit|tide|2|1394|0|0|Halo Strike:sword;Rain Call:spell
+young-dragon|YOUNG DRAGON|uncommon|spirit||3|1395|1|0|Glint:sword;Gleam:spell
+dragon|DRAGON|rare|fire||3|1396|1|0|Scorch:sword;Ember Rain:spell;Soot Screen:armor
+elder-dragon|ELDER DRAGON|epic|fire||4|1397|1|0|Searing Jab:sword;Fireball:spell;Soot Screen:armor
+young-drake|YOUNG DRAKE|common|feral||2|1398|1|0|Maul:sword;Roar:spell
+drake|DRAKE|uncommon|tide||3|1399|1|0|Brine Bite:sword;Frost Coat:armor
+elder-drake|ELDER DRAKE|rare|tide||3|1400|1|0|Lash:sword;Bubble Hex:spell;Wave Guard:armor
