@@ -28,7 +28,7 @@ export function HistorikalCollection({ list, lineup }: { list: HeldHk[]; lineup:
     <>
       {front.length ? (
         // The lineup, always all of it: its hearts, the creature, its name, then its types | its moves.
-        <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 6 }}>
+        <ul style={{ listStyle: "none", margin: "0 0 10px", padding: 0, display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 6 }}>
           {front.map((h) => (
             <li key={h.id}>
               <button type="button" onClick={() => setCard(h)} aria-label={`${h.name}, lineup ${lineup.indexOf(h.id) + 1}: open its card`} style={{ width: "100%", border: 0, background: "none", color: "inherit", cursor: "pointer", padding: "4px 2px", display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
@@ -55,7 +55,7 @@ export function HistorikalCollection({ list, lineup }: { list: HeldHk[]; lineup:
           </button>
         ))}
       </div>
-      {/* The rest, a list: the creature, then its name with its types beside it, then its hearts | its moves. */}
+      {/* The rest, a list: the creature, then its name with its hearts beside it, then its types | its moves. */}
       <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: 4 }}>
         {rest.map((h) => {
           return (
@@ -65,10 +65,10 @@ export function HistorikalCollection({ list, lineup }: { list: HeldHk[]; lineup:
                 <span style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 7 }}>
                   <span style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
                     <span className="px" style={{ fontSize: 10, lineHeight: 1.35 }}>{corrupt(h.name.toUpperCase(), decay)}</span>
-                    <span className="px" style={{ fontSize: 8.5 }}>{h.types.map((t, i) => <span key={t} style={{ color: ELEMENT_COLOR[t] }}>{i ? " / " : ""}{corrupt(t.toUpperCase(), decay)}</span>)}</span>
+                    <Stats h={h} hp={h.hp} k={1.25} only="hearts" />
                   </span>
                   <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                    <Stats h={h} hp={h.hp} k={1.25} only="hearts" />
+                    <span className="px" style={{ fontSize: 8.5 }}>{h.types.map((t, i) => <span key={t} style={{ color: ELEMENT_COLOR[t] }}>{i ? " / " : ""}{corrupt(t.toUpperCase(), decay)}</span>)}</span>
                     <span aria-hidden style={{ color: "var(--muted)", fontSize: 10, lineHeight: 1 }}>|</span>
                     <span style={{ display: "flex", gap: 4 }} aria-hidden>
                       {(HISTORIKAL.get(h.slug)?.moves ?? []).map((m) => <MoveIcon key={m.name} kind={m.kind} k={1.25} fill="var(--muted)" />)}
