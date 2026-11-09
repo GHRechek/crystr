@@ -6,7 +6,7 @@
 "sprite": 1418,
 "art": 1418,
 "name": "Ghost Fire",
-"rarity": "rare",
+"rarity": "uncommon",
 "types": [
 "fire",
 "shadow"
@@ -60,7 +60,7 @@
 "sprite": 1441,
 "art": 1441,
 "name": "Ghost Slime",
-"rarity": "rare",
+"rarity": "uncommon",
 "types": [
 "water",
 "shadow"
@@ -96,7 +96,7 @@
 "sprite": 1457,
 "art": 1457,
 "name": "Bone Ghost",
-"rarity": "uncommon",
+"rarity": "common",
 "types": [
 "shadow",
 "earth"
@@ -204,7 +204,7 @@
 "sprite": 1498,
 "art": 1498,
 "name": "Ghost'nya",
-"rarity": "uncommon",
+"rarity": "common",
 "types": [
 "shadow",
 "normal"
@@ -240,7 +240,7 @@
 "sprite": 1509,
 "art": 1509,
 "name": "Ghost Chef",
-"rarity": "uncommon",
+"rarity": "common",
 "types": [
 "shadow",
 "light"
@@ -258,7 +258,7 @@
 "sprite": 1512,
 "art": 1512,
 "name": "Ghost Key",
-"rarity": "rare",
+"rarity": "uncommon",
 "types": [
 "shadow",
 "light"
@@ -294,7 +294,7 @@
 "sprite": 1825,
 "art": 1825,
 "name": "Hairy Lurker",
-"rarity": "rare",
+"rarity": "uncommon",
 "types": [
 "normal",
 "nature"
@@ -311,7 +311,7 @@
 "sprite": 1826,
 "art": 1826,
 "name": "Jewel Spider",
-"rarity": "uncommon",
+"rarity": "common",
 "types": [
 "fire",
 "nature"
@@ -413,7 +413,7 @@
 "sprite": 1856,
 "art": 1856,
 "name": "Leggy Widow",
-"rarity": "rare",
+"rarity": "uncommon",
 "types": [
 "nature",
 "shadow"
@@ -447,7 +447,7 @@
 "sprite": 1881,
 "art": 1881,
 "name": "Little Widow",
-"rarity": "uncommon",
+"rarity": "common",
 "types": [
 "fire",
 "shadow"
@@ -481,7 +481,7 @@
 "sprite": 1771,
 "art": 1771,
 "name": "Firezombie",
-"rarity": "uncommon",
+"rarity": "common",
 "types": [
 "shadow",
 "fire"
@@ -532,7 +532,7 @@
 "sprite": 1783,
 "art": 1783,
 "name": "Dr. Zombie",
-"rarity": "rare",
+"rarity": "uncommon",
 "types": [
 "light",
 "shadow"
@@ -583,7 +583,7 @@
 "sprite": 1810,
 "art": 1810,
 "name": "Girl Zombie",
-"rarity": "rare",
+"rarity": "uncommon",
 "types": [
 "shadow",
 "light"
@@ -651,7 +651,7 @@
 "sprite": 1892,
 "art": 1892,
 "name": "Goblin Bandit",
-"rarity": "uncommon",
+"rarity": "common",
 "types": [
 "shadow",
 "shadow"
@@ -668,7 +668,7 @@
 "sprite": 1895,
 "art": 1895,
 "name": "Science Goblin",
-"rarity": "rare",
+"rarity": "uncommon",
 "types": [
 "light",
 "shadow"
@@ -719,7 +719,7 @@
 "sprite": 1903,
 "art": 1903,
 "name": "Goblin Bard",
-"rarity": "rare",
+"rarity": "uncommon",
 "types": [
 "light",
 "light"
@@ -770,7 +770,7 @@
 "sprite": 1908,
 "art": 1908,
 "name": "Torcher",
-"rarity": "rare",
+"rarity": "uncommon",
 "types": [
 "fire",
 "light"
@@ -872,7 +872,7 @@
 "sprite": 1925,
 "art": 1925,
 "name": "Feral Goblin",
-"rarity": "uncommon",
+"rarity": "common",
 "types": [
 "fire",
 "normal"
@@ -1076,7 +1076,7 @@
 "sprite": 1730,
 "art": 1730,
 "name": "Buckle Bones",
-"rarity": "uncommon",
+"rarity": "common",
 "types": [
 "shadow",
 "earth"
@@ -1093,7 +1093,7 @@
 "sprite": 1732,
 "art": 1732,
 "name": "Crossbownes",
-"rarity": "uncommon",
+"rarity": "common",
 "types": [
 "nature",
 "shadow"
@@ -1144,7 +1144,7 @@
 "sprite": 1741,
 "art": 1741,
 "name": "Bone'ight",
-"rarity": "rare",
+"rarity": "uncommon",
 "types": [
 "shadow",
 "earth"
@@ -1178,7 +1178,7 @@
 "sprite": 1746,
 "art": 1746,
 "name": "Bonescape",
-"rarity": "uncommon",
+"rarity": "common",
 "types": [
 "shadow",
 "fire"
@@ -1229,7 +1229,7 @@
 "sprite": 1749,
 "art": 1749,
 "name": "Bone Caller",
-"rarity": "rare",
+"rarity": "uncommon",
 "types": [
 "shadow",
 "earth"
@@ -1484,7 +1484,7 @@
 "sprite": 924,
 "art": 924,
 "name": "Runnorc",
-"rarity": "rare",
+"rarity": "uncommon",
 "types": [
 "normal",
 "fire"
@@ -1501,7 +1501,7 @@
 "sprite": 925,
 "art": 925,
 "name": "Boarc",
-"rarity": "rare",
+"rarity": "uncommon",
 "types": [
 "normal",
 "earth"
@@ -1586,7 +1586,7 @@
 "sprite": 931,
 "art": 931,
 "name": "Orc Mystic",
-"rarity": "rare",
+"rarity": "uncommon",
 "types": [
 "normal",
 "light"
@@ -1637,7 +1637,7 @@
 "sprite": 936,
 "art": 936,
 "name": "Orc Prowler",
-"rarity": "uncommon",
+"rarity": "common",
 "types": [
 "shadow",
 "earth"
@@ -1688,7 +1688,7 @@
 "sprite": 940,
 "art": 940,
 "name": "Orc Defender",
-"rarity": "uncommon",
+"rarity": "common",
 "types": [
 "light",
 "earth"
@@ -1841,7 +1841,7 @@
 "sprite": 957,
 "art": 957,
 "name": "Orc Marauder",
-"rarity": "uncommon",
+"rarity": "common",
 "types": [
 "normal",
 "normal"
@@ -1875,7 +1875,7 @@
 "sprite": 2067,
 "art": 2067,
 "name": "Stone Golem",
-"rarity": "rare",
+"rarity": "uncommon",
 "types": [
 "earth",
 "earth"
@@ -2062,7 +2062,7 @@
 "sprite": 2096,
 "art": 2096,
 "name": "Sand Golem",
-"rarity": "uncommon",
+"rarity": "common",
 "types": [
 "fire",
 "earth"
@@ -2079,7 +2079,7 @@
 "sprite": 2097,
 "art": 2097,
 "name": "Arm Golem",
-"rarity": "uncommon",
+"rarity": "common",
 "types": [
 "earth",
 "normal"
@@ -2096,7 +2096,7 @@
 "sprite": 2099,
 "art": 2099,
 "name": "Man Golem",
-"rarity": "uncommon",
+"rarity": "common",
 "types": [
 "normal",
 "earth"
@@ -2130,7 +2130,7 @@
 "sprite": 477,
 "art": 477,
 "name": "Geode Golem",
-"rarity": "rare",
+"rarity": "uncommon",
 "types": [
 "earth",
 "shadow"
@@ -2198,7 +2198,7 @@
 "sprite": 761,
 "art": 761,
 "name": "Dwaxe",
-"rarity": "uncommon",
+"rarity": "common",
 "types": [
 "earth",
 "fire"
@@ -2334,7 +2334,7 @@
 "sprite": 967,
 "art": 968,
 "name": "Archer",
-"rarity": "uncommon",
+"rarity": "common",
 "types": [
 "nature",
 "light"
@@ -2368,7 +2368,7 @@
 "sprite": 974,
 "art": 974,
 "name": "Knight",
-"rarity": "rare",
+"rarity": "uncommon",
 "types": [
 "earth",
 "light"
@@ -2487,7 +2487,7 @@
 "sprite": 730,
 "art": 730,
 "name": "Elf Lancer",
-"rarity": "rare",
+"rarity": "uncommon",
 "types": [
 "light",
 "earth"
@@ -2538,7 +2538,7 @@
 "sprite": 724,
 "art": 724,
 "name": "Moss Elf",
-"rarity": "uncommon",
+"rarity": "common",
 "types": [
 "nature",
 "shadow"
@@ -2555,7 +2555,7 @@
 "sprite": 729,
 "art": 729,
 "name": "Drow Hunter",
-"rarity": "rare",
+"rarity": "uncommon",
 "types": [
 "shadow",
 "water"
@@ -2708,7 +2708,7 @@
 "sprite": 1975,
 "art": 1975,
 "name": "Boulder Troll",
-"rarity": "uncommon",
+"rarity": "common",
 "types": [
 "normal",
 "earth"
@@ -2725,7 +2725,7 @@
 "sprite": 1982,
 "art": 1982,
 "name": "Frost Troll",
-"rarity": "rare",
+"rarity": "uncommon",
 "types": [
 "water",
 "normal"
@@ -2828,7 +2828,7 @@
 "sprite": 2044,
 "art": 2044,
 "name": "Pitchy Devil",
-"rarity": "uncommon",
+"rarity": "common",
 "types": [
 "fire",
 "normal"
@@ -3033,7 +3033,7 @@
 "sprite": 1413,
 "art": 1413,
 "name": "Gun Gremlin",
-"rarity": "rare",
+"rarity": "uncommon",
 "types": [
 "earth",
 "fire"
@@ -3152,7 +3152,7 @@
 "sprite": 1044,
 "art": 1044,
 "name": "Eely Fishman",
-"rarity": "uncommon",
+"rarity": "common",
 "types": [
 "nature",
 "water"
@@ -3526,7 +3526,7 @@
 "sprite": 2255,
 "art": 2255,
 "name": "Axe Minotaur",
-"rarity": "rare",
+"rarity": "epic",
 "types": [
 "earth",
 "normal"
@@ -3665,7 +3665,7 @@
 "sprite": 2243,
 "art": 2243,
 "name": "Bronze Golem",
-"rarity": "rare",
+"rarity": "epic",
 "types": [
 "fire",
 "earth"
@@ -3733,7 +3733,7 @@
 "sprite": 2231,
 "art": 2231,
 "name": "Clockwork Knight",
-"rarity": "rare",
+"rarity": "epic",
 "types": [
 "earth",
 "fire"
@@ -3835,7 +3835,7 @@
 "sprite": 2200,
 "art": 2200,
 "name": "Deep Kraken",
-"rarity": "rare",
+"rarity": "epic",
 "types": [
 "water",
 "nature"
@@ -3972,7 +3972,7 @@
 "sprite": 2227,
 "art": 2227,
 "name": "Elder Squid",
-"rarity": "rare",
+"rarity": "epic",
 "types": [
 "shadow",
 "water"
@@ -4057,7 +4057,7 @@
 "sprite": 2190,
 "art": 2190,
 "name": "Emerald Widow",
-"rarity": "rare",
+"rarity": "epic",
 "types": [
 "nature",
 "shadow"
@@ -4179,7 +4179,7 @@
 "sprite": 2229,
 "art": 2229,
 "name": "Glacier Wraith",
-"rarity": "rare",
+"rarity": "epic",
 "types": [
 "water",
 "shadow"
@@ -4196,7 +4196,7 @@
 "sprite": 2234,
 "art": 2234,
 "name": "Gargant",
-"rarity": "rare",
+"rarity": "epic",
 "types": [
 "nature",
 "earth"
@@ -4266,7 +4266,7 @@
 "sprite": 2224,
 "art": 2224,
 "name": "Ghoul King",
-"rarity": "rare",
+"rarity": "epic",
 "types": [
 "normal",
 "earth"
@@ -4351,7 +4351,7 @@
 "sprite": 2260,
 "art": 2260,
 "name": "Grave Knight",
-"rarity": "rare",
+"rarity": "epic",
 "types": [
 "shadow",
 "earth"
@@ -4368,7 +4368,7 @@
 "sprite": 2273,
 "art": 2273,
 "name": "Great Ape",
-"rarity": "rare",
+"rarity": "epic",
 "types": [
 "earth",
 "normal"
@@ -4505,7 +4505,7 @@
 "sprite": 2188,
 "art": 2188,
 "name": "Hydra",
-"rarity": "rare",
+"rarity": "epic",
 "types": [
 "nature",
 "normal"
@@ -4590,7 +4590,7 @@
 "sprite": 2264,
 "art": 2264,
 "name": "Iron Golem",
-"rarity": "rare",
+"rarity": "epic",
 "types": [
 "earth",
 "light"
@@ -4607,7 +4607,7 @@
 "sprite": 2211,
 "art": 2211,
 "name": "Iron Knight",
-"rarity": "rare",
+"rarity": "epic",
 "types": [
 "earth",
 "light"
@@ -5478,7 +5478,7 @@
 "sprite": 2343,
 "art": 2343,
 "name": "Frost Giant",
-"rarity": "rare",
+"rarity": "uncommon",
 "types": [
 "water",
 "earth"
@@ -5546,7 +5546,7 @@
 "sprite": 2347,
 "art": 2347,
 "name": "Centaur",
-"rarity": "uncommon",
+"rarity": "common",
 "types": [
 "light",
 "normal"
@@ -5580,7 +5580,7 @@
 "sprite": 2336,
 "art": 2336,
 "name": "Bullsaxe",
-"rarity": "rare",
+"rarity": "uncommon",
 "types": [
 "earth",
 "normal"
@@ -5614,7 +5614,7 @@
 "sprite": 2306,
 "art": 2306,
 "name": "Thunderbird",
-"rarity": "rare",
+"rarity": "uncommon",
 "types": [
 "light",
 "water"
@@ -5649,7 +5649,7 @@
 "sprite": 2320,
 "art": 2320,
 "name": "Mist Drake",
-"rarity": "rare",
+"rarity": "uncommon",
 "types": [
 "water",
 "light"
@@ -5666,7 +5666,7 @@
 "sprite": 2341,
 "art": 2341,
 "name": "Basilisk",
-"rarity": "rare",
+"rarity": "uncommon",
 "types": [
 "nature",
 "shadow"
@@ -5683,7 +5683,7 @@
 "sprite": 2377,
 "art": 2377,
 "name": "Slappras",
-"rarity": "uncommon",
+"rarity": "common",
 "types": [
 "water",
 "earth"
@@ -5734,7 +5734,7 @@
 "sprite": 2345,
 "art": 2345,
 "name": "Rockclopse",
-"rarity": "rare",
+"rarity": "uncommon",
 "types": [
 "earth",
 "normal"
@@ -5820,7 +5820,7 @@
 "sprite": 2391,
 "art": 2391,
 "name": "Jade Qilin",
-"rarity": "rare",
+"rarity": "uncommon",
 "types": [
 "water",
 "nature"
@@ -5837,7 +5837,7 @@
 "sprite": 2327,
 "art": 2327,
 "name": "Moon Wolf",
-"rarity": "uncommon",
+"rarity": "common",
 "types": [
 "light",
 "shadow"
@@ -5854,7 +5854,7 @@
 "sprite": 2339,
 "art": 2339,
 "name": "Lamassu",
-"rarity": "rare",
+"rarity": "uncommon",
 "types": [
 "light",
 "normal"
@@ -5871,7 +5871,7 @@
 "sprite": 2281,
 "art": 2281,
 "name": "Monolith",
-"rarity": "uncommon",
+"rarity": "common",
 "types": [
 "earth",
 "normal"
@@ -6008,7 +6008,7 @@
 "sprite": 1687,
 "art": 1687,
 "name": "Glass Slime",
-"rarity": "uncommon",
+"rarity": "common",
 "types": [
 "light",
 "earth"
@@ -6025,7 +6025,7 @@
 "sprite": 1698,
 "art": 1698,
 "name": "Swamp Ooze",
-"rarity": "uncommon",
+"rarity": "common",
 "types": [
 "water",
 "nature"
@@ -6093,7 +6093,7 @@
 "sprite": 389,
 "art": 389,
 "name": "Feyre",
-"rarity": "uncommon",
+"rarity": "common",
 "types": [
 "fire",
 "light"
@@ -6111,7 +6111,7 @@
 "sprite": 385,
 "art": 385,
 "name": "Blazard",
-"rarity": "rare",
+"rarity": "uncommon",
 "types": [
 "fire",
 "normal"
@@ -6303,7 +6303,7 @@
 "sprite": 529,
 "art": 529,
 "name": "Gust Ghost",
-"rarity": "uncommon",
+"rarity": "common",
 "types": [
 "water",
 "shadow"
@@ -6357,7 +6357,7 @@
 "sprite": 612,
 "art": 612,
 "name": "Cherub Wisp",
-"rarity": "uncommon",
+"rarity": "common",
 "types": [
 "light",
 "water"
@@ -6411,7 +6411,7 @@
 "sprite": 1549,
 "art": 1549,
 "name": "Gilt Wing",
-"rarity": "rare",
+"rarity": "uncommon",
 "types": [
 "light",
 "earth"
@@ -6428,7 +6428,7 @@
 "sprite": 1544,
 "art": 1544,
 "name": "Glass Dragon",
-"rarity": "rare",
+"rarity": "uncommon",
 "types": [
 "water",
 "light"
