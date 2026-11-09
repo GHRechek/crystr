@@ -18,6 +18,6 @@ export function IdleImg({ src, size, style }: { src: string; size: number; style
   const img = <img src={creature && two ? `/creatures/${creature}-2.png` : src} alt="" width={size} height={size} style={{ display: "block", imageRendering: "pixelated", ...style }} />;
   if (!creature) return img;
   // The ring goes inside the bob, not around it: Safari drops a filter on the parent of an animated child.
-  const ringed = <RarityGlow slug={creature} size={size}>{img}</RarityGlow>;
+  const ringed = <RarityGlow slug={creature} size={size} src={creature && two ? `/creatures/${creature}-2.png` : src}>{img}</RarityGlow>;
   return HISTORIKAL.get(creature)?.hover ? <span className="hk-hover">{ringed}</span> : ringed;
 }

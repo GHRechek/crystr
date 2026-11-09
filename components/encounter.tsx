@@ -223,7 +223,7 @@ export function Creature({ slug, size, shadow, ko, el }: { slug: string; size: n
   const img = <img src={shadow ? `/creatures/${slug}-s.png` : historikalSrc(slug, f, el)} alt="" width={size} height={size} draggable={false} style={{ display: "block", imageRendering: "pixelated", pointerEvents: "none" }} />;
   // Flyers and floaters bob gently.
   // The ring goes inside the bob, not around it: Safari drops a filter on the parent of an animated child.
-  const ringed = <RarityGlow slug={slug} size={size}>{img}</RarityGlow>;
+  const ringed = <RarityGlow slug={slug} size={size} src={historikalSrc(slug, f, el)}>{img}</RarityGlow>;
   return shadow ? img : HISTORIKAL.get(slug)?.hover ? <span className="hk-hover">{ringed}</span> : ringed;
 }
 

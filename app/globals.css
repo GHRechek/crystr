@@ -1971,7 +1971,7 @@ select.input { border: 0; }
 .en-prize { display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 13px; color: #f2b544; text-shadow: 2px 2px 0 #160b2e; text-align: center; }
 
 /* Battles show creatures plain: no rarity outline. */
-.en-battle .hk-ring { filter: none !important; }
+.en-battle .hk-ring canvas { display: none; }   /* no ring or flakes in a battle: the creatures stand plain */
 
 /* Team picking: three slots (and a gold stake slot) above one swipeable row. */
 .en-theirstake { position: absolute; left: 0; right: 0; top: calc(60px + env(safe-area-inset-top)); z-index: 4; padding: 0 16px; }
