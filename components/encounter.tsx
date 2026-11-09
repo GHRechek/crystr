@@ -253,7 +253,7 @@ function useDrag(onUp: () => void, onDown: () => void, target: React.RefObject<H
 
 /** The pinwheel's colours: the trade's blues, the battle's purples, gold for an epic battle, and blood reds while
  *  a mythic stands on the other side. */
-const PALETTE = { trade: { bg: [50, 86, 190], ray: [76, 125, 240] }, plain: { bg: [36, 14, 50], ray: [88, 22, 66] }, epic: { bg: [40, 25, 4], ray: [110, 74, 12] }, mythic: { bg: [96, 18, 26], ray: [44, 7, 12] } };
+const PALETTE = { trade: { bg: [50, 86, 190], ray: [76, 125, 240] }, plain: { bg: [36, 14, 50], ray: [88, 22, 66] }, epic: { bg: [40, 25, 4], ray: [110, 74, 12] }, mythic: { bg: [78, 13, 20], ray: [32, 5, 9] } };
 function Shell({ kind, children, dim, epic, mythic }: { kind: "trade" | "battle"; children: React.ReactNode; dim?: "on" | "after"; epic?: boolean; mythic?: boolean }) {
   const pal = PALETTE[kind === "trade" ? "trade" : mythic ? "mythic" : epic ? "epic" : "plain"];
   return (
@@ -506,15 +506,16 @@ export function BattleScreen({ v, act, close }: { v: View; act: (a: Record<strin
   // in blood reds with the creature shown; its hearts are a bar. Once per mythic that steps out.
   const theirIsMythic = !!v.theirs && HISTORIKAL.get(v.theirs.slug)?.rarity === "legendary";
   const theirMythic = fighting && theirIsMythic && (v.theirs!.hp ?? 0) > 0;   // standing: the reds and the aura
-  const [entrance, setEntrance] = useState<"dark" | "shown" | null>(null);
+  // "fade": the screen is going dark and nothing of theirs shows yet; "dark": the silhouette with its aura; "shown": the creature.
+  const [entrance, setEntrance] = useState<"fade" | "dark" | "shown" | null>(null);
   const entered = useRef<string | null>(null);
   useEffect(() => {
     if (!theirMythic || !v.theirs) { if (!theirMythic) entered.current = null; return; }
     if (entered.current === v.theirs.slug) return;
     entered.current = v.theirs.slug;
-    setEntrance("dark"); playMythicDirge();
-    const t = window.setTimeout(() => setEntrance("shown"), 2600);
-    return () => window.clearTimeout(t);
+    setEntrance("fade"); playMythicDirge();
+    const t1 = window.setTimeout(() => setEntrance("dark"), 800), t2 = window.setTimeout(() => setEntrance("shown"), 2600);
+    return () => { window.clearTimeout(t1); window.clearTimeout(t2); };
   }, [theirMythic, v.theirs?.slug]);   // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
@@ -588,9 +589,9 @@ export function BattleScreen({ v, act, close }: { v: View; act: (a: Record<strin
         <>
           <div className="px en-q">{v.stage === "end" ? "" : v.stage === "replace" ? "KNOCKED OUT!" : `TURN ${v.turn}`}</div>
           <div className={`en-them${(v.theirs.hp ?? 0) <= 0 ? " down" : ""}`} style={lunge ? { transform: "translateY(110px)" } : undefined}>
-            {theirMythic && entrance === "dark" ? <Creature slug={v.theirs.slug} size={102} shadow aura /> : <Creature slug={v.theirs.slug} el={v.theirs.types?.[0]} size={102} ko={(v.theirs.hp ?? 0) <= 0} />}
+            {theirMythic && entrance === "fade" ? null : theirMythic && entrance === "dark" ? <Creature slug={v.theirs.slug} size={102} shadow aura /> : <Creature slug={v.theirs.slug} el={v.theirs.types?.[0]} size={102} ko={(v.theirs.hp ?? 0) <= 0} />}
           </div>
-          <div className="en-tag en-tag-them">
+          <div className="en-tag en-tag-them" style={theirMythic && entrance === "fade" ? { visibility: "hidden" } : undefined}>
             {theirIsMythic ? <span className="px en-mythtag">MYTHIC</span> : null}
             <span className={`px en-name${theirIsMythic ? " en-mythname" : ""}`}>{up(v.theirs.name)}</span>
             {theirIsMythic ? (entrance === "shown" || !theirMythic ? <BossBar hp={v.theirs.hp ?? v.theirs.hearts} hearts={v.theirs.hearts} /> : <span className="en-bossbar" aria-hidden />)
