@@ -23,8 +23,8 @@ export function RarityGlow({ slug, size, src, children }: { slug: string; size: 
     const img = new Image();
     img.onload = () => {
       if (!alive) return;
-      // Everything is drawn on a half-pixel grid (S = 2 canvas pixels per sprite pixel): the ring is one sprite
-      // pixel wide, its inner half solid and its outer half at half strength.
+      // Everything is drawn on a half-pixel grid (S = 2 canvas pixels per sprite pixel). The ring is one sprite
+      // pixel wide and solid (a half-and-half ring was tried and the solid one kept).
       const S = 2, W = (GRID + 2) * S, H = (GRID + 2 + ABOVE) * S, RH = (GRID + 2) * S;
       canvas.width = W; canvas.height = H;
       const ctx = canvas.getContext("2d");
@@ -39,8 +39,8 @@ export function RarityGlow({ slug, size, src, children }: { slug: string; size: 
         g.globalCompositeOperation = "source-in"; g.globalAlpha = alpha; g.fillStyle = colour; g.fillRect(0, 0, W, RH);
         return c;
       };
-      const outer = cast(S, 0.5), inner = cast(S / 2, 1);
-      const still = () => { ctx.clearRect(0, 0, W, H); ctx.drawImage(outer, 0, ABOVE * S); ctx.drawImage(inner, 0, ABOVE * S); };
+      const ring = cast(S, 1);
+      const still = () => { ctx.clearRect(0, 0, W, H); ctx.drawImage(ring, 0, ABOVE * S); };
       still();
       if (!mythic || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
       // The flakes: from the top edge of each column, up a few rows, in the ring's red, solid or half strength.
