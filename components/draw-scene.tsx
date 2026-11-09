@@ -71,14 +71,14 @@ export function DrawScene({ kind, count, onClose, drawWith = drawFromDb }: { kin
       if (!live) return;
       if (!d) { setState("idle"); return; }
       // A legendary keeps you waiting a little longer.
-      const wait = Math.max(0, (kind === "main" ? 2400 : 1850) + (d.hk.rarity === "legendary" ? 1200 : 0) - (Date.now() - began));
+      const wait = Math.max(0, (kind === "main" ? 2400 : 1850) + (d.hk.rarity === "legendary" ? 1200 : d.hk.rarity === "epic" ? 600 : 0) - (Date.now() - began));
       window.setTimeout(() => {
         if (!live) return;
         setGot(d.hk);
         setLeft(kind === "main" ? d.main : d.normal);
         setState("open");
         playLidOpen();
-        if (d.hk.rarity === "legendary" || d.hk.rarity === "rare") window.setTimeout(playFanfare, 220);
+        if (d.hk.rarity === "legendary" || d.hk.rarity === "epic" || d.hk.rarity === "rare") window.setTimeout(playFanfare, 220);
       }, wait);
     })();
     return () => { live = false; };
@@ -136,7 +136,7 @@ export function DrawScene({ kind, count, onClose, drawWith = drawFromDb }: { kin
         <div className="px dr-count">{left} {left === 1 ? "DRAW" : "DRAWS"} LEFT</div>
         {found.length ? (
           <div className="dr-found" aria-label="Found so far">
-            {found.map((h, i) => <Creature key={i} slug={h.slug} size={34} />)}
+            {found.map((h, i) => <Creature key={i} slug={h.slug} el={h.types?.[0]} size={34} />)}
           </div>
         ) : null}
       </div>
@@ -152,7 +152,7 @@ export function DrawScene({ kind, count, onClose, drawWith = drawFromDb }: { kin
               <>
                 <div className="dr-burst" style={{ "--rc": colour } as React.CSSProperties} aria-hidden />
                 <div ref={popRef} className="dr-pop" style={{ "--rc": colour } as React.CSSProperties}>
-                  <Creature slug={got.slug} size={96} />
+                  <Creature slug={got.slug} el={got.types?.[0]} size={96} />
                 </div>
               </>
             ) : null}

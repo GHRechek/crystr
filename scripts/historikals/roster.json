@@ -1,0 +1,6819 @@
+[
+{
+"id": "ghost_1418",
+"family": "ghost",
+"familyName": "Ghost",
+"sprite": 1418,
+"art": 1418,
+"name": "Ghost Fire",
+"rarity": "rare",
+"types": [
+"fire",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "ghost_1427",
+"family": "ghost",
+"familyName": "Ghost",
+"sprite": 1427,
+"art": 1427,
+"name": "Ghost Pirate",
+"rarity": "uncommon",
+"types": [
+"water",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "ghost_1431",
+"family": "ghost",
+"familyName": "Ghost",
+"sprite": 1431,
+"art": 1431,
+"name": "Ghost Squire",
+"rarity": "uncommon",
+"types": [
+"shadow",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "ghost_1441",
+"family": "ghost",
+"familyName": "Ghost",
+"sprite": 1441,
+"art": 1441,
+"name": "Ghost Slime",
+"rarity": "rare",
+"types": [
+"water",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "ghost_1443",
+"family": "ghost",
+"familyName": "Ghost",
+"sprite": 1443,
+"art": 1443,
+"name": "Mr. Ghost",
+"rarity": "legendary",
+"types": [
+"shadow",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "ghost_1457",
+"family": "ghost",
+"familyName": "Ghost",
+"sprite": 1457,
+"art": 1457,
+"name": "Bone Ghost",
+"rarity": "uncommon",
+"types": [
+"shadow",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "ghost_1459",
+"family": "ghost",
+"familyName": "Ghost",
+"sprite": 1459,
+"art": 1459,
+"name": "Ghost Knight",
+"rarity": "rare",
+"types": [
+"shadow",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "ghost_1476",
+"family": "ghost",
+"familyName": "Ghost",
+"sprite": 1476,
+"art": 1476,
+"name": "Ghost",
+"rarity": "common",
+"types": [
+"shadow",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "ghost"
+},
+{
+"id": "ghost_1482",
+"family": "ghost",
+"familyName": "Ghost",
+"sprite": 1482,
+"art": 1482,
+"name": "Lit Ghost'nya",
+"rarity": "rare",
+"types": [
+"shadow",
+"fire"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "ghost_1490",
+"family": "ghost",
+"familyName": "Ghost",
+"sprite": 1490,
+"art": 1490,
+"name": "Funny Ghost",
+"rarity": "uncommon",
+"types": [
+"shadow",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "ghost_1491",
+"family": "ghost",
+"familyName": "Ghost",
+"sprite": 1491,
+"art": 1491,
+"name": "Mr. Ghost Sr.",
+"rarity": "legendary",
+"types": [
+"shadow",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "ghost_1498",
+"family": "ghost",
+"familyName": "Ghost",
+"sprite": 1498,
+"art": 1498,
+"name": "Ghost'nya",
+"rarity": "uncommon",
+"types": [
+"shadow",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "ghost_1506",
+"family": "ghost",
+"familyName": "Ghost",
+"sprite": 1506,
+"art": 1506,
+"name": "Friendly Ghost",
+"rarity": "common",
+"types": [
+"shadow",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "ghost_1509",
+"family": "ghost",
+"familyName": "Ghost",
+"sprite": 1509,
+"art": 1509,
+"name": "Ghost Chef",
+"rarity": "uncommon",
+"types": [
+"shadow",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "ghost_1512",
+"family": "ghost",
+"familyName": "Ghost",
+"sprite": 1512,
+"art": 1512,
+"name": "Ghost Key",
+"rarity": "rare",
+"types": [
+"shadow",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "ghost_1528",
+"family": "ghost",
+"familyName": "Ghost",
+"sprite": 1528,
+"art": 1528,
+"name": "Book Ghost",
+"rarity": "common",
+"types": [
+"shadow",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "spider_1825",
+"family": "spider",
+"familyName": "Spider",
+"sprite": 1825,
+"art": 1825,
+"name": "Hairy Lurker",
+"rarity": "rare",
+"types": [
+"nature",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "spider_1826",
+"family": "spider",
+"familyName": "Spider",
+"sprite": 1826,
+"art": 1826,
+"name": "Jewel Spider",
+"rarity": "uncommon",
+"types": [
+"fire",
+"water"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "spider_1828",
+"family": "spider",
+"familyName": "Spider",
+"sprite": 1828,
+"art": 1828,
+"name": "Toxic Spider",
+"rarity": "uncommon",
+"types": [
+"nature",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "spider_1831",
+"family": "spider",
+"familyName": "Spider",
+"sprite": 1831,
+"art": 1831,
+"name": "Frost Crawler",
+"rarity": "rare",
+"types": [
+"nature",
+"water"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "spider_1837",
+"family": "spider",
+"familyName": "Spider",
+"sprite": 1837,
+"art": 1837,
+"name": "Crouching Widow",
+"rarity": "uncommon",
+"types": [
+"nature",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "spider_1838",
+"family": "spider",
+"familyName": "Spider",
+"sprite": 1838,
+"art": 1838,
+"name": "Skitter",
+"rarity": "epic",
+"types": [
+"nature",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "spider_1839",
+"family": "spider",
+"familyName": "Spider",
+"sprite": 1839,
+"art": 1839,
+"name": "Giant Spider",
+"rarity": "common",
+"types": [
+"nature",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "spider-02"
+},
+{
+"id": "spider_1856",
+"family": "spider",
+"familyName": "Spider",
+"sprite": 1856,
+"art": 1856,
+"name": "Leggy Widow",
+"rarity": "rare",
+"types": [
+"nature",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "spider_1860",
+"family": "spider",
+"familyName": "Spider",
+"sprite": 1860,
+"art": 1860,
+"name": "Crystal Spider",
+"rarity": "legendary",
+"types": [
+"nature",
+"water"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "spider_1881",
+"family": "spider",
+"familyName": "Spider",
+"sprite": 1881,
+"art": 1881,
+"name": "Little Widow",
+"rarity": "uncommon",
+"types": [
+"fire",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "zombie_1769",
+"family": "zombie",
+"familyName": "Zombie",
+"sprite": 1769,
+"art": 1769,
+"name": "Shambler",
+"rarity": "common",
+"types": [
+"shadow",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "zombie_1771",
+"family": "zombie",
+"familyName": "Zombie",
+"sprite": 1771,
+"art": 1771,
+"name": "Firezombie",
+"rarity": "uncommon",
+"types": [
+"shadow",
+"fire"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "zombie_1772",
+"family": "zombie",
+"familyName": "Zombie",
+"sprite": 1772,
+"art": 1772,
+"name": "Brainebelle",
+"rarity": "uncommon",
+"types": [
+"shadow",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "zombie_1781",
+"family": "zombie",
+"familyName": "Zombie",
+"sprite": 1781,
+"art": 1781,
+"name": "Zombie Boss",
+"rarity": "rare",
+"types": [
+"shadow",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "zombie_1783",
+"family": "zombie",
+"familyName": "Zombie",
+"sprite": 1783,
+"art": 1783,
+"name": "Dr. Zombie",
+"rarity": "rare",
+"types": [
+"light",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "zombie_1802",
+"family": "zombie",
+"familyName": "Zombie",
+"sprite": 1802,
+"art": 1802,
+"name": "Droner",
+"rarity": "common",
+"types": [
+"shadow",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "zombie"
+},
+{
+"id": "zombie_1805",
+"family": "zombie",
+"familyName": "Zombie",
+"sprite": 1805,
+"art": 1805,
+"name": "Office Zombie",
+"rarity": "common",
+"types": [
+"shadow",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "zombie_1810",
+"family": "zombie",
+"familyName": "Zombie",
+"sprite": 1810,
+"art": 1810,
+"name": "Girl Zombie",
+"rarity": "rare",
+"types": [
+"shadow",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "zombie_1813",
+"family": "zombie",
+"familyName": "Zombie",
+"sprite": 1813,
+"art": 1813,
+"name": "Barbossi",
+"rarity": "legendary",
+"types": [
+"shadow",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "goblin_1888",
+"family": "goblin",
+"familyName": "Goblin",
+"sprite": 1888,
+"art": 1888,
+"name": "Goblin Spearman",
+"rarity": "uncommon",
+"types": [
+"normal",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "goblin_1889",
+"family": "goblin",
+"familyName": "Goblin",
+"sprite": 1889,
+"art": 1889,
+"name": "The Gablier",
+"rarity": "legendary",
+"types": [
+"shadow",
+"water"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "goblin_1892",
+"family": "goblin",
+"familyName": "Goblin",
+"sprite": 1892,
+"art": 1892,
+"name": "Goblin Bandit",
+"rarity": "uncommon",
+"types": [
+"shadow",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "goblin_1895",
+"family": "goblin",
+"familyName": "Goblin",
+"sprite": 1895,
+"art": 1895,
+"name": "Science Goblin",
+"rarity": "rare",
+"types": [
+"light",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "goblin_1901",
+"family": "goblin",
+"familyName": "Goblin",
+"sprite": 1901,
+"art": 1901,
+"name": "Zombie Goblin",
+"rarity": "common",
+"types": [
+"earth",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "goblin_1902",
+"family": "goblin",
+"familyName": "Goblin",
+"sprite": 1902,
+"art": 1902,
+"name": "The Goblin King",
+"rarity": "legendary",
+"types": [
+"nature",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "goblin_1903",
+"family": "goblin",
+"familyName": "Goblin",
+"sprite": 1903,
+"art": 1903,
+"name": "Goblin Bard",
+"rarity": "rare",
+"types": [
+"light",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "goblin_1905",
+"family": "goblin",
+"familyName": "Goblin",
+"sprite": 1905,
+"art": 928,
+"name": "Widdle Goblin",
+"rarity": "common",
+"types": [
+"nature",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "goblin"
+},
+{
+"id": "goblin_1907",
+"family": "goblin",
+"familyName": "Goblin",
+"sprite": 1907,
+"art": 1907,
+"name": "Goblin Berserker",
+"rarity": "rare",
+"types": [
+"normal",
+"fire"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "goblin_1908",
+"family": "goblin",
+"familyName": "Goblin",
+"sprite": 1908,
+"art": 1908,
+"name": "Torcher",
+"rarity": "rare",
+"types": [
+"fire",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "goblin_1909",
+"family": "goblin",
+"familyName": "Goblin",
+"sprite": 1909,
+"art": 1909,
+"name": "Spider Goblin",
+"rarity": "epic",
+"types": [
+"normal",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "goblin_1910",
+"family": "goblin",
+"familyName": "Goblin",
+"sprite": 1910,
+"art": 1910,
+"name": "Tin Can Goblin",
+"rarity": "uncommon",
+"types": [
+"earth",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "goblin_1911",
+"family": "goblin",
+"familyName": "Goblin",
+"sprite": 1911,
+"art": 1911,
+"name": "Gobclopse",
+"rarity": "epic",
+"types": [
+"earth",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "goblin_1914",
+"family": "goblin",
+"familyName": "Goblin",
+"sprite": 1914,
+"art": 1914,
+"name": "Girt",
+"rarity": "legendary",
+"types": [
+"light",
+"nature"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "goblin_1924",
+"family": "goblin",
+"familyName": "Goblin",
+"sprite": 1924,
+"art": 1924,
+"name": "Goblin Conjurer",
+"rarity": "uncommon",
+"types": [
+"shadow",
+"light"
+],
+"rnd": true,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "goblin_1925",
+"family": "goblin",
+"familyName": "Goblin",
+"sprite": 1925,
+"art": 1925,
+"name": "Feral Goblin",
+"rarity": "uncommon",
+"types": [
+"fire",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "goblin_1932",
+"family": "goblin",
+"familyName": "Goblin",
+"sprite": 1932,
+"art": 1932,
+"name": "Clever Goblin",
+"rarity": "common",
+"types": [
+"shadow",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "goblin_1940",
+"family": "goblin",
+"familyName": "Goblin",
+"sprite": 1940,
+"art": 1940,
+"name": "Gymbroh",
+"rarity": "epic",
+"types": [
+"normal",
+"fire"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "goblin_1943",
+"family": "goblin",
+"familyName": "Goblin",
+"sprite": 1943,
+"art": 1943,
+"name": "Antlered Goblin",
+"rarity": "rare",
+"types": [
+"nature",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "skeleton_1705",
+"family": "skeleton",
+"familyName": "Skeleton",
+"sprite": 1705,
+"art": 1705,
+"name": "Just A Skeleton",
+"rarity": "common",
+"types": [
+"shadow",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "skeleton"
+},
+{
+"id": "skeleton_1710",
+"family": "skeleton",
+"familyName": "Skeleton",
+"sprite": 1710,
+"art": 1710,
+"name": "Bandshirt Bones",
+"rarity": "epic",
+"types": [
+"shadow",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "skeleton_1711",
+"family": "skeleton",
+"familyName": "Skeleton",
+"sprite": 1711,
+"art": 1711,
+"name": "Ol' Monarke",
+"rarity": "legendary",
+"types": [
+"shadow",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "skeleton_1714",
+"family": "skeleton",
+"familyName": "Skeleton",
+"sprite": 1714,
+"art": 1714,
+"name": "Skeleton Pirate",
+"rarity": "rare",
+"types": [
+"shadow",
+"fire"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "skeleton_1715",
+"family": "skeleton",
+"familyName": "Skeleton",
+"sprite": 1715,
+"art": 1715,
+"name": "Skeleton Warrior",
+"rarity": "uncommon",
+"types": [
+"shadow",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "skeleton_1720",
+"family": "skeleton",
+"familyName": "Skeleton",
+"sprite": 1720,
+"art": 1720,
+"name": "Robed Skeleton",
+"rarity": "common",
+"types": [
+"shadow",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "skeleton_1725",
+"family": "skeleton",
+"familyName": "Skeleton",
+"sprite": 1725,
+"art": 1725,
+"name": "Crackey",
+"rarity": "common",
+"types": [
+"shadow",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "skeleton_1729",
+"family": "skeleton",
+"familyName": "Skeleton",
+"sprite": 1729,
+"art": 1729,
+"name": "Lampslighter",
+"rarity": "uncommon",
+"types": [
+"shadow",
+"fire"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "skeleton_1730",
+"family": "skeleton",
+"familyName": "Skeleton",
+"sprite": 1730,
+"art": 1730,
+"name": "Buckle Bones",
+"rarity": "uncommon",
+"types": [
+"shadow",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "skeleton_1732",
+"family": "skeleton",
+"familyName": "Skeleton",
+"sprite": 1732,
+"art": 1732,
+"name": "Crossbownes",
+"rarity": "uncommon",
+"types": [
+"normal",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "skeleton_1733",
+"family": "skeleton",
+"familyName": "Skeleton",
+"sprite": 1733,
+"art": 1733,
+"name": "Emperor Bone're",
+"rarity": "legendary",
+"types": [
+"shadow",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "skeleton_1740",
+"family": "skeleton",
+"familyName": "Skeleton",
+"sprite": 1740,
+"art": 1740,
+"name": "Bandaged Bones",
+"rarity": "common",
+"types": [
+"shadow",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "skeleton_1741",
+"family": "skeleton",
+"familyName": "Skeleton",
+"sprite": 1741,
+"art": 1741,
+"name": "Bone'ight",
+"rarity": "rare",
+"types": [
+"shadow",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "skeleton_1742",
+"family": "skeleton",
+"familyName": "Skeleton",
+"sprite": 1742,
+"art": 1742,
+"name": "Cloaked Skeleton",
+"rarity": "common",
+"types": [
+"shadow",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "skeleton_1746",
+"family": "skeleton",
+"familyName": "Skeleton",
+"sprite": 1746,
+"art": 1746,
+"name": "Bonescape",
+"rarity": "uncommon",
+"types": [
+"shadow",
+"fire"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "skeleton_1747",
+"family": "skeleton",
+"familyName": "Skeleton",
+"sprite": 1747,
+"art": 1747,
+"name": "Skeleton Fencer",
+"rarity": "common",
+"types": [
+"shadow",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "skeleton_1748",
+"family": "skeleton",
+"familyName": "Skeleton",
+"sprite": 1748,
+"art": 1748,
+"name": "Bonethrower",
+"rarity": "common",
+"types": [
+"shadow",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "skeleton_1749",
+"family": "skeleton",
+"familyName": "Skeleton",
+"sprite": 1749,
+"art": 1749,
+"name": "Bone Caller",
+"rarity": "rare",
+"types": [
+"shadow",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "skeleton_1751",
+"family": "skeleton",
+"familyName": "Skeleton",
+"sprite": 1751,
+"art": 1751,
+"name": "Skeleton Spearman",
+"rarity": "common",
+"types": [
+"shadow",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "skeleton_1752",
+"family": "skeleton",
+"familyName": "Skeleton",
+"sprite": 1752,
+"art": 1752,
+"name": "Ribby Ranger",
+"rarity": "uncommon",
+"types": [
+"shadow",
+"nature"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "skeleton_1756",
+"family": "skeleton",
+"familyName": "Skeleton",
+"sprite": 1756,
+"art": 1756,
+"name": "Skeleton Hermit",
+"rarity": "rare",
+"types": [
+"shadow",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "skeleton_1758",
+"family": "skeleton",
+"familyName": "Skeleton",
+"sprite": 1758,
+"art": 1758,
+"name": "Skeletal Cleric",
+"rarity": "epic",
+"types": [
+"light",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "rat_120",
+"family": "rat",
+"familyName": "Rat",
+"sprite": 120,
+"art": 120,
+"name": "Hammy",
+"rarity": "common",
+"types": [
+"nature",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "rat_126",
+"family": "rat",
+"familyName": "Rat",
+"sprite": 126,
+"art": 126,
+"name": "Mr. Hammy",
+"rarity": "legendary",
+"types": [
+"nature",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "rat_135",
+"family": "rat",
+"familyName": "Rat",
+"sprite": 135,
+"art": 135,
+"name": "Rat",
+"rarity": "common",
+"types": [
+"normal",
+"nature"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "rat"
+},
+{
+"id": "rat_141",
+"family": "rat",
+"familyName": "Rat",
+"sprite": 141,
+"art": 141,
+"name": "Mr. Rat",
+"rarity": "legendary",
+"types": [
+"nature",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "rat_147",
+"family": "rat",
+"familyName": "Rat",
+"sprite": 147,
+"art": 147,
+"name": "Rat King",
+"rarity": "rare",
+"types": [
+"nature",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "orc_919",
+"family": "orc",
+"familyName": "Orc",
+"sprite": 919,
+"art": 919,
+"name": "Ax Strongswing",
+"rarity": "legendary",
+"types": [
+"normal",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "orc_920",
+"family": "orc",
+"familyName": "Orc",
+"sprite": 920,
+"art": 920,
+"name": "Orc Assassin",
+"rarity": "rare",
+"types": [
+"shadow",
+"water"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "orc_921",
+"family": "orc",
+"familyName": "Orc",
+"sprite": 921,
+"art": 921,
+"name": "Girl Orc",
+"rarity": "epic",
+"types": [
+"nature",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "orc_922",
+"family": "orc",
+"familyName": "Orc",
+"sprite": 922,
+"art": 922,
+"name": "Orc Shieldbearer",
+"rarity": "uncommon",
+"types": [
+"earth",
+"nature"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "orc_923",
+"family": "orc",
+"familyName": "Orc",
+"sprite": 923,
+"art": 923,
+"name": "Elder Orc",
+"rarity": "uncommon",
+"types": [
+"shadow",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "orc_924",
+"family": "orc",
+"familyName": "Orc",
+"sprite": 924,
+"art": 924,
+"name": "Runnorc",
+"rarity": "rare",
+"types": [
+"normal",
+"fire"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "orc_925",
+"family": "orc",
+"familyName": "Orc",
+"sprite": 925,
+"art": 925,
+"name": "Boarc",
+"rarity": "rare",
+"types": [
+"normal",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "orc_926",
+"family": "orc",
+"familyName": "Orc",
+"sprite": 926,
+"art": 926,
+"name": "Orc Ranger",
+"rarity": "rare",
+"types": [
+"normal",
+"nature"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "orc_928",
+"family": "orc",
+"familyName": "Orc",
+"sprite": 928,
+"art": 927,
+"name": "Justababy",
+"rarity": "legendary",
+"types": [
+"water",
+"normal"
+],
+"rnd": true,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "orc_929",
+"family": "orc",
+"familyName": "Orc",
+"sprite": 929,
+"art": 929,
+"name": "Thrag Tribecaller",
+"rarity": "legendary",
+"types": [
+"light",
+"fire"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "orc_930",
+"family": "orc",
+"familyName": "Orc",
+"sprite": 930,
+"art": 930,
+"name": "Lil' Legs",
+"rarity": "legendary",
+"types": [
+"light",
+"nature"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "orc_931",
+"family": "orc",
+"familyName": "Orc",
+"sprite": 931,
+"art": 931,
+"name": "Orc Mystic",
+"rarity": "rare",
+"types": [
+"normal",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "orc_934",
+"family": "orc",
+"familyName": "Orc",
+"sprite": 934,
+"art": 934,
+"name": "Orc Gladiator",
+"rarity": "common",
+"types": [
+"normal",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "orc_935",
+"family": "orc",
+"familyName": "Orc",
+"sprite": 935,
+"art": 935,
+"name": "Orc Blademaster",
+"rarity": "uncommon",
+"types": [
+"earth",
+"water"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "orc_936",
+"family": "orc",
+"familyName": "Orc",
+"sprite": 936,
+"art": 936,
+"name": "Orc Prowler",
+"rarity": "uncommon",
+"types": [
+"shadow",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "orc_937",
+"family": "orc",
+"familyName": "Orc",
+"sprite": 937,
+"art": 937,
+"name": "Orc Ninja",
+"rarity": "epic",
+"types": [
+"shadow",
+"water"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "orc_939",
+"family": "orc",
+"familyName": "Orc",
+"sprite": 939,
+"art": 939,
+"name": "Chainmail Orc",
+"rarity": "common",
+"types": [
+"light",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "orc_940",
+"family": "orc",
+"familyName": "Orc",
+"sprite": 940,
+"art": 940,
+"name": "Orc Defender",
+"rarity": "uncommon",
+"types": [
+"light",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "orc_943",
+"family": "orc",
+"familyName": "Orc",
+"sprite": 943,
+"art": 943,
+"name": "Orc Raider",
+"rarity": "common",
+"types": [
+"normal",
+"nature"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "orc_945",
+"family": "orc",
+"familyName": "Orc",
+"sprite": 945,
+"art": 945,
+"name": "Orc Mercenary",
+"rarity": "common",
+"types": [
+"normal",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "orc_947",
+"family": "orc",
+"familyName": "Orc",
+"sprite": 947,
+"art": 947,
+"name": "Orc Champion",
+"rarity": "common",
+"types": [
+"earth",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "orc_951",
+"family": "orc",
+"familyName": "Orc",
+"sprite": 951,
+"art": 951,
+"name": "Orc Guard",
+"rarity": "common",
+"types": [
+"earth",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "orc_952",
+"family": "orc",
+"familyName": "Orc",
+"sprite": 952,
+"art": 952,
+"name": "Orc Veteran",
+"rarity": "common",
+"types": [
+"earth",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "orc_954",
+"family": "orc",
+"familyName": "Orc",
+"sprite": 954,
+"art": 954,
+"name": "Bone Collector",
+"rarity": "common",
+"types": [
+"normal",
+"nature"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "orc_955",
+"family": "orc",
+"familyName": "Orc",
+"sprite": 955,
+"art": 955,
+"name": "Sneaky Orc",
+"rarity": "common",
+"types": [
+"shadow",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "orc_956",
+"family": "orc",
+"familyName": "Orc",
+"sprite": 956,
+"art": 956,
+"name": "Orc",
+"rarity": "common",
+"types": [
+"earth",
+"nature"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "orc"
+},
+{
+"id": "orc_957",
+"family": "orc",
+"familyName": "Orc",
+"sprite": 957,
+"art": 957,
+"name": "Orc Marauder",
+"rarity": "uncommon",
+"types": [
+"normal",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "orc_958",
+"family": "orc",
+"familyName": "Orc",
+"sprite": 958,
+"art": 958,
+"name": "Orc Scout",
+"rarity": "common",
+"types": [
+"nature",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "golem_2067",
+"family": "golem",
+"familyName": "Golem",
+"sprite": 2067,
+"art": 2067,
+"name": "Stone Golem",
+"rarity": "rare",
+"types": [
+"earth",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "stone-golem"
+},
+{
+"id": "golem_2069",
+"family": "golem",
+"familyName": "Golem",
+"sprite": 2069,
+"art": 2069,
+"name": "Ember Golem",
+"rarity": "common",
+"types": [
+"earth",
+"fire"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "golem_2071",
+"family": "golem",
+"familyName": "Golem",
+"sprite": 2071,
+"art": 2071,
+"name": "Obsidian Golem",
+"rarity": "uncommon",
+"types": [
+"earth",
+"fire"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "golem_2075",
+"family": "golem",
+"familyName": "Golem",
+"sprite": 2075,
+"art": 2075,
+"name": "Ancient Golem",
+"rarity": "epic",
+"types": [
+"earth",
+"nature"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "golem_2079",
+"family": "golem",
+"familyName": "Golem",
+"sprite": 2079,
+"art": 2079,
+"name": "Shale Golem",
+"rarity": "common",
+"types": [
+"fire",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "golem_2083",
+"family": "golem",
+"familyName": "Golem",
+"sprite": 2083,
+"art": 2083,
+"name": "Wicker Golem",
+"rarity": "uncommon",
+"types": [
+"light",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "golem_2089",
+"family": "golem",
+"familyName": "Golem",
+"sprite": 2089,
+"art": 2089,
+"name": "Magicite Golem",
+"rarity": "common",
+"types": [
+"light",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "golem_2090",
+"family": "golem",
+"familyName": "Golem",
+"sprite": 2090,
+"art": 2090,
+"name": "Wood Golem",
+"rarity": "common",
+"types": [
+"nature",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "golem_2091",
+"family": "golem",
+"familyName": "Golem",
+"sprite": 2091,
+"art": 2091,
+"name": "Deadwood Golem",
+"rarity": "rare",
+"types": [
+"nature",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "golem_2093",
+"family": "golem",
+"familyName": "Golem",
+"sprite": 2093,
+"art": 2093,
+"name": "Amethyst Golem",
+"rarity": "epic",
+"types": [
+"earth",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "golem_2094",
+"family": "golem",
+"familyName": "Golem",
+"sprite": 2094,
+"art": 2094,
+"name": "Lava Golem",
+"rarity": "common",
+"types": [
+"earth",
+"fire"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "golem_2096",
+"family": "golem",
+"familyName": "Golem",
+"sprite": 2096,
+"art": 2096,
+"name": "Sand Golem",
+"rarity": "uncommon",
+"types": [
+"fire",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "golem_2097",
+"family": "golem",
+"familyName": "Golem",
+"sprite": 2097,
+"art": 2097,
+"name": "Arm Golem",
+"rarity": "uncommon",
+"types": [
+"earth",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "golem_2099",
+"family": "golem",
+"familyName": "Golem",
+"sprite": 2099,
+"art": 2099,
+"name": "Man Golem",
+"rarity": "uncommon",
+"types": [
+"normal",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "golem_2100",
+"family": "golem",
+"familyName": "Golem",
+"sprite": 2100,
+"art": 2100,
+"name": "Quartz Golem",
+"rarity": "uncommon",
+"types": [
+"earth",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "golem_477",
+"family": "golem",
+"familyName": "Golem",
+"sprite": 477,
+"art": 477,
+"name": "Geode Golem",
+"rarity": "rare",
+"types": [
+"earth",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "golem_478",
+"family": "golem",
+"familyName": "Golem",
+"sprite": 478,
+"art": 478,
+"name": "Crystipher",
+"rarity": "legendary",
+"types": [
+"earth",
+"water"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "dwarf_751",
+"family": "dwarf",
+"familyName": "Dwarf",
+"sprite": 751,
+"art": 751,
+"name": "Dwarfling",
+"rarity": "common",
+"types": [
+"fire",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "dwarf_757",
+"family": "dwarf",
+"familyName": "Dwarf",
+"sprite": 757,
+"art": 757,
+"name": "Dwarf",
+"rarity": "common",
+"types": [
+"normal",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "dwarf"
+},
+{
+"id": "dwarf_761",
+"family": "dwarf",
+"familyName": "Dwarf",
+"sprite": 761,
+"art": 761,
+"name": "Dwaxe",
+"rarity": "uncommon",
+"types": [
+"earth",
+"fire"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "dwarf_765",
+"family": "dwarf",
+"familyName": "Dwarf",
+"sprite": 765,
+"art": 765,
+"name": "Cloaky Dwarf",
+"rarity": "common",
+"types": [
+"normal",
+"fire"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "dwarf_767",
+"family": "dwarf",
+"familyName": "Dwarf",
+"sprite": 767,
+"art": 767,
+"name": "Old Dwarf",
+"rarity": "common",
+"types": [
+"normal",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "dwarf_769",
+"family": "dwarf",
+"familyName": "Dwarf",
+"sprite": 769,
+"art": 769,
+"name": "Miney Dwarf",
+"rarity": "common",
+"types": [
+"fire",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "dwarf_773",
+"family": "dwarf",
+"familyName": "Dwarf",
+"sprite": 773,
+"art": 773,
+"name": "Hawky Dwarf",
+"rarity": "uncommon",
+"types": [
+"normal",
+"fire"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "dwarf_777",
+"family": "dwarf",
+"familyName": "Dwarf",
+"sprite": 777,
+"art": 777,
+"name": "Hammer Dwarf",
+"rarity": "common",
+"types": [
+"earth",
+"fire"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "dwarf_779",
+"family": "dwarf",
+"familyName": "Dwarf",
+"sprite": 779,
+"art": 779,
+"name": "Shieldy Dwarf",
+"rarity": "uncommon",
+"types": [
+"earth",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "human_966",
+"family": "human",
+"familyName": "Human",
+"sprite": 966,
+"art": 966,
+"name": "Townsfolk",
+"rarity": "common",
+"types": [
+"normal",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "human_967",
+"family": "human",
+"familyName": "Human",
+"sprite": 967,
+"art": 967,
+"name": "Archer",
+"rarity": "uncommon",
+"types": [
+"light",
+"nature"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "human_961",
+"family": "human",
+"familyName": "Human",
+"sprite": 961,
+"art": 961,
+"name": "Footman",
+"rarity": "common",
+"types": [
+"earth",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "human_974",
+"family": "human",
+"familyName": "Human",
+"sprite": 974,
+"art": 974,
+"name": "Knight",
+"rarity": "rare",
+"types": [
+"earth",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "human_978",
+"family": "human",
+"familyName": "Human",
+"sprite": 978,
+"art": 990,
+"name": "Monk",
+"rarity": "common",
+"types": [
+"light",
+"fire"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "human_988",
+"family": "human",
+"familyName": "Human",
+"sprite": 988,
+"art": 964,
+"name": "Hedge Witch",
+"rarity": "uncommon",
+"types": [
+"shadow",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "human_992",
+"family": "human",
+"familyName": "Human",
+"sprite": 992,
+"art": 992,
+"name": "Blacksmith",
+"rarity": "uncommon",
+"types": [
+"earth",
+"fire"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "human_1003",
+"family": "human",
+"familyName": "Human",
+"sprite": 1003,
+"art": 1003,
+"name": "Jester",
+"rarity": "rare",
+"types": [
+"light",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "human_962",
+"family": "human",
+"familyName": "Human",
+"sprite": 962,
+"art": 962,
+"name": "The King",
+"rarity": "legendary",
+"types": [
+"light",
+"fire"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "elf_697",
+"family": "elf",
+"familyName": "Elf",
+"sprite": 697,
+"art": 697,
+"name": "Elf Archer",
+"rarity": "common",
+"types": [
+"light",
+"nature"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "elf_730",
+"family": "elf",
+"familyName": "Elf",
+"sprite": 730,
+"art": 730,
+"name": "Elf Lancer",
+"rarity": "rare",
+"types": [
+"light",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "elf_699",
+"family": "elf",
+"familyName": "Elf",
+"sprite": 699,
+"art": 699,
+"name": "Wood Elf",
+"rarity": "common",
+"types": [
+"normal",
+"nature"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "elf_698",
+"family": "elf",
+"familyName": "Elf",
+"sprite": 698,
+"art": 698,
+"name": "Basic Ass Elf",
+"rarity": "uncommon",
+"types": [
+"light",
+"nature"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "elf_724",
+"family": "elf",
+"familyName": "Elf",
+"sprite": 724,
+"art": 724,
+"name": "Moss Elf",
+"rarity": "uncommon",
+"types": [
+"nature",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "elf_729",
+"family": "elf",
+"familyName": "Elf",
+"sprite": 729,
+"art": 729,
+"name": "Drow Hunter",
+"rarity": "rare",
+"types": [
+"shadow",
+"water"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "elf_702",
+"family": "elf",
+"familyName": "Elf",
+"sprite": 702,
+"art": 702,
+"name": "Elf Priestess",
+"rarity": "rare",
+"types": [
+"light",
+"fire"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "elf_742",
+"family": "elf",
+"familyName": "Elf",
+"sprite": 742,
+"art": 742,
+"name": "The Oldest Elf",
+"rarity": "legendary",
+"types": [
+"light",
+"nature"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "gorilla_461",
+"family": "gorilla",
+"familyName": "Gorilla",
+"sprite": 461,
+"art": 461,
+"name": "A Single Gorilla",
+"rarity": "rare",
+"types": [
+"normal",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "troll_1971",
+"family": "troll",
+"familyName": "Troll",
+"sprite": 1971,
+"art": 1971,
+"name": "Troll",
+"rarity": "common",
+"types": [
+"normal",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "troll"
+},
+{
+"id": "troll_1947",
+"family": "troll",
+"familyName": "Troll",
+"sprite": 1947,
+"art": 1947,
+"name": "Hulking Troll",
+"rarity": "uncommon",
+"types": [
+"normal",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "troll_1956",
+"family": "troll",
+"familyName": "Troll",
+"sprite": 1956,
+"art": 1956,
+"name": "Skinny Troll",
+"rarity": "common",
+"types": [
+"normal",
+"earth"
+],
+"rnd": true,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "troll_1962",
+"family": "troll",
+"familyName": "Troll",
+"sprite": 1962,
+"art": 1962,
+"name": "Redmane Troll",
+"rarity": "rare",
+"types": [
+"normal",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "troll_1968",
+"family": "troll",
+"familyName": "Troll",
+"sprite": 1968,
+"art": 1968,
+"name": "Big-Nose Troll",
+"rarity": "uncommon",
+"types": [
+"normal",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "troll_1975",
+"family": "troll",
+"familyName": "Troll",
+"sprite": 1975,
+"art": 1975,
+"name": "Boulder Troll",
+"rarity": "uncommon",
+"types": [
+"normal",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "troll_1982",
+"family": "troll",
+"familyName": "Troll",
+"sprite": 1982,
+"art": 1982,
+"name": "Frost Troll",
+"rarity": "rare",
+"types": [
+"water",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "troll_2005",
+"family": "troll",
+"familyName": "Troll",
+"sprite": 2005,
+"art": 2005,
+"name": "Four-Eyed Troll",
+"rarity": "epic",
+"types": [
+"normal",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "devil_2009",
+"family": "devil",
+"familyName": "Devil",
+"sprite": 2009,
+"art": 2009,
+"name": "Demon",
+"rarity": "common",
+"types": [
+"shadow",
+"fire"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "demon"
+},
+{
+"id": "devil_2008",
+"family": "devil",
+"familyName": "Devil",
+"sprite": 2008,
+"art": 2008,
+"name": "Devil",
+"rarity": "common",
+"types": [
+"fire",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "devil_2015",
+"family": "devil",
+"familyName": "Devil",
+"sprite": 2015,
+"art": 2015,
+"name": "Blue Devil",
+"rarity": "common",
+"types": [
+"normal",
+"water"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "devil_2016",
+"family": "devil",
+"familyName": "Devil",
+"sprite": 2016,
+"art": 2016,
+"name": "Winged Devil",
+"rarity": "rare",
+"types": [
+"fire",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "devil_2044",
+"family": "devil",
+"familyName": "Devil",
+"sprite": 2044,
+"art": 2044,
+"name": "Pitchy Devil",
+"rarity": "uncommon",
+"types": [
+"fire",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "devil_2054",
+"family": "devil",
+"familyName": "Devil",
+"sprite": 2054,
+"art": 2054,
+"name": "Little Devil",
+"rarity": "common",
+"types": [
+"fire",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "devil_2058",
+"family": "devil",
+"familyName": "Devil",
+"sprite": 2058,
+"art": 2058,
+"name": "Forky Devil",
+"rarity": "common",
+"types": [
+"fire",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "devil_2059",
+"family": "devil",
+"familyName": "Devil",
+"sprite": 2059,
+"art": 2059,
+"name": "Contract Devil",
+"rarity": "uncommon",
+"types": [
+"fire",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "devil_2066",
+"family": "devil",
+"familyName": "Devil",
+"sprite": 2066,
+"art": 2066,
+"name": "Stone Devil",
+"rarity": "common",
+"types": [
+"earth",
+"fire"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "red-dragon_1562",
+"family": "red-dragon",
+"familyName": "Red Dragon",
+"sprite": 1562,
+"art": 1546,
+"name": "Dragondra",
+"rarity": "epic",
+"types": [
+"fire",
+"earth"
+],
+"rnd": true,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "red-dragon_1583",
+"family": "red-dragon",
+"familyName": "Red Dragon",
+"sprite": 1583,
+"art": 1583,
+"name": "Ancient Wyrm",
+"rarity": "legendary",
+"types": [
+"fire",
+"earth"
+],
+"rnd": true,
+"one": false,
+"shift": false,
+"slug": "red-dragon"
+},
+{
+"id": "red-dragon_1584",
+"family": "red-dragon",
+"familyName": "Red Dragon",
+"sprite": 1584,
+"art": 1584,
+"name": "Griffin",
+"rarity": "rare",
+"types": [
+"normal",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "red-dragon_1598",
+"family": "red-dragon",
+"familyName": "Red Dragon",
+"sprite": 1598,
+"art": 1598,
+"name": "Peryton",
+"rarity": "uncommon",
+"types": [
+"shadow",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "gremlin_1378",
+"family": "gremlin",
+"familyName": "Gremlin",
+"sprite": 1378,
+"art": 1378,
+"name": "Gremlin",
+"rarity": "common",
+"types": [
+"shadow",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "gremlin"
+},
+{
+"id": "gremlin_1387",
+"family": "gremlin",
+"familyName": "Gremlin",
+"sprite": 1387,
+"art": 1387,
+"name": "Shadow Gremlin",
+"rarity": "common",
+"types": [
+"shadow",
+"fire"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "gremlin_1388",
+"family": "gremlin",
+"familyName": "Gremlin",
+"sprite": 1388,
+"art": 1388,
+"name": "Little Gremlin",
+"rarity": "common",
+"types": [
+"shadow",
+"fire"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "gremlin_1413",
+"family": "gremlin",
+"familyName": "Gremlin",
+"sprite": 1413,
+"art": 1413,
+"name": "Gun Gremlin",
+"rarity": "rare",
+"types": [
+"earth",
+"fire"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "gremlin_1400",
+"family": "gremlin",
+"familyName": "Gremlin",
+"sprite": 1400,
+"art": 1400,
+"name": "Sneaky Gremlin",
+"rarity": "common",
+"types": [
+"shadow",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "gremlin_1410",
+"family": "gremlin",
+"familyName": "Gremlin",
+"sprite": 1410,
+"art": 1410,
+"name": "Frosty Gremlin",
+"rarity": "uncommon",
+"types": [
+"shadow",
+"water"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "gremlin_1395",
+"family": "gremlin",
+"familyName": "Gremlin",
+"sprite": 1395,
+"art": 1395,
+"name": "Chubby Gremlin",
+"rarity": "rare",
+"types": [
+"shadow",
+"fire"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "fishman_1043",
+"family": "fishman",
+"familyName": "Fishman",
+"sprite": 1043,
+"art": 1043,
+"name": "Fishman",
+"rarity": "common",
+"types": [
+"water",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "aquaticman"
+},
+{
+"id": "fishman_1014",
+"family": "fishman",
+"familyName": "Fishman",
+"sprite": 1014,
+"art": 1014,
+"name": "Mermaid",
+"rarity": "common",
+"types": [
+"water",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "fishman_1015",
+"family": "fishman",
+"familyName": "Fishman",
+"sprite": 1015,
+"art": 1015,
+"name": "Mermiss",
+"rarity": "common",
+"types": [
+"water",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "fishman_1044",
+"family": "fishman",
+"familyName": "Fishman",
+"sprite": 1044,
+"art": 1044,
+"name": "Eely Fishman",
+"rarity": "uncommon",
+"types": [
+"nature",
+"water"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "fishman_1038",
+"family": "fishman",
+"familyName": "Fishman",
+"sprite": 1038,
+"art": 1038,
+"name": "Brawny Fishman",
+"rarity": "uncommon",
+"types": [
+"water",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "fishman_1042",
+"family": "fishman",
+"familyName": "Fishman",
+"sprite": 1042,
+"art": 1042,
+"name": "Siren",
+"rarity": "common",
+"types": [
+"water",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "fishman_1056",
+"family": "fishman",
+"familyName": "Fishman",
+"sprite": 1056,
+"art": 1056,
+"name": "Manfish",
+"rarity": "rare",
+"types": [
+"water",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "yeti_410",
+"family": "yeti",
+"familyName": "Yeti",
+"sprite": 410,
+"art": 410,
+"name": "Lil Yeti",
+"rarity": "common",
+"types": [
+"water",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "yeti"
+},
+{
+"id": "yeti_413",
+"family": "yeti",
+"familyName": "Yeti",
+"sprite": 413,
+"art": 413,
+"name": "Fluffy Yeti",
+"rarity": "common",
+"types": [
+"water",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "yeti_415",
+"family": "yeti",
+"familyName": "Yeti",
+"sprite": 415,
+"art": 415,
+"name": "Horned Yeti",
+"rarity": "common",
+"types": [
+"water",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "yeti_416",
+"family": "yeti",
+"familyName": "Yeti",
+"sprite": 416,
+"art": 416,
+"name": "Abominable Yeti",
+"rarity": "rare",
+"types": [
+"water",
+"fire"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "nightmare_683",
+"family": "nightmare",
+"familyName": "Nightmare",
+"sprite": 683,
+"art": 683,
+"name": "Nightmare",
+"rarity": "common",
+"types": [
+"shadow",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "nightmare"
+},
+{
+"id": "nightmare_655",
+"family": "nightmare",
+"familyName": "Nightmare",
+"sprite": 655,
+"art": 655,
+"name": "Three-Eyed Nightmare",
+"rarity": "uncommon",
+"types": [
+"shadow",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "nightmare_654",
+"family": "nightmare",
+"familyName": "Nightmare",
+"sprite": 654,
+"art": 654,
+"name": "Horned Nightmare",
+"rarity": "common",
+"types": [
+"shadow",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "nightmare_673",
+"family": "nightmare",
+"familyName": "Nightmare",
+"sprite": 673,
+"art": 673,
+"name": "Grinning Nightmare",
+"rarity": "common",
+"types": [
+"shadow",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "snake_203",
+"family": "snake",
+"familyName": "Snake",
+"sprite": 203,
+"art": 203,
+"name": "Green Snake",
+"rarity": "common",
+"types": [
+"nature",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "snake-01"
+},
+{
+"id": "snake_211",
+"family": "snake",
+"familyName": "Snake",
+"sprite": 211,
+"art": 211,
+"name": "Viper",
+"rarity": "common",
+"types": [
+"normal",
+"nature"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "snake-02"
+},
+{
+"id": "snake_197",
+"family": "snake",
+"familyName": "Snake",
+"sprite": 197,
+"art": 197,
+"name": "Blue Snake",
+"rarity": "common",
+"types": [
+"water",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "snake-blue"
+},
+{
+"id": "snake_209",
+"family": "snake",
+"familyName": "Snake",
+"sprite": 209,
+"art": 209,
+"name": "Brown Snake",
+"rarity": "common",
+"types": [
+"normal",
+"nature"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "snake-brown"
+},
+{
+"id": "snake_380",
+"family": "snake",
+"familyName": "Snake",
+"sprite": 380,
+"art": 380,
+"name": "Burning Snake",
+"rarity": "uncommon",
+"types": [
+"fire",
+"nature"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "burning-skeleton"
+},
+{
+"id": "gargoyle_2018",
+"family": "gargoyle",
+"familyName": "Gargoyle",
+"sprite": 2018,
+"art": 2018,
+"name": "Lil Gargoyle",
+"rarity": "common",
+"types": [
+"earth",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "gargoyle"
+},
+{
+"id": "gargoyle_2010",
+"family": "gargoyle",
+"familyName": "Gargoyle",
+"sprite": 2010,
+"art": 2010,
+"name": "Gargoyle",
+"rarity": "uncommon",
+"types": [
+"earth",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "gargoyle_2017",
+"family": "gargoyle",
+"familyName": "Gargoyle",
+"sprite": 2017,
+"art": 2017,
+"name": "Perched Gargoyle",
+"rarity": "rare",
+"types": [
+"earth",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "ant_338",
+"family": "ant",
+"familyName": "Ant",
+"sprite": 338,
+"art": 338,
+"name": "Ant",
+"rarity": "common",
+"types": [
+"nature",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "ant"
+},
+{
+"id": "aquatic-elf_1015",
+"family": "aquatic-elf",
+"familyName": "Aquatic Elf",
+"sprite": 1015,
+"art": 1015,
+"name": "Aquatic Elf",
+"rarity": "uncommon",
+"types": [
+"water",
+"nature"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "aquatic-elf"
+},
+{
+"id": "boss-2255_2255",
+"family": "boss-2255",
+"familyName": "Axe Minotaur",
+"sprite": 2255,
+"art": 2255,
+"name": "Axe Minotaur",
+"rarity": "rare",
+"types": [
+"earth",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "banshee_551",
+"family": "banshee",
+"familyName": "Banshee",
+"sprite": 551,
+"art": 551,
+"name": "Banshee",
+"rarity": "uncommon",
+"types": [
+"shadow",
+"water"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "banshee"
+},
+{
+"id": "bat_1587",
+"family": "bat",
+"familyName": "Bat",
+"sprite": 1587,
+"art": 1587,
+"name": "Bat",
+"rarity": "common",
+"types": [
+"shadow",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "bat"
+},
+{
+"id": "bee_1615",
+"family": "bee",
+"familyName": "Bee",
+"sprite": 1615,
+"art": 1615,
+"name": "Bee",
+"rarity": "common",
+"types": [
+"normal",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "bee"
+},
+{
+"id": "boss-2223_2223",
+"family": "boss-2223",
+"familyName": "Blood Fiend",
+"sprite": 2223,
+"art": 2223,
+"name": "Blood Fiend",
+"rarity": "rare",
+"types": [
+"fire",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "boss-2208_2208",
+"family": "boss-2208",
+"familyName": "Bone Shaman",
+"sprite": 2208,
+"art": 2208,
+"name": "Bone Shaman",
+"rarity": "rare",
+"types": [
+"shadow",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "boss-2183_2183",
+"family": "boss-2183",
+"familyName": "Bone Weaver",
+"sprite": 2183,
+"art": 2183,
+"name": "Bone Weaver",
+"rarity": "rare",
+"types": [
+"light",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "brain-sucker_2213",
+"family": "brain-sucker",
+"familyName": "Brain Sucker",
+"sprite": 2213,
+"art": 2213,
+"name": "Brain Sucker",
+"rarity": "uncommon",
+"types": [
+"shadow",
+"water"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "brain-sucker"
+},
+{
+"id": "boss-2243_2243",
+"family": "boss-2243",
+"familyName": "Bronze Golem",
+"sprite": 2243,
+"art": 2243,
+"name": "Bronze Golem",
+"rarity": "rare",
+"types": [
+"fire",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "boss-2230_2230",
+"family": "boss-2230",
+"familyName": "Bull Demon",
+"sprite": 2230,
+"art": 2230,
+"name": "Man Bull",
+"rarity": "rare",
+"types": [
+"normal",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "chaos-screamer_2235",
+"family": "chaos-screamer",
+"familyName": "Chaos Screamer",
+"sprite": 2235,
+"art": 2235,
+"name": "Chaos Screamer",
+"rarity": "uncommon",
+"types": [
+"shadow",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "chaos-screamer"
+},
+{
+"id": "boss-2256_2256",
+"family": "boss-2256",
+"familyName": "Chimera",
+"sprite": 2256,
+"art": 2256,
+"name": "Manchimera",
+"rarity": "legendary",
+"types": [
+"fire",
+"nature"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "boss-2231_2231",
+"family": "boss-2231",
+"familyName": "Clockwork Knight",
+"sprite": 2231,
+"art": 2231,
+"name": "Clockwork Knight",
+"rarity": "rare",
+"types": [
+"earth",
+"fire"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "crabman_1058",
+"family": "crabman",
+"familyName": "Crabman",
+"sprite": 1058,
+"art": 1058,
+"name": "Crabman",
+"rarity": "uncommon",
+"types": [
+"fire",
+"water"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "crabman"
+},
+{
+"id": "boss-2225_2225",
+"family": "boss-2225",
+"familyName": "Crimson Demon",
+"sprite": 2225,
+"art": 2225,
+"name": "Thick Demon",
+"rarity": "rare",
+"types": [
+"fire",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "dark-elf-mage_715",
+"family": "dark-elf-mage",
+"familyName": "Dark Elf Mage",
+"sprite": 715,
+"art": 715,
+"name": "Elf Mage",
+"rarity": "uncommon",
+"types": [
+"water",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "dark-elf-mage"
+},
+{
+"id": "boss-2240_2240",
+"family": "boss-2240",
+"familyName": "Dark Knight",
+"sprite": 2240,
+"art": 2240,
+"name": "Dark Knight",
+"rarity": "legendary",
+"types": [
+"shadow",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "death-knight_2204",
+"family": "death-knight",
+"familyName": "Death Knight",
+"sprite": 2204,
+"art": 2204,
+"name": "Death Knight",
+"rarity": "legendary",
+"types": [
+"shadow",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "death-knight"
+},
+{
+"id": "boss-2200_2200",
+"family": "boss-2200",
+"familyName": "Deep Kraken",
+"sprite": 2200,
+"art": 2200,
+"name": "Deep Kraken",
+"rarity": "rare",
+"types": [
+"water",
+"nature"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "boss-2222_2222",
+"family": "boss-2222",
+"familyName": "Deep One",
+"sprite": 2222,
+"art": 2222,
+"name": "The Deep One",
+"rarity": "legendary",
+"types": [
+"shadow",
+"water"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "boss-2275_2275",
+"family": "boss-2275",
+"familyName": "Demon Queen",
+"sprite": 2275,
+"art": 2275,
+"name": "Demon Queen",
+"rarity": "legendary",
+"types": [
+"fire",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "boss-2198_2198",
+"family": "boss-2198",
+"familyName": "Devil Lord",
+"sprite": 2198,
+"art": 2198,
+"name": "Bill",
+"rarity": "legendary",
+"types": [
+"normal",
+"fire"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "displacer-beast_2308",
+"family": "displacer-beast",
+"familyName": "Displacer Beast",
+"sprite": 2308,
+"art": 2308,
+"name": "Displacer Beast",
+"rarity": "rare",
+"types": [
+"normal",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "displacer-beast"
+},
+{
+"id": "boss-2253_2253",
+"family": "boss-2253",
+"familyName": "Drowned Captain",
+"sprite": 2253,
+"art": 2253,
+"name": "The Captain",
+"rarity": "legendary",
+"types": [
+"water",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "boss-2271_2271",
+"family": "boss-2271",
+"familyName": "Eagle Lord",
+"sprite": 2271,
+"art": 2271,
+"name": "Lord of all Eagles",
+"rarity": "legendary",
+"types": [
+"light",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "earth-elemental_474",
+"family": "earth-elemental",
+"familyName": "Earth Elemental",
+"sprite": 474,
+"art": 474,
+"name": "Earth Elemental",
+"rarity": "rare",
+"types": [
+"earth",
+"nature"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "earth-elemental"
+},
+{
+"id": "boss-2227_2227",
+"family": "boss-2227",
+"familyName": "Elder Squid",
+"sprite": 2227,
+"art": 2227,
+"name": "Elder Squid",
+"rarity": "rare",
+"types": [
+"shadow",
+"water"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "boss-2186_2186",
+"family": "boss-2186",
+"familyName": "Elder Treant",
+"sprite": 2186,
+"art": 2186,
+"name": "Treant",
+"rarity": "rare",
+"types": [
+"nature",
+"nature"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "electric-elemental_558",
+"family": "electric-elemental",
+"familyName": "Electric Elemental",
+"sprite": 558,
+"art": 558,
+"name": "Electric Elemental",
+"rarity": "rare",
+"types": [
+"light",
+"water"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "electric-elemental"
+},
+{
+"id": "ember-knight_2204",
+"family": "ember-knight",
+"familyName": "Ember Knight",
+"sprite": 2204,
+"art": 2204,
+"name": "Death Knight",
+"rarity": "legendary",
+"types": [
+"fire",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "ember-knight"
+},
+{
+"id": "boss-2181_2181",
+"family": "boss-2181",
+"familyName": "Emerald Colossus",
+"sprite": 2181,
+"art": 2181,
+"name": "Emerald Colossus",
+"rarity": "legendary",
+"types": [
+"nature",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "boss-2190_2190",
+"family": "boss-2190",
+"familyName": "Emerald Widow",
+"sprite": 2190,
+"art": 2190,
+"name": "Emerald Widow",
+"rarity": "rare",
+"types": [
+"nature",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "eyehorror_2277",
+"family": "eyehorror",
+"familyName": "Eye Horror",
+"sprite": 2277,
+"art": 2277,
+"name": "Eye Horror",
+"rarity": "uncommon",
+"types": [
+"shadow",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "eyehorror"
+},
+{
+"id": "fire-elemental_390",
+"family": "fire-elemental",
+"familyName": "Fire Elemental",
+"sprite": 390,
+"art": 390,
+"name": "Fire Elemental",
+"rarity": "rare",
+"types": [
+"fire",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "fire-elemental"
+},
+{
+"id": "boss-2179_2179",
+"family": "boss-2179",
+"familyName": "Flame Tree",
+"sprite": 2179,
+"art": 2179,
+"name": "The Everburn",
+"rarity": "legendary",
+"types": [
+"fire",
+"nature"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "mosquito_1657",
+"family": "mosquito",
+"familyName": "Fly",
+"sprite": 1657,
+"art": 1657,
+"name": "Fly",
+"rarity": "common",
+"types": [
+"shadow",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "mosquito"
+},
+{
+"id": "flying-skull_1379",
+"family": "flying-skull",
+"familyName": "Flying Skull",
+"sprite": 1379,
+"art": 1379,
+"name": "Flying Skull",
+"rarity": "common",
+"types": [
+"shadow",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "flying-skull"
+},
+{
+"id": "boss-2194_2194",
+"family": "boss-2194",
+"familyName": "Frost Widow",
+"sprite": 2194,
+"art": 2194,
+"name": "Frost Widow",
+"rarity": "rare",
+"types": [
+"water",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "boss-2229_2229",
+"family": "boss-2229",
+"familyName": "Frost Wraith",
+"sprite": 2229,
+"art": 2229,
+"name": "Glacier Wraith",
+"rarity": "rare",
+"types": [
+"water",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "boss-2234_2234",
+"family": "boss-2234",
+"familyName": "Gargant",
+"sprite": 2234,
+"art": 2234,
+"name": "Gargant",
+"rarity": "rare",
+"types": [
+"nature",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "boss-2197_2197",
+"family": "boss-2197",
+"familyName": "Gargoyle Lord",
+"sprite": 2197,
+"art": 2197,
+"name": "Gargoyle Lawd",
+"rarity": "epic",
+"types": [
+"earth",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "boss-2212_2212",
+"family": "boss-2212",
+"familyName": "Gazer",
+"sprite": 2212,
+"art": 2212,
+"name": "Gazer",
+"rarity": "rare",
+"types": [
+"shadow",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "beholder_2205",
+"family": "beholder",
+"familyName": "Beholder",
+"sprite": 2205,
+"art": 2205,
+"name": "Beholder",
+"rarity": "legendary",
+"types": [
+"shadow",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "beholder"
+},
+{
+"id": "boss-2224_2224",
+"family": "boss-2224",
+"familyName": "Ghoul King",
+"sprite": 2224,
+"art": 2224,
+"name": "Ghoul King",
+"rarity": "rare",
+"types": [
+"shadow",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "drow-spider_2266",
+"family": "drow-spider",
+"familyName": "Giant Mantis",
+"sprite": 2266,
+"art": 2266,
+"name": "Giant Mantis",
+"rarity": "uncommon",
+"types": [
+"normal",
+"nature"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "drow-spider"
+},
+{
+"id": "boss-2180_2180",
+"family": "boss-2180",
+"familyName": "Glacier Titan",
+"sprite": 2180,
+"art": 2180,
+"name": "The Glacier Titan",
+"rarity": "legendary",
+"types": [
+"water",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "boss-2263_2263",
+"family": "boss-2263",
+"familyName": "Goblin Tinker",
+"sprite": 2263,
+"art": 2263,
+"name": "Steamer",
+"rarity": "rare",
+"types": [
+"earth",
+"fire"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "boss-2269_2269",
+"family": "boss-2269",
+"familyName": "Golden Spider",
+"sprite": 2269,
+"art": 2269,
+"name": "The Gold Spinner",
+"rarity": "legendary",
+"types": [
+"light",
+"nature"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "boss-2260_2260",
+"family": "boss-2260",
+"familyName": "Grave Knight",
+"sprite": 2260,
+"art": 2260,
+"name": "Grave Knight",
+"rarity": "rare",
+"types": [
+"shadow",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "boss-2273_2273",
+"family": "boss-2273",
+"familyName": "Great Ape",
+"sprite": 2273,
+"art": 2273,
+"name": "Great Ape",
+"rarity": "rare",
+"types": [
+"earth",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "boss-2189_2189",
+"family": "boss-2189",
+"familyName": "Griffin",
+"sprite": 2189,
+"art": 2189,
+"name": "Griffin",
+"rarity": "rare",
+"types": [
+"light",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "boss-2239_2239",
+"family": "boss-2239",
+"familyName": "Grove Keeper",
+"sprite": 2239,
+"art": 2239,
+"name": "The Druking",
+"rarity": "legendary",
+"types": [
+"nature",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "boss-2226_2226",
+"family": "boss-2226",
+"familyName": "Grove Shaman",
+"sprite": 2226,
+"art": 2226,
+"name": "Druwood",
+"rarity": "rare",
+"types": [
+"nature",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "harpy_2296",
+"family": "harpy",
+"familyName": "Harpy",
+"sprite": 2296,
+"art": 2296,
+"name": "Harpy",
+"rarity": "uncommon",
+"types": [
+"light",
+"water"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "harpy"
+},
+{
+"id": "boss-2259_2259",
+"family": "boss-2259",
+"familyName": "Holy Knight",
+"sprite": 2259,
+"art": 2259,
+"name": "Holy Knight",
+"rarity": "legendary",
+"types": [
+"light",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "boss-2254_2254",
+"family": "boss-2254",
+"familyName": "Hooded Reaper",
+"sprite": 2254,
+"art": 2254,
+"name": "Evil Wizard",
+"rarity": "rare",
+"types": [
+"fire",
+"shadow"
+],
+"rnd": true,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "boss-2232_2232",
+"family": "boss-2232",
+"familyName": "Hooded Shade",
+"sprite": 2232,
+"art": 2232,
+"name": "Shade",
+"rarity": "epic",
+"types": [
+"fire",
+"shadow"
+],
+"rnd": true,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "boss-2188_2188",
+"family": "boss-2188",
+"familyName": "Hydra",
+"sprite": 2188,
+"art": 2188,
+"name": "Hydra",
+"rarity": "rare",
+"types": [
+"nature",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "boss-2185_2185",
+"family": "boss-2185",
+"familyName": "Ice Phoenix",
+"sprite": 2185,
+"art": 2185,
+"name": "Artikino",
+"rarity": "legendary",
+"types": [
+"water",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "boss-2220_2220",
+"family": "boss-2220",
+"familyName": "Illithid",
+"sprite": 2220,
+"art": 2220,
+"name": "Brain Taker",
+"rarity": "rare",
+"types": [
+"shadow",
+"water"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "imp_2014",
+"family": "imp",
+"familyName": "Imp",
+"sprite": 2014,
+"art": 2014,
+"name": "Imp",
+"rarity": "uncommon",
+"types": [
+"shadow",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "imp"
+},
+{
+"id": "boss-2248_2248",
+"family": "boss-2248",
+"familyName": "Inferno",
+"sprite": 2248,
+"art": 2248,
+"name": "Infernus",
+"rarity": "legendary",
+"types": [
+"fire",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "boss-2264_2264",
+"family": "boss-2264",
+"familyName": "Iron Golem",
+"sprite": 2264,
+"art": 2264,
+"name": "Iron Golem",
+"rarity": "rare",
+"types": [
+"earth",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "boss-2211_2211",
+"family": "boss-2211",
+"familyName": "Iron Knight",
+"sprite": 2211,
+"art": 2211,
+"name": "Iron Knight",
+"rarity": "rare",
+"types": [
+"earth",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "boss-2192_2192",
+"family": "boss-2192",
+"familyName": "Kraken",
+"sprite": 2192,
+"art": 2192,
+"name": "The Kraken",
+"rarity": "legendary",
+"types": [
+"water",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "boss-2184_2184",
+"family": "boss-2184",
+"familyName": "Lava Fiend",
+"sprite": 2184,
+"art": 2184,
+"name": "Lava Fiend",
+"rarity": "epic",
+"types": [
+"fire",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "boss-2201_2201",
+"family": "boss-2201",
+"familyName": "Lich",
+"sprite": 2201,
+"art": 2201,
+"name": "Lich",
+"rarity": "epic",
+"types": [
+"shadow",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "boss-2258_2258",
+"family": "boss-2258",
+"familyName": "Lich King",
+"sprite": 2258,
+"art": 2258,
+"name": "The Lich King",
+"rarity": "legendary",
+"types": [
+"shadow",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "boss-2206_2206",
+"family": "boss-2206",
+"familyName": "Mind Witch",
+"sprite": 2206,
+"art": 2206,
+"name": "Mind Shaker",
+"rarity": "rare",
+"types": [
+"shadow",
+"water"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "boss-2228_2228",
+"family": "boss-2228",
+"familyName": "Minotaur",
+"sprite": 2228,
+"art": 2228,
+"name": "Minotaur",
+"rarity": "rare",
+"types": [
+"earth",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "boss-2216_2216",
+"family": "boss-2216",
+"familyName": "Minotaur Brute",
+"sprite": 2216,
+"art": 2216,
+"name": "Minotaura",
+"rarity": "rare",
+"types": [
+"earth",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "boss-2187_2187",
+"family": "boss-2187",
+"familyName": "Minotaur Chief",
+"sprite": 2187,
+"art": 2187,
+"name": "Minotauraga",
+"rarity": "rare",
+"types": [
+"earth",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "elder-horror_2276",
+"family": "elder-horror",
+"familyName": "Moon Elder",
+"sprite": 2276,
+"art": 2261,
+"name": "Moon Elder",
+"rarity": "legendary",
+"types": [
+"shadow",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "elder-horror"
+},
+{
+"id": "boss-2217_2217",
+"family": "boss-2217",
+"familyName": "Moss Golem",
+"sprite": 2217,
+"art": 2217,
+"name": "Moss Golem",
+"rarity": "rare",
+"types": [
+"nature",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "sprite_647",
+"family": "sprite",
+"familyName": "Mote",
+"sprite": 647,
+"art": 647,
+"name": "Mote",
+"rarity": "uncommon",
+"types": [
+"light",
+"fire"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "sprite"
+},
+{
+"id": "moth_1624",
+"family": "moth",
+"familyName": "Moth",
+"sprite": 1624,
+"art": 1624,
+"name": "Mothie",
+"rarity": "common",
+"types": [
+"light",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "moth"
+},
+{
+"id": "mudman_460",
+"family": "mudman",
+"familyName": "Mudman",
+"sprite": 460,
+"art": 460,
+"name": "Mudde",
+"rarity": "common",
+"types": [
+"normal",
+"water"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "mudman"
+},
+{
+"id": "boss-2176_2176",
+"family": "boss-2176",
+"familyName": "Mummy Lord",
+"sprite": 2176,
+"art": 2176,
+"name": "Mummy",
+"rarity": "rare",
+"types": [
+"earth",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "boss-2265_2265",
+"family": "boss-2265",
+"familyName": "Naga Queen",
+"sprite": 2265,
+"art": 2265,
+"name": "Queen Dopplepop",
+"rarity": "legendary",
+"types": [
+"water",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "boss-2250_2250",
+"family": "boss-2250",
+"familyName": "Necromancer",
+"sprite": 2250,
+"art": 2250,
+"name": "Eternus",
+"rarity": "legendary",
+"types": [
+"shadow",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "boss-2244_2244",
+"family": "boss-2244",
+"familyName": "Night Fiend",
+"sprite": 2244,
+"art": 2244,
+"name": "The Pit Master",
+"rarity": "legendary",
+"types": [
+"shadow",
+"fire"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "boss-2191_2191",
+"family": "boss-2191",
+"familyName": "Night Gargoyle",
+"sprite": 2191,
+"art": 2191,
+"name": "Night Gargoyle",
+"rarity": "rare",
+"types": [
+"shadow",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "witch_2207",
+"family": "witch",
+"familyName": "Night Hag",
+"sprite": 2207,
+"art": 2207,
+"name": "Night Hag",
+"rarity": "uncommon",
+"types": [
+"shadow",
+"water"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "witch"
+},
+{
+"id": "boss-2272_2272",
+"family": "boss-2272",
+"familyName": "Orc Warlord",
+"sprite": 2272,
+"art": 2272,
+"name": "Thagg",
+"rarity": "legendary",
+"types": [
+"earth",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "boss-2270_2270",
+"family": "boss-2270",
+"familyName": "Paladin",
+"sprite": 2270,
+"art": 2270,
+"name": "Paladin",
+"rarity": "rare",
+"types": [
+"fire",
+"light"
+],
+"rnd": true,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "boss-2203_2203",
+"family": "boss-2203",
+"familyName": "Pale Revenant",
+"sprite": 2203,
+"art": 2203,
+"name": "Pale Revenant",
+"rarity": "rare",
+"types": [
+"shadow",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "phasespawn_2215",
+"family": "phasespawn",
+"familyName": "Phase Spawn",
+"sprite": 2215,
+"art": 2215,
+"name": "Phase Spawn",
+"rarity": "uncommon",
+"types": [
+"shadow",
+"fire"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "phasespawn"
+},
+{
+"id": "boss-2221_2221",
+"family": "boss-2221",
+"familyName": "Pit Fiend",
+"sprite": 2221,
+"art": 2221,
+"name": "The Pit Boss",
+"rarity": "legendary",
+"types": [
+"fire",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "boss-2233_2233",
+"family": "boss-2233",
+"familyName": "Purple Lich",
+"sprite": 2233,
+"art": 2233,
+"name": "Steve",
+"rarity": "legendary",
+"types": [
+"shadow",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "white-rabbit_230",
+"family": "white-rabbit",
+"familyName": "Rabbit",
+"sprite": 230,
+"art": 230,
+"name": "Rabbit",
+"rarity": "common",
+"types": [
+"normal",
+"nature"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "white-rabbit"
+},
+{
+"id": "boss-2219_2219",
+"family": "boss-2219",
+"familyName": "Royal Griffon",
+"sprite": 2219,
+"art": 2219,
+"name": "King Griffon",
+"rarity": "legendary",
+"types": [
+"light",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "salamander_377",
+"family": "salamander",
+"familyName": "Salamander",
+"sprite": 377,
+"art": 377,
+"name": "Salamander",
+"rarity": "uncommon",
+"types": [
+"fire",
+"water"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "salamander"
+},
+{
+"id": "scarab_1650",
+"family": "scarab",
+"familyName": "Scarab",
+"sprite": 1650,
+"art": 1650,
+"name": "Scarab",
+"rarity": "common",
+"types": [
+"fire",
+"nature"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "scarab"
+},
+{
+"id": "scorpion_291",
+"family": "scorpion",
+"familyName": "Scorpion",
+"sprite": 291,
+"art": 291,
+"name": "Scorpion",
+"rarity": "common",
+"types": [
+"fire",
+"nature"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "scorpion"
+},
+{
+"id": "boss-2262_2262",
+"family": "boss-2262",
+"familyName": "Shadow Assassin",
+"sprite": 2262,
+"art": 2262,
+"name": "Shadow Assassin",
+"rarity": "rare",
+"types": [
+"shadow",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "boss-2268_2268",
+"family": "boss-2268",
+"familyName": "Shadow Rogue",
+"sprite": 2268,
+"art": 2268,
+"name": "Her",
+"rarity": "legendary",
+"types": [
+"shadow",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "boss-2238_2238",
+"family": "boss-2238",
+"familyName": "Six-Armed Warlord",
+"sprite": 2238,
+"art": 2238,
+"name": "Gottesixe",
+"rarity": "legendary",
+"types": [
+"fire",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "snail_340",
+"family": "snail",
+"familyName": "Snail",
+"sprite": 340,
+"art": 340,
+"name": "Snaily",
+"rarity": "common",
+"types": [
+"water",
+"earth"
+],
+"rnd": true,
+"one": false,
+"shift": false,
+"slug": "snail"
+},
+{
+"id": "boss-2267_2267",
+"family": "boss-2267",
+"familyName": "Sorceress",
+"sprite": 2267,
+"art": 2267,
+"name": "Sorceress",
+"rarity": "rare",
+"types": [
+"water",
+"shadow"
+],
+"rnd": true,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "boss-2245_2245",
+"family": "boss-2245",
+"familyName": "Sphinx",
+"sprite": 2245,
+"art": 2245,
+"name": "The Sphinx",
+"rarity": "legendary",
+"types": [
+"light",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "boss-2196_2196",
+"family": "boss-2196",
+"familyName": "Spider Queen",
+"sprite": 2196,
+"art": 2196,
+"name": "The Azure Queen",
+"rarity": "legendary",
+"types": [
+"shadow",
+"nature"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "boss-2218_2218",
+"family": "boss-2218",
+"familyName": "Swamp Lord",
+"sprite": 2218,
+"art": 2218,
+"name": "Swamp Lord",
+"rarity": "rare",
+"types": [
+"water",
+"nature"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "guard-sword_974",
+"family": "guard-sword",
+"familyName": "Sword Guard",
+"sprite": 974,
+"art": 974,
+"name": "Sword Guard",
+"rarity": "uncommon",
+"types": [
+"earth",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "guard-sword"
+},
+{
+"id": "boss-2182_2182",
+"family": "boss-2182",
+"familyName": "Thunderhead",
+"sprite": 2182,
+"art": 2182,
+"name": "Thunderhead",
+"rarity": "rare",
+"types": [
+"light",
+"water"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "moose_2330",
+"family": "moose",
+"familyName": "Uniboar",
+"sprite": 2330,
+"art": 2330,
+"name": "Uniboar",
+"rarity": "common",
+"types": [
+"normal",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "moose"
+},
+{
+"id": "wasp_1585",
+"family": "wasp",
+"familyName": "Wasp",
+"sprite": 1585,
+"art": 1585,
+"name": "Wasp",
+"rarity": "common",
+"types": [
+"nature",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "wasp"
+},
+{
+"id": "water-elemental_2249",
+"family": "water-elemental",
+"familyName": "Water Elemental",
+"sprite": 2249,
+"art": 2249,
+"name": "Water Elemental",
+"rarity": "rare",
+"types": [
+"water",
+"nature"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "water-elemental"
+},
+{
+"id": "boss-2274_2274",
+"family": "boss-2274",
+"familyName": "Water Spirit",
+"sprite": 2274,
+"art": 2274,
+"name": "Oceanis",
+"rarity": "legendary",
+"types": [
+"water",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "boss-2199_2199",
+"family": "boss-2199",
+"familyName": "Werebeast",
+"sprite": 2199,
+"art": 2257,
+"name": "Mister Beast",
+"rarity": "rare",
+"types": [
+"shadow",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "warewolf_2257",
+"family": "warewolf",
+"familyName": "Werewolf",
+"sprite": 2257,
+"art": 2199,
+"name": "Werewolf",
+"rarity": "uncommon",
+"types": [
+"shadow",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "warewolf"
+},
+{
+"id": "wolf_2416",
+"family": "wolf",
+"familyName": "Wolf",
+"sprite": 2416,
+"art": 2416,
+"name": "Wolf",
+"rarity": "uncommon",
+"types": [
+"normal",
+"nature"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "wolf"
+},
+{
+"id": "worm_463",
+"family": "worm",
+"familyName": "Worm",
+"sprite": 463,
+"art": 463,
+"name": "Worm",
+"rarity": "common",
+"types": [
+"normal",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": "worm"
+},
+{
+"id": "mythic_2278",
+"family": "mythic",
+"familyName": "Mythic Beast",
+"sprite": 2278,
+"art": 2278,
+"name": "Sentient Lettuce",
+"rarity": "uncommon",
+"types": [
+"normal",
+"nature"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "mythic_2348",
+"family": "mythic",
+"familyName": "Mythic Beast",
+"sprite": 2348,
+"art": 2348,
+"name": "Magmrexe",
+"rarity": "legendary",
+"types": [
+"fire",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "mythic_2343",
+"family": "mythic",
+"familyName": "Mythic Beast",
+"sprite": 2343,
+"art": 2343,
+"name": "Frost Giant",
+"rarity": "rare",
+"types": [
+"water",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "mythic_2311",
+"family": "mythic",
+"familyName": "Mythic Beast",
+"sprite": 2311,
+"art": 2311,
+"name": "Sparkle Unicorn",
+"rarity": "rare",
+"types": [
+"light",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "mythic_2384",
+"family": "mythic",
+"familyName": "Mythic Beast",
+"sprite": 2384,
+"art": 2384,
+"name": "Tide Ketos",
+"rarity": "uncommon",
+"types": [
+"shadow",
+"water"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "mythic_2381",
+"family": "mythic",
+"familyName": "Mythic Beast",
+"sprite": 2381,
+"art": 2381,
+"name": "Snow Griffin",
+"rarity": "rare",
+"types": [
+"light",
+"water"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "mythic_2347",
+"family": "mythic",
+"familyName": "Mythic Beast",
+"sprite": 2347,
+"art": 2347,
+"name": "Centaur",
+"rarity": "uncommon",
+"types": [
+"light",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "mythic_2338",
+"family": "mythic",
+"familyName": "Mythic Beast",
+"sprite": 2338,
+"art": 2338,
+"name": "Cerbeross",
+"rarity": "legendary",
+"types": [
+"fire",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "mythic_2336",
+"family": "mythic",
+"familyName": "Mythic Beast",
+"sprite": 2336,
+"art": 2336,
+"name": "Bullsaxe",
+"rarity": "rare",
+"types": [
+"earth",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "mythic_2350",
+"family": "mythic",
+"familyName": "Mythic Beast",
+"sprite": 2350,
+"art": 2350,
+"name": "Nine-Tail Fox",
+"rarity": "rare",
+"types": [
+"fire",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "mythic_2306",
+"family": "mythic",
+"familyName": "Mythic Beast",
+"sprite": 2306,
+"art": 2306,
+"name": "Thunderbird",
+"rarity": "rare",
+"types": [
+"light",
+"water"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "mythic_2337",
+"family": "mythic",
+"familyName": "Mythic Beast",
+"sprite": 2337,
+"art": 2337,
+"name": "Eagle Griffin",
+"rarity": "uncommon",
+"types": [
+"normal",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "mythic_2320",
+"family": "mythic",
+"familyName": "Mythic Beast",
+"sprite": 2320,
+"art": 2320,
+"name": "Mist Drake",
+"rarity": "rare",
+"types": [
+"water",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "mythic_2341",
+"family": "mythic",
+"familyName": "Mythic Beast",
+"sprite": 2341,
+"art": 2341,
+"name": "Basilisk",
+"rarity": "rare",
+"types": [
+"nature",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "mythic_2377",
+"family": "mythic",
+"familyName": "Mythic Beast",
+"sprite": 2377,
+"art": 2377,
+"name": "Slappras",
+"rarity": "uncommon",
+"types": [
+"water",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "mythic_2335",
+"family": "mythic",
+"familyName": "Mythic Beast",
+"sprite": 2335,
+"art": 2335,
+"name": "Shadow Wyvern",
+"rarity": "rare",
+"types": [
+"fire",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "mythic_2282",
+"family": "mythic",
+"familyName": "Mythic Beast",
+"sprite": 2282,
+"art": 2282,
+"name": "Warlock",
+"rarity": "uncommon",
+"types": [
+"shadow",
+"fire"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "mythic_2345",
+"family": "mythic",
+"familyName": "Mythic Beast",
+"sprite": 2345,
+"art": 2345,
+"name": "Rockclopse",
+"rarity": "rare",
+"types": [
+"earth",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "mythic_2370",
+"family": "mythic",
+"familyName": "Mythic Beast",
+"sprite": 2370,
+"art": 2370,
+"name": "Sea Serpent",
+"rarity": "uncommon",
+"types": [
+"water",
+"nature"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "mythic_2291",
+"family": "mythic",
+"familyName": "Mythic Beast",
+"sprite": 2291,
+"art": 2291,
+"name": "Manticub",
+"rarity": "common",
+"types": [
+"normal",
+"nature"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "mythic_2303",
+"family": "mythic",
+"familyName": "Mythic Beast",
+"sprite": 2303,
+"art": 2303,
+"name": "Silver Simurgh",
+"rarity": "rare",
+"types": [
+"light",
+"water"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "mythic_2342",
+"family": "mythic",
+"familyName": "Mythic Beast",
+"sprite": 2342,
+"art": 2342,
+"name": "Satyr",
+"rarity": "common",
+"types": [
+"normal",
+"nature"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "mythic_2391",
+"family": "mythic",
+"familyName": "Mythic Beast",
+"sprite": 2391,
+"art": 2391,
+"name": "Jade Qilin",
+"rarity": "rare",
+"types": [
+"water",
+"nature"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "mythic_2327",
+"family": "mythic",
+"familyName": "Mythic Beast",
+"sprite": 2327,
+"art": 2327,
+"name": "Moon Wolf",
+"rarity": "uncommon",
+"types": [
+"light",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "mythic_2339",
+"family": "mythic",
+"familyName": "Mythic Beast",
+"sprite": 2339,
+"art": 2339,
+"name": "Lamassu",
+"rarity": "rare",
+"types": [
+"light",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "mythic_2281",
+"family": "mythic",
+"familyName": "Mythic Beast",
+"sprite": 2281,
+"art": 2281,
+"name": "Monolith",
+"rarity": "uncommon",
+"types": [
+"earth",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "mythic_2367",
+"family": "mythic",
+"familyName": "Mythic Beast",
+"sprite": 2367,
+"art": 2367,
+"name": "Kitte",
+"rarity": "common",
+"types": [
+"nature",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "slime_1685",
+"family": "slime",
+"familyName": "Slime",
+"sprite": 1685,
+"art": 1685,
+"name": "Slime",
+"rarity": "common",
+"types": [
+"water",
+"water"
+],
+"rnd": true,
+"one": false,
+"shift": false,
+"slug": "pink-jelly"
+},
+{
+"id": "slime_1668",
+"family": "slime",
+"familyName": "Slime",
+"sprite": 1668,
+"art": 1668,
+"name": "Googly Slime",
+"rarity": "common",
+"types": [
+"water",
+"water"
+],
+"rnd": true,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "slime_1677",
+"family": "slime",
+"familyName": "Slime",
+"sprite": 1677,
+"art": 1677,
+"name": "Cube Slime",
+"rarity": "uncommon",
+"types": [
+"fire",
+"earth"
+],
+"rnd": true,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "slime_1699",
+"family": "slime",
+"familyName": "Slime",
+"sprite": 1699,
+"art": 1699,
+"name": "Chef Slime",
+"rarity": "epic",
+"types": [
+"water",
+"normal"
+],
+"rnd": true,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "slime_1702",
+"family": "slime",
+"familyName": "Slime",
+"sprite": 1702,
+"art": 1702,
+"name": "Batwing Slime",
+"rarity": "uncommon",
+"types": [
+"water",
+"shadow"
+],
+"rnd": true,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "slime_1688",
+"family": "slime",
+"familyName": "Slime",
+"sprite": 1688,
+"art": 1688,
+"name": "Daytona",
+"rarity": "legendary",
+"types": [
+"water",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "slime_1687",
+"family": "slime",
+"familyName": "Slime",
+"sprite": 1687,
+"art": 1687,
+"name": "Glass Slime",
+"rarity": "uncommon",
+"types": [
+"light",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "slime_1698",
+"family": "slime",
+"familyName": "Slime",
+"sprite": 1698,
+"art": 1698,
+"name": "Swamp Ooze",
+"rarity": "uncommon",
+"types": [
+"water",
+"nature"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "slime_1700",
+"family": "slime",
+"familyName": "Slime",
+"sprite": 1700,
+"art": 1700,
+"name": "Metal Slime",
+"rarity": "uncommon",
+"types": [
+"earth",
+"water"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "slime_1689",
+"family": "slime",
+"familyName": "Slime",
+"sprite": 1689,
+"art": 1689,
+"name": "Devil Slime",
+"rarity": "rare",
+"types": [
+"fire",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "fire-spirit_363",
+"family": "fire-spirit",
+"familyName": "Fire Spirit",
+"sprite": 363,
+"art": 363,
+"name": "Ember Fiend",
+"rarity": "uncommon",
+"types": [
+"fire",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "fire-spirit_389",
+"family": "fire-spirit",
+"familyName": "Fire Spirit",
+"sprite": 389,
+"art": 389,
+"name": "Feyre",
+"rarity": "uncommon",
+"types": [
+"fire",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "fire-spirit_385",
+"family": "fire-spirit",
+"familyName": "Fire Spirit",
+"sprite": 385,
+"art": 385,
+"name": "Blazard",
+"rarity": "rare",
+"types": [
+"fire",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "fire-spirit_382",
+"family": "fire-spirit",
+"familyName": "Fire Spirit",
+"sprite": 382,
+"art": 382,
+"name": "Sunfire Stag",
+"rarity": "rare",
+"types": [
+"fire",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "ice-spirit_401",
+"family": "ice-spirit",
+"familyName": "Ice Spirit",
+"sprite": 401,
+"art": 401,
+"name": "Frostfire Ghoul",
+"rarity": "rare",
+"types": [
+"fire",
+"water"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "ice-spirit_434",
+"family": "ice-spirit",
+"familyName": "Ice Spirit",
+"sprite": 434,
+"art": 434,
+"name": "Frost Ettin",
+"rarity": "uncommon",
+"types": [
+"water",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "ice-spirit_421",
+"family": "ice-spirit",
+"familyName": "Ice Spirit",
+"sprite": 421,
+"art": 421,
+"name": "Frost Wasp",
+"rarity": "common",
+"types": [
+"water",
+"nature"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "ice-spirit_433",
+"family": "ice-spirit",
+"familyName": "Ice Spirit",
+"sprite": 433,
+"art": 433,
+"name": "Snow Globe",
+"rarity": "common",
+"types": [
+"water",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "ice-spirit_440",
+"family": "ice-spirit",
+"familyName": "Ice Spirit",
+"sprite": 440,
+"art": 440,
+"name": "Icenewte",
+"rarity": "common",
+"types": [
+"water",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "storm-spirit_555",
+"family": "storm-spirit",
+"familyName": "Storm Spirit",
+"sprite": 555,
+"art": 555,
+"name": "Storm Wraith",
+"rarity": "rare",
+"types": [
+"shadow",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "storm-spirit_517",
+"family": "storm-spirit",
+"familyName": "Storm Spirit",
+"sprite": 517,
+"art": 517,
+"name": "Pixies",
+"rarity": "common",
+"types": [
+"light",
+"water"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "storm-spirit_554",
+"family": "storm-spirit",
+"familyName": "Storm Spirit",
+"sprite": 554,
+"art": 554,
+"name": "Volt Beetle",
+"rarity": "uncommon",
+"types": [
+"light",
+"nature"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "storm-spirit_520",
+"family": "storm-spirit",
+"familyName": "Storm Spirit",
+"sprite": 520,
+"art": 520,
+"name": "Storm Eagle",
+"rarity": "uncommon",
+"types": [
+"light",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "storm-spirit_529",
+"family": "storm-spirit",
+"familyName": "Storm Spirit",
+"sprite": 529,
+"art": 529,
+"name": "Gust Ghost",
+"rarity": "uncommon",
+"types": [
+"water",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "light-wisp_601",
+"family": "light-wisp",
+"familyName": "Light Wisp",
+"sprite": 601,
+"art": 601,
+"name": "Lil' Star",
+"rarity": "common",
+"types": [
+"light",
+"fire"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "light-wisp_629",
+"family": "light-wisp",
+"familyName": "Light Wisp",
+"sprite": 629,
+"art": 629,
+"name": "Pastel Phantom",
+"rarity": "common",
+"types": [
+"light",
+"water"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "light-wisp_612",
+"family": "light-wisp",
+"familyName": "Light Wisp",
+"sprite": 612,
+"art": 612,
+"name": "Cherub Wisp",
+"rarity": "uncommon",
+"types": [
+"light",
+"water"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "light-wisp_615",
+"family": "light-wisp",
+"familyName": "Light Wisp",
+"sprite": 615,
+"art": 615,
+"name": "Spark Sprite",
+"rarity": "uncommon",
+"types": [
+"light",
+"fire"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "dragon_1574",
+"family": "dragon",
+"familyName": "Dragon",
+"sprite": 1574,
+"art": 1574,
+"name": "Feathered Wyrmling",
+"rarity": "rare",
+"types": [
+"water",
+"light"
+],
+"rnd": true,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "dragon_1549",
+"family": "dragon",
+"familyName": "Dragon",
+"sprite": 1549,
+"art": 1549,
+"name": "Gilt Wing",
+"rarity": "rare",
+"types": [
+"light",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "dragon_1544",
+"family": "dragon",
+"familyName": "Dragon",
+"sprite": 1544,
+"art": 1544,
+"name": "Glass Dragon",
+"rarity": "rare",
+"types": [
+"water",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "dragon_1548",
+"family": "dragon",
+"familyName": "Dragon",
+"sprite": 1548,
+"art": 1548,
+"name": "Rainbow Dragon",
+"rarity": "rare",
+"types": [
+"light",
+"nature"
+],
+"rnd": false,
+"one": false,
+"shift": true,
+"slug": null
+},
+{
+"id": "dragon_1565",
+"family": "dragon",
+"familyName": "Dragon",
+"sprite": 1565,
+"art": 1557,
+"name": "Feathered Wyrm",
+"rarity": "epic",
+"types": [
+"normal",
+"light"
+],
+"rnd": true,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "dragon_1558",
+"family": "dragon",
+"familyName": "Dragon",
+"sprite": 1558,
+"art": 1558,
+"name": "Rainbow Wyrm",
+"rarity": "epic",
+"types": [
+"light",
+"nature"
+],
+"rnd": false,
+"one": false,
+"shift": true,
+"slug": null
+},
+{
+"id": "sea-monster_1287",
+"family": "sea-monster",
+"familyName": "Sea Monster",
+"sprite": 1287,
+"art": 1287,
+"name": "Pearl Serpent",
+"rarity": "uncommon",
+"types": [
+"water",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "sea-monster_1245",
+"family": "sea-monster",
+"familyName": "Sea Monster",
+"sprite": 1245,
+"art": 1245,
+"name": "Goldy",
+"rarity": "legendary",
+"types": [
+"light",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "sea-monster_1231",
+"family": "sea-monster",
+"familyName": "Sea Monster",
+"sprite": 1231,
+"art": 1231,
+"name": "Nessie",
+"rarity": "legendary",
+"types": [
+"water",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "sea-monster_1310",
+"family": "sea-monster",
+"familyName": "Sea Monster",
+"sprite": 1310,
+"art": 1310,
+"name": "Silver Eel",
+"rarity": "common",
+"types": [
+"water",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "sea-monster_1257",
+"family": "sea-monster",
+"familyName": "Sea Monster",
+"sprite": 1257,
+"art": 1257,
+"name": "Reef Dragon",
+"rarity": "rare",
+"types": [
+"water",
+"nature"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "mummy_2101",
+"family": "mummy",
+"familyName": "Mummies & Ghouls",
+"sprite": 2101,
+"art": 2101,
+"name": "Patchwork Zombie",
+"rarity": "uncommon",
+"types": [
+"earth",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "mummy_2168",
+"family": "mummy",
+"familyName": "Mummies & Ghouls",
+"sprite": 2168,
+"art": 2168,
+"name": "Shambling Zombie",
+"rarity": "common",
+"types": [
+"earth",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "mummy_2146",
+"family": "mummy",
+"familyName": "Mummies & Ghouls",
+"sprite": 2146,
+"art": 2146,
+"name": "Wrapped Pharaoh",
+"rarity": "legendary",
+"types": [
+"shadow",
+"light"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "mummy_2120",
+"family": "mummy",
+"familyName": "Mummies & Ghouls",
+"sprite": 2120,
+"art": 2120,
+"name": "Sackcloth Ghoul",
+"rarity": "uncommon",
+"types": [
+"shadow",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "mummy_2151",
+"family": "mummy",
+"familyName": "Mummies & Ghouls",
+"sprite": 2151,
+"art": 2151,
+"name": "Gilded Mummy",
+"rarity": "epic",
+"types": [
+"light",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "wild-beast_2401",
+"family": "wild-beast",
+"familyName": "Wild Beast",
+"sprite": 2401,
+"art": 2401,
+"name": "Shadow Bear",
+"rarity": "uncommon",
+"types": [
+"shadow",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "wild-beast_2421",
+"family": "wild-beast",
+"familyName": "Wild Beast",
+"sprite": 2421,
+"art": 2421,
+"name": "Frost Wolf",
+"rarity": "uncommon",
+"types": [
+"water",
+"normal"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "wild-beast_2412",
+"family": "wild-beast",
+"familyName": "Wild Beast",
+"sprite": 2412,
+"art": 2412,
+"name": "Ice Wyrm",
+"rarity": "rare",
+"types": [
+"water",
+"fire"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "gnome_918",
+"family": "gnome",
+"familyName": "Gnome",
+"sprite": 918,
+"art": 918,
+"name": "Flower Gnome",
+"rarity": "uncommon",
+"types": [
+"light",
+"nature"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "gnome_872",
+"family": "gnome",
+"familyName": "Gnome",
+"sprite": 872,
+"art": 872,
+"name": "Miner Gnome",
+"rarity": "common",
+"types": [
+"shadow",
+"earth"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "gnome_900",
+"family": "gnome",
+"familyName": "Gnome",
+"sprite": 900,
+"art": 900,
+"name": "Watering Gnome",
+"rarity": "common",
+"types": [
+"light",
+"water"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
+"id": "drakes_1569",
+"family": "drakes",
+"familyName": "Drakes",
+"sprite": 1569,
+"art": 1569,
+"name": "Young Dragon",
+"rarity": "uncommon",
+"types": [
+"light",
+"earth"
+],
+"rnd": true,
+"one": true,
+"shift": false,
+"slug": null
+},
+{
+"id": "drakes_1576",
+"family": "drakes",
+"familyName": "Drakes",
+"sprite": 1576,
+"art": 1549,
+"name": "Dragon",
+"rarity": "rare",
+"types": [
+"fire",
+"earth"
+],
+"rnd": true,
+"one": true,
+"shift": false,
+"slug": null
+},
+{
+"id": "drakes_1536",
+"family": "drakes",
+"familyName": "Drakes",
+"sprite": 1536,
+"art": 1540,
+"name": "Elder Dragon",
+"rarity": "epic",
+"types": [
+"fire",
+"earth"
+],
+"rnd": true,
+"one": true,
+"shift": false,
+"slug": null
+},
+{
+"id": "drakes_1560",
+"family": "drakes",
+"familyName": "Drakes",
+"sprite": 1560,
+"art": 1553,
+"name": "Young Drake",
+"rarity": "common",
+"types": [
+"normal",
+"nature"
+],
+"rnd": true,
+"one": true,
+"shift": false,
+"slug": null
+},
+{
+"id": "drakes_1577",
+"family": "drakes",
+"familyName": "Drakes",
+"sprite": 1577,
+"art": 1577,
+"name": "Drake",
+"rarity": "uncommon",
+"types": [
+"water",
+"nature"
+],
+"rnd": true,
+"one": true,
+"shift": false,
+"slug": null
+},
+{
+"id": "drakes_1537",
+"family": "drakes",
+"familyName": "Drakes",
+"sprite": 1537,
+"art": 1565,
+"name": "Elder Drake",
+"rarity": "rare",
+"types": [
+"water",
+"nature"
+],
+"rnd": true,
+"one": true,
+"shift": false,
+"slug": null
+}
+]

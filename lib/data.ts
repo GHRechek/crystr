@@ -1,4 +1,5 @@
 import type { BadgeRow, BadgeItem, TokenRow, Trade } from "@/lib/badges";
+import type { Element, Rarity } from "@/lib/historikals";
 import { cache } from "react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
@@ -851,19 +852,21 @@ export async function getBadgeItems(userId: string): Promise<BadgeItem[]> {
   return (data ?? []) as unknown as BadgeItem[];
 }
 
-/** Someone's Historikals, with how many hearts each has right now. */
-export type HeldHistorikal = { id: number; slug: string; name: string; rarity: "common" | "uncommon" | "rare" | "legendary"; element: "fire" | "water" | "grass" | "rock" | "dark" | "light"; hearts: number; hp: number };
+/** Someone's Historikals, with how many hearts each has right now, and the types each copy is (one that
+ *  rolls its type shows the one it rolled). */
+export type HeldHistorikal = { id: number; slug: string; name: string; rarity: Rarity; types: Element[]; hearts: number; hp: number };
 export async function getHistorikals(userId: string): Promise<HeldHistorikal[]> {
   const supabase = createClient();
   const { data } = await supabase
     .from("badge_items")
-    .select("id, hp, kind_slug, k:badge_kinds(title, rarity, element, hearts, sort)")
+    .select("id, hp, rolled, kind_slug, k:badge_kinds(title, rarity, types, rnd, hearts, sort)")
     .eq("owner_id", userId)
     .eq("kind", "tradable")
     .limit(500);
-  type Row = { id: number; hp: number | null; kind_slug: string; k: { title: string; rarity: HeldHistorikal["rarity"]; element: HeldHistorikal["element"] | null; hearts: number | null; sort: number } | null };
+  type Row = { id: number; hp: number | null; rolled: Element | null; kind_slug: string; k: { title: string; rarity: Rarity; types: Element[] | null; rnd: boolean; hearts: number | null; sort: number } | null };
+  const typesOf = (r: Row, t: Element[]) => (r.k?.rnd && r.rolled ? [...new Set([r.rolled, ...t.slice(1)])] : t);
   return ((data ?? []) as unknown as Row[])
-    .flatMap((r) => (r.k?.element && r.k.hearts ? [{ id: r.id, slug: r.kind_slug, name: r.k.title, rarity: r.k.rarity, element: r.k.element, hearts: r.k.hearts, hp: Math.min(r.k.hearts, r.hp ?? r.k.hearts), sort: r.k.sort }] : []))
+    .flatMap((r) => (r.k?.types?.length && r.k.hearts ? [{ id: r.id, slug: r.kind_slug, name: r.k.title, rarity: r.k.rarity, types: typesOf(r, r.k.types), hearts: r.k.hearts, hp: Math.min(r.k.hearts, r.hp ?? r.k.hearts), sort: r.k.sort }] : []))
     .sort((a, b) => a.hp / a.hearts - b.hp / b.hearts || a.sort - b.sort)
     .map(({ sort: _s, ...h }) => h);
 }

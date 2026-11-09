@@ -185,7 +185,7 @@ export function resolveShown(
       if (!it?.kindRow) continue;
       // What it is (rarity, type, hearts), then where it came from.
       const hk = it.kind_slug ? HISTORIKAL.get(it.kind_slug) : undefined;
-      const what = hk ? `${hk.rarity[0].toUpperCase()}${hk.rarity.slice(1)} ${hk.element} Historikal, ${hk.hearts} hearts.` : "A Historikal.";
+      const what = hk ? `${hk.rarity[0].toUpperCase()}${hk.rarity.slice(1)} ${hk.types.join("/")} Historikal, ${hk.hearts} hearts.` : "A Historikal.";
       const from =
         it.earned_by && it.earned_by !== it.owner_id
           ? `Came from ${it.maker?.handle ?? "someone"}.`

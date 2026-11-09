@@ -1,0 +1,2474 @@
+[
+ {
+  "slug": "warrior",
+  "name": "Warrior",
+  "rarity": "common",
+  "element": "light",
+  "hearts": 2,
+  "moves": [
+   {
+    "name": "Strike",
+    "kind": "sword"
+   },
+   {
+    "name": "Aegis",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "hunter",
+  "name": "Hunter",
+  "rarity": "common",
+  "element": "light",
+  "hearts": 2,
+  "moves": [
+   {
+    "name": "Dive",
+    "kind": "sword"
+   },
+   {
+    "name": "Sun Flare",
+    "kind": "spell"
+   }
+  ]
+ },
+ {
+  "slug": "rogue",
+  "name": "Rogue",
+  "rarity": "common",
+  "element": "light",
+  "hearts": 2,
+  "moves": [
+   {
+    "name": "Dive",
+    "kind": "sword"
+   },
+   {
+    "name": "Sun Flare",
+    "kind": "spell"
+   }
+  ]
+ },
+ {
+  "slug": "mage",
+  "name": "Mage",
+  "rarity": "uncommon",
+  "element": "light",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Dive",
+    "kind": "sword"
+   },
+   {
+    "name": "Halo",
+    "kind": "spell"
+   }
+  ]
+ },
+ {
+  "slug": "priest",
+  "name": "Priest",
+  "rarity": "uncommon",
+  "element": "light",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Strike",
+    "kind": "sword"
+   },
+   {
+    "name": "Shield",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "snake-01",
+  "name": "Green Snake",
+  "rarity": "common",
+  "element": "grass",
+  "hearts": 2,
+  "moves": [
+   {
+    "name": "Pounce",
+    "kind": "sword"
+   },
+   {
+    "name": "Leaf Guard",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "snake-02",
+  "name": "Viper",
+  "rarity": "common",
+  "element": "grass",
+  "hearts": 2,
+  "moves": [
+   {
+    "name": "Thorn Lash",
+    "kind": "sword"
+   },
+   {
+    "name": "Vine Hex",
+    "kind": "spell"
+   }
+  ]
+ },
+ {
+  "slug": "snake-blue",
+  "name": "Blue Snake",
+  "rarity": "common",
+  "element": "water",
+  "hearts": 2,
+  "moves": [
+   {
+    "name": "Tide Strike",
+    "kind": "sword"
+   },
+   {
+    "name": "Ice Wall",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "snake-brown",
+  "name": "Brown Snake",
+  "rarity": "common",
+  "element": "grass",
+  "hearts": 2,
+  "moves": [
+   {
+    "name": "Thorn Lash",
+    "kind": "sword"
+   },
+   {
+    "name": "Spore Cloud",
+    "kind": "spell"
+   }
+  ]
+ },
+ {
+  "slug": "spider",
+  "name": "Spider",
+  "rarity": "common",
+  "element": "grass",
+  "hearts": 2,
+  "moves": [
+   {
+    "name": "Pounce",
+    "kind": "sword"
+   },
+   {
+    "name": "Leaf Guard",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "ghost",
+  "name": "Ghost",
+  "rarity": "uncommon",
+  "element": "dark",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Wail",
+    "kind": "spell"
+   },
+   {
+    "name": "Fade",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "wasp",
+  "name": "Wasp",
+  "rarity": "common",
+  "element": "grass",
+  "hearts": 2,
+  "moves": [
+   {
+    "name": "Pounce",
+    "kind": "sword"
+   },
+   {
+    "name": "Bark Skin",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "bat",
+  "name": "Bat",
+  "rarity": "common",
+  "element": "dark",
+  "hearts": 2,
+  "moves": [
+   {
+    "name": "Bite",
+    "kind": "sword"
+   },
+   {
+    "name": "Screech",
+    "kind": "spell"
+   }
+  ]
+ },
+ {
+  "slug": "ant",
+  "name": "Ant",
+  "rarity": "common",
+  "element": "grass",
+  "hearts": 2,
+  "moves": [
+   {
+    "name": "Thorn Lash",
+    "kind": "sword"
+   },
+   {
+    "name": "Spore Cloud",
+    "kind": "spell"
+   }
+  ]
+ },
+ {
+  "slug": "pink-jelly",
+  "name": "Pink Jelly",
+  "rarity": "common",
+  "element": "water",
+  "hearts": 2,
+  "moves": [
+   {
+    "name": "Splash",
+    "kind": "spell"
+   },
+   {
+    "name": "Wobble",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "scorpion",
+  "name": "Scorpion",
+  "rarity": "common",
+  "element": "rock",
+  "hearts": 2,
+  "moves": [
+   {
+    "name": "Quake Stomp",
+    "kind": "sword"
+   },
+   {
+    "name": "Sandstorm",
+    "kind": "spell"
+   }
+  ]
+ },
+ {
+  "slug": "scarab",
+  "name": "Scarab",
+  "rarity": "common",
+  "element": "grass",
+  "hearts": 2,
+  "moves": [
+   {
+    "name": "Thorn Lash",
+    "kind": "sword"
+   },
+   {
+    "name": "Spore Cloud",
+    "kind": "spell"
+   }
+  ]
+ },
+ {
+  "slug": "skeleton",
+  "name": "Skeleton",
+  "rarity": "common",
+  "element": "dark",
+  "hearts": 2,
+  "moves": [
+   {
+    "name": "Bone Rattle",
+    "kind": "sword"
+   },
+   {
+    "name": "Grave Guard",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "orc",
+  "name": "Orc",
+  "rarity": "common",
+  "element": "grass",
+  "hearts": 2,
+  "moves": [
+   {
+    "name": "Thorn Lash",
+    "kind": "sword"
+   },
+   {
+    "name": "Pollen Burst",
+    "kind": "spell"
+   }
+  ]
+ },
+ {
+  "slug": "bird",
+  "name": "Bird",
+  "rarity": "common",
+  "element": "grass",
+  "hearts": 2,
+  "moves": [
+   {
+    "name": "Pounce",
+    "kind": "sword"
+   },
+   {
+    "name": "Bark Skin",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "goblin",
+  "name": "Goblin",
+  "rarity": "common",
+  "element": "grass",
+  "hearts": 2,
+  "moves": [
+   {
+    "name": "Stab",
+    "kind": "sword"
+   },
+   {
+    "name": "Hide",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "demon",
+  "name": "Demon",
+  "rarity": "rare",
+  "element": "fire",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Flame Slash",
+    "kind": "sword"
+   },
+   {
+    "name": "Fireball",
+    "kind": "spell"
+   },
+   {
+    "name": "Cinder Wall",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "water-elemental",
+  "name": "Water Elemental",
+  "rarity": "rare",
+  "element": "water",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Tide Strike",
+    "kind": "sword"
+   },
+   {
+    "name": "Tidal Wave",
+    "kind": "spell"
+   },
+   {
+    "name": "Ice Wall",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "air-elemental",
+  "name": "Air Elemental",
+  "rarity": "rare",
+  "element": "light",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Smite",
+    "kind": "sword"
+   },
+   {
+    "name": "Sun Flare",
+    "kind": "spell"
+   },
+   {
+    "name": "Shield",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "earth-elemental",
+  "name": "Earth Elemental",
+  "rarity": "rare",
+  "element": "rock",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Quake Stomp",
+    "kind": "sword"
+   },
+   {
+    "name": "Rune Rock",
+    "kind": "spell"
+   },
+   {
+    "name": "Granite Hide",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "fire-elemental",
+  "name": "Fire Elemental",
+  "rarity": "rare",
+  "element": "fire",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Flare",
+    "kind": "sword"
+   },
+   {
+    "name": "Blaze",
+    "kind": "spell"
+   },
+   {
+    "name": "Smoke",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "troll",
+  "name": "Troll",
+  "rarity": "uncommon",
+  "element": "rock",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Rumble",
+    "kind": "spell"
+   },
+   {
+    "name": "Stone Wall",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "rat",
+  "name": "Rat",
+  "rarity": "common",
+  "element": "grass",
+  "hearts": 2,
+  "moves": [
+   {
+    "name": "Gnaw",
+    "kind": "sword"
+   },
+   {
+    "name": "Scurry",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "zombie",
+  "name": "Zombie",
+  "rarity": "common",
+  "element": "dark",
+  "hearts": 2,
+  "moves": [
+   {
+    "name": "Fang",
+    "kind": "sword"
+   },
+   {
+    "name": "Hex",
+    "kind": "spell"
+   }
+  ]
+ },
+ {
+  "slug": "vampire",
+  "name": "Vampire",
+  "rarity": "rare",
+  "element": "dark",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Fang",
+    "kind": "sword"
+   },
+   {
+    "name": "Wail",
+    "kind": "spell"
+   },
+   {
+    "name": "Fade",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "beholder",
+  "name": "Beholder",
+  "rarity": "legendary",
+  "element": "dark",
+  "hearts": 4,
+  "moves": [
+   {
+    "name": "Bite",
+    "kind": "sword"
+   },
+   {
+    "name": "Eye Beam",
+    "kind": "spell"
+   },
+   {
+    "name": "Glare",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "flying-skull",
+  "name": "Flying Skull",
+  "rarity": "common",
+  "element": "dark",
+  "hearts": 2,
+  "moves": [
+   {
+    "name": "Bone Rattle",
+    "kind": "sword"
+   },
+   {
+    "name": "Fade",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "floating-eye",
+  "name": "Floating Eye",
+  "rarity": "uncommon",
+  "element": "dark",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Stare",
+    "kind": "spell"
+   },
+   {
+    "name": "Blink",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "salamander",
+  "name": "Salamander",
+  "rarity": "uncommon",
+  "element": "fire",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Ember Claw",
+    "kind": "sword"
+   },
+   {
+    "name": "Fireball",
+    "kind": "spell"
+   }
+  ]
+ },
+ {
+  "slug": "mummy",
+  "name": "Mummy",
+  "rarity": "uncommon",
+  "element": "dark",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Bone Rattle",
+    "kind": "sword"
+   },
+   {
+    "name": "Grave Guard",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "evil-mage",
+  "name": "Evil Mage",
+  "rarity": "uncommon",
+  "element": "dark",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Fang",
+    "kind": "sword"
+   },
+   {
+    "name": "Wail",
+    "kind": "spell"
+   }
+  ]
+ },
+ {
+  "slug": "cultist",
+  "name": "Cultist",
+  "rarity": "common",
+  "element": "dark",
+  "hearts": 2,
+  "moves": [
+   {
+    "name": "Bone Rattle",
+    "kind": "sword"
+   },
+   {
+    "name": "Grave Guard",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "wolf",
+  "name": "Wolf",
+  "rarity": "uncommon",
+  "element": "grass",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Thorn Lash",
+    "kind": "sword"
+   },
+   {
+    "name": "Vine Hex",
+    "kind": "spell"
+   }
+  ]
+ },
+ {
+  "slug": "lizardman",
+  "name": "Lizardman",
+  "rarity": "uncommon",
+  "element": "water",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Tide Strike",
+    "kind": "sword"
+   },
+   {
+    "name": "Wave Guard",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "birdman",
+  "name": "Birdman",
+  "rarity": "uncommon",
+  "element": "light",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Dive",
+    "kind": "sword"
+   },
+   {
+    "name": "Radiance",
+    "kind": "spell"
+   }
+  ]
+ },
+ {
+  "slug": "animated-armor",
+  "name": "Animated Armor",
+  "rarity": "uncommon",
+  "element": "rock",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Rumble",
+    "kind": "spell"
+   },
+   {
+    "name": "Stone Wall",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "stone-golem",
+  "name": "Stone Golem",
+  "rarity": "rare",
+  "element": "rock",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Smash",
+    "kind": "sword"
+   },
+   {
+    "name": "Rumble",
+    "kind": "spell"
+   },
+   {
+    "name": "Wall",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "dark-elf-hunter",
+  "name": "Dark Elf Hunter",
+  "rarity": "uncommon",
+  "element": "dark",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Bone Rattle",
+    "kind": "sword"
+   },
+   {
+    "name": "Shroud",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "dark-elf-mage",
+  "name": "Dark Elf Mage",
+  "rarity": "uncommon",
+  "element": "dark",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Hex",
+    "kind": "spell"
+   },
+   {
+    "name": "Fade",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "wyvern",
+  "name": "Wyvern",
+  "rarity": "rare",
+  "element": "fire",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Flame Slash",
+    "kind": "sword"
+   },
+   {
+    "name": "Fireball",
+    "kind": "spell"
+   },
+   {
+    "name": "Smoke Veil",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "aquaticman",
+  "name": "Fishman",
+  "rarity": "common",
+  "element": "water",
+  "hearts": 2,
+  "moves": [
+   {
+    "name": "Lash",
+    "kind": "sword"
+   },
+   {
+    "name": "Tidal Wave",
+    "kind": "spell"
+   }
+  ]
+ },
+ {
+  "slug": "dwarf",
+  "name": "Dwarf",
+  "rarity": "uncommon",
+  "element": "rock",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Quake Stomp",
+    "kind": "sword"
+   },
+   {
+    "name": "Sandstorm",
+    "kind": "spell"
+   }
+  ]
+ },
+ {
+  "slug": "worm",
+  "name": "Worm",
+  "rarity": "common",
+  "element": "grass",
+  "hearts": 2,
+  "moves": [
+   {
+    "name": "Pounce",
+    "kind": "sword"
+   },
+   {
+    "name": "Burrow",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "bear",
+  "name": "Bear",
+  "rarity": "uncommon",
+  "element": "grass",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Spore Cloud",
+    "kind": "spell"
+   },
+   {
+    "name": "Bark Skin",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "witch",
+  "name": "Witch",
+  "rarity": "uncommon",
+  "element": "dark",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Fang",
+    "kind": "sword"
+   },
+   {
+    "name": "Hex",
+    "kind": "spell"
+   }
+  ]
+ },
+ {
+  "slug": "gargoyle",
+  "name": "Gargoyle",
+  "rarity": "uncommon",
+  "element": "rock",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Quake Stomp",
+    "kind": "sword"
+   },
+   {
+    "name": "Sandstorm",
+    "kind": "spell"
+   }
+  ]
+ },
+ {
+  "slug": "gremlin",
+  "name": "Gremlin",
+  "rarity": "common",
+  "element": "dark",
+  "hearts": 2,
+  "moves": [
+   {
+    "name": "Hex",
+    "kind": "spell"
+   },
+   {
+    "name": "Shroud",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "centaur",
+  "name": "Centaur",
+  "rarity": "uncommon",
+  "element": "grass",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Thorn Lash",
+    "kind": "sword"
+   },
+   {
+    "name": "Pollen Burst",
+    "kind": "spell"
+   }
+  ]
+ },
+ {
+  "slug": "guard-spear",
+  "name": "Guard Spear",
+  "rarity": "common",
+  "element": "light",
+  "hearts": 2,
+  "moves": [
+   {
+    "name": "Dive",
+    "kind": "sword"
+   },
+   {
+    "name": "Sun Flare",
+    "kind": "spell"
+   }
+  ]
+ },
+ {
+  "slug": "guard-sword",
+  "name": "Guard Sword",
+  "rarity": "uncommon",
+  "element": "light",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Dive",
+    "kind": "sword"
+   },
+   {
+    "name": "Sun Flare",
+    "kind": "spell"
+   }
+  ]
+ },
+ {
+  "slug": "sprite",
+  "name": "Sprite",
+  "rarity": "uncommon",
+  "element": "light",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Dive",
+    "kind": "sword"
+   },
+   {
+    "name": "Radiance",
+    "kind": "spell"
+   }
+  ]
+ },
+ {
+  "slug": "fox",
+  "name": "Fox",
+  "rarity": "uncommon",
+  "element": "grass",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Pounce",
+    "kind": "sword"
+   },
+   {
+    "name": "Trick",
+    "kind": "spell"
+   }
+  ]
+ },
+ {
+  "slug": "white-rabbit",
+  "name": "White Rabbit",
+  "rarity": "common",
+  "element": "grass",
+  "hearts": 2,
+  "moves": [
+   {
+    "name": "Pounce",
+    "kind": "sword"
+   },
+   {
+    "name": "Leaf Guard",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "brown-owl",
+  "name": "Brown Owl",
+  "rarity": "uncommon",
+  "element": "grass",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Pounce",
+    "kind": "sword"
+   },
+   {
+    "name": "Leaf Guard",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "snail",
+  "name": "Snail",
+  "rarity": "common",
+  "element": "water",
+  "hearts": 2,
+  "moves": [
+   {
+    "name": "Bubble Hex",
+    "kind": "spell"
+   },
+   {
+    "name": "Shell Up",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "lynx",
+  "name": "Lynx",
+  "rarity": "common",
+  "element": "grass",
+  "hearts": 2,
+  "moves": [
+   {
+    "name": "Thorn Lash",
+    "kind": "sword"
+   },
+   {
+    "name": "Vine Hex",
+    "kind": "spell"
+   }
+  ]
+ },
+ {
+  "slug": "moose",
+  "name": "Moose",
+  "rarity": "common",
+  "element": "grass",
+  "hearts": 2,
+  "moves": [
+   {
+    "name": "Pounce",
+    "kind": "sword"
+   },
+   {
+    "name": "Burrow",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "eagle",
+  "name": "Eagle",
+  "rarity": "uncommon",
+  "element": "light",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Dive",
+    "kind": "sword"
+   },
+   {
+    "name": "Radiance",
+    "kind": "spell"
+   }
+  ]
+ },
+ {
+  "slug": "spider-02",
+  "name": "Giant Spider",
+  "rarity": "common",
+  "element": "grass",
+  "hearts": 2,
+  "moves": [
+   {
+    "name": "Thorn Lash",
+    "kind": "sword"
+   },
+   {
+    "name": "Pollen Burst",
+    "kind": "spell"
+   }
+  ]
+ },
+ {
+  "slug": "banshee",
+  "name": "Banshee",
+  "rarity": "uncommon",
+  "element": "dark",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Hex",
+    "kind": "spell"
+   },
+   {
+    "name": "Grave Guard",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "couatl",
+  "name": "Couatl",
+  "rarity": "legendary",
+  "element": "light",
+  "hearts": 4,
+  "moves": [
+   {
+    "name": "Strike",
+    "kind": "sword"
+   },
+   {
+    "name": "Sun Flare",
+    "kind": "spell"
+   },
+   {
+    "name": "Aegis",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "cyclops",
+  "name": "Cyclops",
+  "rarity": "rare",
+  "element": "rock",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Boulder Fist",
+    "kind": "sword"
+   },
+   {
+    "name": "Rumble",
+    "kind": "spell"
+   },
+   {
+    "name": "Hunker",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "death-knight",
+  "name": "Death Knight",
+  "rarity": "legendary",
+  "element": "dark",
+  "hearts": 4,
+  "moves": [
+   {
+    "name": "Fang",
+    "kind": "sword"
+   },
+   {
+    "name": "Wail",
+    "kind": "spell"
+   },
+   {
+    "name": "Grave Guard",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "shadow-demon",
+  "name": "Shadow Demon",
+  "rarity": "rare",
+  "element": "dark",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Shadow Claw",
+    "kind": "sword"
+   },
+   {
+    "name": "Wail",
+    "kind": "spell"
+   },
+   {
+    "name": "Shroud",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "marilith",
+  "name": "Marilith",
+  "rarity": "rare",
+  "element": "fire",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Ember Claw",
+    "kind": "sword"
+   },
+   {
+    "name": "Inferno",
+    "kind": "spell"
+   },
+   {
+    "name": "Ash Shield",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "gnoll",
+  "name": "Gnoll",
+  "rarity": "uncommon",
+  "element": "grass",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Spore Cloud",
+    "kind": "spell"
+   },
+   {
+    "name": "Bark Skin",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "drow-elf",
+  "name": "Drow Elf",
+  "rarity": "uncommon",
+  "element": "dark",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Bone Rattle",
+    "kind": "sword"
+   },
+   {
+    "name": "Fade",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "succubus",
+  "name": "Succubus",
+  "rarity": "rare",
+  "element": "fire",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Scorch",
+    "kind": "sword"
+   },
+   {
+    "name": "Fireball",
+    "kind": "spell"
+   },
+   {
+    "name": "Smoke Veil",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "orb",
+  "name": "Orb",
+  "rarity": "uncommon",
+  "element": "light",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Halo",
+    "kind": "spell"
+   },
+   {
+    "name": "Ward",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "elder-horror",
+  "name": "Moon Elder",
+  "rarity": "legendary",
+  "element": "dark",
+  "hearts": 4,
+  "moves": [
+   {
+    "name": "Shadow Claw",
+    "kind": "sword"
+   },
+   {
+    "name": "Hex",
+    "kind": "spell"
+   },
+   {
+    "name": "Grave Guard",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "poltergeist",
+  "name": "Poltergeist",
+  "rarity": "uncommon",
+  "element": "dark",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Bone Rattle",
+    "kind": "sword"
+   },
+   {
+    "name": "Shroud",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "nightmare",
+  "name": "Nightmare",
+  "rarity": "rare",
+  "element": "dark",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Fang",
+    "kind": "sword"
+   },
+   {
+    "name": "Curse",
+    "kind": "spell"
+   },
+   {
+    "name": "Shroud",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "drow-spider",
+  "name": "Drow Spider",
+  "rarity": "uncommon",
+  "element": "dark",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Hex",
+    "kind": "spell"
+   },
+   {
+    "name": "Grave Guard",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "snakeman",
+  "name": "Snakeman",
+  "rarity": "uncommon",
+  "element": "grass",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Spore Cloud",
+    "kind": "spell"
+   },
+   {
+    "name": "Leaf Guard",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "brain-sucker",
+  "name": "Brain Sucker",
+  "rarity": "uncommon",
+  "element": "dark",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Fang",
+    "kind": "sword"
+   },
+   {
+    "name": "Hex",
+    "kind": "spell"
+   }
+  ]
+ },
+ {
+  "slug": "displacer-beast",
+  "name": "Displacer Beast",
+  "rarity": "rare",
+  "element": "dark",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Shadow Claw",
+    "kind": "sword"
+   },
+   {
+    "name": "Hex",
+    "kind": "spell"
+   },
+   {
+    "name": "Shroud",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "umber-hulk",
+  "name": "Umber Hulk",
+  "rarity": "rare",
+  "element": "rock",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Smash",
+    "kind": "sword"
+   },
+   {
+    "name": "Sandstorm",
+    "kind": "spell"
+   },
+   {
+    "name": "Stone Wall",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "orc-shaman-master",
+  "name": "Orc Shaman Master",
+  "rarity": "uncommon",
+  "element": "grass",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Pounce",
+    "kind": "sword"
+   },
+   {
+    "name": "Leaf Guard",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "angel",
+  "name": "Angel",
+  "rarity": "legendary",
+  "element": "light",
+  "hearts": 4,
+  "moves": [
+   {
+    "name": "Smite",
+    "kind": "sword"
+   },
+   {
+    "name": "Halo",
+    "kind": "spell"
+   },
+   {
+    "name": "Shield",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "white-worm",
+  "name": "White Worm",
+  "rarity": "uncommon",
+  "element": "water",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Bubble Hex",
+    "kind": "spell"
+   },
+   {
+    "name": "Ice Wall",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "crabman",
+  "name": "Crabman",
+  "rarity": "uncommon",
+  "element": "water",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Bubble Hex",
+    "kind": "spell"
+   },
+   {
+    "name": "Ice Wall",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "crawling-claw",
+  "name": "Crawling Claw",
+  "rarity": "common",
+  "element": "dark",
+  "hearts": 2,
+  "moves": [
+   {
+    "name": "Fang",
+    "kind": "sword"
+   },
+   {
+    "name": "Curse",
+    "kind": "spell"
+   }
+  ]
+ },
+ {
+  "slug": "aquatic-elf",
+  "name": "Aquatic Elf",
+  "rarity": "uncommon",
+  "element": "water",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Tide Strike",
+    "kind": "sword"
+   },
+   {
+    "name": "Ice Wall",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "eyehorror",
+  "name": "Eye Horror",
+  "rarity": "uncommon",
+  "element": "dark",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Hex",
+    "kind": "spell"
+   },
+   {
+    "name": "Fade",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "chaos-screamer",
+  "name": "Chaos Screamer",
+  "rarity": "uncommon",
+  "element": "fire",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Ember Claw",
+    "kind": "sword"
+   },
+   {
+    "name": "Inferno",
+    "kind": "spell"
+   }
+  ]
+ },
+ {
+  "slug": "frog",
+  "name": "Frog",
+  "rarity": "common",
+  "element": "water",
+  "hearts": 2,
+  "moves": [
+   {
+    "name": "Tide Strike",
+    "kind": "sword"
+   },
+   {
+    "name": "Shell Up",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "toad",
+  "name": "Toad",
+  "rarity": "common",
+  "element": "water",
+  "hearts": 2,
+  "moves": [
+   {
+    "name": "Tide Strike",
+    "kind": "sword"
+   },
+   {
+    "name": "Shell Up",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "harpy",
+  "name": "Harpy",
+  "rarity": "uncommon",
+  "element": "light",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Halo",
+    "kind": "spell"
+   },
+   {
+    "name": "Ward",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "fungoid",
+  "name": "Fungoid",
+  "rarity": "uncommon",
+  "element": "grass",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Spore Cloud",
+    "kind": "spell"
+   },
+   {
+    "name": "Leaf Guard",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "genie",
+  "name": "Genie",
+  "rarity": "legendary",
+  "element": "light",
+  "hearts": 4,
+  "moves": [
+   {
+    "name": "Strike",
+    "kind": "sword"
+   },
+   {
+    "name": "Halo",
+    "kind": "spell"
+   },
+   {
+    "name": "Aegis",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "ettin",
+  "name": "Ettin",
+  "rarity": "uncommon",
+  "element": "rock",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Rumble",
+    "kind": "spell"
+   },
+   {
+    "name": "Granite Hide",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "warewolf",
+  "name": "Werewolf",
+  "rarity": "uncommon",
+  "element": "grass",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Thorn Lash",
+    "kind": "sword"
+   },
+   {
+    "name": "Vine Hex",
+    "kind": "spell"
+   }
+  ]
+ },
+ {
+  "slug": "moth",
+  "name": "Moth",
+  "rarity": "common",
+  "element": "grass",
+  "hearts": 2,
+  "moves": [
+   {
+    "name": "Pounce",
+    "kind": "sword"
+   },
+   {
+    "name": "Burrow",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "phasespawn",
+  "name": "Phase Spawn",
+  "rarity": "uncommon",
+  "element": "dark",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Bone Rattle",
+    "kind": "sword"
+   },
+   {
+    "name": "Grave Guard",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "grimlock",
+  "name": "Grimlock",
+  "rarity": "common",
+  "element": "rock",
+  "hearts": 2,
+  "moves": [
+   {
+    "name": "Quake Stomp",
+    "kind": "sword"
+   },
+   {
+    "name": "Rune Rock",
+    "kind": "spell"
+   }
+  ]
+ },
+ {
+  "slug": "imp",
+  "name": "Imp",
+  "rarity": "uncommon",
+  "element": "fire",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Ember Claw",
+    "kind": "sword"
+   },
+   {
+    "name": "Blaze",
+    "kind": "spell"
+   }
+  ]
+ },
+ {
+  "slug": "red-dragon",
+  "name": "Red Dragon",
+  "rarity": "legendary",
+  "element": "fire",
+  "hearts": 4,
+  "moves": [
+   {
+    "name": "Flame Slash",
+    "kind": "sword"
+   },
+   {
+    "name": "Inferno",
+    "kind": "spell"
+   },
+   {
+    "name": "Smoke Veil",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "locathah",
+  "name": "Locathah",
+  "rarity": "uncommon",
+  "element": "water",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Bubble Hex",
+    "kind": "spell"
+   },
+   {
+    "name": "Wave Guard",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "medusa",
+  "name": "Medusa",
+  "rarity": "rare",
+  "element": "dark",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Fang",
+    "kind": "sword"
+   },
+   {
+    "name": "Gaze",
+    "kind": "spell"
+   },
+   {
+    "name": "Coil",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "mist",
+  "name": "Mist",
+  "rarity": "uncommon",
+  "element": "water",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Tide Strike",
+    "kind": "sword"
+   },
+   {
+    "name": "Wave Guard",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "yeti",
+  "name": "Yeti",
+  "rarity": "rare",
+  "element": "water",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Maul",
+    "kind": "sword"
+   },
+   {
+    "name": "Frost",
+    "kind": "spell"
+   },
+   {
+    "name": "Hunker",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "minotaur",
+  "name": "Minotaur",
+  "rarity": "rare",
+  "element": "rock",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Boulder Fist",
+    "kind": "sword"
+   },
+   {
+    "name": "Sandstorm",
+    "kind": "spell"
+   },
+   {
+    "name": "Stone Wall",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "lamia",
+  "name": "Lamia",
+  "rarity": "rare",
+  "element": "grass",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Pounce",
+    "kind": "sword"
+   },
+   {
+    "name": "Spore Cloud",
+    "kind": "spell"
+   },
+   {
+    "name": "Leaf Guard",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "manticore",
+  "name": "Manticore",
+  "rarity": "legendary",
+  "element": "fire",
+  "hearts": 4,
+  "moves": [
+   {
+    "name": "Sting",
+    "kind": "sword"
+   },
+   {
+    "name": "Roar",
+    "kind": "spell"
+   },
+   {
+    "name": "Wings",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "electric-elemental",
+  "name": "Electric Elemental",
+  "rarity": "rare",
+  "element": "light",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Smite",
+    "kind": "sword"
+   },
+   {
+    "name": "Halo",
+    "kind": "spell"
+   },
+   {
+    "name": "Aegis",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "magma-elemental",
+  "name": "Magma Elemental",
+  "rarity": "rare",
+  "element": "fire",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Flame Slash",
+    "kind": "sword"
+   },
+   {
+    "name": "Fireball",
+    "kind": "spell"
+   },
+   {
+    "name": "Cinder Wall",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "mimic",
+  "name": "Mimic",
+  "rarity": "rare",
+  "element": "rock",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Quake Stomp",
+    "kind": "sword"
+   },
+   {
+    "name": "Rune Rock",
+    "kind": "spell"
+   },
+   {
+    "name": "Hunker",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "kenku",
+  "name": "Kenku",
+  "rarity": "uncommon",
+  "element": "light",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Strike",
+    "kind": "sword"
+   },
+   {
+    "name": "Aegis",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "satyr",
+  "name": "Satyr",
+  "rarity": "uncommon",
+  "element": "grass",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Thorn Lash",
+    "kind": "sword"
+   },
+   {
+    "name": "Spore Cloud",
+    "kind": "spell"
+   }
+  ]
+ },
+ {
+  "slug": "hippogriff",
+  "name": "Hippogriff",
+  "rarity": "rare",
+  "element": "light",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Strike",
+    "kind": "sword"
+   },
+   {
+    "name": "Radiance",
+    "kind": "spell"
+   },
+   {
+    "name": "Shield",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "meateater-plant",
+  "name": "Meat-Eater Plant",
+  "rarity": "uncommon",
+  "element": "grass",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Pounce",
+    "kind": "sword"
+   },
+   {
+    "name": "Burrow",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "weretiger",
+  "name": "Weretiger",
+  "rarity": "uncommon",
+  "element": "fire",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Scorch",
+    "kind": "sword"
+   },
+   {
+    "name": "Cinder Wall",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "mudman",
+  "name": "Mudman",
+  "rarity": "common",
+  "element": "rock",
+  "hearts": 2,
+  "moves": [
+   {
+    "name": "Quake Stomp",
+    "kind": "sword"
+   },
+   {
+    "name": "Sandstorm",
+    "kind": "spell"
+   }
+  ]
+ },
+ {
+  "slug": "octopus",
+  "name": "Octopus",
+  "rarity": "uncommon",
+  "element": "water",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Tide Strike",
+    "kind": "sword"
+   },
+   {
+    "name": "Wave Guard",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "womanscorpion",
+  "name": "Scorpion Woman",
+  "rarity": "uncommon",
+  "element": "rock",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Quake Stomp",
+    "kind": "sword"
+   },
+   {
+    "name": "Sandstorm",
+    "kind": "spell"
+   }
+  ]
+ },
+ {
+  "slug": "centipede",
+  "name": "Centipede",
+  "rarity": "common",
+  "element": "grass",
+  "hearts": 2,
+  "moves": [
+   {
+    "name": "Pounce",
+    "kind": "sword"
+   },
+   {
+    "name": "Burrow",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "mosquito",
+  "name": "Mosquito",
+  "rarity": "common",
+  "element": "grass",
+  "hearts": 2,
+  "moves": [
+   {
+    "name": "Pounce",
+    "kind": "sword"
+   },
+   {
+    "name": "Leaf Guard",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "skeleton-archer",
+  "name": "Skeleton Archer",
+  "rarity": "uncommon",
+  "element": "dark",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Bone Rattle",
+    "kind": "sword"
+   },
+   {
+    "name": "Grave Guard",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "burning-skeleton",
+  "name": "Burning Skeleton",
+  "rarity": "uncommon",
+  "element": "fire",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Fireball",
+    "kind": "spell"
+   },
+   {
+    "name": "Smoke Veil",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "crab",
+  "name": "Crab",
+  "rarity": "uncommon",
+  "element": "water",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Pinch",
+    "kind": "sword"
+   },
+   {
+    "name": "Shell Up",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "ghost-spider",
+  "name": "Ghost Spider",
+  "rarity": "uncommon",
+  "element": "dark",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Hex",
+    "kind": "spell"
+   },
+   {
+    "name": "Shroud",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "bee",
+  "name": "Bee",
+  "rarity": "common",
+  "element": "grass",
+  "hearts": 2,
+  "moves": [
+   {
+    "name": "Thorn Lash",
+    "kind": "sword"
+   },
+   {
+    "name": "Spore Cloud",
+    "kind": "spell"
+   }
+  ]
+ },
+ {
+  "slug": "sorrowsworn",
+  "name": "Sorrowsworn",
+  "rarity": "rare",
+  "element": "dark",
+  "hearts": 3,
+  "moves": [
+   {
+    "name": "Shadow Claw",
+    "kind": "sword"
+   },
+   {
+    "name": "Wail",
+    "kind": "spell"
+   },
+   {
+    "name": "Shroud",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "cosmic-elder",
+  "name": "Cosmic Elder",
+  "rarity": "legendary",
+  "element": "light",
+  "hearts": 4,
+  "moves": [
+   {
+    "name": "Starfall Claw",
+    "kind": "sword"
+   },
+   {
+    "name": "Nova",
+    "kind": "spell"
+   },
+   {
+    "name": "Star Ward",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "dawn-beholder",
+  "name": "Dawn Beholder",
+  "rarity": "legendary",
+  "element": "light",
+  "hearts": 4,
+  "moves": [
+   {
+    "name": "Glint Bite",
+    "kind": "sword"
+   },
+   {
+    "name": "Sunbeam Eye",
+    "kind": "spell"
+   },
+   {
+    "name": "Dazzle",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "ember-knight",
+  "name": "Ember Knight",
+  "rarity": "legendary",
+  "element": "fire",
+  "hearts": 4,
+  "moves": [
+   {
+    "name": "Brand Blade",
+    "kind": "sword"
+   },
+   {
+    "name": "Pyre Oath",
+    "kind": "spell"
+   },
+   {
+    "name": "Cinder Plate",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "fallen-angel",
+  "name": "Fallen Angel",
+  "rarity": "legendary",
+  "element": "dark",
+  "hearts": 4,
+  "moves": [
+   {
+    "name": "Night Smite",
+    "kind": "sword"
+   },
+   {
+    "name": "Black Halo",
+    "kind": "spell"
+   },
+   {
+    "name": "Ashen Wings",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "stone-djinn",
+  "name": "Stone Djinn",
+  "rarity": "legendary",
+  "element": "rock",
+  "hearts": 4,
+  "moves": [
+   {
+    "name": "Sand Saber",
+    "kind": "sword"
+   },
+   {
+    "name": "Dune Wish",
+    "kind": "spell"
+   },
+   {
+    "name": "Basalt Veil",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "tide-couatl",
+  "name": "Tide Couatl",
+  "rarity": "legendary",
+  "element": "water",
+  "hearts": 4,
+  "moves": [
+   {
+    "name": "Riptide Fang",
+    "kind": "sword"
+   },
+   {
+    "name": "Rain Dance",
+    "kind": "spell"
+   },
+   {
+    "name": "Coral Coil",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "jade-dragon",
+  "name": "Jade Dragon",
+  "rarity": "legendary",
+  "element": "grass",
+  "hearts": 4,
+  "moves": [
+   {
+    "name": "Jade Talon",
+    "kind": "sword"
+   },
+   {
+    "name": "Verdant Breath",
+    "kind": "spell"
+   },
+   {
+    "name": "Moss Scale",
+    "kind": "armor"
+   }
+  ]
+ },
+ {
+  "slug": "frost-manticore",
+  "name": "Frost Manticore",
+  "rarity": "legendary",
+  "element": "water",
+  "hearts": 4,
+  "moves": [
+   {
+    "name": "Icicle Sting",
+    "kind": "sword"
+   },
+   {
+    "name": "Blizzard Roar",
+    "kind": "spell"
+   },
+   {
+    "name": "Frost Wings",
+    "kind": "armor"
+   }
+  ]
+ }
+]

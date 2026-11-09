@@ -6,15 +6,12 @@ import { Creature, MoveIcon, Stats } from "@/components/encounter";
 import { healHistorikal } from "@/lib/actions";
 import { useDecay } from "@/components/decay";
 import { corrupt } from "@/lib/crystr";
-import { ELEMENT_COLOR, HISTORIKAL, NO_EFFECT, RARITY_COLOR, SUPER, type Element } from "@/lib/historikals";
+import { ELEMENT_COLOR, HISTORIKAL, RARITY_COLOR, SUPER, type Element } from "@/lib/historikals";
 
 const up = (s: string) => s.toUpperCase();
 
-/** What a type hits hard (two hearts), and what it can't touch. */
-export const matchup = (e: Element) =>
-  [SUPER[e].length ? `STRONG VS ${SUPER[e].map(up).join(", ")}` : null, NO_EFFECT[e]?.length ? `CAN'T TOUCH ${NO_EFFECT[e]!.map(up).join(", ")}` : null]
-    .filter(Boolean)
-    .join(" · ");
+/** What a creature hits hard (two hearts): what its first type beats. */
+export const matchup = (e: Element) => `STRONG VS ${SUPER[e].map(up).join(", ")}`;
 
 /** One Historikal, close up: the creature, its rarity, type and what that's strong against, its hearts,
  *  and where it came from. Your own show their moves; someone else's keep them hidden, as they are in a
@@ -27,7 +24,8 @@ export function HistorikalCard({
   onEditLineup,
   onClose,
 }: {
-  hk: { slug: string; hp: number; id?: number };
+  /** types: what this copy is right now, if it rolls or changes its type. */
+  hk: { slug: string; hp: number; id?: number; types?: Element[] };
   /** Where it came from, as its tooltip says. */
   line?: string;
   own?: boolean;
@@ -46,21 +44,24 @@ export function HistorikalCard({
   const h = HISTORIKAL.get(hk.slug);
   if (!h) return null;
   const colour = RARITY_COLOR[h.rarity];
+  const types = hk.types?.length ? hk.types : h.types;
   const ko = hk.hp <= 0;
   const hurt = hk.hp < h.hearts;
   return (
     <div role="dialog" aria-label={h.name} className="hk-card-wrap" onClick={onClose}>
       <div className="hk-card" onClick={(e) => e.stopPropagation()}>
         {lineupPos !== undefined && lineupPos >= 0 ? <div className="px" style={{ fontSize: 10, color: "#e0398a" }}>LINEUP · {lineupPos + 1}</div> : null}
-        <Creature slug={h.slug} size={120} ko={ko} />
+        <Creature slug={h.slug} el={types[0]} size={120} ko={ko} />
         <div className="px" style={{ fontSize: 18, color: colour, textAlign: "center" }}>{eat(up(h.name))}</div>
         <div className="px" style={{ fontSize: 10, display: "flex", gap: 8, alignItems: "center" }}>
           <span style={{ color: colour }}>{up(h.rarity)}</span>
-          <Stats h={{ id: 0, slug: h.slug, name: h.name, rarity: h.rarity, element: h.element, hearts: h.hearts }} hp={hk.hp} k={2} />
+          <Stats h={{ id: 0, slug: h.slug, name: h.name, rarity: h.rarity, types, hearts: h.hearts }} hp={hk.hp} k={2} />
           {ko ? <span style={{ color: "#ff5a7a" }}>KNOCKED OUT</span> : null}
         </div>
-        <div className="px" style={{ fontSize: 10, color: ELEMENT_COLOR[h.element], textAlign: "center", lineHeight: 1.6 }}>
-          {eat(`${up(h.element)}${matchup(h.element) ? ` · ${matchup(h.element)}` : ""}`)}
+        <div className="px" style={{ fontSize: 10, textAlign: "center", lineHeight: 1.6 }}>
+          {types.map((t, i) => <span key={t} style={{ color: ELEMENT_COLOR[t] }}>{i ? " / " : ""}{eat(up(t))}</span>)}
+          <span style={{ color: ELEMENT_COLOR[types[0]] }}>{eat(` · ${matchup(types[0])}`)}</span>
+          {h.shift ? <div style={{ color: "var(--muted)" }}>{eat("ITS TYPE CHANGES AFTER EVERY BATTLE")}</div> : null}
         </div>
         <div className="hk-card-moves">
           <div className="px" style={{ fontSize: 9, color: "var(--muted)" }}>MOVES</div>

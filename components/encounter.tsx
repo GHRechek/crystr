@@ -13,7 +13,8 @@ import { RarityGlow } from "@/components/rarity-glow";
    The host sits in the app's layout: it notices when someone starts one with you, opens the screen on both
    phones, and keeps it fresh about once a second while it is open. */
 
-export type HK = { id: number; slug: string; name: string; rarity: Rarity; element?: Element; hearts: number; moves?: { name: string; kind: MoveKind }[]; hp?: number; seen?: string[] };
+/** `types` (one or two, the first leads) is missing until you know it. `element` is the old single type: unused. */
+export type HK = { id: number; slug: string; name: string; rarity: Rarity; element?: string; types?: Element[]; hearts: number; moves?: { name: string; kind: MoveKind }[]; hp?: number; seen?: string[] };
 type Side = { swap: boolean; from: string; to: string; move: string | null; hit: number };
 type View = {
   ok: boolean; id: number; kind: "trade" | "battle"; stage: string; seq: number; me: "a" | "b";
@@ -37,7 +38,7 @@ function PrizeLine({ v }: { v: View }) {
   const them = up(v.them.handle);
   return (
     <div className="en-prize">
-      {p.kind === "token" ? <TokenPic design={p.token} size={56} /> : p.item ? <Creature slug={p.item.slug} size={64} /> : null}
+      {p.kind === "token" ? <TokenPic design={p.token} size={56} /> : p.item ? <Creature slug={p.item.slug} el={p.item.types?.[0]} size={64} /> : null}
       <span className="px">{p.won
         ? (p.kind === "token" ? `YOU WON ${them}'S PROOF` : `YOU WON ${up(p.item?.name ?? "")}`)
         : (p.kind === "token" ? `${them} WON A COPY OF YOUR PROOF` : `${them} TOOK ${up(p.item?.name ?? "")}`)}</span>
@@ -173,11 +174,12 @@ const MOVE: Record<MoveKind, string[]> = {
 };
 const TYPE: Record<Element, string[]> = {
   fire: ["...#...", "..##...", "..###..", ".####.#", ".######", "#######", ".#####."],
-  water: ["...#...", "..###..", "..###..", ".#####.", "#######", "#######", ".#####."],
-  grass: ["....###", "..#####", ".######", "######.", "#####..", "####...", "#......"],
-  rock: ["..###..", ".#####.", "#######", "#######", "#######", ".######", "..####."],
+  tide: ["...#...", "..###..", "..###..", ".#####.", "#######", "#######", ".#####."],
+  nature: ["....###", "..#####", ".######", "######.", "#####..", "####...", "#......"],
+  ward: ["#######", "##...##", "#.....#", "#.....#", ".#...#.", "..#.#..", "...#..."],
+  feral: ["#..#..#", "#..#..#", "#..#..#", ".#..#.#", ".#..#.#", "..#..#.", "..#..#."],
   dark: ["..####.", ".###...", "###....", "###....", "###....", ".###...", "..####."],
-  light: ["#..#..#", ".#...#.", "..###..", "#.###.#", "..###..", ".#...#.", "#..#..#"],
+  spirit: ["#..#..#", ".#...#.", "..###..", "#.###.#", "..###..", ".#...#.", "#..#..#"],
 };
 const QMARK = [".###.", "#...#", "...#.", "..#..", "..#..", ".....", "..#.."];
 const SWORDS = ["#.......#", ".#.....#.", "..#...#..", "...#.#...", "....#....", "...#.#...", ".##...##.", ".##...##.", "#.......#"];
@@ -190,19 +192,19 @@ export function MoveIcon({ kind, k = 2, fill = "#fff" }: { kind: MoveKind; k?: n
   return <Pix rows={MOVE[kind]} k={k} fill={fill} />;
 }
 
-/** Element (in its rarity's colour, or ? until you know it) then white hearts. */
+/** Its types (each in its colour, or ? until you know them) then white hearts. */
 export function Stats({ h, hp, k = 3, known = true, only }: { h: HK; hp?: number; k?: number; known?: boolean; only?: "type" | "hearts" }) {
   const left = hp ?? h.hearts;
   return (
     <span className="en-stats">
-      {only === "hearts" ? null : known && h.element ? <Pix rows={TYPE[h.element]} k={k} fill={ELEMENT_COLOR[h.element]} /> : <Pix rows={QMARK} k={k} fill="#d2cefd" />}
+      {only === "hearts" ? null : known && h.types?.length ? h.types.map((t) => <Pix key={t} rows={TYPE[t]} k={k} fill={ELEMENT_COLOR[t]} />) : <Pix rows={QMARK} k={k} fill="#d2cefd" />}
       {only === "type" ? null : Array.from({ length: h.hearts }, (_, i) => <Pix key={i} rows={i >= left ? HEART_LOST : HEART} k={k} fill="#fff" />)}
     </span>
   );
 }
 
-/** A creature, idling between its two frames. */
-export function Creature({ slug, size, shadow, ko }: { slug: string; size: number; shadow?: boolean; ko?: boolean }) {
+/** A creature, idling between its two frames, in the colour of its type (el) if it rolls one. */
+export function Creature({ slug, size, shadow, ko, el }: { slug: string; size: number; shadow?: boolean; ko?: boolean; el?: Element }) {
   const [f, setF] = useState<1 | 2>(1);
   useEffect(() => {
     if (shadow) return;
@@ -211,9 +213,9 @@ export function Creature({ slug, size, shadow, ko }: { slug: string; size: numbe
   }, [shadow]);
   // Knocked out: greyed out and still, but solid (not see-through).
   // eslint-disable-next-line @next/next/no-img-element
-  if (ko) return <img className="en-ko-sil" src={historikalSrc(slug, 1)} alt="" width={size} height={size} draggable={false} style={{ display: "block", imageRendering: "pixelated", pointerEvents: "none", filter: "grayscale(1) brightness(.6)" }} />;
+  if (ko) return <img className="en-ko-sil" src={historikalSrc(slug, 1, el)} alt="" width={size} height={size} draggable={false} style={{ display: "block", imageRendering: "pixelated", pointerEvents: "none", filter: "grayscale(1) brightness(.6)" }} />;
   // eslint-disable-next-line @next/next/no-img-element
-  const img = <img src={shadow ? `/creatures/${slug}-s.png` : historikalSrc(slug, f)} alt="" width={size} height={size} draggable={false} style={{ display: "block", imageRendering: "pixelated", pointerEvents: "none" }} />;
+  const img = <img src={shadow ? `/creatures/${slug}-s.png` : historikalSrc(slug, f, el)} alt="" width={size} height={size} draggable={false} style={{ display: "block", imageRendering: "pixelated", pointerEvents: "none" }} />;
   return shadow ? img : <RarityGlow slug={slug} size={size}>{img}</RarityGlow>;
 }
 
@@ -303,7 +305,7 @@ function Invite({ v, act, kind }: { v: View; act: Act; kind: "trade" | "battle" 
       return (
         <>
           <div className="px en-q">★ {up(v.them.handle)} WANTS AN EPIC BATTLE ★</div>
-          <div className="en-mid">{theirs?.item ? <Creature slug={theirs.item.slug} size={102} /> : theirs?.token ? <TokenPic design={theirs.token} size={96} /> : null}</div>
+          <div className="en-mid">{theirs?.item ? <Creature slug={theirs.item.slug} el={theirs.item.types?.[0]} size={102} /> : theirs?.token ? <TokenPic design={theirs.token} size={96} /> : null}</div>
           <div className="px en-midlabel">THEY PUT UP<b>{theirs?.item ? up(theirs.item.name) : "THEIR PROOF"}</b></div>
           {problem ? <div className="px en-say" style={{ position: "absolute", left: 16, right: 16, bottom: "calc(300px + env(safe-area-inset-bottom))", textAlign: "center", color: "#ffb3cf" }}>{problem}</div> : null}
           <div className="en-invite" style={{ bottom: "calc(36px + env(safe-area-inset-bottom))" }}>
@@ -348,7 +350,7 @@ function Shelf({ items, onPick, label, hp }: { items: HK[]; onPick: (h: HK) => v
       <div className="en-row">
         {items.map((h) => (
           <button key={h.id} type="button" onClick={() => { playClick(); onPick(h); }} aria-label={`${h.name}, ${h.rarity}`}>
-            <Creature slug={h.slug} size={64} />
+            <Creature slug={h.slug} el={h.types?.[0]} size={64} />
             <span className="en-mini"><Stats h={h} hp={hp?.(h)} k={2} /></span>
           </button>
         ))}
@@ -371,7 +373,7 @@ export function TradeScreen({ v, act, close }: { v: View; act: (a: Record<string
       {v.stage === "pick" ? (
         <>
           <div className="px en-q">{theirs ? `${up(v.them.handle)} OFFERS` : <>{up(v.them.handle)} IS CHOOSING<Dots /></>}</div>
-          <div className="en-mid" ref={mid}>{theirs ? <Creature slug={theirs.slug} size={102} /> : <div className="px en-qmark">?</div>}</div>
+          <div className="en-mid" ref={mid}>{theirs ? <Creature slug={theirs.slug} el={theirs.types?.[0]} size={102} /> : <div className="px en-qmark">?</div>}</div>
           {theirs ? <div className="px en-midlabel">THEIR OFFER<b>{up(theirs.name)}</b><Stats h={theirs} k={2} /></div> : null}
           {!mine ? (
             (v.mine ?? []).length ? (
@@ -385,7 +387,7 @@ export function TradeScreen({ v, act, close }: { v: View; act: (a: Record<string
           ) : (
             <>
               <div className={`en-mine${drag.held ? " held" : ""}`} {...drag.bind} style={drag.style} aria-label={`Your offer, ${mine.name}. Drag it up to theirs to swap, or back down to pick another.`}>
-                <div className="en-float"><Creature slug={mine.slug} size={72} /></div>
+                <div className="en-float"><Creature slug={mine.slug} el={mine.types?.[0]} size={72} /></div>
               </div>
               <div className="en-hints" aria-hidden>
                 {theirs ? <div className="px en-hint yes"><b>YES!</b><span>SWAP</span><span>THE BADGE!</span></div> : <div className="px en-hint yes"><b>WAIT!</b><span>THEY&apos;RE</span><span>CHOOSING</span></div>}
@@ -398,7 +400,7 @@ export function TradeScreen({ v, act, close }: { v: View; act: (a: Record<string
       {v.stage === "done" && v.got ? (
         <>
           <div className="px en-q">TRADE!</div>
-          <div className="en-mid en-rise"><Creature slug={v.got.slug} size={102} /></div>
+          <div className="en-mid en-rise"><Creature slug={v.got.slug} el={v.got.types?.[0]} size={102} /></div>
           <div className="px en-midlabel">YOU GOT<b>{up(v.got.name)}</b><Stats h={v.got} k={2} /></div>
           <div className="en-bottom" style={{ bottom: 120 }}><button type="button" className="px en-btn" onClick={close}>CLOSE</button></div>
         </>
@@ -464,7 +466,7 @@ export function BattleScreen({ v, act, close }: { v: View; act: (a: Record<strin
         v.ask ? (
           <>
             <div className="px en-q">{up(v.them.handle)} CAN&apos;T PUT A PROOF UP</div>
-            {v.their_stake?.item ? <div className="en-mid"><Creature slug={v.their_stake.item.slug} size={102} /></div> : null}
+            {v.their_stake?.item ? <div className="en-mid"><Creature slug={v.their_stake.item.slug} el={v.their_stake.item.types?.[0]} size={102} /></div> : null}
             {v.their_stake?.item ? <div className="px en-midlabel">THEY STAKED<b>{up(v.their_stake.item.name)}</b><Stats h={v.their_stake.item} k={2} /></div> : null}
             <Shelf items={(v.lineup ?? []).map((id) => (v.mine ?? []).find((h) => h.id === id)).filter((h): h is HK => !!h)} label="STAKE ONE OF YOUR LINEUP FOR AN EPIC FIGHT?" onPick={(h) => act({ do: "answer", stake: { item: h.id } })} />
             <div className="en-bottom"><button type="button" className="px en-btn quiet" onClick={() => act({ do: "answer" })}>NO, JUST FIGHT</button></div>
@@ -486,7 +488,7 @@ export function BattleScreen({ v, act, close }: { v: View; act: (a: Record<strin
           ) : (
             <>
               <div className={`en-mine en-fighter${drag.held ? " held" : ""}`} {...drag.bind} style={drag.style} aria-label={`Your fighter, ${me.name}. Drag it up into the question mark to lock in, or back down to pick again.`}>
-                <div className={v.lock ? "" : "en-float"}><Creature slug={me.slug} size={96} /></div>
+                <div className={v.lock ? "" : "en-float"}><Creature slug={me.slug} el={me.types?.[0]} size={96} /></div>
               </div>
               <div className="en-tag en-tag-me"><span className="px en-name">{up(me.name)}</span><Stats h={me} /></div>
               {v.lock ? <div className="px en-status">READY · WAITING ON {up(v.them.handle)}</div> : (
@@ -505,13 +507,13 @@ export function BattleScreen({ v, act, close }: { v: View; act: (a: Record<strin
           <div className="px en-q">LAST CHANCE TO SWAP</div>
           <div className="en-mid en-sil" aria-label={`${v.them.handle}'s fighter, in shadow`}>{v.shadow ? <Creature slug={v.shadow} size={102} shadow /> : null}</div>
           <div className="px en-count" aria-live="polite">{left || ""}</div>
-          <div className="en-me-sm"><Creature slug={me.slug} size={84} /></div>
+          <div className="en-me-sm"><Creature slug={me.slug} el={me.types?.[0]} size={84} /></div>
           <div className="en-tag en-tag-sm"><span className="px en-name">{up(me.name)}</span><Stats h={me} /></div>
           <div className="en-bench">
             {v.swapped ? <span className="px en-say">SWAPPED · THEY STILL SEE YOUR OLD SHADOW</span> : (
               <><span className="px en-say">SWAP? THEY WON&apos;T SEE IT</span>
               <div className="en-benchrow">{(v.team ?? []).filter((h) => h.id !== v.pick).map((h) => (
-                <button key={h.id} type="button" onClick={() => { playClick(); act({ do: "swapin", item: h.id }); }} aria-label={`Swap to ${h.name}`}><Creature slug={h.slug} size={48} /></button>
+                <button key={h.id} type="button" onClick={() => { playClick(); act({ do: "swapin", item: h.id }); }} aria-label={`Swap to ${h.name}`}><Creature slug={h.slug} el={h.types?.[0]} size={48} /></button>
               ))}</div></>
             )}
           </div>
@@ -523,10 +525,10 @@ export function BattleScreen({ v, act, close }: { v: View; act: (a: Record<strin
       {fighting && me && v.theirs ? (
         <>
           <div className="px en-q">{v.stage === "end" ? "" : v.stage === "replace" ? "KNOCKED OUT!" : `TURN ${v.turn}`}</div>
-          <div className={`en-them${(v.theirs.hp ?? 0) <= 0 ? " down" : ""}`} style={lunge ? { transform: "translateY(110px)" } : undefined}><Creature slug={v.theirs.slug} size={102} ko={(v.theirs.hp ?? 0) <= 0} /></div>
+          <div className={`en-them${(v.theirs.hp ?? 0) <= 0 ? " down" : ""}`} style={lunge ? { transform: "translateY(110px)" } : undefined}><Creature slug={v.theirs.slug} el={v.theirs.types?.[0]} size={102} ko={(v.theirs.hp ?? 0) <= 0} /></div>
           <div className="en-tag en-tag-them">
             <span className="px en-name">{up(v.theirs.name)}</span>
-            <Stats h={v.theirs} hp={v.theirs.hp} known={!!v.theirs.element} />
+            <Stats h={v.theirs} hp={v.theirs.hp} known={!!v.theirs.types} />
             <span className="px en-seen">{v.theirs.seen?.length ? `SEEN: ${v.theirs.seen.map(up).join(" · ")}` : "MOVES: ???"}</span>
             <span className="en-pips">{(v.their_pips ?? []).map((p, i) => <i key={i} className={`${p.ko ? "ko" : ""}${p.cur ? " cur" : ""}`} />)}</span>
           </div>
@@ -536,14 +538,14 @@ export function BattleScreen({ v, act, close }: { v: View; act: (a: Record<strin
               <span>{v.last.line}</span>{v.last.extra ? <b>{v.last.extra}</b> : null}
             </div>
           ) : null}
-          <div className={`en-me${(me.hp ?? 0) <= 0 ? " down" : ""}`} style={lunge ? { transform: "translateY(-110px)" } : undefined}><Creature slug={me.slug} size={84} ko={(me.hp ?? 0) <= 0} /></div>
+          <div className={`en-me${(me.hp ?? 0) <= 0 ? " down" : ""}`} style={lunge ? { transform: "translateY(-110px)" } : undefined}><Creature slug={me.slug} el={me.types?.[0]} size={84} ko={(me.hp ?? 0) <= 0} /></div>
           <div className="en-tag en-tag-fme">
             <span className="px en-name">{up(me.name)}</span>
             <Stats h={me} hp={me.hp} />
             <span className="en-heads">{(v.team ?? []).map((h) => (
               // eslint-disable-next-line @next/next/no-img-element
-              (h.hp ?? 0) <= 0 ? <span key={h.id} className="en-headko" title={h.name}><Creature slug={h.slug} size={28} ko /></span>
-                : <img key={h.id} src={historikalSrc(h.slug)} alt={h.name} className={h.id === v.pick ? "cur" : ""} />
+              (h.hp ?? 0) <= 0 ? <span key={h.id} className="en-headko" title={h.name}><Creature slug={h.slug} el={h.types?.[0]} size={28} ko /></span>
+                : <img key={h.id} src={historikalSrc(h.slug, 1, h.types?.[0])} alt={h.name} className={h.id === v.pick ? "cur" : ""} />
             ))}</span>
           </div>
 
@@ -558,13 +560,13 @@ export function BattleScreen({ v, act, close }: { v: View; act: (a: Record<strin
           ) : v.stage === "replace" ? (
             v.need ? (
               <div className="en-bench"><span className="px en-say">WHO&apos;S NEXT?</span><div className="en-benchrow">{bench.map((h) => (
-                <button key={h.id} type="button" onClick={() => { playClick(); act({ do: "next", item: h.id }); }} aria-label={h.name}><Creature slug={h.slug} size={44} /><span className="en-mini"><Stats h={h} hp={h.hp} k={2} /></span></button>
+                <button key={h.id} type="button" onClick={() => { playClick(); act({ do: "next", item: h.id }); }} aria-label={h.name}><Creature slug={h.slug} el={h.types?.[0]} size={44} /><span className="en-mini"><Stats h={h} hp={h.hp} k={2} /></span></button>
               ))}</div></div>
             ) : <div className="px en-status">{up(v.them.handle)} IS SENDING SOMEONE OUT<Dots /></div>
           ) : swapping ? (
             <div className="en-bench"><span className="px en-say">SWAP TO WHO? IT COSTS YOUR TURN</span><div className="en-benchrow">
               {bench.map((h) => (
-                <button key={h.id} type="button" onClick={() => { setSwapping(false); act({ do: "move", swap: h.id }); }} aria-label={h.name}><Creature slug={h.slug} size={44} /><span className="en-mini"><Stats h={h} hp={h.hp} k={2} /></span></button>
+                <button key={h.id} type="button" onClick={() => { setSwapping(false); act({ do: "move", swap: h.id }); }} aria-label={h.name}><Creature slug={h.slug} el={h.types?.[0]} size={44} /><span className="en-mini"><Stats h={h} hp={h.hp} k={2} /></span></button>
               ))}
               <button type="button" className="px en-back" onClick={() => setSwapping(false)}>BACK</button>
             </div></div>

@@ -6,7 +6,7 @@ import { pickHistorikal } from "@/lib/actions";
 import { Creature, Stats } from "@/components/encounter";
 import { HISTORIKALS, HISTORIKAL, type Rarity } from "@/lib/historikals";
 
-const ORDER: Rarity[] = ["legendary", "rare", "uncommon", "common"];
+const ORDER: Rarity[] = ["legendary", "epic", "rare", "uncommon", "common"];
 
 /** Spending a gifted pick: every Historikal there is, and you choose one. */
 export default async function PickPage({ searchParams }: { searchParams: Promise<{ s?: string }> }) {
@@ -45,7 +45,7 @@ export default async function PickPage({ searchParams }: { searchParams: Promise
         <section key={r} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
           <h2 className="px" style={{ fontSize: 11, fontWeight: 400, color: "var(--muted)" }}>{r.toUpperCase()}</h2>
           <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(104px, 1fr))", gap: 6 }}>
-            {HISTORIKALS.filter((h) => h.rarity === r).map((h) => gone.has(h.slug) ? (
+            {HISTORIKALS.filter((h) => h.rarity === r && !h.retired).map((h) => gone.has(h.slug) ? (
               <li key={h.slug} aria-label={`${h.name}: taken`} style={{ padding: "10px 4px", display: "flex", flexDirection: "column", alignItems: "center", gap: 6, opacity: 0.45 }}>
                 <Creature slug={h.slug} size={56} ko />
                 <span className="px" style={{ fontSize: 9.5, textAlign: "center", lineHeight: 1.4 }}>{eat(h.name)}</span>
