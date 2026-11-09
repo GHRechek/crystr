@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { setBanner } from "@/lib/actions";
-import { PATTERNS, SWATCHES, bannerStyle, type Banner, type PatternKey, type SwatchKey } from "@/lib/banner";
+import { DEFAULT_BANNER, PATTERNS, SWATCHES, bannerStyle, type Banner, type PatternKey, type SwatchKey } from "@/lib/banner";
 
 function Swatches({ value, onPick, name }: { value: SwatchKey; onPick: (k: SwatchKey) => void; name: string }) {
   return (
@@ -39,7 +38,8 @@ function Swatches({ value, onPick, name }: { value: SwatchKey; onPick: (k: Swatc
   );
 }
 
-/** Choose a pattern and two colours for your profile banner, with the result shown live. */
+/** Choose a pattern and two colours for your profile banner, with the result shown live. A section of the
+ *  profile form (its values ride along as hidden fields), so the one SAVE at the bottom saves it too. */
 export function BannerPicker({ current }: { current: Banner }) {
   const [pattern, setPattern] = useState<PatternKey>(current.pattern);
   const [a, setA] = useState<SwatchKey>(current.a);
@@ -48,7 +48,7 @@ export function BannerPicker({ current }: { current: Banner }) {
   const label = { fontSize: 11, color: "var(--muted)", letterSpacing: ".05em" } as const;
 
   return (
-    <form action={setBanner} className="tile" style={{ padding: 12, display: "flex", flexDirection: "column", gap: 12 }}>
+    <div className="tile" style={{ padding: 12, display: "flex", flexDirection: "column", gap: 12 }}>
       <div className="px" style={{ fontSize: 11, color: "var(--blu-soft)" }}>
         YOUR BANNER
       </div>
@@ -122,9 +122,6 @@ export function BannerPicker({ current }: { current: Banner }) {
       </div>
 
       <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-        <button type="submit" className="btn btn-purple" style={{ flex: 1 }}>
-          SAVE BANNER
-        </button>
         <button
           type="button"
           className="btn"
@@ -135,10 +132,19 @@ export function BannerPicker({ current }: { current: Banner }) {
         >
           ⇄ SWAP
         </button>
-        <button type="submit" name="reset" value="1" className="btn">
+        <button
+          type="button"
+          className="btn"
+          onClick={() => {
+            setPattern(DEFAULT_BANNER.pattern);
+            setA(DEFAULT_BANNER.a);
+            setB(DEFAULT_BANNER.b);
+          }}
+        >
           BACK TO THE ORIGINAL
         </button>
       </div>
-    </form>
+      <div className="px" style={{ fontSize: 10, color: "var(--muted)" }}>SAVED WITH THE REST, BY THE SAVE BUTTON BELOW.</div>
+    </div>
   );
 }

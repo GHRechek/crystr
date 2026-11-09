@@ -31,9 +31,9 @@ export default async function EditProfilePage() {
         ☻☻ CHANGE YOUR TOP 5
       </Link>
 
-      <BannerPicker current={bannerOf(profile)} />
-
       <form action={updateProfile} style={{ display: "flex", flexDirection: "column", gap: 11 }}>
+        <BannerPicker current={bannerOf(profile)} />
+
         <div className="field">
           <label htmlFor="handle">USERNAME</label>
           <input

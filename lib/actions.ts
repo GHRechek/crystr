@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 import { setFlash, EDGE } from "@/lib/flash";
 import { TERMS_VERSION } from "@/lib/terms";
 import { INVISIBLE } from "@/lib/wiki-fact";
-import { isPattern, isSwatch } from "@/lib/banner";
+import { DEFAULT_BANNER, isPattern, isSwatch } from "@/lib/banner";
 import { COSTS, hasStarterHandle, untilReady } from "@/lib/crystr";
 import { normalizePortrait, portraitFromId, packPortrait } from "@/lib/portrait/core";
 import { normalizeToken, unpackToken } from "@/lib/token";
@@ -894,10 +894,21 @@ export async function updateProfile(fd: FormData) {
     return;
   }
 
+  // The banner, when the form carries one: the default is stored as none, anything else as chosen.
+  const pattern = str(fd, "pattern"), a = str(fd, "a"), b = str(fd, "b");
+  const hasBanner = !!(pattern || a || b);
+  if (hasBanner && !(isPattern(pattern) && isSwatch(a) && isSwatch(b))) {
+    await setFlash("NOT QUITE", "Pick a banner pattern and two colours from the lists.", EDGE.mag);
+    return;
+  }
+  const isDefault = pattern === DEFAULT_BANNER.pattern && a === DEFAULT_BANNER.a && b === DEFAULT_BANNER.b;
+  const banner = !hasBanner ? {} : isDefault ? { banner_pattern: null, banner_a: null, banner_b: null } : { banner_pattern: pattern, banner_a: a, banner_b: b };
+
   const { error } = await supabase
     .from("profiles")
     .update({
       handle,
+      ...banner,
       display_name: field(fd, "display_name"),
       pronouns: field(fd, "pronouns", 30),
       bio: field(fd, "bio", BIO_MAX),
@@ -927,41 +938,6 @@ export async function updateProfile(fd: FormData) {
 }
 
 /** Choose how your profile banner looks, or put it back to the original. */
-export async function setBanner(fd: FormData) {
-  const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
-
-  const reset = str(fd, "reset") === "1";
-  const pattern = str(fd, "pattern");
-  const a = str(fd, "a");
-  const b = str(fd, "b");
-  if (!reset && !(isPattern(pattern) && isSwatch(a) && isSwatch(b))) {
-    await setFlash("NOT QUITE", "Pick a pattern and two colours from the lists.", EDGE.mag);
-    return;
-  }
-
-  const { error } = await supabase
-    .from("profiles")
-    .update(
-      reset
-        ? { banner_pattern: null, banner_a: null, banner_b: null, updated_at: new Date().toISOString() }
-        : { banner_pattern: pattern, banner_a: a, banner_b: b, updated_at: new Date().toISOString() },
-    )
-    .eq("id", user.id);
-
-  if (error) {
-    console.error("setBanner:", error.message);
-    await wentWrong();
-    return;
-  }
-  await setFlash("BANNER SAVED", reset ? "Back to the original." : "Your banner is up.", EDGE.purple);
-  revalidatePath("/me");
-  redirect("/me");
-}
-
 export async function setMood(fd: FormData) {
   const supabase = createClient();
   const {
