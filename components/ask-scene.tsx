@@ -174,8 +174,17 @@ function Key() {
 
 /** The background: wide pixel-edged rays in the CRYSTR colours, drawn small and scaled up, turning slowly
  *  and gently strobing. */
-export function Rays({ bg = [30, 50, 128], ray = [58, 100, 204] }: { bg?: number[]; ray?: number[] } = {}) {
+/** The ordered dither (Bayer 4×4) that steps one palette into another pixel by pixel. */
+const BAYER = [[0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5]];
+const BLACK = [6, 3, 8];
+
+/** The pinwheel behind an ask, a trade or a battle. When its colours change it dithers across to the new
+ *  ones over a second; with `viaBlack` it goes down to black first, holds there, and comes back in the
+ *  new colours (a mythic's entrance). */
+export function Rays({ bg = [30, 50, 128], ray = [58, 100, 204], viaBlack = false }: { bg?: number[]; ray?: number[]; viaBlack?: boolean } = {}) {
   const ref = useRef<HTMLCanvasElement>(null);
+  const want = useRef({ bg, ray, viaBlack });
+  want.current = { bg, ray, viaBlack };
   useEffect(() => {
     const c = ref.current;
     const ctx = c?.getContext("2d");
@@ -186,9 +195,26 @@ export function Rays({ bg = [30, 50, 128], ray = [58, 100, 204] }: { bg?: number
     let t = 0;
     // Each pixel is worked out on its own, so every edge is a hard step with no in-between colours.
     const img = ctx.createImageData(W, H), d = img.data;
-    const BG = bg, RAY = ray; // by default a darker blue, and the chest panels' blue
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const draw = () => {
+    // The palette now, the one before it, and how far across (0–1, dithered); plus a queued second step.
+    let cur = { bg: want.current.bg, ray: want.current.ray }, from = cur, mix = 1, mixStart = 0, mixLen = 1000;
+    let next: { bg: number[]; ray: number[]; at: number } | null = null;
+    let last = 0;
+    const same = (p: { bg: number[]; ray: number[] }, q: { bg: number[]; ray: number[] }) => p.bg.join() === q.bg.join() && p.ray.join() === q.ray.join();
+    const draw = (now: number) => {
+      // A change of colours: start a dither, through black if asked (then hold 1.2s and come back).
+      const w = want.current, target = { bg: w.bg, ray: w.ray };
+      if (!same(target, cur) && !(next && same(target, next))) {
+        if (w.viaBlack && !same(cur, { bg: BLACK, ray: BLACK })) {
+          from = cur; cur = { bg: BLACK, ray: BLACK }; mix = 0; mixStart = now; mixLen = 800;
+          next = { ...target, at: now + 800 + 1200 };
+        } else { from = cur; cur = target; mix = 0; mixStart = now; mixLen = 1000; next = null; }
+      }
+      if (next && now >= next.at) { from = cur; cur = { bg: next.bg, ray: next.ray }; mix = 0; mixStart = now; mixLen = 1000; next = null; }
+      if (mix < 1) mix = Math.min(1, (now - mixStart) / mixLen);
+      // Steady: the slow pulse at 7 frames a second; mid-dither, every frame.
+      if (mix >= 1 && now - last < 140) return;
+      last = now;
       t += 1;
       const pulse = reduce ? 1 : 0.88 + 0.12 * Math.sin(t / 9), spin = reduce ? 0 : t * 0.006, step = Math.PI / 6;
       for (let y = 0; y < H; y++) {
@@ -196,7 +222,8 @@ export function Rays({ bg = [30, 50, 128], ray = [58, 100, 204] }: { bg?: number
           let a = Math.atan2(y + 0.5 - H * RAY_CY, x + 0.5 - W / 2) - spin;
           a = ((a % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
           const i = Math.floor(a / step), o = (y * W + x) * 4;
-          const col = i % 2 ? BG : RAY, m = i % 2 ? 1 : pulse;
+          const pal = mix >= (BAYER[y % 4][x % 4] + 0.5) / 16 ? cur : from;
+          const BG = pal.bg, col = i % 2 ? BG : pal.ray, m = i % 2 ? 1 : pulse;
           d[o] = Math.round(BG[0] + (col[0] - BG[0]) * m);
           d[o + 1] = Math.round(BG[1] + (col[1] - BG[1]) * m);
           d[o + 2] = Math.round(BG[2] + (col[2] - BG[2]) * m);
@@ -205,11 +232,45 @@ export function Rays({ bg = [30, 50, 128], ray = [58, 100, 204] }: { bg?: number
       }
       ctx.putImageData(img, 0, 0);
     };
-    draw();
-    const id = window.setInterval(draw, 140);
-    return () => window.clearInterval(id);
+    let raf = 0;
+    const loop = (now: number) => { draw(now); raf = requestAnimationFrame(loop); };
+    raf = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(raf);
   }, []);
   return <canvas ref={ref} aria-hidden style={{ position: "absolute", inset: 0, width: "100%", height: "100%", imageRendering: "pixelated" }} />;
+}
+
+/** A mythic's entrance: a slow dirge in D minor, square-wave bass, a triangle organ chord with a tritone in
+ *  it, a sawtooth lead with vibrato for the wail, a low drum, and a swell as the creature lands. Four bars,
+ *  about thirteen seconds, once. */
+export function playMythicDirge() {
+  try {
+    const AC = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    if (!AC) return;
+    const ctx = new AC();
+    const note = (f: number, when: number, dur: number, type: OscillatorType, gain: number, vib = false) => {
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = type; o.frequency.value = f;
+      if (vib) { const l = ctx.createOscillator(), lg = ctx.createGain(); l.frequency.value = 5.5; lg.gain.value = f * 0.012; l.connect(lg).connect(o.frequency); l.start(when); l.stop(when + dur); }
+      g.gain.setValueAtTime(0.0001, when); g.gain.exponentialRampToValueAtTime(gain, when + 0.03); g.gain.setValueAtTime(gain, when + dur * 0.7); g.gain.exponentialRampToValueAtTime(0.0001, when + dur);
+      o.connect(g).connect(ctx.destination); o.start(when); o.stop(when + dur + 0.05);
+    };
+    const drum = (when: number) => {
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = "triangle"; o.frequency.setValueAtTime(110, when); o.frequency.exponentialRampToValueAtTime(35, when + 0.25);
+      g.gain.setValueAtTime(0.5, when); g.gain.exponentialRampToValueAtTime(0.0001, when + 0.3);
+      o.connect(g).connect(ctx.destination); o.start(when); o.stop(when + 0.35);
+    };
+    const t = ctx.currentTime + 0.05, beat = 60 / 72;
+    const bass = [73.42, 55, 58.27, 55], chords = [[146.83, 174.61, 220], [146.83, 174.61, 207.65], [155.56, 185, 233.08], [146.83, 174.61, 207.65]];
+    const lead: [number, number][] = [[293.66, 2], [349.23, 1], [329.63, 1], [293.66, 2], [277.18, 1], [293.66, 1], [349.23, 2], [415.3, 2], [392, 1], [349.23, 1], [293.66, 4]];
+    for (let b = 0; b < 4; b++) { const w = t + b * 4 * beat; note(bass[b], w, 4 * beat, "square", 0.09); for (const f of chords[b]) note(f, w, 4 * beat, "triangle", 0.06); drum(w); drum(w + 2 * beat); drum(w + 3.5 * beat); }
+    let lt = t + 0.5 * beat; for (const [f, n] of lead) { note(f, lt, n * beat * 0.95, "sawtooth", 0.07, true); lt += n * beat; }
+    note(36.71, t + 0.8, 3, "sawtooth", 0.12); note(146.83, t + 1, 2.6, "square", 0.05, true);
+    window.setTimeout(() => void ctx.close(), 16 * beat * 1000 + 1500);
+  } catch {
+    // No sound is fine.
+  }
 }
 
 /** Sparkles around the risen badge: x, y (from the badge's corner), colour, delay, size, and whether it drifts down. */

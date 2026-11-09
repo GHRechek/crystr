@@ -113,7 +113,7 @@ export function RarityGlow({ slug, size, src, children }: { slug: string; size: 
   if (!h || !colour) return <span style={{ display: "block", width: size, height: size, flex: "none" }}>{children}</span>;
   const px = size / GRID;
   return (
-    <span className="hk-ring" style={{ display: "block", width: size, height: size, flex: "none", position: "relative" }}>
+    <span className={`hk-ring${mythic ? " hk-myth" : ""}`} style={{ display: "block", width: size, height: size, flex: "none", position: "relative" }}>
       <canvas ref={ref} aria-hidden style={{ position: "absolute", left: -px, top: -px * (1 + ABOVE), width: px * (GRID + 2), height: px * (GRID + 2 + ABOVE), imageRendering: "pixelated", pointerEvents: "none" }} />
       <span style={{ position: "relative", display: "block", width: size, height: size }}>{children}</span>
     </span>

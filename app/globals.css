@@ -1971,7 +1971,12 @@ select.input { border: 0; }
 .en-prize { display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 13px; color: #f2b544; text-shadow: 2px 2px 0 #160b2e; text-align: center; }
 
 /* Battles show creatures plain: no rarity outline. */
-.en-battle .hk-ring canvas { display: none; }   /* no ring or flakes in a battle: the creatures stand plain */
+.en-battle .hk-ring:not(.hk-myth) canvas { display: none; }   /* in a battle only a mythic wears its ring and flakes */
+/* A mythic in the fight: its tag, its name in red, and its health as one bar that pours in. */
+.en-mythtag { font-size: 9px; color: #c4262f; text-shadow: 2px 2px 0 #160b2e; letter-spacing: .1em; }
+.en-name.en-mythname { color: #e04a52; }
+.en-bossbar { position: relative; width: 200px; height: 8px; background: #2a0609; }
+.en-bossbar canvas { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; }
 
 /* Team picking: three slots (and a gold stake slot) above one swipeable row. */
 .en-theirstake { position: absolute; left: 0; right: 0; top: calc(60px + env(safe-area-inset-top)); z-index: 4; padding: 0 16px; }

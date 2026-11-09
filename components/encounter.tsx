@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { QuestAskScreen, type QuestView } from "@/components/quest-ask";
-import { Rays, playBuildUp, playClick, playFanfare, playLidOpen, playWhoosh } from "@/components/ask-scene";
+import { Rays, playBuildUp, playClick, playFanfare, playLidOpen, playMythicDirge, playWhoosh } from "@/components/ask-scene";
 import { ELEMENT_COLOR, HISTORIKAL, historikalSrc, type Element, type MoveKind, type Rarity } from "@/lib/historikals";
 import { normalizeToken, tokenSrc } from "@/lib/token";
 import { RarityGlow } from "@/components/rarity-glow";
@@ -209,7 +209,7 @@ export function Stats({ h, hp, k = 3, known = true, only }: { h: HK; hp?: number
 }
 
 /** A creature, idling between its two frames, in the colour of its type (el) if it rolls one. */
-export function Creature({ slug, size, shadow, ko, el }: { slug: string; size: number; shadow?: boolean; ko?: boolean; el?: Element }) {
+export function Creature({ slug, size, shadow, ko, el, aura }: { slug: string; size: number; shadow?: boolean; ko?: boolean; el?: Element; /** A silhouette that still wears its ring and flakes: a mythic's entrance. */ aura?: boolean }) {
   const [f, setF] = useState<1 | 2>(1);
   useEffect(() => {
     if (shadow) return;
@@ -223,8 +223,9 @@ export function Creature({ slug, size, shadow, ko, el }: { slug: string; size: n
   const img = <img src={shadow ? `/creatures/${slug}-s.png` : historikalSrc(slug, f, el)} alt="" width={size} height={size} draggable={false} style={{ display: "block", imageRendering: "pixelated", pointerEvents: "none" }} />;
   // Flyers and floaters bob gently.
   // The ring goes inside the bob, not around it: Safari drops a filter on the parent of an animated child.
-  const ringed = <RarityGlow slug={slug} size={size} src={historikalSrc(slug, f, el)}>{img}</RarityGlow>;
-  return shadow ? img : HISTORIKAL.get(slug)?.hover ? <span className="hk-hover">{ringed}</span> : ringed;
+  const ringed = <RarityGlow slug={slug} size={size} src={shadow ? `/creatures/${slug}-s.png` : historikalSrc(slug, f, el)}>{img}</RarityGlow>;
+  if (shadow) return aura ? ringed : img;
+  return HISTORIKAL.get(slug)?.hover ? <span className="hk-hover">{ringed}</span> : ringed;
 }
 
 /** Drag a creature: up into the target (or anywhere above it) or back down. A tap does nothing. */
@@ -250,14 +251,52 @@ function useDrag(onUp: () => void, onDown: () => void, target: React.RefObject<H
   return { bind, style: { transform: `translate(${pos.x}px, ${pos.y}px)`, touchAction: "none" as const }, held };
 }
 
-function Shell({ kind, children, dim, epic }: { kind: "trade" | "battle"; children: React.ReactNode; dim?: "on" | "after"; epic?: boolean }) {
+/** The pinwheel's colours: the trade's blues, the battle's purples, gold for an epic battle, and blood reds while
+ *  a mythic stands on the other side. */
+const PALETTE = { trade: { bg: [50, 86, 190], ray: [76, 125, 240] }, plain: { bg: [36, 14, 50], ray: [88, 22, 66] }, epic: { bg: [40, 25, 4], ray: [110, 74, 12] }, mythic: { bg: [96, 18, 26], ray: [44, 7, 12] } };
+function Shell({ kind, children, dim, epic, mythic }: { kind: "trade" | "battle"; children: React.ReactNode; dim?: "on" | "after"; epic?: boolean; mythic?: boolean }) {
+  const pal = PALETTE[kind === "trade" ? "trade" : mythic ? "mythic" : epic ? "epic" : "plain"];
   return (
     <div role="dialog" aria-label={kind === "trade" ? "Trade" : "Battle"} className={`en-scene en-${kind}`}>
-      {kind === "trade" ? <Rays bg={[50, 86, 190]} ray={[76, 125, 240]} /> : epic ? <Rays key="epic" bg={[40, 25, 4]} ray={[110, 74, 12]} /> : <Rays key="plain" bg={[36, 14, 50]} ray={[88, 22, 66]} />}
+      <Rays bg={pal.bg} ray={pal.ray} viaBlack={!!mythic} />
       <div className={`en-dim${dim ? ` is-${dim}` : ""}`} aria-hidden />
       {children}
     </div>
   );
+}
+
+/** A mythic's health in the fight: one bar that pours in from the left like a liquid when it first shows, then
+ *  follows its hearts, sinking smoothly when it is hit. */
+function BossBar({ hp, hearts }: { hp: number; hearts: number }) {
+  const ref = useRef<HTMLCanvasElement>(null);
+  const shown = useRef(0);   // the share of the bar drawn full right now
+  const target = Math.max(0, Math.min(1, hearts ? hp / hearts : 0));
+  useEffect(() => {
+    const c = ref.current, g = c?.getContext("2d");
+    if (!c || !g) return;
+    c.width = 100; c.height = 4;
+    const start = performance.now();
+    let raf = 0;
+    const draw = (now: number) => {
+      const t = (now - start) / 1000;
+      const pour = Math.min(1, t / 1.3), ease = 1 - Math.pow(1 - pour, 3);
+      // Pouring in, the bar heads for its true level; afterwards it slides towards it over half a second.
+      const goal = pour < 1 ? ease * target : target;
+      shown.current = pour < 1 ? goal : shown.current + (goal - shown.current) * 0.18;
+      const w = shown.current * 100;
+      g.clearRect(0, 0, 100, 4);
+      for (let y = 0; y < 4; y++) {
+        const slosh = pour < 1 ? Math.round(Math.sin(t * 14 + y * 1.9) * 2 + (y % 2 ? 1 : 0)) : 0;
+        const ww = Math.max(0, Math.min(100, Math.round(w) + slosh));
+        g.fillStyle = y === 0 ? "#d8323c" : "#a8161f"; g.fillRect(0, y, ww, 1);
+        if (pour < 1 && ww < 100) { g.fillStyle = "#e85a62"; g.fillRect(ww - 1, y, 1, 1); }
+      }
+      if (pour < 1 || Math.abs(goal - shown.current) > 0.002) raf = requestAnimationFrame(draw);
+    };
+    raf = requestAnimationFrame(draw);
+    return () => cancelAnimationFrame(raf);
+  }, [target]);
+  return <span className="en-bossbar" role="img" aria-label={`${hp} of ${hearts} hearts`}><canvas ref={ref} /></span>;
 }
 
 function Closed({ v, close, what }: { v: View; close: () => void; what: string }) {
@@ -463,8 +502,23 @@ export function BattleScreen({ v, act, close }: { v: View; act: (a: Record<strin
   const bench = alive.filter((h) => h.id !== v.pick);
   const fighting = ["fight", "replace", "end"].includes(v.stage) && !revealing;
 
+  // A mythic on their side: the screen goes to black with it in silhouette, wearing its aura, then comes back
+  // in blood reds with the creature shown; its hearts are a bar. Once per mythic that steps out.
+  const theirIsMythic = !!v.theirs && HISTORIKAL.get(v.theirs.slug)?.rarity === "legendary";
+  const theirMythic = fighting && theirIsMythic && (v.theirs!.hp ?? 0) > 0;   // standing: the reds and the aura
+  const [entrance, setEntrance] = useState<"dark" | "shown" | null>(null);
+  const entered = useRef<string | null>(null);
+  useEffect(() => {
+    if (!theirMythic || !v.theirs) { if (!theirMythic) entered.current = null; return; }
+    if (entered.current === v.theirs.slug) return;
+    entered.current = v.theirs.slug;
+    setEntrance("dark"); playMythicDirge();
+    const t = window.setTimeout(() => setEntrance("shown"), 2600);
+    return () => window.clearTimeout(t);
+  }, [theirMythic, v.theirs?.slug]);   // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
-    <Shell kind="battle" epic={!!v.epic || !!v.want_epic} dim={revealing ? "on" : v.stage === "end" ? "after" : undefined}>
+    <Shell kind="battle" epic={!!v.epic || !!v.want_epic} mythic={theirMythic} dim={revealing ? "on" : v.stage === "end" ? "after" : undefined}>
       {v.stage === "off" ? <Closed v={v} close={close} what="BATTLE" /> : null}
       {v.stage === "invite" ? <Invite v={v} act={act} kind="battle" /> : null}
 
@@ -533,10 +587,14 @@ export function BattleScreen({ v, act, close }: { v: View; act: (a: Record<strin
       {fighting && me && v.theirs ? (
         <>
           <div className="px en-q">{v.stage === "end" ? "" : v.stage === "replace" ? "KNOCKED OUT!" : `TURN ${v.turn}`}</div>
-          <div className={`en-them${(v.theirs.hp ?? 0) <= 0 ? " down" : ""}`} style={lunge ? { transform: "translateY(110px)" } : undefined}><Creature slug={v.theirs.slug} el={v.theirs.types?.[0]} size={102} ko={(v.theirs.hp ?? 0) <= 0} /></div>
+          <div className={`en-them${(v.theirs.hp ?? 0) <= 0 ? " down" : ""}`} style={lunge ? { transform: "translateY(110px)" } : undefined}>
+            {theirMythic && entrance === "dark" ? <Creature slug={v.theirs.slug} size={102} shadow aura /> : <Creature slug={v.theirs.slug} el={v.theirs.types?.[0]} size={102} ko={(v.theirs.hp ?? 0) <= 0} />}
+          </div>
           <div className="en-tag en-tag-them">
-            <span className="px en-name">{up(v.theirs.name)}</span>
-            <Stats h={v.theirs} hp={v.theirs.hp} known={!!v.theirs.types} />
+            {theirIsMythic ? <span className="px en-mythtag">MYTHIC</span> : null}
+            <span className={`px en-name${theirIsMythic ? " en-mythname" : ""}`}>{up(v.theirs.name)}</span>
+            {theirIsMythic ? (entrance === "shown" || !theirMythic ? <BossBar hp={v.theirs.hp ?? v.theirs.hearts} hearts={v.theirs.hearts} /> : <span className="en-bossbar" aria-hidden />)
+              : <Stats h={v.theirs} hp={v.theirs.hp} known={!!v.theirs.types} />}
             <span className="px en-seen">{v.theirs.seen?.length ? `SEEN: ${v.theirs.seen.map(up).join(" · ")}` : "MOVES: ???"}</span>
             <span className="en-pips">{(v.their_pips ?? []).map((p, i) => <i key={i} className={`${p.ko ? "ko" : ""}${p.cur ? " cur" : ""}`} />)}</span>
           </div>
