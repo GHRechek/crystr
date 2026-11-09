@@ -6,7 +6,7 @@ import { Creature, MoveIcon, Stats } from "@/components/encounter";
 import { healHistorikal } from "@/lib/actions";
 import { useDecay } from "@/components/decay";
 import { corrupt } from "@/lib/crystr";
-import { ELEMENT_COLOR, HISTORIKAL, RARITY_COLOR, SUPER, type Element } from "@/lib/historikals";
+import { ELEMENT_COLOR, HISTORIKAL, RARITY_COLOR, RARITY_NAME, SUPER, type Element } from "@/lib/historikals";
 
 const up = (s: string) => s.toUpperCase();
 
@@ -50,11 +50,10 @@ export function HistorikalCard({
   return (
     <div role="dialog" aria-label={h.name} className="hk-card-wrap" onClick={onClose}>
       <div className="hk-card" onClick={(e) => e.stopPropagation()}>
-        {lineupPos !== undefined && lineupPos >= 0 ? <div className="px" style={{ fontSize: 10, color: "#e0398a" }}>LINEUP · {lineupPos + 1}</div> : null}
         <Creature slug={h.slug} el={types[0]} size={120} ko={ko} />
+        <div className="px" style={{ fontSize: 10, color: colour, marginBottom: -6 }}>{up(RARITY_NAME[h.rarity])}</div>
         <div className="px" style={{ fontSize: 18, color: colour, textAlign: "center" }}>{eat(up(h.name))}</div>
         <div className="px" style={{ fontSize: 10, display: "flex", gap: 8, alignItems: "center" }}>
-          <span style={{ color: colour }}>{up(h.rarity)}</span>
           <Stats h={{ id: 0, slug: h.slug, name: h.name, rarity: h.rarity, types, hearts: h.hearts }} hp={hk.hp} k={2} />
           {ko ? <span style={{ color: "#ff5a7a" }}>KNOCKED OUT</span> : null}
         </div>
