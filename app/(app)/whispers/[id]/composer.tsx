@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { shrink } from "@/lib/shrink";
 import { sendWhisper } from "@/lib/actions";
 import { WHISPER_IMAGE_MAX, WHISPER_IMAGE_TYPES } from "@/lib/whisper";
 
@@ -38,6 +39,7 @@ export function WhisperComposer({
       return;
     }
     setBusy(true);
+    file = await shrink(file);
     const ext = file.type === "image/jpeg" ? "jpg" : file.type.split("/")[1];
     const key = `${threadId}/${crypto.randomUUID()}.${ext}`;
     const { error } = await createClient().storage.from("whispers").upload(key, file, {

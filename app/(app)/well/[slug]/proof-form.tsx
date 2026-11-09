@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { shrink } from "@/lib/shrink";
 import { submitQuest } from "@/lib/actions";
 import { untilReady } from "@/lib/crystr";
 import type { Quest } from "@/lib/data";
@@ -36,6 +37,7 @@ export function ProofForm({ quest, userId }: { quest: Quest; userId: string }) {
     if (preview) URL.revokeObjectURL(preview);
     setPreview(URL.createObjectURL(file));
     const supabase = createClient();
+    file = await shrink(file);
     const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
     const key = `${userId}/${quest.slug}-${Date.now()}.${ext}`;
 

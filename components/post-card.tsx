@@ -107,6 +107,7 @@ export function PostCard({
               src={post.image_url}
               alt="A picture shared with this post"
               loading="lazy"
+              decoding="async"
               style={{ display: "block", width: "100%", maxHeight: 420, objectFit: "contain", background: "var(--inset)" }}
             />
           </div>

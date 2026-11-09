@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { shrink } from "@/lib/shrink";
 import { createPost, voiceLocked } from "@/lib/actions";
 import { COSTS } from "@/lib/crystr";
 import { Cost } from "@/components/mana";
@@ -36,6 +37,7 @@ export function Composer({ userId, mana, badge }: { userId: string; mana: number
     if (thumb) URL.revokeObjectURL(thumb);
     setThumb(URL.createObjectURL(file));
     setBusy(true);
+    file = await shrink(file);
     const ext = file.type === "image/jpeg" ? "jpg" : (file.type.split("/")[1] || file.name.split(".").pop() || "jpg");
     const key = `${userId}/post-${crypto.randomUUID()}.${ext}`;
     const { error } = await createClient().storage.from("proofs").upload(key, file, { contentType: file.type || undefined, cacheControl: "3600", upsert: false });
