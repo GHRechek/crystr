@@ -204,7 +204,7 @@ export function resolveShown(
       const from =
         it.earned_by && it.earned_by !== it.owner_id
           ? `Came from ${it.maker?.handle ?? "someone"}.`
-          : ({ birthday: "Found on a birthday.", battle: "Won in battle.", epic: "Summoned for a main quest.", helped: "Summoned for helping.", quest: "Found on a quest.", pick: "A gift." } as Record<string, string>)[it.occasion ?? ""] ?? "";
+          : ({ birthday: "Found on a birthday.", battle: "Won in battle.", epic: "Summoned for a main quest.", helped: "Found for helping.", quest: "Found on a quest.", pick: "A gift." } as Record<string, string>)[it.occasion ?? ""] ?? "";
       const line = `${what}${from ? ` ${from}` : ""}`;
       out.push({ key, src: kindArtSrc(it.kindRow.art), title: it.kindRow.title.toUpperCase(), line,
         hk: hk && it.kind_slug ? { id: it.id, slug: it.kind_slug, hp: Math.min(hk.hearts, it.hp ?? hk.hearts) } : undefined });

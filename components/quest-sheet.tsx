@@ -70,7 +70,7 @@ export function QuestRow({ b, face, rest, scan, bare }: { b: ShownBadge; face: R
   const kind = b.target ? `${article(targetLabel(b.target))} ${targetLabel(b.target).toLowerCase()}` : null;
   const delay = (Array.from(slug).reduce((n, c) => n + c.charCodeAt(0), 0) % 7) * 0.9;
   const open = () => setTip(true);
-  // Helping never runs out: every three confirmed helps bring a Historikal, so it can always be scanned.
+  // Helping never runs out: every confirmed help brings a Historikal, so it can always be scanned.
   const again = b.key === "a:a-helping-hand";
   // A side quest done before: ready to do again (a find draw, no new badge), or waiting out the month.
   const readyAgain = !!b.again?.ready;
@@ -103,7 +103,7 @@ export function QuestRow({ b, face, rest, scan, bare }: { b: ShownBadge; face: R
               <div style={{ fontSize: 12, lineHeight: 1.5, color: "var(--muted)" }}>
                 {canScan
                   ? again
-                    ? "Scan the code of the person you helped. It opens on their phone, and they have thirty seconds to give you the key. Every three helps bring a good Historikal."
+                    ? "Scan the code of the person you helped. It opens on their phone, and they have thirty seconds to give you the key. Every help brings a Historikal."
                     : `${kind ? `It has to be ${kind}. ` : ""}Scan ${kind ? `${kind}'s` : "their"} code. It opens on their phone, and they have thirty seconds to give you the key. They show their code from ME: tap their picture.`
                   : b.request
                     ? "Make a post that shows it. It is marked as a badge request, and when a witch likes it, the badge is yours."
