@@ -23,32 +23,36 @@ export function RarityGlow({ slug, size, src, children }: { slug: string; size: 
     const img = new Image();
     img.onload = () => {
       if (!alive) return;
-      // Everything is drawn on a half-pixel grid (S = 2 canvas pixels per sprite pixel). The ring is one sprite
-      // pixel wide and solid (a half-and-half ring was tried and the solid one kept).
+      // Everything is drawn at S canvas pixels per sprite pixel.
       const S = 2, W = (GRID + 2) * S, H = (GRID + 2 + ABOVE) * S, RH = (GRID + 2) * S;
       canvas.width = W; canvas.height = H;
       const ctx = canvas.getContext("2d");
       if (!ctx) return;
       ctx.imageSmoothingEnabled = false;
-      const cast = (reach: number, alpha: number) => {
-        const c = document.createElement("canvas"); c.width = W; c.height = RH;
-        const g = c.getContext("2d");
-        if (!g) return c;
-        g.imageSmoothingEnabled = false;
-        for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [-1, 1], [1, -1], [-1, -1]]) g.drawImage(img, S + dx * reach, S + dy * reach, GRID * S, GRID * S);
-        g.globalCompositeOperation = "source-in"; g.globalAlpha = alpha; g.fillStyle = colour; g.fillRect(0, 0, W, RH);
-        return c;
-      };
-      const ring = cast(S, 1);
-      const still = () => { ctx.clearRect(0, 0, W, H); ctx.drawImage(ring, 0, ABOVE * S); };
-      still();
-      if (!mythic || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-      // The flakes: from the top edge of each column, up a few rows, in the ring's red, solid or half strength.
+      // The ring, on the pixel grid: every empty pixel beside a sprite pixel (up, down, left, right), plus the
+      // diagonal corners of sprite pixels that sit in a mass (two or more neighbours), so solid edges run
+      // unbroken while one-pixel points (horns, wing tips, tails) stay rounded instead of squared off.
       const probe = document.createElement("canvas"); probe.width = GRID; probe.height = GRID;
       const pc = probe.getContext("2d");
       if (!pc) return;
       pc.drawImage(img, 0, 0);
       const data = pc.getImageData(0, 0, GRID, GRID).data;
+      const on = (x: number, y: number) => x >= 0 && y >= 0 && x < GRID && y < GRID && data[(y * GRID + x) * 4 + 3] > 0;
+      const ring = document.createElement("canvas"); ring.width = W; ring.height = RH;
+      const rg = ring.getContext("2d");
+      if (!rg) return;
+      rg.fillStyle = colour;
+      const mark = (x: number, y: number) => { if (!on(x, y)) rg.fillRect((x + 1) * S, (y + 1) * S, S, S); };
+      for (let y = 0; y < GRID; y++) for (let x = 0; x < GRID; x++) {
+        if (!on(x, y)) continue;
+        mark(x + 1, y); mark(x - 1, y); mark(x, y + 1); mark(x, y - 1);
+        const mass = [on(x + 1, y), on(x - 1, y), on(x, y + 1), on(x, y - 1)].filter(Boolean).length >= 2;
+        if (mass) { mark(x + 1, y + 1); mark(x - 1, y + 1); mark(x + 1, y - 1); mark(x - 1, y - 1); }
+      }
+      const still = () => { ctx.clearRect(0, 0, W, H); ctx.drawImage(ring, 0, ABOVE * S); };
+      still();
+      if (!mythic || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      // The flakes: from the top edge of each column, up a few rows, in the ring's red, solid or half strength.
       const edge: number[] = [];
       for (let x = 0; x < GRID; x++) { edge[x] = -1; for (let y = 0; y < GRID; y++) if (data[(y * GRID + x) * 4 + 3]) { edge[x] = y; break; } }
       type Flake = { x: number; y: number; vx: number; vy: number; w: number; a: number; age: number; life: number };
