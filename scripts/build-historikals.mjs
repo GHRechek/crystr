@@ -295,6 +295,11 @@ revoke all on function public.cr_roll_main_historikal() from public, anon, authe
 -- The wiki's facts about them.
 update public.wiki_facts set body = 'Common, uncommon, rare, epic, and legendary' where body = 'Common, uncommon, rare, and legendary';
 update public.wiki_facts set body = 'Hundreds of types' where body = 'Well over a hundred types';
+
+-- Tidy: the chart functions keep a fixed search path; the roll trigger is a trigger only.
+alter function public.cr_beats(text, text) set search_path = public;
+alter function public.cr_dmg(jsonb, jsonb) set search_path = public;
+revoke all on function public.cr_roll_element() from public, anon, authenticated;
 `;
 fs.writeFileSync(path.join(root, "supabase/migrations/20261109000000_historikal_recast.sql"), sql);
 
