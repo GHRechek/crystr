@@ -5,7 +5,7 @@ import { Creature, MoveIcon, Stats, TypeIcon } from "@/components/encounter";
 import { HistorikalCard } from "@/components/historikal-card";
 import { useDecay } from "@/components/decay";
 import { corrupt } from "@/lib/crystr";
-import { HISTORIKAL, RARITY_COLOR, type Element, type Rarity } from "@/lib/historikals";
+import { ELEMENT_COLOR, HISTORIKAL, RARITY_COLOR, type Element, type Rarity } from "@/lib/historikals";
 
 export type HeldHk = { id: number; slug: string; name: string; rarity: Rarity; types: Element[]; hearts: number; hp: number };
 
@@ -40,12 +40,15 @@ export function HistorikalCollection({ list, lineup }: { list: HeldHk[]; lineup:
           {front.map((h) => (
             <li key={h.id}>
               <button type="button" onClick={() => setCard(h)} aria-label={`${h.name}, lineup ${lineup.indexOf(h.id) + 1}: open its card`} style={{ width: "100%", border: 0, background: "none", color: "inherit", cursor: "pointer", padding: "4px 2px", display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
-                <span style={{ display: "flex", gap: 4 }} aria-label={h.types.join(" / ")}>{h.types.map((t) => <TypeIcon key={t} type={t} k={1.5} />)}</span>
+                <span style={{ display: "flex", gap: 4 }} aria-label={h.types.join(" / ")}>{h.types.map((t) => <TypeIcon key={t} type={t} k={1.25} />)}</span>
                 <Creature slug={h.slug} el={h.types[0]} size={64} ko={h.hp <= 0} />
                 <span className="px" style={{ fontSize: 10, textAlign: "center", lineHeight: 1.35 }}>{corrupt(h.name.toUpperCase(), decay)}</span>
-                <Stats h={h} hp={h.hp} k={1.5} only="hearts" />
-                <span style={{ display: "flex", gap: 5 }} aria-hidden>
-                  {(HISTORIKAL.get(h.slug)?.moves ?? []).map((m) => <MoveIcon key={m.name} kind={m.kind} k={1.5} fill="var(--muted)" />)}
+                <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                  <Stats h={h} hp={h.hp} k={1.25} only="hearts" />
+                  <span aria-hidden style={{ color: "var(--muted)", fontSize: 10, lineHeight: 1 }}>|</span>
+                  <span style={{ display: "flex", gap: 4 }} aria-hidden>
+                    {(HISTORIKAL.get(h.slug)?.moves ?? []).map((m) => <MoveIcon key={m.name} kind={m.kind} k={1.25} fill="var(--muted)" />)}
+                  </span>
                 </span>
               </button>
             </li>
@@ -62,13 +65,13 @@ export function HistorikalCollection({ list, lineup }: { list: HeldHk[]; lineup:
                 <span style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 7 }}>
                   <span style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
                     <span className="px" style={{ fontSize: 10, lineHeight: 1.35 }}>{corrupt(h.name.toUpperCase(), decay)}</span>
-                    <span style={{ display: "flex", gap: 4 }} aria-label={h.types.join(" / ")}>{h.types.map((t) => <TypeIcon key={t} type={t} k={1.5} />)}</span>
+                    <span className="px" style={{ fontSize: 8.5 }}>{h.types.map((t, i) => <span key={t} style={{ color: ELEMENT_COLOR[t] }}>{i ? " / " : ""}{corrupt(t.toUpperCase(), decay)}</span>)}</span>
                   </span>
                   <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                    <Stats h={h} hp={h.hp} k={1.5} only="hearts" />
-                    <span aria-hidden style={{ color: "var(--muted)", fontSize: 11, lineHeight: 1 }}>|</span>
-                    <span style={{ display: "flex", gap: 5 }} aria-hidden>
-                      {(HISTORIKAL.get(h.slug)?.moves ?? []).map((m) => <MoveIcon key={m.name} kind={m.kind} k={1.5} fill="var(--muted)" />)}
+                    <Stats h={h} hp={h.hp} k={1.25} only="hearts" />
+                    <span aria-hidden style={{ color: "var(--muted)", fontSize: 10, lineHeight: 1 }}>|</span>
+                    <span style={{ display: "flex", gap: 4 }} aria-hidden>
+                      {(HISTORIKAL.get(h.slug)?.moves ?? []).map((m) => <MoveIcon key={m.name} kind={m.kind} k={1.25} fill="var(--muted)" />)}
                     </span>
                   </span>
                 </span>
