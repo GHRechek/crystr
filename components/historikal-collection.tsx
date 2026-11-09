@@ -20,6 +20,9 @@ export function HistorikalCollection({ list, lineup }: { list: HeldHk[]; lineup:
   const rank = (h: HeldHk) => (lineup.includes(h.id) ? -10 + lineup.indexOf(h.id) : RARITIES.indexOf(h.rarity));
   const shown = list.filter((h) => !only || h.rarity === only).sort((a, b) => rank(a) - rank(b) || a.name.localeCompare(b.name));
   const count = (r: Rarity) => list.filter((h) => h.rarity === r).length;
+  // The lineup stands in a row at the top; everything else is the list below it.
+  const front = shown.filter((h) => lineup.includes(h.id));
+  const rest = shown.filter((h) => !lineup.includes(h.id));
 
   return (
     <>
@@ -31,10 +34,28 @@ export function HistorikalCollection({ list, lineup }: { list: HeldHk[]; lineup:
           </button>
         ))}
       </div>
-      {/* A list: the creature, then its name with its types beside it, then its hearts | its moves. */}
+      {front.length ? (
+        // The lineup: its types, the creature, its name, its hearts, its moves, top to bottom.
+        <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 6 }}>
+          {front.map((h) => (
+            <li key={h.id}>
+              <button type="button" onClick={() => setCard(h)} aria-label={`${h.name}, lineup ${lineup.indexOf(h.id) + 1}: open its card`} style={{ width: "100%", border: 0, background: "none", color: "inherit", cursor: "pointer", padding: "4px 2px", display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+                <span className="px" style={{ fontSize: 8.5, color: "#e0398a" }}>LINEUP · {lineup.indexOf(h.id) + 1}</span>
+                <span style={{ display: "flex", gap: 4 }} aria-label={h.types.join(" / ")}>{h.types.map((t) => <TypeIcon key={t} type={t} k={1.5} />)}</span>
+                <Creature slug={h.slug} el={h.types[0]} size={64} ko={h.hp <= 0} />
+                <span className="px" style={{ fontSize: 10, textAlign: "center", lineHeight: 1.35 }}>{corrupt(h.name.toUpperCase(), decay)}</span>
+                <Stats h={h} hp={h.hp} k={1.5} only="hearts" />
+                <span style={{ display: "flex", gap: 5 }} aria-hidden>
+                  {(HISTORIKAL.get(h.slug)?.moves ?? []).map((m) => <MoveIcon key={m.name} kind={m.kind} k={1.5} fill="var(--muted)" />)}
+                </span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+      {/* The rest, a list: the creature, then its name with its types beside it, then its hearts | its moves. */}
       <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: 4 }}>
-        {shown.map((h) => {
-          const n = lineup.indexOf(h.id);
+        {rest.map((h) => {
           return (
             <li key={h.id}>
               <button type="button" onClick={() => setCard(h)} aria-label={`${h.name}: open its card`} style={{ width: "100%", border: 0, background: "none", color: "inherit", cursor: "pointer", padding: "4px 0", display: "flex", alignItems: "center", gap: 12, textAlign: "left" }}>
@@ -43,7 +64,6 @@ export function HistorikalCollection({ list, lineup }: { list: HeldHk[]; lineup:
                   <span style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
                     <span className="px" style={{ fontSize: 10, lineHeight: 1.35 }}>{corrupt(h.name.toUpperCase(), decay)}</span>
                     <span style={{ display: "flex", gap: 4 }} aria-label={h.types.join(" / ")}>{h.types.map((t) => <TypeIcon key={t} type={t} k={1.5} />)}</span>
-                    {n >= 0 ? <span className="px" style={{ fontSize: 8.5, color: "#e0398a" }}>LINEUP · {n + 1}</span> : null}
                   </span>
                   <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
                     <Stats h={h} hp={h.hp} k={1.5} only="hearts" />
