@@ -176,6 +176,7 @@ export const HISTORIKALS: Historikal[] = [
   { slug: "hedge-witch", name: "Hedge Witch", rarity: "uncommon", types: ["dark", "spirit"], hearts: 3, moves: [{ name: "Shadow Claw", kind: "sword" }, { name: "Ether Guard", kind: "armor" }] },
   { slug: "blacksmith", name: "Blacksmith", rarity: "uncommon", types: ["ward", "fire"], hearts: 3, moves: [{ name: "Strike", kind: "sword" }, { name: "Kindle", kind: "spell" }] },
   { slug: "jester", name: "Jester", rarity: "rare", types: ["spirit", "dark"], hearts: 3, moves: [{ name: "Ghost Touch", kind: "sword" }, { name: "Wail", kind: "spell" }, { name: "Ether Guard", kind: "armor" }] },
+  { slug: "jesterae", name: "Jesterae", rarity: "rare", types: ["spirit", "dark"], hearts: 3, moves: [{ name: "Smite", kind: "sword" }, { name: "Curse", kind: "spell" }, { name: "Ether Guard", kind: "armor" }] },
   { slug: "the-king", name: "The King", rarity: "legendary", types: ["spirit", "fire"], hearts: 4, moves: [{ name: "Smite", kind: "sword" }, { name: "Fireball", kind: "spell" }, { name: "Aegis", kind: "armor" }] },
   { slug: "elf-archer", name: "Elf Archer", rarity: "common", types: ["spirit", "nature"], hearts: 2, moves: [{ name: "Halo Strike", kind: "sword" }, { name: "Burrow", kind: "armor" }] },
   { slug: "elf-lancer", name: "Elf Lancer", rarity: "rare", types: ["spirit", "ward"], hearts: 3, moves: [{ name: "Spirit Lance", kind: "sword" }, { name: "War Cry", kind: "spell" }, { name: "Glow Veil", kind: "armor" }] },

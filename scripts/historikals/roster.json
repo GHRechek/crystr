@@ -2447,6 +2447,23 @@
 "slug": null
 },
 {
+"id": "human_1003f",
+"family": "human",
+"familyName": "Human",
+"sprite": 1003,
+"art": 1003,
+"name": "Jesterae",
+"rarity": "rare",
+"types": [
+"light",
+"shadow"
+],
+"rnd": false,
+"one": false,
+"shift": false,
+"slug": null
+},
+{
 "id": "human_962",
 "family": "human",
 "familyName": "Human",
