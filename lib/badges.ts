@@ -35,7 +35,20 @@ export type BadgeRow = {
   earned_at: string | null;
   /** The tier held, 1 to 4 (1 on a badge with one tier). 0 until earned. */
   tier: number;
+  /** When it was last done: earned, or repeated since (a side quest can be done again each month). */
+  done_at?: string | null;
 };
+
+/** A side quest that can be done again: a one-step quest a witch likes or someone confirms, held already.
+ *  Doing it again brings no new badge, but a find draw, once a month. */
+export const AGAIN_DAYS = 30;
+export const questRepeats = (b: BadgeRow) =>
+  !!b.earned_at && b.kind !== "goal" && !b.first_step && b.tiers === 1 && !!(b.witch_approved || b.peer_approved);
+/** When it can next be done again (null if it is not one that repeats). */
+export const questAgainAt = (b: BadgeRow): Date | null =>
+  questRepeats(b) ? new Date(new Date(b.done_at ?? b.earned_at ?? 0).getTime() + AGAIN_DAYS * 86400000) : null;
+export const questAgainReady = (b: BadgeRow) => { const at = questAgainAt(b); return !!at && at.getTime() <= Date.now(); };
+const again = (b: BadgeRow): ShownBadge["again"] => { const at = questAgainAt(b); return at ? { ready: at.getTime() <= Date.now(), at: at.toISOString() } : undefined; };
 
 /** A tier as it is written on the badge: I, II, III, IV. The ladder itself (five, ten,
  *  twenty-five, fifty) lives in badge_tier_for in the database and is not advertised: the
@@ -124,6 +137,8 @@ export type ShownBadge = {
   line: string;
   /** Not earned yet: drawn dimmed, and the line says what to do to earn it. */
   locked?: boolean;
+  /** A held side quest that can be done again: ready now, or from when. */
+  again?: { ready: boolean; at: string };
   /** A badge to ask a witch for: make a post, and a witch's like earns it. */
   request?: boolean;
   /** Earned by asking someone, who answers in a whisper. */
@@ -208,6 +223,7 @@ export function achievementGrid(badges: BadgeRow[]): ShownBadge[] {
     line: b.earned_at ? (b.blurb || DID[b.slug] || b.how) : b.how,
     locked: !b.earned_at,
     auto: !b.witch_approved && !b.peer_approved,
+    again: again(b),
     edit: { slug: b.slug, title: b.title, how: b.how, blurb: b.blurb, art: Number(/(\d+)\.png$/.exec(b.art ?? "")?.[1] ?? 1), custom: b.art?.startsWith("token:") ? b.art.slice(6) : undefined, fixed: b.kind === "goal", peer: b.witch_approved || b.peer_approved ? !!b.peer_approved : undefined, target: b.peer_target ?? undefined },
   });
   return [...badges.filter((b) => b.earned_at), ...badges.filter((b) => !b.earned_at)].map(cell);
@@ -299,9 +315,10 @@ export const questGrid = (badges: BadgeRow[]): ShownBadge[] => {
     line: b.earned_at ? b.blurb || b.how : b.how,
     locked: !b.earned_at,
     auto: !b.witch_approved && !b.peer_approved,
-    request: !!b.witch_approved && !b.earned_at,
-    peer: !!b.peer_approved && !b.earned_at,
+    request: !!b.witch_approved && (!b.earned_at || questAgainReady(b)),
+    peer: !!b.peer_approved && (!b.earned_at || questAgainReady(b)),
     instant: !!b.scan_instant,
+    again: again(b),
     mode: b.peer_approved ? "with" : b.witch_approved ? "show" : "do",
     target: b.peer_target ?? undefined,
   }));

@@ -72,7 +72,10 @@ export function QuestRow({ b, face, rest, scan, bare }: { b: ShownBadge; face: R
   const open = () => setTip(true);
   // Helping never runs out: every three confirmed helps bring a Historikal, so it can always be scanned.
   const again = b.key === "a:a-helping-hand";
-  const canScan = !!scan && (b.locked || again);
+  // A side quest done before: ready to do again (a find draw, no new badge), or waiting out the month.
+  const readyAgain = !!b.again?.ready;
+  const canScan = !!scan && (b.locked || again || readyAgain);
+  const againOn = b.again && !readyAgain ? new Date(b.again.at).toLocaleDateString(undefined, { day: "numeric", month: "short" }) : null;
 
   return (
     <>
@@ -91,7 +94,12 @@ export function QuestRow({ b, face, rest, scan, bare }: { b: ShownBadge; face: R
             <BadgeFace b={b} size={64} />
             <div className="px" style={{ fontSize: 12, lineHeight: 1.5, color: "var(--text)" }}>{b.title}</div>
             <div style={{ fontSize: 12.5, lineHeight: 1.5, color: "var(--muted)" }}>{b.line}</div>
-            {b.locked || canScan ? (
+            {b.again ? (
+              <div className="px" style={{ fontSize: 10, lineHeight: 1.6, color: readyAgain ? "var(--blu-soft)" : "var(--muted)" }}>
+                {readyAgain ? "READY TO DO AGAIN · A FIND DRAW, NO NEW BADGE" : `AGAIN FROM ${againOn?.toUpperCase()} · A FIND DRAW EACH MONTH`}
+              </div>
+            ) : null}
+            {b.locked || canScan || (readyAgain && b.request) ? (
               <div style={{ fontSize: 12, lineHeight: 1.5, color: "var(--muted)" }}>
                 {canScan
                   ? again
@@ -112,7 +120,7 @@ export function QuestRow({ b, face, rest, scan, bare }: { b: ShownBadge; face: R
                   SCAN A CODE
                 </button>
               ) : null}
-              {b.locked && !scan && b.request ? (
+              {(b.locked || readyAgain) && !scan && b.request ? (
                 <Link href={`/post?badge=${slug}`} className="btn btn-purple" style={{ minHeight: 44, display: "inline-flex", alignItems: "center" }}>
                   MAKE THE POST →
                 </Link>

@@ -60,7 +60,7 @@ export function QuestBrowser({
             <li key={b.key}>
               <QuestRow
                 b={b}
-                scan={!!b.peer && b.locked}
+                scan={!!b.peer && (b.locked || !!b.again?.ready)}
                 face={<span style={{ display: "block", opacity: b.locked ? 0.85 : 1 }}><BadgeFace b={b} size={42} /></span>}
                 rest={
                   <>

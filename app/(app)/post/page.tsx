@@ -1,10 +1,11 @@
 import { requireMe, getBadges } from "@/lib/data";
+import { questAgainReady } from "@/lib/badges";
 import { Composer } from "./composer";
 
 export default async function ComposePage(props: { searchParams: Promise<{ badge?: string }> }) {
   const { userId, profile } = await requireMe();
   const { badge: slug } = await props.searchParams;
-  const found = slug ? (await getBadges(userId)).find((b) => b.slug === slug && b.witch_approved && !b.earned_at) : undefined;
+  const found = slug ? (await getBadges(userId)).find((b) => b.slug === slug && b.witch_approved && (!b.earned_at || questAgainReady(b))) : undefined;
   return (
     <>
       <h1 className="sr-only">New post</h1>

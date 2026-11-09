@@ -826,16 +826,24 @@ export async function peekOverride(code: string): Promise<{ ok: true; witch: str
  *  what tier. */
 export async function getBadges(userId: string): Promise<BadgeRow[]> {
   const supabase = createClient();
-  const [all, mine] = await Promise.all([
+  const [all, mine, again] = await Promise.all([
     supabase.from("badges").select("slug, title, how, blurb, art, tiers, sort, witch_approved, peer_approved, peer_target, kind, steps, threshold, first_step, scan_instant").order("sort"),
     supabase.from("user_badges").select("badge_slug, earned_at, tier").eq("user_id", userId),
+    supabase.from("quest_repeats").select("badge_slug, done_at").eq("user_id", userId),
   ]);
   const earned = new Map(
     (mine.data ?? []).map((r) => [String(r.badge_slug), { at: String(r.earned_at), tier: Number(r.tier ?? 1) }]),
   );
+  // The last time each side quest was done again, for the month's wait.
+  const last = new Map<string, string>();
+  for (const r of again.data ?? []) {
+    const slug = String(r.badge_slug), at = String(r.done_at);
+    if (!last.has(slug) || at > (last.get(slug) ?? "")) last.set(slug, at);
+  }
   return ((all.data ?? []) as Omit<BadgeRow, "earned_at" | "tier">[]).map((b) => {
     const got = earned.get(b.slug);
-    return { ...b, tiers: Number(b.tiers ?? 1), earned_at: got?.at ?? null, tier: got?.tier ?? 0 };
+    const done = [got?.at, last.get(b.slug)].filter((x): x is string => !!x).sort().pop() ?? null;
+    return { ...b, tiers: Number(b.tiers ?? 1), earned_at: got?.at ?? null, tier: got?.tier ?? 0, done_at: done };
   });
 }
 
