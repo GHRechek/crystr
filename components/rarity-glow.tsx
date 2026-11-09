@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { HISTORIKAL, RARITY_COLOR } from "@/lib/historikals";
 
 const GRID = 34;   // the sprite files are 34×34 (a 32px sprite with a 1px margin)
-const ABOVE = 8;   // rows of room above the sprite, for a mythic's flakes
+const ABOVE = 12;  // rows of room above the sprite, for a mythic's flakes
 
 /** A Historikal's picture with a hard outline in its rarity colour, one sprite pixel wide, just past its black
  *  border: white, green, blue, purple, red for mythic. A mythic also has flakes of that red rising off its top.
@@ -67,7 +67,7 @@ export function RarityGlow({ slug, size, src, children }: { slug: string; size: 
           const x = Math.floor(Math.random() * GRID);
           if (edge[x] >= 0) {
             const big = Math.random() < 0.2;
-            flakes.push({ x: x + 1, y: edge[x] + ABOVE - Math.floor(Math.random() * 2), vx: (Math.random() - 0.5) * 0.06, vy: -(0.1 + Math.random() * 0.1), w: big ? 2 : 1, a: Math.random() < 0.5 ? 1 : 0.5, age: 0, life: 20 + Math.random() * 15 });
+            flakes.push({ x: x + 1, y: edge[x] + ABOVE - Math.floor(Math.random() * 2), vx: (Math.random() - 0.5) * 0.06, vy: -(0.12 + Math.random() * 0.12), w: big ? 2 : 1, a: Math.random() < 0.5 ? 1 : 0.5, age: 0, life: 30 + Math.random() * 20 });
           }
         }
         for (const f of flakes) { f.age++; f.x += f.vx; f.y += f.vy; }
