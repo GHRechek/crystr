@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { HISTORIKAL, RARITY_COLOR } from "@/lib/historikals";
 
 const GRID = 34;   // the sprite files are 34×34 (a 32px sprite with a 1px margin)
-const ABOVE = 16;  // rows of room above the sprite (the flakes reach fifteen), for a mythic's flakes
+const ABOVE = 28;  // rows of room above the sprite: the flakes climb well clear of it, for a mythic's flakes
 
 /** A Historikal's picture with a hard outline in its rarity colour, one sprite pixel wide, just past its black
  *  border: white, green, blue, purple, red for mythic. A mythic also has flakes of that red rising off its top.
@@ -66,8 +66,17 @@ export function RarityGlow({ slug, size, src, children }: { slug: string; size: 
       still();
       if (!mythic || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
       // The flakes: from the top edge of each column, up a few rows, in the ring's red, solid or half strength.
+      // Where flakes start: the top edge of each column, and the sides of the upper half (shoulders, wing edges).
       const edge: number[] = [];
       for (let x = 0; x < GRID; x++) { edge[x] = -1; for (let y = 0; y < GRID; y++) if (data[(y * GRID + x) * 4 + 3]) { edge[x] = y; break; } }
+      const tops = edge.filter((y) => y >= 0); const topMost = tops.length ? Math.min(...tops) : 0;
+      let botMost = topMost; for (let y = GRID - 1; y >= 0; y--) { if (edge.some((e, x) => e >= 0 && data[(y * GRID + x) * 4 + 3])) { botMost = y; break; } }
+      const sides: [number, number][] = [];
+      for (let y = topMost; y <= topMost + (botMost - topMost) / 2; y++) {
+        let l = -1, r = -1;
+        for (let x = 0; x < GRID; x++) if (data[(y * GRID + x) * 4 + 3]) { if (l < 0) l = x; r = x; }
+        if (l >= 0) { sides.push([l - 1, y]); sides.push([r + 1, y]); }
+      }
       type Flake = { x: number; y: number; vx: number; vy: number; w: number; a: number; age: number; life: number };
       const flakes: Flake[] = [];
       let last = 0;
@@ -76,12 +85,14 @@ export function RarityGlow({ slug, size, src, children }: { slug: string; size: 
         raf = requestAnimationFrame(tick);
         if (t - last < 1000 / 30) return;   // thirty steps a second is plenty for pixels
         last = t;
-        if (Math.random() < 0.9) {
-          const x = Math.floor(Math.random() * GRID);
-          if (edge[x] >= 0) {
-            const big = Math.random() < 0.2;
-            flakes.push({ x: x + 1, y: edge[x] + ABOVE - Math.floor(Math.random() * 2), vx: (Math.random() - 0.5) * 0.06, vy: -(0.14 + Math.random() * 0.16), w: big ? 2 : 1, a: Math.random() < 0.65 ? 1 : 0.5, age: 0, life: 30 + Math.random() * 20 });
-          }
+        for (let n = 1.4; n > 0; n -= 1) {
+          if (Math.random() >= Math.min(1, n)) continue;
+          let sx = -1, sy = 0;
+          if (Math.random() < 0.6 || !sides.length) { const x = Math.floor(Math.random() * GRID); if (edge[x] >= 0) { sx = x; sy = edge[x] - 1 - Math.floor(Math.random() * 2); } }
+          else { const p = sides[Math.floor(Math.random() * sides.length)]; sx = p[0]; sy = p[1]; }
+          if (sx < 0) continue;
+          const big = Math.random() < 0.2;
+          flakes.push({ x: sx + 1, y: sy + ABOVE + 1, vx: (Math.random() - 0.5) * 0.08, vy: -(0.2 + Math.random() * 0.2), w: big ? 2 : 1, a: Math.random() < 0.65 ? 1 : 0.5, age: 0, life: 40 + Math.random() * 30 });
         }
         for (const f of flakes) { f.age++; f.x += f.vx; f.y += f.vy; }
         for (let i = flakes.length - 1; i >= 0; i--) if (flakes[i].age >= flakes[i].life || flakes[i].y < 0) flakes.splice(i, 1);
