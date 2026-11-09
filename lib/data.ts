@@ -1,5 +1,6 @@
 import type { BadgeRow, BadgeItem, TokenRow, Trade } from "@/lib/badges";
 import type { Element, Rarity } from "@/lib/historikals";
+import { applyPatches, patchesFrom, type CatalogueRow, type CreaturePatch } from "@/lib/catalogue";
 import { cache } from "react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
@@ -52,11 +53,29 @@ export type Author = Pick<
 const AUTHOR_COLS = "id, handle, display_name, avatar_url, portrait_url, avatar_config";
 
 /** Every screen behind the tab bar needs these two. */
+/** The creature editor's changes to the catalogue (only the creatures that differ from the built-in one),
+ *  applied on the server for this request. The layout hands the same patches to the browser. */
+export const getCatalogue = cache(async function getCatalogue(): Promise<CreaturePatch[]> {
+  const supabase = createClient();
+  const { data } = await supabase.from("badge_kinds").select("slug, title, rarity, types, hearts, moves, droppable, hover, rnd, shift").not("types", "is", null).limit(1000);
+  const patches = patchesFrom((data ?? []) as CatalogueRow[]);
+  applyPatches(patches);
+  return patches;
+});
+
+/** Whether this person may use the creature editor. */
+export const isCreatureEditor = cache(async function isCreatureEditor(): Promise<boolean> {
+  const supabase = createClient();
+  const { data } = await supabase.rpc("cr_is_editor");
+  return data === true;
+});
+
 export const requireMe = cache(async function requireMe(): Promise<{ userId: string; profile: Profile }> {
   const supabase = createClient();
-  const {
+  // Every page asks who you are first, so the catalogue is brought up to date alongside it.
+  const [, {
     data: { user },
-  } = await supabase.auth.getUser();
+  }] = await Promise.all([getCatalogue(), supabase.auth.getUser()]);
   if (!user) redirect("/login");
 
   const { data: profile } = await supabase

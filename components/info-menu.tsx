@@ -9,7 +9,7 @@ import { MoreIcon } from "@/components/icons";
 /** The three dots at the top right of the header. Opens a sheet over the app with the things
  *  that are about the game rather than about you: what it is, where it is, and the
  *  terms people agreed to. */
-export function InfoMenu({ isWitch = false }: { isWitch?: boolean }) {
+export function InfoMenu({ isWitch = false, isEditor = false }: { isWitch?: boolean; isEditor?: boolean }) {
   const [open, setOpen] = useState(false);
   const path = usePathname();
   const q = useSearchParams();
@@ -108,6 +108,17 @@ export function InfoMenu({ isWitch = false }: { isWitch?: boolean }) {
                 </div>
                 <Link href="/me/badges" className="btn btn-block" style={{ minHeight: 44, marginTop: 8 }}>
                   EDIT BADGES
+                </Link>
+              </section>
+            ) : null}
+
+            {isEditor ? (
+              <section>
+                <div className="px" style={{ fontSize: 11, color: "var(--mag)", marginBottom: 8 }}>
+                  EDITOR
+                </div>
+                <Link href="/creatures" className="btn btn-block" style={{ minHeight: 44 }}>
+                  CREATURE EDITOR
                 </Link>
               </section>
             ) : null}

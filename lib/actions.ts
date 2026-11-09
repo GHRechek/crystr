@@ -1283,3 +1283,43 @@ export async function healHistorikal(fd: FormData) {
   revalidatePath("/me/historikals");
   revalidatePath("/", "layout");
 }
+
+// ------------------------------------------------------------ creature editor
+
+const EDIT_WHY: Record<string, string> = {
+  not_editor: "Only the creature editors can change creatures.",
+  missing: "That creature isn't there any more.",
+  bad_name: "A name needs one to forty letters, and no | ; or :.",
+  bad_rarity: "That isn't a rarity.",
+  bad_types: "One or two types, and two different ones.",
+  bad_moves: "Commons and uncommons have two moves; rares and up have three. Each needs a name (up to 24 letters, no | ; or :) and a kind.",
+};
+
+/** The creature editor: save one creature's name, rarity, types, moves and flags. */
+export async function saveCreature(fd: FormData) {
+  const slug = String(fd.get("slug") ?? "");
+  const rarity = String(fd.get("rarity") ?? "");
+  const n = rarity === "common" || rarity === "uncommon" ? 2 : 3;
+  const moves = [0, 1, 2].slice(0, n).map((i) => ({ name: String(fd.get(`move${i}`) ?? "").trim(), kind: String(fd.get(`kind${i}`) ?? "") }));
+  const types = [String(fd.get("type1") ?? ""), String(fd.get("type2") ?? "")].filter(Boolean);
+  const r = await call("cr_edit_creature", {
+    p_slug: slug,
+    p: { name: String(fd.get("name") ?? ""), rarity, types, moves, droppable: fd.get("droppable") === "on", hover: fd.get("hover") === "on", rnd: fd.get("rnd") === "on", shift: fd.get("shift") === "on" },
+  });
+  if (!r.ok) await setFlash("NOT SAVED", EDIT_WHY[r.code ?? ""] ?? "Something went wrong. Try again.", EDGE.purple);
+  else await setFlash("SAVED", "The creature is changed everywhere.", EDGE.blue);
+  revalidatePath("/", "layout");
+  redirect(`/creatures/${slug}`);
+}
+
+/** The creature editor: turn one held copy into another creature. */
+export async function swapCopy(fd: FormData) {
+  const slug = String(fd.get("slug") ?? "");
+  const r = await call("cr_swap_copy", { p_item: Number(fd.get("item")), p_to: String(fd.get("to") ?? "") });
+  if (!r.ok) {
+    const why: Record<string, string> = { taken: "That legendary is taken: someone already has it (in every type it comes in).", same: "It's that creature already.", bad_target: "Pick a creature to turn it into.", missing: "That copy isn't there any more.", not_editor: EDIT_WHY.not_editor };
+    await setFlash("NOT SWAPPED", why[r.code ?? ""] ?? "Something went wrong. Try again.", EDGE.purple);
+  } else await setFlash("SWAPPED", "Their copy is the new creature now, hearts and history kept.", EDGE.blue);
+  revalidatePath("/", "layout");
+  redirect(`/creatures/${slug}`);
+}

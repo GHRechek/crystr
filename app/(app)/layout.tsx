@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { requireMe, getQuests, getPendingVouches, getTopSixNotices, getTradeNotices, hasAcceptedTerms, claimBirthdayBadge, getUnreadThreadIds } from "@/lib/data";
+import { requireMe, getCatalogue, isCreatureEditor, getQuests, getPendingVouches, getTopSixNotices, getTradeNotices, hasAcceptedTerms, claimBirthdayBadge, getUnreadThreadIds } from "@/lib/data";
 import { birthdayBadgeDue } from "@/lib/birthday";
 import { EDGE } from "@/lib/toast";
 import { TERMS_VERSION } from "@/lib/terms";
@@ -10,6 +10,7 @@ import { readFlash } from "@/lib/flash";
 import { SetupBanner, TabBar, Toast } from "@/components/chrome";
 import { DecayFrame } from "@/components/decay";
 import { InfoMenu } from "@/components/info-menu";
+import { CatalogueSync } from "@/components/catalogue-sync";
 import { SearchIcon } from "@/components/icons";
 import { ManaButton } from "@/components/mana";
 import { VouchBanner } from "@/components/vouch-banner";
@@ -23,6 +24,7 @@ export const dynamic = "force-dynamic";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const { profile, userId } = await requireMe();
+  const [patches, editor] = await Promise.all([getCatalogue(), isCreatureEditor()]);
   const [vouches, topSixFrom, trades, agreed] = await Promise.all([
     getPendingVouches(userId),
     getTopSixNotices(userId),
@@ -78,6 +80,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="stage">
+      {/* First, so everything after it draws the creature editor's changes. */}
+      <CatalogueSync patches={patches} />
       <div className="frame">
         <header className="head">
           <div className="head-row">
@@ -104,7 +108,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             </div>
             {welcoming ? null : (
               <Suspense fallback={null}>
-                <InfoMenu isWitch={profile.is_witch} />
+                <InfoMenu isWitch={profile.is_witch} isEditor={editor} />
               </Suspense>
             )}
           </div>
