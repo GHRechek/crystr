@@ -97,7 +97,7 @@ export type Historikal = { slug: string; name: string; rarity: Rarity; types: El
 
 export const RARITIES: Rarity[] = ["common", "uncommon", "rare", "epic", "legendary"];
 /** The colour of each rarity's outline and name: white, green, blue, purple, red. */
-export const RARITY_COLOR: Record<Rarity, string> = { common: "#d7d7d7", uncommon: "#4ea260", rare: "#3b6ad8", epic: "#947adc", legendary: "#8a1420" };
+export const RARITY_COLOR: Record<Rarity, string> = { common: "#d7d7d7", uncommon: "#5c9468", rare: "#4970ca", epic: "#9984d2", legendary: "#8a1420" };
 /** What each rarity is called on screen: the top one is Mythic (its key stays \`legendary\` in the data). */
 export const RARITY_NAME: Record<Rarity, string> = { common: "common", uncommon: "uncommon", rare: "rare", epic: "epic", legendary: "mythic" };
 export const TYPES: Element[] = ${q(TYPES)};
