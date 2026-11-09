@@ -56,21 +56,25 @@ export function QuestBrowser({
         {list.length === 0 ? <li className="empty">{tab === 0 ? "NOTHING LEFT TO DO HERE" : "NONE YET"}</li> : null}
         {list.map((b) => {
           const slug = b.key.slice(2);
+          // Done ones are struck through and dimmed, as finished Main Quests are; one that can be done again
+          // this month stands back up.
+          const struck = !b.locked && !b.again?.ready;
           return (
             <li key={b.key}>
               <QuestRow
                 b={b}
                 scan={!!b.peer && (b.locked || !!b.again?.ready)}
-                face={<span style={{ display: "block", opacity: b.locked ? 0.85 : 1 }}><BadgeFace b={b} size={42} /></span>}
+                face={<span style={{ display: "block", opacity: struck ? 0.4 : b.locked ? 0.85 : 1 }}><BadgeFace b={b} size={42} /></span>}
                 rest={
                   <>
                     <span style={{ minWidth: 0, flex: 1, textAlign: "left" }}>
-                      <span className="px" style={{ display: "block", fontSize: 11, color: "var(--text)", lineHeight: 1.5 }}>
+                      <span className="px" style={{ display: "block", fontSize: 11, color: struck ? "var(--dim)" : "var(--text)", lineHeight: 1.5, textDecoration: struck ? "line-through" : "none", textDecorationColor: "var(--dim)" }}>
                         {b.title}
+                        {b.again?.ready ? <span aria-label="Can be done again" style={{ color: "var(--blu-soft)", marginLeft: 6 }}>↻</span> : null}
                         {b.peer && b.locked ? <span style={{ marginLeft: 6 }}><CameraIcon /></span> : null}
                         {b.auto ? <span aria-label="Awarded by the system" title="The system gives this one out itself" style={{ color: "#e8c14b", marginLeft: 6 }}>★</span> : null}
                       </span>
-                      <span style={{ display: "block", fontSize: 11, lineHeight: 1.4, color: "var(--muted)" }}>{b.line}</span>
+                      <span style={{ display: "block", fontSize: 11, lineHeight: 1.4, color: struck ? "var(--dim)" : "var(--muted)" }}>{b.line}</span>
                     </span>
                     {pending[slug] ? <span className="px" style={{ flex: "none", fontSize: 9.5, color: "var(--pur-pale)", textAlign: "right", maxWidth: 96, lineHeight: 1.4 }}>{pending[slug]}</span> : null}
                   </>
