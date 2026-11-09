@@ -40,7 +40,6 @@ export function HistorikalCollection({ list, lineup }: { list: HeldHk[]; lineup:
           {front.map((h) => (
             <li key={h.id}>
               <button type="button" onClick={() => setCard(h)} aria-label={`${h.name}, lineup ${lineup.indexOf(h.id) + 1}: open its card`} style={{ width: "100%", border: 0, background: "none", color: "inherit", cursor: "pointer", padding: "4px 2px", display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
-                <span className="px" style={{ fontSize: 8.5, color: "#e0398a" }}>LINEUP · {lineup.indexOf(h.id) + 1}</span>
                 <span style={{ display: "flex", gap: 4 }} aria-label={h.types.join(" / ")}>{h.types.map((t) => <TypeIcon key={t} type={t} k={1.5} />)}</span>
                 <Creature slug={h.slug} el={h.types[0]} size={64} ko={h.hp <= 0} />
                 <span className="px" style={{ fontSize: 10, textAlign: "center", lineHeight: 1.35 }}>{corrupt(h.name.toUpperCase(), decay)}</span>
