@@ -9,8 +9,10 @@ export function RarityGlow({ slug, size, children }: { slug: string; size: numbe
   // One sprite pixel wide: the sprite is 34 pixels across, so a 68px picture has 2px pixels. (It was one
   // screen pixel, half a sprite pixel on a phone: a hairline that looked broken.)
   const k = Math.max(1, Math.round(size / 34));
+  // Cast in all eight directions: four leave a notch at every corner of a stepped edge.
+  const ring = [[k, 0], [-k, 0], [0, k], [0, -k], [k, k], [-k, k], [k, -k], [-k, -k]].map(([x, y]) => `drop-shadow(${x}px ${y}px 0 ${c})`).join(" ");
   return (
-    <span className="hk-ring" style={{ display: "block", width: size, height: size, flex: "none", filter: `drop-shadow(${k}px 0 0 ${c}) drop-shadow(-${k}px 0 0 ${c}) drop-shadow(0 ${k}px 0 ${c}) drop-shadow(0 -${k}px 0 ${c})` }}>
+    <span className="hk-ring" style={{ display: "block", width: size, height: size, flex: "none", filter: ring }}>
       {children}
     </span>
   );
