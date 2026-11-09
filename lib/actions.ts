@@ -307,6 +307,21 @@ export async function setShownBadges(fd: FormData) {
   redirect("/me");
 }
 
+/** Save the four badges on your star row, in order. The database keeps only ones you have earned. */
+export async function setStarBadges(fd: FormData) {
+  let list: unknown = [];
+  try {
+    list = JSON.parse(str(fd, "list") || "[]");
+  } catch {
+    list = [];
+  }
+  const r = await call("cr_set_star_badges", { p_list: Array.isArray(list) ? list.filter((x) => typeof x === "string").slice(0, 4) : [] });
+  if (!r.ok) await wentWrong();
+  else await setFlash("SAVED", "Your star badges are on show.", EDGE.blue);
+  revalidatePath("/me");
+  redirect("/me");
+}
+
 /** Save which badges a person says they are working on (up to five, in order). */
 export async function setWorkingOn(fd: FormData) {
   let list: unknown = [];
@@ -887,7 +902,6 @@ export async function updateProfile(fd: FormData) {
       likes: field(fd, "likes"),
       dislikes: field(fd, "dislikes"),
       food: field(fd, "food"),
-      obsession: field(fd, "obsession"),
       updated_at: new Date().toISOString(),
     })
     .eq("id", user.id);

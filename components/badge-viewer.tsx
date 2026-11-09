@@ -8,15 +8,15 @@ import { SHOW_MAX, type ShownBadge } from "@/lib/badges";
 import { useDecay } from "@/components/decay";
 import { corrupt } from "@/lib/crystr";
 
-/** Historikals in the display are your lineup: the three you battle with. */
-const LINEUP = 3;
+/** Historikals in the display are your lineup: the four you battle with. */
+const LINEUP = 4;
 
 type From = "grid" | number;
 
 /** Every badge a person has, full screen, in two tabs: earned and Historikals. Tap one to read what it
  *  is (a Historikal opens its card). On your own page (`editable`) the display sits on top, five slots:
  *  everything below floats gently, and you drag what you want shown up into a slot. Historikals in the
- *  display, up to three, are your lineup, in the order they sit. Drag between slots to rearrange, drag
+ *  display, up to four, are your lineup, in the order they sit. Drag between slots to rearrange, drag
  *  out (or tap a slot) to take it off, and SAVE keeps it. */
 export function BadgeViewer({
   earned,
@@ -62,9 +62,9 @@ export function BadgeViewer({
       next[from] = there;
     }
     next[to] = b.key;
-    // At most three Historikals: they're your lineup.
+    // At most four Historikals: they're your lineup.
     if (next.filter((k) => k?.startsWith("i:")).length > LINEUP) {
-      setNote("Three Historikals at most: they're your lineup. Swap one out first.");
+      setNote("Four Historikals at most: they're your lineup. Swap one out first.");
       return;
     }
     setNote(null);
@@ -152,7 +152,7 @@ export function BadgeViewer({
               {note ?? (lineup.some((k) => (byKey(k)?.hk?.hp ?? 1) <= 0)
                 ? "Heal the knocked-out one, or swap it out, before you battle."
                 : lineup.length < LINEUP
-                  ? `Drag Historikals up to make your lineup: three with hearts left to battle.`
+                  ? `Drag Historikals up to make your lineup: four with hearts left to battle.`
                   : "Drag between slots to rearrange. Drag one out, or tap it, to take it off.")}
             </div>
           </div>

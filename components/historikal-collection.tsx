@@ -28,7 +28,7 @@ export function HistorikalCollection({ list, lineup }: { list: HeldHk[]; lineup:
     <>
       {front.length ? (
         // The lineup, always all of it: its hearts, the creature, its name, then its types | its moves.
-        <ul style={{ listStyle: "none", margin: "0 0 10px", padding: 0, display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 6 }}>
+        <ul style={{ listStyle: "none", margin: "0 0 10px", padding: 0, display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 6 }}>
           {front.map((h) => (
             <li key={h.id}>
               <button type="button" onClick={() => setCard(h)} aria-label={`${h.name}, lineup ${lineup.indexOf(h.id) + 1}: open its card`} style={{ width: "100%", border: 0, background: "none", color: "inherit", cursor: "pointer", padding: "4px 2px", display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>

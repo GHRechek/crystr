@@ -51,7 +51,7 @@ const supabase = () => createClient();
 export type Stake = { token: true } | { item: number };
 /** Why a battle couldn't start, in words. */
 export const START_PROBLEM: Record<string, string> = {
-  no_lineup: "Your lineup isn't ready. Put three Historikals with hearts left in your badge display (EDIT LINEUP), then try again.",
+  no_lineup: "Your lineup isn't ready. Put four Historikals with hearts left in your badge display (EDIT LINEUP), then try again.",
   proof_resting: "Your Proof is resting: it was lost in the last three months. Stake a Historikal instead.",
   bad_stake: "That Historikal can't be staked. Pick another.",
 };
@@ -282,12 +282,12 @@ function Invite({ v, act, kind }: { v: View; act: Act; kind: "trade" | "battle" 
     if (r && !r.ok) setProblem(r.code === "their_lineup" ? `${up(v.them.handle)}'s lineup isn't ready any more.` : START_PROBLEM[r.code ?? ""] ?? "That didn't work. Try again.");
   };
   if (v.me === "b") {
-    // A battle needs your lineup: three Historikals with hearts left, on show in your badge display.
+    // A battle needs your lineup: four Historikals with hearts left, on show in your badge display.
     if (kind === "battle" && v.lineup_ok === false) {
       return (
         <>
           <div className="px en-q">{up(v.them.handle)} WANTS TO {v.want_epic ? "EPIC " : ""}BATTLE</div>
-          <div className="px en-big">{icon}YOUR LINEUP<b>ISN&apos;T READY</b>PUT 3 HISTORIKALS WITH HEARTS IN YOUR BADGE DISPLAY</div>
+          <div className="px en-big">{icon}YOUR LINEUP<b>ISN&apos;T READY</b>PUT 4 HISTORIKALS WITH HEARTS IN YOUR BADGE DISPLAY</div>
           <div className="en-invite">
             <a href="/me?badges=1" className="px" style={{ background: "#5a1f6e", textDecoration: "none", textAlign: "center" }} onClick={() => act({ do: "no" })}>EDIT MY LINEUP</a>
             <button type="button" className="px" style={{ background: "#c42c76" }} onClick={() => { playWhoosh(); act({ do: "no" }); }}>NOT NOW</button>

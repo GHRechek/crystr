@@ -7,6 +7,7 @@ import { TokenImage } from "@/components/badges";
 import { AboutBadges } from "@/components/about-badges";
 import { ProofMark } from "@/components/proof-mark";
 import { ProfileDetails, type DetailKind } from "@/components/profile-details";
+import { StarRow, starBadges } from "@/components/star-row";
 import { WorkingOn } from "@/components/working-on";
 import { achievementGrid, resolveShown, resolveWorking, helpingRow, questGrid, firstStepGrid, firstStepsDone } from "@/lib/badges";
 import { WitchFace } from "@/components/witch-face";
@@ -55,7 +56,6 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
       ["likes", person.likes],
       ["dislikes", person.dislikes],
       ["food", person.food],
-      ["obsession", person.obsession],
     ] as [DetailKind, string | null | undefined][]
   ).flatMap(([kind, value]) => (value?.trim() ? [{ kind, value: value.trim() }] : []));
 
@@ -125,7 +125,10 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
         <div style={{ fontSize: 12.5, lineHeight: 1.6, color: "var(--text-3)", textWrap: "pretty" }}>
           {corrupt(person.bio || "Nothing written here yet.", decay)}
         </div>
-        <ProfileDetails rows={details.map((d) => ({ kind: d.kind, value: corrupt(d.value, decay) }))} />
+        <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          <ProfileDetails rows={details.map((d) => ({ kind: d.kind, value: corrupt(d.value, decay) }))} />
+          <StarRow token={token?.design ?? null} badges={starBadges((person as { star_badges?: string[] | null }).star_badges, badges)} />
+        </div>
 
         {top.length ? (
           <div>

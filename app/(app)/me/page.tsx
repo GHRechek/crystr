@@ -23,6 +23,7 @@ import { BadgeArt, ItemTile, TokenImage } from "@/components/badges";
 import { AboutBadges } from "@/components/about-badges";
 import { WorkingOn } from "@/components/working-on";
 import { ProfileDetails, type DetailKind } from "@/components/profile-details";
+import { StarRow, starBadges } from "@/components/star-row";
 import { ProfileHead } from "./face-menu";
 import { bannerOf, bannerStyle } from "@/lib/banner";
 import { portraitFromId, normalizePortrait, packPortrait } from "@/lib/portrait/core";
@@ -80,7 +81,6 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
       ["likes", profile.likes],
       ["dislikes", profile.dislikes],
       ["food", profile.food],
-      ["obsession", profile.obsession],
     ] as [DetailKind, string | null | undefined][]
   ).flatMap(([kind, value]) => (value?.trim() ? [{ kind, value: value.trim() }] : []));
 
@@ -164,7 +164,11 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
         <div style={{ fontSize: 12.5, lineHeight: 1.6, color: "var(--text-3)", textWrap: "pretty" }}>
           {corrupt(profile.bio || "Nothing written here yet. The City will assume the worst.", decay)}
         </div>
-        <ProfileDetails rows={details.map((d) => ({ kind: d.kind, value: corrupt(d.value, decay) }))} />
+        <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          <ProfileDetails rows={details.map((d) => ({ kind: d.kind, value: corrupt(d.value, decay) }))} />
+          {/* Where OBSESSED WITH was: your Proof and four badges you pick. */}
+          <StarRow token={token?.design ?? null} badges={starBadges(profile.star_badges, badges)} href="/me/star" />
+        </div>
 
         <div>
           {heading(
