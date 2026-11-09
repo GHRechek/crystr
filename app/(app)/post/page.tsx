@@ -8,7 +8,7 @@ export default async function ComposePage(props: { searchParams: Promise<{ badge
   return (
     <>
       <h1 className="sr-only">New post</h1>
-      <Composer mana={profile.mana} badge={found ? { slug: found.slug, title: found.title, how: found.how } : undefined} />
+      <Composer userId={userId} mana={profile.mana} badge={found ? { slug: found.slug, title: found.title, how: found.how } : undefined} />
     </>
   );
 }

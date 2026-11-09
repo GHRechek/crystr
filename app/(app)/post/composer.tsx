@@ -1,23 +1,69 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 import { createPost, voiceLocked } from "@/lib/actions";
 import { COSTS } from "@/lib/crystr";
 import { Cost } from "@/components/mana";
-import { Placeholder } from "@/components/bits";
 
-export function Composer({ mana, badge }: { mana: number; badge?: { slug: string; title: string; how: string } }) {
+/** Pictures on posts: a JPEG, PNG, WebP, HEIC or GIF up to 10 MB, the proofs bucket's own rules. */
+const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/heic", "image/gif"];
+const IMAGE_MAX = 10 * 1024 * 1024;
+
+export function Composer({ userId, mana, badge }: { userId: string; mana: number; badge?: { slug: string; title: string; how: string } }) {
   const [text, setText] = useState("");
-  const [photo, setPhoto] = useState(false);
+  // The picture goes up as soon as it is chosen, into this person's own folder of the proofs bucket;
+  // publishing then names it. `photo` is true from the moment one is chosen, so the price shows at once.
+  const [path, setPath] = useState("");
+  const [thumb, setThumb] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [problem, setProblem] = useState("");
+  const fileRef = useRef<HTMLInputElement>(null);
+  const cameraRef = useRef<HTMLInputElement>(null);
+  const photo = !!path || busy;
+
+  async function attach(file: File) {
+    setProblem("");
+    if (file.type && !IMAGE_TYPES.includes(file.type)) {
+      setProblem("That kind of file will not go. Try a JPEG, PNG, WebP or GIF.");
+      return;
+    }
+    if (file.size > IMAGE_MAX) {
+      setProblem("That picture is over 10 MB. Try a smaller one.");
+      return;
+    }
+    if (thumb) URL.revokeObjectURL(thumb);
+    setThumb(URL.createObjectURL(file));
+    setBusy(true);
+    const ext = file.type === "image/jpeg" ? "jpg" : (file.type.split("/")[1] || file.name.split(".").pop() || "jpg");
+    const key = `${userId}/post-${crypto.randomUUID()}.${ext}`;
+    const { error } = await createClient().storage.from("proofs").upload(key, file, { contentType: file.type || undefined, cacheControl: "3600", upsert: false });
+    setBusy(false);
+    if (error) {
+      console.error("post picture:", error.message);
+      setProblem("The picture did not arrive. Try again.");
+      clear();
+      return;
+    }
+    setPath(key);
+  }
+
+  function clear() {
+    setPath("");
+    if (thumb) URL.revokeObjectURL(thumb);
+    setThumb("");
+    if (fileRef.current) fileRef.current.value = "";
+    if (cameraRef.current) cameraRef.current.value = "";
+  }
 
   const cost = COSTS.post + (photo ? COSTS.photo : 0);
   const affordable = mana >= cost;
-  const canPublish = affordable && text.trim().length > 0;
+  const canPublish = affordable && text.trim().length > 0 && !busy;
 
   return (
     <form action={createPost} className="pad">
-      <input type="hidden" name="has_image" value={photo ? "true" : "false"} />
+      <input type="hidden" name="image_path" value={path} />
       {badge ? <input type="hidden" name="badge" value={badge.slug} /> : null}
 
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
@@ -57,20 +103,38 @@ export function Composer({ mana, badge }: { mana: number; badge?: { slug: string
         placeholder="say something"
       />
 
+      <input ref={fileRef} type="file" accept="image/*" hidden onChange={(e) => { const f = e.target.files?.[0]; if (f) void attach(f); }} />
+      <input ref={cameraRef} type="file" accept="image/*" capture="environment" hidden onChange={(e) => { const f = e.target.files?.[0]; if (f) void attach(f); }} />
+
       <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-        <button
-          type="button"
-          className={`btn${photo ? " btn-mag" : ""}`}
-          onClick={() => setPhoto((p) => !p)}
-        >
-          ▣ ATTACH IMAGE <Cost n={COSTS.photo} />
-        </button>
+        {path || busy ? (
+          <button type="button" className="btn" onClick={clear} disabled={busy}>
+            ✕ REMOVE IMAGE
+          </button>
+        ) : (
+          <>
+            <button type="button" className="btn" onClick={() => fileRef.current?.click()}>
+              ▣ ATTACH IMAGE <Cost n={COSTS.photo} />
+            </button>
+            <button type="button" className="btn" onClick={() => cameraRef.current?.click()} aria-label="Take a photo">
+              ◉ CAMERA
+            </button>
+          </>
+        )}
         <button type="submit" formAction={voiceLocked} className="btn" style={{ color: "var(--muted)" }}>
           ♪ VOICE — LOCKED
         </button>
       </div>
 
-      {photo ? <Placeholder label="YOUR IMAGE GOES HERE" height={120} /> : null}
+      {thumb ? (
+        // The picture as it will show on the card, in the CRYSTR frame.
+        <div className="crystr-frame" style={{ opacity: busy ? 0.6 : 1 }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={thumb} alt="The picture you are attaching" style={{ display: "block", width: "100%", maxHeight: 320, objectFit: "contain", background: "var(--inset)" }} />
+        </div>
+      ) : null}
+      {busy ? <div className="px" style={{ fontSize: 10, color: "var(--muted)" }}>SENDING THE PICTURE…</div> : null}
+      {problem ? <div className="px" style={{ fontSize: 10, color: "var(--mag)" }}>{problem.toUpperCase()}</div> : null}
 
       {affordable ? null : (
         <div
@@ -94,7 +158,9 @@ export function Composer({ mana, badge }: { mana: number; badge?: { slug: string
           )
           : !affordable
             ? "REST FIRST"
-            : "WRITE SOMETHING"}
+            : busy
+              ? "SENDING THE PICTURE…"
+              : "WRITE SOMETHING"}
       </button>
     </form>
   );

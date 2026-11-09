@@ -80,9 +80,11 @@ async function wentWrong() {
 
 export async function createPost(fd: FormData) {
   const body = str(fd, "body");
-  const hasImage = fd.get("has_image") === "on" || fd.get("has_image") === "true";
+  // The picture, if any, is already in the person's own folder of the proofs bucket; the database checks that.
+  const image = str(fd, "image_path") || null;
+  const hasImage = !!image || fd.get("has_image") === "on" || fd.get("has_image") === "true";
 
-  const r = await call("cr_create_post", { p_body: body, p_has_image: hasImage, p_badge: str(fd, "badge") || null });
+  const r = await call("cr_create_post", { p_body: body, p_has_image: hasImage, p_badge: str(fd, "badge") || null, p_image: image });
 
   if (!r.ok) {
     if (r.code === "empty") {
@@ -91,6 +93,8 @@ export async function createPost(fd: FormData) {
       await broke(r, "You are {short} short of the strength for that. A little time at the Well will help.");
     } else if (r.code === "have_it") {
       await setFlash("ALREADY YOURS", "You have that badge already.", EDGE.purple);
+    } else if (r.code === "bad_image") {
+      await setFlash("NO PICTURE", "The picture did not arrive. Attach it again, then publish.", EDGE.mag);
     } else {
       await wentWrong();
     }
