@@ -4,7 +4,7 @@ import { requireMe, isCreatureEditor } from "@/lib/data";
 import { createClient } from "@/lib/supabase/server";
 import { saveCreature, swapCopy } from "@/lib/actions";
 import { Creature, Stats } from "@/components/encounter";
-import { ELEMENT_COLOR, HISTORIKAL, HISTORIKALS, RARITIES, RARITY_COLOR, TYPES, type Element } from "@/lib/historikals";
+import { ELEMENT_COLOR, HISTORIKAL, HISTORIKALS, RARITIES, RARITY_COLOR, RARITY_NAME, TYPES, type Element } from "@/lib/historikals";
 
 type Holder = { item: number; handle: string; name: string | null; hp: number; hearts: number; types: Element[] | null; since: string };
 
@@ -35,7 +35,7 @@ export default async function CreatureEditPage({ params }: { params: Promise<{ s
         <Creature slug={h.slug} size={96} />
         <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
           <span className="px" style={{ fontSize: 9.5 }}>
-            <span style={{ color: RARITY_COLOR[h.rarity] }}>{h.rarity.toUpperCase()}</span>
+            <span style={{ color: RARITY_COLOR[h.rarity] }}>{RARITY_NAME[h.rarity].toUpperCase()}</span>
             {" · "}
             {h.types.map((t, i) => <span key={t} style={{ color: ELEMENT_COLOR[t] }}>{i ? " / " : ""}{t.toUpperCase()}</span>)}
           </span>
@@ -53,7 +53,7 @@ export default async function CreatureEditPage({ params }: { params: Promise<{ s
         <label style={{ display: "flex", flexDirection: "column", gap: 5 }}>
           <span className="px" style={label}>RARITY · HEARTS FOLLOW IT (2, 3, 3, 4, 4)</span>
           <select name="rarity" className="input" defaultValue={h.rarity}>
-            {RARITIES.map((r) => <option key={r} value={r}>{r.toUpperCase()}</option>)}
+            {RARITIES.map((r) => <option key={r} value={r}>{RARITY_NAME[r].toUpperCase()}</option>)}
           </select>
         </label>
         <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>

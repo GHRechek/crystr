@@ -5,7 +5,7 @@ import { Creature, MoveIcon, Stats, TypeIcon } from "@/components/encounter";
 import { HistorikalCard } from "@/components/historikal-card";
 import { useDecay } from "@/components/decay";
 import { corrupt } from "@/lib/crystr";
-import { ELEMENT_COLOR, HISTORIKAL, RARITY_COLOR, type Element, type Rarity } from "@/lib/historikals";
+import { ELEMENT_COLOR, HISTORIKAL, RARITY_COLOR, RARITY_NAME, type Element, type Rarity } from "@/lib/historikals";
 
 export type HeldHk = { id: number; slug: string; name: string; rarity: Rarity; types: Element[]; hearts: number; hp: number };
 
@@ -51,7 +51,7 @@ export function HistorikalCollection({ list, lineup }: { list: HeldHk[]; lineup:
         <button type="button" data-on={!only} onClick={() => setOnly(null)}>ALL · {list.length}</button>
         {RARITIES.filter((r) => count(r)).map((r) => (
           <button key={r} type="button" data-on={only === r} onClick={() => setOnly(r)} style={{ color: only === r ? undefined : RARITY_COLOR[r] }}>
-            {r.toUpperCase()} · {count(r)}
+            {RARITY_NAME[r].toUpperCase()} · {count(r)}
           </button>
         ))}
       </div>

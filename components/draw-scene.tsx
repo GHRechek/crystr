@@ -4,7 +4,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Rays, playBuildUp, playClick, playFanfare, playLidOpen } from "@/components/ask-scene";
 import { Creature, Stats, type HK } from "@/components/encounter";
-import { RARITY_COLOR } from "@/lib/historikals";
+import { RARITY_COLOR, RARITY_NAME } from "@/lib/historikals";
 
 /** Opening your draws, a chest at a time. FIND ONE! opens a normal draw on the blue chest; SUMMON ONE! a
  *  main draw on the gold one. Turn the key (drag it to the chest, or tap it) and the chest bursts in the
@@ -70,7 +70,7 @@ export function DrawScene({ kind, count, onClose, drawWith = drawFromDb }: { kin
       const d = await pending.current;
       if (!live) return;
       if (!d) { setState("idle"); return; }
-      // A legendary keeps you waiting a little longer.
+      // A mythic keeps you waiting a little longer.
       const wait = Math.max(0, (kind === "main" ? 2400 : 1850) + (d.hk.rarity === "legendary" ? 1200 : d.hk.rarity === "epic" ? 600 : 0) - (Date.now() - began));
       window.setTimeout(() => {
         if (!live) return;
@@ -166,7 +166,7 @@ export function DrawScene({ kind, count, onClose, drawWith = drawFromDb }: { kin
         {state === "open" && got ? (
           <div className="px dr-result" aria-live="polite">
             <span className="dr-name" style={{ color: colour }}>{got.name.toUpperCase()}</span>
-            <span className="dr-sub"><span style={{ color: colour }}>{got.rarity.toUpperCase()}</span><Stats h={got} k={2} /></span>
+            <span className="dr-sub"><span style={{ color: colour }}>{RARITY_NAME[got.rarity].toUpperCase()}</span><Stats h={got} k={2} /></span>
           </div>
         ) : null}
         {problem ? <div className="px dr-problem">{problem}</div> : null}

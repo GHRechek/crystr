@@ -1253,7 +1253,7 @@ export async function pickHistorikal(fd: FormData) {
   const r = await call("cr_pick_historikal", { p_slug: String(fd.get("slug") ?? "") });
   if (!r.ok) {
     if (r.code === "none") await setFlash("NO PICK LEFT", "That pick has been used already.", EDGE.purple);
-    else if (r.code === "taken") await setFlash("ALREADY TAKEN", "Someone already has that legendary, and there's only one. Pick another.", EDGE.purple);
+    else if (r.code === "taken") await setFlash("ALREADY TAKEN", "Someone already has that mythic, and there's only one. Pick another.", EDGE.purple);
     else await wentWrong();
     redirect("/me/historikals");
   }
@@ -1311,7 +1311,7 @@ export async function swapCopy(fd: FormData) {
   const slug = String(fd.get("slug") ?? "");
   const r = await call("cr_swap_copy", { p_item: Number(fd.get("item")), p_to: String(fd.get("to") ?? "") });
   if (!r.ok) {
-    const why: Record<string, string> = { taken: "That legendary is taken: someone already has it (in every type it comes in).", same: "It's that creature already.", bad_target: "Pick a creature to turn it into.", missing: "That copy isn't there any more.", not_editor: EDIT_WHY.not_editor };
+    const why: Record<string, string> = { taken: "That mythic is taken: someone already has it (in every type it comes in).", same: "It's that creature already.", bad_target: "Pick a creature to turn it into.", missing: "That copy isn't there any more.", not_editor: EDIT_WHY.not_editor };
     await setFlash("NOT SWAPPED", why[r.code ?? ""] ?? "Something went wrong. Try again.", EDGE.purple);
   } else await setFlash("SWAPPED", "Their copy is the new creature now, hearts and history kept.", EDGE.blue);
   revalidatePath("/", "layout");

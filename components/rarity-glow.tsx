@@ -1,11 +1,10 @@
 import { HISTORIKAL, RARITY_COLOR } from "@/lib/historikals";
 
 /** A Historikal's picture with a hard outline in its rarity colour, one sprite pixel wide, just past its
- *  black border: no square, no haze. */
+ *  black border: no square, no haze. White for common, green, blue, purple, red for mythic. */
 export function RarityGlow({ slug, size, children }: { slug: string; size: number; children: React.ReactNode }) {
   const h = HISTORIKAL.get(slug);
-  // Commons go without.
-  if (!h || h.rarity === "common") return <span style={{ display: "block", width: size, height: size, flex: "none" }}>{children}</span>;
+  if (!h) return <span style={{ display: "block", width: size, height: size, flex: "none" }}>{children}</span>;
   const c = RARITY_COLOR[h.rarity];
   const k = Math.max(1, Math.round(size / 50));
   return (

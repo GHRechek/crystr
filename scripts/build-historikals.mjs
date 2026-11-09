@@ -96,7 +96,10 @@ export type Move = { name: string; kind: MoveKind };
 export type Historikal = { slug: string; name: string; rarity: Rarity; types: Element[]; hearts: number; moves: Move[]; rnd?: boolean; shift?: boolean; hover?: boolean; retired?: boolean };
 
 export const RARITIES: Rarity[] = ["common", "uncommon", "rare", "epic", "legendary"];
-export const RARITY_COLOR: Record<Rarity, string> = { common: "#b8c0d6", uncommon: "#4c7df0", rare: "#e0398a", epic: "#a98ff0", legendary: "#f2b544" };
+/** The colour of each rarity's outline and name: white, green, blue, purple, red. */
+export const RARITY_COLOR: Record<Rarity, string> = { common: "#e9e9ed", uncommon: "#4fc96a", rare: "#4c7df0", epic: "#a98ff0", legendary: "#e8323c" };
+/** What each rarity is called on screen: the top one is Mythic (its key stays \`legendary\` in the data). */
+export const RARITY_NAME: Record<Rarity, string> = { common: "common", uncommon: "uncommon", rare: "rare", epic: "epic", legendary: "mythic" };
 export const TYPES: Element[] = ${q(TYPES)};
 /** Each type in a colour that says what it is. */
 export const ELEMENT_COLOR: Record<Element, string> = { fire: "#ff6a3d", tide: "#3fa9f5", nature: "#6fa86a", ward: "#a7abb6", feral: "#b0865f", dark: "#8a6fd9", spirit: "#f2e2a2" };
@@ -169,7 +172,7 @@ update public.badge_kinds set droppable = false,
 -- The roster, one creature a line: slug|NAME|rarity|type|second type|hearts|order|rolls its type|changes it|move:kind;...
 insert into public.badge_kinds (slug, title, blurb, art, sort, rarity, element, types, rnd, shift, hearts, moves, droppable, active)
 select f[1], f[2],
-       'A ' || f[3] || ' ' || initcap(f[4]) || case when f[5] <> '' then '/' || initcap(f[5]) else '' end || ' Historikal.',
+       'A ' || (case f[3] when 'legendary' then 'mythic' else f[3] end) || ' ' || initcap(f[4]) || case when f[5] <> '' then '/' || initcap(f[5]) else '' end || ' Historikal.',
        'creatures/' || f[1] || '.png', f[7]::int, f[3], ${caseOld("f[4]")},
        case when f[5] <> '' then array[f[4], f[5]] else array[f[4]] end, f[8] = '1', f[9] = '1', f[6]::int,
        (select jsonb_agg(jsonb_build_object('name', split_part(m, ':', 1), 'kind', split_part(m, ':', 2)) order by o)
@@ -326,7 +329,7 @@ if (!update) {
 -- that changed since the catalogue last applied${gone.length ? `, and ${gone.length} taken out (they stop dropping; holders keep them)` : ""}.
 ${changed.length ? `insert into public.badge_kinds (slug, title, blurb, art, sort, rarity, element, types, rnd, shift, hearts, moves, droppable, active)
 select f[1], f[2],
-       'A ' || f[3] || ' ' || initcap(f[4]) || case when f[5] <> '' then '/' || initcap(f[5]) else '' end || ' Historikal.',
+       'A ' || (case f[3] when 'legendary' then 'mythic' else f[3] end) || ' ' || initcap(f[4]) || case when f[5] <> '' then '/' || initcap(f[5]) else '' end || ' Historikal.',
        'creatures/' || f[1] || '.png', f[7]::int, f[3], ${caseOld("f[4]")},
        case when f[5] <> '' then array[f[4], f[5]] else array[f[4]] end, f[8] = '1', f[9] = '1', f[6]::int,
        (select jsonb_agg(jsonb_build_object('name', split_part(m, ':', 1), 'kind', split_part(m, ':', 2)) order by o)

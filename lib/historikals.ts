@@ -12,7 +12,10 @@ export type Move = { name: string; kind: MoveKind };
 export type Historikal = { slug: string; name: string; rarity: Rarity; types: Element[]; hearts: number; moves: Move[]; rnd?: boolean; shift?: boolean; hover?: boolean; retired?: boolean };
 
 export const RARITIES: Rarity[] = ["common", "uncommon", "rare", "epic", "legendary"];
-export const RARITY_COLOR: Record<Rarity, string> = { common: "#b8c0d6", uncommon: "#4c7df0", rare: "#e0398a", epic: "#a98ff0", legendary: "#f2b544" };
+/** The colour of each rarity's outline and name: white, green, blue, purple, red. */
+export const RARITY_COLOR: Record<Rarity, string> = { common: "#e9e9ed", uncommon: "#4fc96a", rare: "#4c7df0", epic: "#a98ff0", legendary: "#e8323c" };
+/** What each rarity is called on screen: the top one is Mythic (its key stays `legendary` in the data). */
+export const RARITY_NAME: Record<Rarity, string> = { common: "common", uncommon: "uncommon", rare: "rare", epic: "epic", legendary: "mythic" };
 export const TYPES: Element[] = ["fire","tide","nature","ward","feral","dark","spirit"];
 /** Each type in a colour that says what it is. */
 export const ELEMENT_COLOR: Record<Element, string> = { fire: "#ff6a3d", tide: "#3fa9f5", nature: "#6fa86a", ward: "#a7abb6", feral: "#b0865f", dark: "#8a6fd9", spirit: "#f2e2a2" };

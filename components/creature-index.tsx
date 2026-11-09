@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Creature } from "@/components/encounter";
-import { ELEMENT_COLOR, HISTORIKALS, RARITIES, RARITY_COLOR, type Rarity } from "@/lib/historikals";
+import { ELEMENT_COLOR, HISTORIKALS, RARITIES, RARITY_COLOR, RARITY_NAME, type Rarity } from "@/lib/historikals";
 
 /** The creature editor's index: every creature, found by name, slug, type or rarity. */
 export function CreatureIndex() {
@@ -18,7 +18,7 @@ export function CreatureIndex() {
       <div className="seg" role="radiogroup" aria-label="Show" style={{ flexWrap: "wrap" }}>
         <button type="button" data-on={!rar} onClick={() => setRar(null)}>ALL</button>
         {[...RARITIES].reverse().map((r) => (
-          <button key={r} type="button" data-on={rar === r} onClick={() => setRar(r)} style={{ color: rar === r ? undefined : RARITY_COLOR[r] }}>{r.toUpperCase()}</button>
+          <button key={r} type="button" data-on={rar === r} onClick={() => setRar(r)} style={{ color: rar === r ? undefined : RARITY_COLOR[r] }}>{RARITY_NAME[r].toUpperCase()}</button>
         ))}
         <button type="button" data-on={rar === "retired"} onClick={() => setRar("retired")}>OFF</button>
       </div>
@@ -31,7 +31,7 @@ export function CreatureIndex() {
               <span style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 4 }}>
                 <span className="px" style={{ fontSize: 10 }}>{h.name.toUpperCase()}</span>
                 <span className="px" style={{ fontSize: 8.5 }}>
-                  <span style={{ color: RARITY_COLOR[h.rarity] }}>{h.rarity.toUpperCase()}</span>
+                  <span style={{ color: RARITY_COLOR[h.rarity] }}>{RARITY_NAME[h.rarity].toUpperCase()}</span>
                   {" · "}
                   {h.types.map((t, i) => <span key={t} style={{ color: ELEMENT_COLOR[t] }}>{i ? " / " : ""}{t.toUpperCase()}</span>)}
                   {h.hover ? <span style={{ color: "var(--muted)" }}> · HOVERS</span> : null}
