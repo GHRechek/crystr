@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Creature, MoveIcon, Stats } from "@/components/encounter";
+import { Creature, MoveIcon, Stats, TypeIcon } from "@/components/encounter";
 import { HistorikalCard } from "@/components/historikal-card";
 import { useDecay } from "@/components/decay";
 import { corrupt } from "@/lib/crystr";
@@ -38,9 +38,14 @@ export function HistorikalCollection({ list, lineup }: { list: HeldHk[]; lineup:
             <li key={h.id}>
               <button type="button" onClick={() => setCard(h)} aria-label={`${h.name}: open its card`} style={{ width: "100%", border: 0, background: "none", color: "inherit", cursor: "pointer", padding: "4px 2px", display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
                 <span className="px" style={{ fontSize: 8.5, color: "#e0398a", minHeight: 10 }}>{n >= 0 ? `LINEUP · ${n + 1}` : ""}</span>
-                <Creature slug={h.slug} el={h.types[0]} size={64} ko={h.hp <= 0} />
+                {/* Its first type on the left, its second on the right. */}
+                <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                  <span style={{ width: 14, display: "flex", justifyContent: "center" }}><TypeIcon type={h.types[0]} /></span>
+                  <Creature slug={h.slug} el={h.types[0]} size={64} ko={h.hp <= 0} />
+                  <span style={{ width: 14, display: "flex", justifyContent: "center" }}>{h.types[1] ? <TypeIcon type={h.types[1]} /> : null}</span>
+                </span>
                 <span className="px" style={{ fontSize: 10, textAlign: "center", lineHeight: 1.35 }}>{corrupt(h.name.toUpperCase(), decay)}</span>
-                <Stats h={h} hp={h.hp} k={2} />
+                <Stats h={h} hp={h.hp} k={2} only="hearts" />
                 <span style={{ display: "flex", gap: 6 }} aria-hidden>
                   {(HISTORIKAL.get(h.slug)?.moves ?? []).map((m) => <MoveIcon key={m.name} kind={m.kind} fill="var(--muted)" />)}
                 </span>

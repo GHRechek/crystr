@@ -192,6 +192,11 @@ export function MoveIcon({ kind, k = 2, fill = "#fff" }: { kind: MoveKind; k?: n
   return <Pix rows={MOVE[kind]} k={k} fill={fill} />;
 }
 
+/** One type's icon, in its colour. */
+export function TypeIcon({ type, k = 2 }: { type: Element; k?: number }) {
+  return <Pix rows={TYPE[type]} k={k} fill={ELEMENT_COLOR[type]} />;
+}
+
 /** Its types (each in its colour, or ? until you know them) then white hearts. */
 export function Stats({ h, hp, k = 3, known = true, only }: { h: HK; hp?: number; k?: number; known?: boolean; only?: "type" | "hearts" }) {
   const left = hp ?? h.hearts;

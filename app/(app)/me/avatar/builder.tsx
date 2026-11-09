@@ -128,7 +128,10 @@ export function AvatarBuilder({ start, fresh }: { start: PortraitConfig; fresh: 
 
 /** What a control steps through. The top leads: every top is on offer, and SIDES only offers the
  *  sides that take the top you have. */
-const listFor = (key: string, cfg: PortraitConfig) => (key === "hair_back" ? sidesTaking(cfg.top) : ALLOWED[key]);
+/** Each pair of glasses sits next to its clear-lens twin (c03 after 03), though the twins come last in the
+ *  saved order. */
+const EYEWEAR_SHOWN = ALLOWED.eyewear.filter((v) => !v.startsWith("c")).flatMap((v) => (ALLOWED.eyewear.includes(`c${v}`) ? [v, `c${v}`] : [v]));
+const listFor = (key: string, cfg: PortraitConfig) => (key === "hair_back" ? sidesTaking(cfg.top) : key === "eyewear" ? EYEWEAR_SHOWN : ALLOWED[key]);
 /** This face with one choice changed. A top these sides won't take brings the nearest sides that will. */
 function withChoice(prev: PortraitConfig, key: string, value: string): PortraitConfig {
   const out = { ...prev, [key]: value };
