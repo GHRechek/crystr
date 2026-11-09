@@ -103,6 +103,14 @@ const PICKS = {
     { id: "06", cells: [`${WORN}/06`] }, // sunglasses
     { id: "08", cells: [`${WORN}/08`] }, // monocle on a chain
     { id: "09", cells: [`${WORN}/09`] }, // eyepatch
+    // The same six without their glare: clear lenses (and plain black sunglasses). Added after the
+    // eyepatch so every face saved before keeps its glasses (faces are packed by position).
+    { id: "c03", cells: ["ClearLenses/03"] },
+    { id: "c11", cells: ["ClearLenses/11"] },
+    { id: "c10", cells: ["ClearLenses/10"] },
+    { id: "c07", cells: ["ClearLenses/07"] },
+    { id: "c06", cells: ["ClearLenses/06"] },
+    { id: "c08", cells: ["ClearLenses/08"] },
   ],
   jewellery: [
     { id: "01", cells: [`${WORN}/01`] }, // nose ring

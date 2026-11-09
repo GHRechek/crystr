@@ -1394,6 +1394,42 @@ export const OPTIONS: Record<string, PortraitOption[]> = {
       "cells": [
         "LayeredAccessories/09"
       ]
+    },
+    {
+      "id": "c03",
+      "cells": [
+        "ClearLenses/03"
+      ]
+    },
+    {
+      "id": "c11",
+      "cells": [
+        "ClearLenses/11"
+      ]
+    },
+    {
+      "id": "c10",
+      "cells": [
+        "ClearLenses/10"
+      ]
+    },
+    {
+      "id": "c07",
+      "cells": [
+        "ClearLenses/07"
+      ]
+    },
+    {
+      "id": "c06",
+      "cells": [
+        "ClearLenses/06"
+      ]
+    },
+    {
+      "id": "c08",
+      "cells": [
+        "ClearLenses/08"
+      ]
     }
   ],
   "jewellery": [

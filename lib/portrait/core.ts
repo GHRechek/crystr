@@ -86,6 +86,8 @@ export const HAIR_CHOICES = [
 ];
 /** The hair colours there were when faces were first handed out: a face rolled from an id picks from these. */
 const ROLLED_HAIR = 12;
+/** Eyewear a face nobody chose can roll: none and the first seven. The clear-lens six came later. */
+const ROLLED_EYEWEAR = 8;
 export const EYE_CHOICES = [
   "#3c5a78", "#3a2a20", "#4c7df0", "#3fae86", "#9184d9", "#a8641f",
   "#c9c9d4", "#e0398a", "#c95b5b",
@@ -233,6 +235,8 @@ export const SHEET_ORDER = [
   // Matched hair: the original front cell, in place of the two halves.
   "HairFront",
   "LayeredAccessories",
+  // The glasses again, without their glare: on top, as the originals are.
+  "ClearLenses",
 ];
 
 /** Parts you can nudge up or down, as the Portrait Maker's sliders do: the control, the sheets that
@@ -430,7 +434,7 @@ export function portraitFromId(id: string): PortraitConfig {
   for (const [key, list] of Object.entries(ALLOWED)) {
     // Sides added later (cut from a style) aren't rolled: a face nobody chose
     // keeps the hair it was first given.
-    const pool = list.filter((v, i) => v !== NONE && !(key === "hair_back" && SIDES_OWN[v]) && !(key === "hair_colour" && i >= ROLLED_HAIR));
+    const pool = list.filter((v, i) => v !== NONE && !(key === "hair_back" && SIDES_OWN[v]) && !(key === "hair_colour" && i >= ROLLED_HAIR) && !(key === "eyewear" && i >= ROLLED_EYEWEAR));
     if (pool.length) out[key] = pool[hash(`${id}:${key}`) % pool.length];
   }
   for (const [key, pct] of Object.entries(ODDS)) {
