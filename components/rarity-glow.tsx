@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { HISTORIKAL, RARITY_COLOR } from "@/lib/historikals";
 
 const GRID = 34;   // the sprite files are 34×34 (a 32px sprite with a 1px margin)
-const ABOVE = 12;  // rows of room above the sprite, for a mythic's flakes
+const ABOVE = 16;  // rows of room above the sprite (the flakes reach fifteen), for a mythic's flakes
 
 /** A Historikal's picture with a hard outline in its rarity colour, one sprite pixel wide, just past its black
  *  border: white, green, blue, purple, red for mythic. A mythic also has flakes of that red rising off its top.
@@ -38,17 +38,30 @@ export function RarityGlow({ slug, size, src, children }: { slug: string; size: 
       pc.drawImage(img, 0, 0);
       const data = pc.getImageData(0, 0, GRID, GRID).data;
       const on = (x: number, y: number) => x >= 0 && y >= 0 && x < GRID && y < GRID && data[(y * GRID + x) * 4 + 3] > 0;
+      // Each ring pixel is solid on its inner half (against the sprite) and half strength on its outer half; a
+      // corner pixel, touching the sprite only diagonally, is half strength throughout.
       const ring = document.createElement("canvas"); ring.width = W; ring.height = RH;
       const rg = ring.getContext("2d");
       if (!rg) return;
       rg.fillStyle = colour;
-      const mark = (x: number, y: number) => { if (!on(x, y)) rg.fillRect((x + 1) * S, (y + 1) * S, S, S); };
+      const hs = S / 2;
+      const mark = (x: number, y: number) => {
+        if (on(x, y)) return;
+        const px = (x + 1) * S, py = (y + 1) * S;
+        rg.globalAlpha = 0.5; rg.fillRect(px, py, S, S);
+        rg.globalAlpha = 1;
+        if (on(x, y + 1)) rg.fillRect(px, py + hs, S, hs);        // sprite below: the bottom half is solid
+        else if (on(x, y - 1)) rg.fillRect(px, py, S, hs);        // above: the top half
+        else if (on(x + 1, y)) rg.fillRect(px + hs, py, hs, S);   // right: the right half
+        else if (on(x - 1, y)) rg.fillRect(px, py, hs, S);        // left: the left half
+      };
       for (let y = 0; y < GRID; y++) for (let x = 0; x < GRID; x++) {
         if (!on(x, y)) continue;
         mark(x + 1, y); mark(x - 1, y); mark(x, y + 1); mark(x, y - 1);
         const mass = [on(x + 1, y), on(x - 1, y), on(x, y + 1), on(x, y - 1)].filter(Boolean).length >= 2;
         if (mass) { mark(x + 1, y + 1); mark(x - 1, y + 1); mark(x + 1, y - 1); mark(x - 1, y - 1); }
       }
+      rg.globalAlpha = 1;
       const still = () => { ctx.clearRect(0, 0, W, H); ctx.drawImage(ring, 0, ABOVE * S); };
       still();
       if (!mythic || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -67,7 +80,7 @@ export function RarityGlow({ slug, size, src, children }: { slug: string; size: 
           const x = Math.floor(Math.random() * GRID);
           if (edge[x] >= 0) {
             const big = Math.random() < 0.2;
-            flakes.push({ x: x + 1, y: edge[x] + ABOVE - Math.floor(Math.random() * 2), vx: (Math.random() - 0.5) * 0.06, vy: -(0.12 + Math.random() * 0.12), w: big ? 2 : 1, a: Math.random() < 0.5 ? 1 : 0.5, age: 0, life: 30 + Math.random() * 20 });
+            flakes.push({ x: x + 1, y: edge[x] + ABOVE - Math.floor(Math.random() * 2), vx: (Math.random() - 0.5) * 0.06, vy: -(0.14 + Math.random() * 0.16), w: big ? 2 : 1, a: Math.random() < 0.5 ? 1 : 0.5, age: 0, life: 30 + Math.random() * 20 });
           }
         }
         for (const f of flakes) { f.age++; f.x += f.vx; f.y += f.vy; }
