@@ -2075,3 +2075,8 @@ select.input { border: 0; }
 .qa-timer i { display: block; height: 100%; background: #ffe38b; transition: width 1s linear; }
 .qa-done { background: #3a64cc; color: #fff; border: 0; font-size: 13px; padding: 12px 34px; box-shadow: 3px 3px 0 #160b2e; cursor: pointer; }
 @media (prefers-reduced-motion: reduce) { .qa-rock, .qa-bounce { animation: none; } }
+
+/* Historikals that fly or float bob up and down, slowly, a few pixels. */
+@keyframes hk-hover { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7%); } }
+.hk-hover { display: block; animation: hk-hover 2.6s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .hk-hover { animation: none; } }

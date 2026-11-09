@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { RarityGlow } from "@/components/rarity-glow";
+import { HISTORIKAL } from "@/lib/historikals";
 
 /** A badge or Historikal picture. A Historikal (/creatures/<slug>.png) idles between its two frames,
  *  twice a second; anything else is just the picture. */
@@ -15,5 +16,5 @@ export function IdleImg({ src, size, style }: { src: string; size: number; style
   }, [creature]);
   // eslint-disable-next-line @next/next/no-img-element
   const img = <img src={creature && two ? `/creatures/${creature}-2.png` : src} alt="" width={size} height={size} style={{ display: "block", imageRendering: "pixelated", ...style }} />;
-  return creature ? <RarityGlow slug={creature} size={size}>{img}</RarityGlow> : img;
+  return creature ? <RarityGlow slug={creature} size={size}>{HISTORIKAL.get(creature)?.hover ? <span className="hk-hover">{img}</span> : img}</RarityGlow> : img;
 }

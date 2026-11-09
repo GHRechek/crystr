@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { QuestAskScreen, type QuestView } from "@/components/quest-ask";
 import { Rays, playBuildUp, playClick, playFanfare, playLidOpen, playWhoosh } from "@/components/ask-scene";
-import { ELEMENT_COLOR, historikalSrc, type Element, type MoveKind, type Rarity } from "@/lib/historikals";
+import { ELEMENT_COLOR, HISTORIKAL, historikalSrc, type Element, type MoveKind, type Rarity } from "@/lib/historikals";
 import { normalizeToken, tokenSrc } from "@/lib/token";
 import { RarityGlow } from "@/components/rarity-glow";
 
@@ -221,7 +221,8 @@ export function Creature({ slug, size, shadow, ko, el }: { slug: string; size: n
   if (ko) return <img className="en-ko-sil" src={historikalSrc(slug, 1, el)} alt="" width={size} height={size} draggable={false} style={{ display: "block", imageRendering: "pixelated", pointerEvents: "none", filter: "grayscale(1) brightness(.6)" }} />;
   // eslint-disable-next-line @next/next/no-img-element
   const img = <img src={shadow ? `/creatures/${slug}-s.png` : historikalSrc(slug, f, el)} alt="" width={size} height={size} draggable={false} style={{ display: "block", imageRendering: "pixelated", pointerEvents: "none" }} />;
-  return shadow ? img : <RarityGlow slug={slug} size={size}>{img}</RarityGlow>;
+  // Flyers and floaters bob gently.
+  return shadow ? img : <RarityGlow slug={slug} size={size}>{HISTORIKAL.get(slug)?.hover ? <span className="hk-hover">{img}</span> : img}</RarityGlow>;
 }
 
 /** Drag a creature: up into the target (or anywhere above it) or back down. A tap does nothing. */

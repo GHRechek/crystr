@@ -14,7 +14,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hover": true
 },
 {
 "id": "ghost_1427",
@@ -31,7 +32,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hover": true
 },
 {
 "id": "ghost_1431",
@@ -48,7 +50,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hover": true
 },
 {
 "id": "ghost_1441",
@@ -65,7 +68,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hover": true
 },
 {
 "id": "ghost_1443",
@@ -82,7 +86,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hover": true
 },
 {
 "id": "ghost_1457",
@@ -99,7 +104,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hover": true
 },
 {
 "id": "ghost_1459",
@@ -116,7 +122,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hover": true
 },
 {
 "id": "ghost_1476",
@@ -133,7 +140,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": "ghost"
+"slug": "ghost",
+"hover": true
 },
 {
 "id": "ghost_1482",
@@ -150,7 +158,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hover": true
 },
 {
 "id": "ghost_1490",
@@ -167,7 +176,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hover": true
 },
 {
 "id": "ghost_1491",
@@ -184,7 +194,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hover": true
 },
 {
 "id": "ghost_1498",
@@ -201,7 +212,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hover": true
 },
 {
 "id": "ghost_1506",
@@ -218,7 +230,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hover": true
 },
 {
 "id": "ghost_1509",
@@ -235,7 +248,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hover": true
 },
 {
 "id": "ghost_1512",
@@ -252,7 +266,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hover": true
 },
 {
 "id": "ghost_1528",
@@ -269,7 +284,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hover": true
 },
 {
 "id": "spider_1825",
@@ -2802,7 +2818,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hover": true
 },
 {
 "id": "devil_2044",
@@ -2955,7 +2972,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hover": true
 },
 {
 "id": "gremlin_1378",
@@ -3533,7 +3551,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": "banshee"
+"slug": "banshee",
+"hover": true
 },
 {
 "id": "bat_1587",
@@ -3550,7 +3569,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": "bat"
+"slug": "bat",
+"hover": true
 },
 {
 "id": "bee_1615",
@@ -3567,7 +3587,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": "bee"
+"slug": "bee",
+"hover": true
 },
 {
 "id": "boss-2223_2223",
@@ -3924,7 +3945,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hover": true
 },
 {
 "id": "earth-elemental_474",
@@ -4060,7 +4082,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": "eyehorror"
+"slug": "eyehorror",
+"hover": true
 },
 {
 "id": "fire-elemental_390",
@@ -4111,7 +4134,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": "mosquito"
+"slug": "mosquito",
+"hover": true
 },
 {
 "id": "flying-skull_1379",
@@ -4128,7 +4152,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": "flying-skull"
+"slug": "flying-skull",
+"hover": true
 },
 {
 "id": "boss-2194_2194",
@@ -4213,7 +4238,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hover": true
 },
 {
 "id": "beholder_2205",
@@ -4230,7 +4256,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": "beholder"
+"slug": "beholder",
+"hover": true
 },
 {
 "id": "boss-2224_2224",
@@ -4417,7 +4444,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": "harpy"
+"slug": "harpy",
+"hover": true
 },
 {
 "id": "boss-2259_2259",
@@ -4774,7 +4802,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": "sprite"
+"slug": "sprite",
+"hover": true
 },
 {
 "id": "moth_1624",
@@ -4791,7 +4820,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": "moth"
+"slug": "moth",
+"hover": true
 },
 {
 "id": "mudman_460",
@@ -5267,7 +5297,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hover": true
 },
 {
 "id": "moose_2330",
@@ -5301,7 +5332,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": "wasp"
+"slug": "wasp",
+"hover": true
 },
 {
 "id": "water-elemental_2249",
@@ -5590,7 +5622,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hover": true
 },
 {
 "id": "mythic_2337",
@@ -5760,7 +5793,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hover": true
 },
 {
 "id": "mythic_2342",
@@ -5947,7 +5981,8 @@
 "rnd": true,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hover": true
 },
 {
 "id": "slime_1688",
@@ -6066,7 +6101,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hover": true
 },
 {
 "id": "fire-spirit_385",
@@ -6151,7 +6187,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hover": true
 },
 {
 "id": "ice-spirit_433",
@@ -6168,7 +6205,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hover": true
 },
 {
 "id": "ice-spirit_440",
@@ -6202,7 +6240,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hover": true
 },
 {
 "id": "storm-spirit_517",
@@ -6219,7 +6258,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hover": true
 },
 {
 "id": "storm-spirit_554",
@@ -6253,7 +6293,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hover": true
 },
 {
 "id": "storm-spirit_529",
@@ -6270,7 +6311,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hover": true
 },
 {
 "id": "light-wisp_601",
@@ -6287,7 +6329,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hover": true
 },
 {
 "id": "light-wisp_629",
@@ -6304,7 +6347,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hover": true
 },
 {
 "id": "light-wisp_612",
@@ -6321,7 +6365,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hover": true
 },
 {
 "id": "light-wisp_615",
@@ -6338,7 +6383,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hover": true
 },
 {
 "id": "dragon_1574",
@@ -6355,7 +6401,8 @@
 "rnd": true,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hover": true
 },
 {
 "id": "dragon_1549",
@@ -6423,7 +6470,8 @@
 "rnd": true,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hover": true
 },
 {
 "id": "dragon_1558",
