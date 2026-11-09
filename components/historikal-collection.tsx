@@ -31,23 +31,27 @@ export function HistorikalCollection({ list, lineup }: { list: HeldHk[]; lineup:
           </button>
         ))}
       </div>
-      <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(104px, 1fr))", gap: "14px 6px" }}>
+      {/* A list: the creature, then its name with its types beside it, then its hearts | its moves. */}
+      <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: 4 }}>
         {shown.map((h) => {
           const n = lineup.indexOf(h.id);
           return (
             <li key={h.id}>
-              <button type="button" onClick={() => setCard(h)} aria-label={`${h.name}: open its card`} style={{ width: "100%", border: 0, background: "none", color: "inherit", cursor: "pointer", padding: "4px 2px", display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
-                <span className="px" style={{ fontSize: 8.5, color: "#e0398a", minHeight: 10 }}>{n >= 0 ? `LINEUP · ${n + 1}` : ""}</span>
-                {/* Its first type on the left, its second on the right. */}
-                <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                  <span style={{ width: 14, display: "flex", justifyContent: "center" }}><TypeIcon type={h.types[0]} /></span>
-                  <Creature slug={h.slug} el={h.types[0]} size={64} ko={h.hp <= 0} />
-                  <span style={{ width: 14, display: "flex", justifyContent: "center" }}>{h.types[1] ? <TypeIcon type={h.types[1]} /> : null}</span>
-                </span>
-                <span className="px" style={{ fontSize: 10, textAlign: "center", lineHeight: 1.35 }}>{corrupt(h.name.toUpperCase(), decay)}</span>
-                <Stats h={h} hp={h.hp} k={2} only="hearts" />
-                <span style={{ display: "flex", gap: 6 }} aria-hidden>
-                  {(HISTORIKAL.get(h.slug)?.moves ?? []).map((m) => <MoveIcon key={m.name} kind={m.kind} fill="var(--muted)" />)}
+              <button type="button" onClick={() => setCard(h)} aria-label={`${h.name}: open its card`} style={{ width: "100%", border: 0, background: "none", color: "inherit", cursor: "pointer", padding: "4px 0", display: "flex", alignItems: "center", gap: 12, textAlign: "left" }}>
+                <Creature slug={h.slug} el={h.types[0]} size={56} ko={h.hp <= 0} />
+                <span style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 7 }}>
+                  <span style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+                    <span className="px" style={{ fontSize: 10, lineHeight: 1.35 }}>{corrupt(h.name.toUpperCase(), decay)}</span>
+                    <span style={{ display: "flex", gap: 4 }} aria-label={h.types.join(" / ")}>{h.types.map((t) => <TypeIcon key={t} type={t} k={1.5} />)}</span>
+                    {n >= 0 ? <span className="px" style={{ fontSize: 8.5, color: "#e0398a" }}>LINEUP · {n + 1}</span> : null}
+                  </span>
+                  <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                    <Stats h={h} hp={h.hp} k={1.5} only="hearts" />
+                    <span aria-hidden style={{ color: "var(--muted)", fontSize: 11, lineHeight: 1 }}>|</span>
+                    <span style={{ display: "flex", gap: 5 }} aria-hidden>
+                      {(HISTORIKAL.get(h.slug)?.moves ?? []).map((m) => <MoveIcon key={m.name} kind={m.kind} k={1.5} fill="var(--muted)" />)}
+                    </span>
+                  </span>
                 </span>
               </button>
             </li>
