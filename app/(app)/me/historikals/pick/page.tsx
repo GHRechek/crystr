@@ -24,7 +24,7 @@ export default async function PickPage({ searchParams }: { searchParams: Promise
     <div className="pad" style={{ gap: 14 }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
         <Link href="/me/historikals" className="btn btn-sm">← BACK</Link>
-        <h1 className="px" style={{ fontSize: 13, color: "#b3202a", fontWeight: 400 }}>PICK ANY ONE</h1>
+        <h1 className="px" style={{ fontSize: 13, color: "#8a1420", fontWeight: 400 }}>PICK ANY ONE</h1>
       </div>
       <p style={{ margin: 0, fontSize: 12.5, lineHeight: 1.6, color: "var(--text-3)" }}>
         A gift: any Historikal you like, mythics too, unless someone already has it: there is only one of each mythic. Tap one to look, then take it.
