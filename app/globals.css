@@ -2080,3 +2080,8 @@ select.input { border: 0; }
 @keyframes hk-hover { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7%); } }
 .hk-hover { display: block; animation: hk-hover 2.6s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) { .hk-hover { animation: none; } }
+
+/* The star on a profile's star row: still, then every so often one quick spin on its vertical axis. */
+@keyframes star-spin { 0%, 88% { transform: rotateY(0); } 100% { transform: rotateY(360deg); } }
+.star-spin { display: grid; place-items: center; animation: star-spin 7s cubic-bezier(.4, 0, .2, 1) infinite; }
+@media (prefers-reduced-motion: reduce) { .star-spin { animation: none; } }

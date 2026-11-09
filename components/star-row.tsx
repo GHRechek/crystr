@@ -16,7 +16,7 @@ export function starBadges(picked: string[] | null | undefined, badges: BadgeRow
 export function StarRow({ token, badges, href }: { token: unknown; badges: BadgeRow[]; href?: string }) {
   const inner = (
     <>
-      <span style={{ flex: "none", width: 23, height: 21, display: "grid", placeItems: "center" }}>
+      <span className="star-spin" style={{ flex: "none", width: 23, height: 21 }}>
         <EmojiImg e="star" from="/emoji/star.png" crystr size={18} />
       </span>
       <span style={{ display: "flex", alignItems: "center", gap: 6, minWidth: 0 }}>
