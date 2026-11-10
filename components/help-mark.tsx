@@ -1,8 +1,9 @@
-/** The mark on a call for help: a pixel exclamation in the CRYSTR colours, pink down to blue. */
+/** The mark on a call for help: a pixel question mark in the CRYSTR colours, pink down to blue. */
 export function HelpMark({ size = 14 }: { size?: number }) {
-  const rows = ["###", "###", "###", "###", "###", ".#.", "...", "###", "###"];
+  // A question mark, five wide and nine tall.
+  const rows = [".###.", "#...#", "#...#", "....#", "...#.", "..#..", "..#..", ".....", "..#.."];
   return (
-    <svg width={size / 3} height={size} viewBox="0 0 3 9" shapeRendering="crispEdges" aria-hidden style={{ flex: "none", display: "block", filter: "drop-shadow(1px 1px 0 #0a0616)" }}>
+    <svg width={size * 5 / 9} height={size} viewBox="0 0 5 9" shapeRendering="crispEdges" aria-hidden style={{ flex: "none", display: "block", margin: "2px 4px 2px 2px", filter: "drop-shadow(1px 1px 0 #0a0616)" }}>
       <defs>
         <linearGradient id="helpmark" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stopColor="#e0398a" />

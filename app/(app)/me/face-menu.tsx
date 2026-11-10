@@ -51,7 +51,7 @@ export function ProfileHead({
             }}
             style={{ position: "absolute", left: FACE + 28, right: 16, bottom: 30 }}
           >
-            <HelpMark size={36} />
+            <HelpMark size={32} />
             {mood ? <span>{mood}</span> : <span style={{ color: "var(--muted)" }}>What do you need help with?</span>}
           </button>
         ) : null}
