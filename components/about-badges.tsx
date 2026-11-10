@@ -32,6 +32,7 @@ export function AboutBadges({
   compact,
   openAtStart,
   token,
+  known,
 }: {
   children?: React.ReactNode;
   shown: ShownBadge[];
@@ -46,6 +47,8 @@ export function AboutBadges({
   tradeCount?: number;
   /** The trade icon opens the camera to scan someone's code instead of going to the trade menu. */
   scan?: boolean;
+  /** On someone else's profile: the creatures (slugs) the viewer holds themselves, whose cards they may read in full. */
+  known?: string[];
   /** Draws waiting to be opened: FIND ONE! (normal) and SUMMON ONE! (main). */
   draws?: { normal: number; main: number };
   /** The slim version that sits beside the portrait: a small trade icon and a cog at the end. */
@@ -269,7 +272,7 @@ export function AboutBadges({
       ) : tipBadge && tip ? (
         <BadgeTip x={tip.x} top={tip.top} width={width} title={tipBadge.title} line={tipBadge.line} />
       ) : null}
-      {card?.hk ? <HistorikalCard hk={card.hk} line={card.line} own={!!editable} lineupPos={lineupKeys.indexOf(card.key)} onEditLineup={editable ? () => setChoosing(true) : undefined} onClose={() => setCard(null)} /> : null}
+      {card?.hk ? <HistorikalCard hk={card.hk} line={card.line} own={!!editable} known={known?.includes(card.hk.slug)} lineupPos={lineupKeys.indexOf(card.key)} onEditLineup={editable ? () => setChoosing(true) : undefined} onClose={() => setCard(null)} /> : null}
       {choosing ? <BadgeViewer earned={earned} tradable={tradable} current={shown.map((b) => b.key)} editable={editable} aside={aside} onClose={() => setChoosing(false)} /> : null}
     </div>
   );
