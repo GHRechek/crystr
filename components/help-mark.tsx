@@ -1,12 +1,11 @@
 import { useId } from "react";
 
-/** The mark on a call for help: a thick pixel exclamation in the CRYSTR colours, pink down to blue, with
- *  a dark edge so it reads on the bubble's own gradient. */
+/** The mark on a call for help: a thick pixel exclamation in the CRYSTR colours, pink down to blue. */
 export function HelpMark({ size = 14 }: { size?: number }) {
   const rows = ["###", "###", "###", "###", "###", ".#.", "...", "###", "###"];
   const id = `hm${useId().replace(/:/g, "")}`;
   return (
-    <svg width={size / 3} height={size} viewBox="0 0 3 9" shapeRendering="crispEdges" aria-hidden style={{ flex: "none", display: "block", margin: "0 2px", filter: "drop-shadow(1px 0 0 #0a0616) drop-shadow(-1px 0 0 #0a0616) drop-shadow(0 1px 0 #0a0616) drop-shadow(0 -1px 0 #0a0616)" }}>
+    <svg width={size / 3} height={size} viewBox="0 0 3 9" shapeRendering="crispEdges" aria-hidden style={{ flex: "none", display: "block", margin: "0 2px" }}>
       <defs>
         <linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stopColor="#e0398a" />
