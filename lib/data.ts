@@ -867,7 +867,7 @@ export async function getTopFriends(userId: string): Promise<Author[]> {
 // ------------------------------------------------------------ badges held
 
 const ITEM_COLS =
-  "id, kind, kind_slug, earned_by, title, design, owner_id, minted_at, acquired_at, occasion, hp, kindRow:badge_kinds(title, blurb, art), maker:profiles!badge_items_earned_by_fkey(handle)";
+  "id, kind, kind_slug, earned_by, title, design, owner_id, minted_at, acquired_at, occasion, hp, rolled, kindRow:badge_kinds(title, blurb, art), maker:profiles!badge_items_earned_by_fkey(handle)";
 
 /** The tradable badges and tokens this person holds, newest first. */
 export async function getBadgeItems(userId: string): Promise<BadgeItem[]> {

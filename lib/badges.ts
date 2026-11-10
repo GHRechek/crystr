@@ -7,7 +7,7 @@
 // 20261028070000_badge_tiers.sql); this is what the screens need.
 
 import { normalizeToken, tokenSrc, tokenTitle } from "@/lib/token";
-import { HISTORIKAL, kindArtSrc } from "@/lib/historikals";
+import { HISTORIKAL, historikalSrc, kindArtSrc, type Element } from "@/lib/historikals";
 
 export type BadgeRow = {
   slug: string;
@@ -71,6 +71,8 @@ export type BadgeItem = {
   occasion: "helped" | "birthday" | "battle" | "epic" | "pick" | "quest" | null;
   /** A Historikal's hearts left (null = all of them). */
   hp?: number | null;
+  /** The type this copy rolled when it was found, for a creature that rolls one. */
+  rolled?: string | null;
   kindRow: { title: string; blurb: string; art: string } | null;
   maker: { handle: string } | null;
 };
@@ -131,7 +133,7 @@ export type ShownBadge = {
   /** A tradable badge: just its picture. */
   src?: string;
   /** A Historikal: which creature, and its hearts left (for its card). */
-  hk?: { id: number; slug: string; hp: number };
+  hk?: { id: number; slug: string; hp: number; types?: Element[] };
   title: string;
   /** How it is earned, for the tooltip. */
   line: string;
@@ -200,14 +202,17 @@ export function resolveShown(
       if (!it?.kindRow) continue;
       // What it is (rarity, type, hearts), then where it came from.
       const hk = it.kind_slug ? HISTORIKAL.get(it.kind_slug) : undefined;
-      const what = hk ? `${hk.rarity[0].toUpperCase()}${hk.rarity.slice(1)} ${hk.types.join("/")} Historikal, ${hk.hearts} hearts.` : "A Historikal.";
+      // A creature that rolls its type: this copy's types lead with the one it rolled, and its picture is that colour.
+      const rolled = hk?.rnd && it.rolled ? (it.rolled as Element) : undefined;
+      const types = hk ? (rolled ? [...new Set([rolled, ...hk.types.slice(1)])] : hk.types) : [];
+      const what = hk ? `${hk.rarity[0].toUpperCase()}${hk.rarity.slice(1)} ${types.join("/")} Historikal, ${hk.hearts} hearts.` : "A Historikal.";
       const from =
         it.earned_by && it.earned_by !== it.owner_id
           ? `Came from ${it.maker?.handle ?? "someone"}.`
           : ({ birthday: "Found on a birthday.", battle: "Won in battle.", epic: "Summoned for a main quest.", helped: "Found for helping.", quest: "Found on a quest.", pick: "A gift." } as Record<string, string>)[it.occasion ?? ""] ?? "";
       const line = `${what}${from ? ` ${from}` : ""}`;
-      out.push({ key, src: kindArtSrc(it.kindRow.art), title: it.kindRow.title.toUpperCase(), line,
-        hk: hk && it.kind_slug ? { id: it.id, slug: it.kind_slug, hp: Math.min(hk.hearts, it.hp ?? hk.hearts) } : undefined });
+      out.push({ key, src: hk && it.kind_slug ? historikalSrc(it.kind_slug, 1, rolled) : kindArtSrc(it.kindRow.art), title: it.kindRow.title.toUpperCase(), line,
+        hk: hk && it.kind_slug ? { id: it.id, slug: it.kind_slug, hp: Math.min(hk.hearts, it.hp ?? hk.hearts), types } : undefined });
     }
   }
   return out.slice(0, limit);
