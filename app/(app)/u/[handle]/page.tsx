@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { requireMe, getTopFriends, getBadges, getBadgeItems, getToken, getPlaintiffSince, getProfileByHandle, getAllTokens, countHelps } from "@/lib/data";
+import { requireMe, getTopFriends, getBadges, getBadgeItems, getToken, getPlaintiffSince, getProfileByHandle, getAllTokens, countHelps, getHistorikals } from "@/lib/data";
 import { openThread } from "@/lib/actions";
 import { Avatar } from "@/components/bits";
 import { AboutBadges } from "@/components/about-badges";
@@ -36,13 +36,15 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
   if (!person) notFound();
   if (person.id === userId) redirect("/me");
 
-  const [top, badges, items, token, plaintiffSince, helps] = await Promise.all([
+  const [top, badges, items, token, plaintiffSince, helps, mine] = await Promise.all([
     getTopFriends(person.id),
     getBadges(person.id),
     getBadgeItems(person.id),
     getToken(person.id),
     getPlaintiffSince(person.id),
     countHelps(person.id),
+    // What the viewer holds themselves: a creature they know, they may read in full on this person's card.
+    getHistorikals(userId),
   ]);
   const earned = badges.filter((b) => b.earned_at);
   const shown = resolveShown(person.shown_badges, badges, items, person.handle);
@@ -79,6 +81,7 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
             <AboutBadges
                 compact
                 shown={shown}
+                known={mine.map((h) => h.slug)}
                 earned={achievementGrid(earned)}
                 // Only the Historikals they show (their front three): the rest of their collection is theirs to keep to themselves.
                 tradable={shown.filter((b) => b.hk)}

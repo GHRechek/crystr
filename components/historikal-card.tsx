@@ -20,6 +20,7 @@ export function HistorikalCard({
   hk,
   line,
   own,
+  known,
   lineupPos,
   onEditLineup,
   onClose,
@@ -29,6 +30,9 @@ export function HistorikalCard({
   /** Where it came from, as its tooltip says. */
   line?: string;
   own?: boolean;
+  /** Someone else's, and you hold one too: you know it, so its hearts, types and the rest show. Without
+   *  that, a stranger's Historikal gives away only its picture, its rarity and its name. */
+  known?: boolean;
   /** Its place in the lineup (0, 1, 2), if it's in it. */
   lineupPos?: number;
   onEditLineup?: () => void;
@@ -53,6 +57,13 @@ export function HistorikalCard({
         <Creature slug={h.slug} el={types[0]} size={120} ko={ko} />
         <div className="px" style={{ fontSize: 10, color: colour, marginBottom: -6 }}>{up(RARITY_NAME[h.rarity])}</div>
         <div className="px" style={{ fontSize: 18, color: colour, textAlign: "center" }}>{eat(up(h.name))}</div>
+        {!own && !known ? (
+          <>
+            <div className="px" style={{ fontSize: 10, color: "var(--muted)", textAlign: "center", lineHeight: 1.6 }}>{eat("??? · HOLD ONE YOURSELF TO KNOW IT")}</div>
+            <button type="button" className="btn btn-sm" onClick={onClose}>CLOSE</button>
+          </>
+        ) : (
+        <>
         <div className="px" style={{ fontSize: 10, display: "flex", gap: 8, alignItems: "center" }}>
           <Stats h={{ id: 0, slug: h.slug, name: h.name, rarity: h.rarity, types, hearts: h.hearts }} hp={hk.hp} k={2} />
           {ko ? <span style={{ color: "#ff5a7a" }}>KNOCKED OUT</span> : null}
@@ -90,6 +101,8 @@ export function HistorikalCard({
           {own && onEditLineup ? <button type="button" className="btn btn-sm" onClick={() => { onClose(); onEditLineup(); }}>EDIT LINEUP</button> : null}
           <button type="button" className="btn btn-sm" onClick={onClose}>CLOSE</button>
         </div>
+        </>
+        )}
       </div>
     </div>
   );
