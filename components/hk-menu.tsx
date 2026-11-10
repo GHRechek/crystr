@@ -179,7 +179,7 @@ export function HkMenu({ shown, tradable, items, onClose }: {
         {view === "all" ? (
           <>
           {/* Between the lineup and the picker: how it works, in one line, centred. */}
-          <div style={{ display: "flex", justifyContent: "center", padding: "0 14px 10px" }}>
+          <div style={{ display: "flex", justifyContent: "center", padding: "6px 14px 16px" }}>
             <span className="px" style={{ fontSize: 10, color: "#e0398a", letterSpacing: ".04em", display: "inline-flex", alignItems: "center", gap: 5, whiteSpace: "nowrap" }}>
               TAP FOR <Px rows={INFO} k={1.5} fill="#e0398a" /> OR HOLD &amp; DRAG <span style={{ display: "flex", transform: "translateY(-1px)" }}><TradeIcon size={12} /></span> TO ALTER LINEUP
             </span>
