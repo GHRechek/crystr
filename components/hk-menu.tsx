@@ -166,7 +166,7 @@ export function HkMenu({ shown, tradable, items, onClose }: {
                   {b ? (
                     // A tap opens its card: moves, hearts, and HEAL or REVIVE when it needs it. In MY HISTORIKALS a
                     // drag moves it to another slot, or off the lineup when let go anywhere else.
-                    <button type="button" className="bv-item" {...(editing ? handlers(b, i) : {})} onClick={() => held && setCard(held)} style={{ opacity: ghost?.b.key === b.key ? 0.3 : 1 }} aria-label={`${b.title}${ko ? ", knocked out" : ""}: open its card${editing ? "; drag to move it" : ""}`}><BadgeFace b={b} size={slotPx - 8} /></button>
+                    <button type="button" className="bv-item" {...(editing ? handlers(b, i) : {})} onClick={() => held && setCard(held)} style={{ visibility: ghost?.b.key === b.key ? "hidden" : "visible" }} aria-label={`${b.title}${ko ? ", knocked out" : ""}: open its card${editing ? "; drag to move it" : ""}`}><BadgeFace b={b} size={slotPx - 8} /></button>
                   ) : <span className="hk-wobble" style={{ display: "inline-block" }}><Px rows={QMARK} k={3} fill="rgba(255,255,255,.45)" /></span>}
                 </span>
                 {/* Its name, then its hearts, the lost ones hollow. Healing is on its card. */}

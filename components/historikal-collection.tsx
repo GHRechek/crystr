@@ -66,7 +66,7 @@ export function HistorikalCollection({ list, ring, drag, lifted, inLineup, onOpe
   /** Pointer handlers that let a row's creature be dragged (into a lineup slot, in the Historikals panel).
    *  Only the creature takes them, so the rest of the row still scrolls the list on a touch screen. */
   drag?: (h: HeldHk) => React.HTMLAttributes<HTMLElement>;
-  /** The row whose creature is being held and dragged right now: it sits faint until it is dropped. */
+  /** The row whose creature is being held and dragged right now: it is gone from its place until dropped. */
   lifted?: (h: HeldHk) => boolean;
   /** Rows already in the lineup are left out of the list. */
   inLineup?: (h: HeldHk) => boolean;
@@ -90,7 +90,7 @@ export function HistorikalCollection({ list, ring, drag, lifted, inLineup, onOpe
         {rest.map((h) => {
           return (
             <li key={h.id}>
-              <button type="button" onClick={() => (onOpen ?? setCard)(h)} aria-label={`${h.name}: open its card${drag ? "; drag its picture into your lineup" : ""}`} style={{ width: "100%", border: 0, background: "none", color: "inherit", cursor: "pointer", padding: "4px 0", display: "flex", alignItems: "center", gap: 12, textAlign: "left", WebkitTapHighlightColor: "transparent", opacity: lifted?.(h) ? 0.3 : 1 }}>
+              <button type="button" onClick={() => (onOpen ?? setCard)(h)} aria-label={`${h.name}: open its card${drag ? "; drag its picture into your lineup" : ""}`} style={{ width: "100%", border: 0, background: "none", color: "inherit", cursor: "pointer", padding: "4px 0", display: "flex", alignItems: "center", gap: 12, textAlign: "left", WebkitTapHighlightColor: "transparent", visibility: lifted?.(h) ? "hidden" : "visible" }}>
                 <span {...(drag ? drag(h) : {})} style={drag ? { touchAction: "none", userSelect: "none", WebkitUserSelect: "none", WebkitTouchCallout: "none", cursor: "grab", lineHeight: 0 } : { lineHeight: 0 }}>
                   <Creature slug={h.slug} el={h.types[0]} size={56} ko={h.hp <= 0} />
                 </span>
