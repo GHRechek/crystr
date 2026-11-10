@@ -286,7 +286,7 @@ function EyeIcon() {
 }
 
 /** A little pixel monster face: scan someone to trade or battle Historikals. */
-function TradeIcon({ size = 22 }: { size?: number }) {
+export function TradeIcon({ size = 22 }: { size?: number }) {
   const rows = ["#.........#", "##.......##", ".#########.", "###########", "##..###..##", "##..###..##", "###########", "##.#.#.#.##", "##.......##", "###########", ".#########."];
   const on = (r: number, c: number) => rows[r][c] === "#";
   const id = `mf${useId().replace(/:/g, "")}`;

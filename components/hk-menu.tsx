@@ -2,6 +2,7 @@
 
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, useTransition } from "react";
 import { BadgeFace } from "@/components/badge-chooser";
+import { TradeIcon } from "@/components/about-badges";
 import { Stats } from "@/components/encounter";
 import { HistorikalCard } from "@/components/historikal-card";
 import { FilterRow, HistorikalCollection, type HeldHk } from "@/components/historikal-collection";
@@ -125,7 +126,9 @@ export function HkMenu({ shown, tradable, items, onClose }: {
           {view === "menu" ? (
             <button type="button" aria-label="Edit your lineup" title="Edit lineup" onClick={() => setView("edit")} style={{ background: "rgba(255,255,255,.08)", border: 0, color: "#fff", width: 24, height: 24, display: "grid", placeItems: "center", cursor: "pointer" }}><PencilIcon size={11} /></button>
           ) : null}
-          <span className="px" style={{ fontSize: 10, color: "#e0398a", letterSpacing: ".06em" }}>{editing ? "YOUR LINEUP · DRAG ONE UP, TAP A SLOT TO CLEAR IT" : view === "all" ? `MY HISTORIKALS · ${all.length}` : "YOUR LINEUP"}</span>
+          <span className="px" style={{ fontSize: 10, color: "#e0398a", letterSpacing: ".06em", display: "inline-flex", alignItems: "center", gap: 5 }}>
+            {editing ? <>DRAG &amp; DROP <TradeIcon size={12} /> TO ALTER LINEUP</> : view === "all" ? `MY HISTORIKALS · ${all.length}` : "YOUR LINEUP"}
+          </span>
           <span style={{ flex: 1 }} />
           {view !== "menu" ? (
             <button type="button" className="px" onClick={() => setView("menu")} style={{ background: "none", border: 0, color: "#fff", fontSize: 10, letterSpacing: ".06em", padding: "6px 8px", cursor: "pointer" }}>← BACK</button>

@@ -28,8 +28,8 @@ export function FilterRow({ rarities, count, rar, setRar, type, setType, ring = 
 }) {
   const line = "linear-gradient(90deg, #e0398a, #9184d9 52%, #4c7df0)";
   return (
-    <div style={{ display: "flex", alignItems: "flex-start", gap: 8, flexWrap: "wrap" }}>
-      <div role="group" aria-label="Rarity" style={{ display: "flex", gap: 6, alignItems: "flex-start" }}>
+    <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+      <div role="group" aria-label="Rarity" style={{ display: "flex", gap: 6, alignItems: "center" }}>
         {rarities.map((r) => {
           const on = rar === r;
           const n = count?.(r);
@@ -43,7 +43,7 @@ export function FilterRow({ rarities, count, rar, setRar, type, setType, ring = 
         })}
       </div>
       <span aria-hidden style={{ width: 1, alignSelf: "stretch", margin: "4px 2px", background: "rgba(255,255,255,.25)" }} />
-      <div role="group" aria-label="Type" style={{ display: "flex", gap: 2, alignItems: "flex-start", flexWrap: "wrap" }}>
+      <div role="group" aria-label="Type" style={{ display: "flex", gap: 2, alignItems: "center", flexWrap: "wrap" }}>
         {TYPES.map((t) => {
           const on = type === t;
           return (
