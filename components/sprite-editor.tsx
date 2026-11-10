@@ -38,12 +38,18 @@ export function SpriteEditor({ sheets, creatures, overrides, skins, hairs, contr
   const [file, setFile] = useState("");
   const [edited, setEdited] = useState<Set<string>>(() => new Set(overrides));
 
-  const ids = sheets.find((s) => s.sheet === sheet)?.ids ?? [];
-  const files = creatures.find((c) => c.slug === slug)?.files ?? [];
-  useEffect(() => { if (!ids.includes(id)) setId(ids[0] ?? ""); }, [sheet, ids, id]);
-  useEffect(() => { if (!files.includes(file)) setFile(files[0] ?? ""); }, [slug, files, file]);
+  const ids = useMemo(() => sheets.find((s) => s.sheet === sheet)?.ids ?? [], [sheets, sheet]);
+  const files = useMemo(() => creatures.find((c) => c.slug === slug)?.files ?? [], [creatures, slug]);
+  // The chosen cell or file, or the first one when the choice does not belong to this sheet or creature:
+  // derived, not reset by an effect, so a choice made in the phone's picker is never fought.
+  const cell = ids.includes(id) ? id : ids[0] ?? "";
+  const pic = files.includes(file) ? file : files[0] ?? "";
+  const step = (d: number) => {
+    if (mode === "portrait") { const i = ids.indexOf(cell); setId(ids[(i + d + ids.length) % ids.length] ?? ""); }
+    else { const i = files.indexOf(pic); setFile(files[(i + d + files.length) % files.length] ?? ""); }
+  };
 
-  const path = mode === "portrait" ? (sheet && id ? `portrait/${sheet}/${id}.png` : "") : file ? `creatures/${file}` : "";
+  const path = mode === "portrait" ? (sheet && cell ? `portrait/${sheet}/${cell}.png` : "") : pic ? `creatures/${pic}` : "";
 
   // The picture: pixels, size, and what was loaded (to know if anything changed).
   const [img, setImg] = useState<{ w: number; h: number; px: Uint8ClampedArray } | null>(null);
@@ -63,7 +69,7 @@ export function SpriteEditor({ sheets, creatures, overrides, skins, hairs, contr
   // The test face's parts. The part being drawn is set to the cell; the rest are yours to choose, so two
   // parts (a hair top with a hair side) can be seen together.
   const [parts, setParts] = useState<Record<string, string>>({ top: "16", hair_back: "28", jaw: "06", eyes: "00", eyebrows: "03", nose: "01", mouth: "24", ears: "01" });
-  const cellCtl = mode === "portrait" && sheet && id ? controlFor(`${sheet}/${id}`) : null;
+  const cellCtl = mode === "portrait" && sheet && cell ? controlFor(`${sheet}/${cell}`) : null;
   useEffect(() => { if (cellCtl) setParts((p) => (p[cellCtl.key] === cellCtl.id ? p : { ...p, [cellCtl.key]: cellCtl.id })); }, [cellCtl?.key, cellCtl?.id]);   // eslint-disable-line react-hooks/exhaustive-deps
   const ordered = useMemo(() => [...controls].sort((a, b) => FIRST.indexOf(a.key) - FIRST.indexOf(b.key)), [controls]);
 
@@ -300,18 +306,22 @@ export function SpriteEditor({ sheets, creatures, overrides, skins, hairs, contr
           <select className="input" value={sheet} onChange={(e) => setSheet(e.target.value)} aria-label="Sheet" style={{ ...sel, flex: 1 }}>
             {sheets.map((s) => <option key={s.sheet} value={s.sheet}>{s.sheet}</option>)}
           </select>
-          <select className="input" value={id} onChange={(e) => setId(e.target.value)} aria-label="Cell" style={{ ...sel, width: 92 }}>
+          <select className="input" value={cell} onChange={(e) => setId(e.target.value)} aria-label="Cell" style={{ ...sel, width: 96 }}>
             {ids.map((i) => <option key={i} value={i}>{i}{edited.has(`portrait/${sheet}/${i}.png`) ? " ✎" : ""}</option>)}
           </select>
+          <button type="button" className="btn btn-sm" onClick={() => step(-1)} aria-label="Previous cell" style={{ minHeight: 36, minWidth: 36, padding: 0 }}>‹</button>
+          <button type="button" className="btn btn-sm" onClick={() => step(1)} aria-label="Next cell" style={{ minHeight: 36, minWidth: 36, padding: 0 }}>›</button>
         </div>
       ) : (
         <div style={{ display: "flex", gap: 6 }}>
           <select className="input" value={slug} onChange={(e) => setSlug(e.target.value)} aria-label="Historikal" style={{ ...sel, flex: 1 }}>
             {creatures.map((c) => <option key={c.slug} value={c.slug}>{c.name}</option>)}
           </select>
-          <select className="input" value={file} onChange={(e) => setFile(e.target.value)} aria-label="Picture" style={{ ...sel, flex: 1 }}>
+          <select className="input" value={pic} onChange={(e) => setFile(e.target.value)} aria-label="Picture" style={{ ...sel, flex: 1 }}>
             {files.map((f) => <option key={f} value={f}>{f.slice(slug.length).replace(/^-/, "") || "base"}{edited.has(`creatures/${f}`) ? " ✎" : ""}</option>)}
           </select>
+          <button type="button" className="btn btn-sm" onClick={() => step(-1)} aria-label="Previous picture" style={{ minHeight: 36, minWidth: 36, padding: 0 }}>‹</button>
+          <button type="button" className="btn btn-sm" onClick={() => step(1)} aria-label="Next picture" style={{ minHeight: 36, minWidth: 36, padding: 0 }}>›</button>
         </div>
       )}
 
