@@ -118,7 +118,7 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
           <ProfileDetails rows={details.map((d) => ({ kind: d.kind, value: corrupt(d.value, decay) }))} />
-          <StarRow token={token?.design ?? null} badges={starBadges((person as { star_badges?: string[] | null }).star_badges, badges)} />
+          <StarRow token={token?.design ?? null} badges={starBadges((person as { star_badges?: string[] | null }).star_badges, badges)} whose={person.handle} />
         </div>
 
         {top.length ? (

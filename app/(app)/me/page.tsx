@@ -153,9 +153,9 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
           {corrupt(profile.bio || "Nothing written here yet. The City will assume the worst.", decay)}
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-          <ProfileDetails rows={details.map((d) => ({ kind: d.kind, value: corrupt(d.value, decay) }))} />
+          <ProfileDetails rows={details.map((d) => ({ kind: d.kind, value: corrupt(d.value, decay) }))} editHref="/me/edit" />
           {/* Where OBSESSED WITH was: your Proof and four badges you pick. */}
-          <StarRow token={token?.design ?? null} badges={starBadges(profile.star_badges, badges)} href="/me/star" />
+          <StarRow token={token?.design ?? null} badges={starBadges(profile.star_badges, badges)} href="/me/star" whose="Your" />
         </div>
 
         <div>

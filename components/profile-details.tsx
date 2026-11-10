@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { BadgeTip } from "@/components/badge-tip";
 import { EmojiImg } from "@/components/emoji-img";
@@ -16,8 +17,9 @@ const KINDS: Record<string, { art?: number; emoji?: string; crystr?: boolean; ti
 
 export type DetailKind = "birthday" | "likes" | "dislikes" | "food" | "obsession";
 
-/** The details on a profile: a small picture and the words, no label. Tap a row to say what it is. */
-export function ProfileDetails({ rows }: { rows: { kind: DetailKind; value: string }[] }) {
+/** The details on a profile: a small picture and the words, no label. Tap the words to say what it is; on
+ *  your own profile the picture opens the editor. */
+export function ProfileDetails({ rows, editHref }: { rows: { kind: DetailKind; value: string }[]; editHref?: string }) {
   const box = useRef<HTMLDivElement>(null);
   const [tip, setTip] = useState<{ kind: DetailKind; x: number; top: number } | null>(null);
   const [width, setWidth] = useState(320);
@@ -51,28 +53,34 @@ export function ProfileDetails({ rows }: { rows: { kind: DetailKind; value: stri
 
   return (
     <div ref={box} style={{ position: "relative", display: "flex", flexDirection: "column", gap: 2 }}>
-      {rows.map((r) => (
-        <button
-          key={r.kind}
-          type="button"
-          data-detail-row
-          aria-label={`${KINDS[r.kind].title}: ${r.value}`}
-          onClick={(e) => {
-            const el = e.currentTarget;
-            setTip((t) => (t?.kind === r.kind ? null : { kind: r.kind, x: 22, top: el.offsetTop + el.offsetHeight + 4 }));
-          }}
-          style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: 0, background: "none", border: 0, cursor: "pointer", color: "inherit", font: "inherit", textAlign: "left" }}
-        >
-          <span style={{ flex: "none", width: 23, height: 21, display: "grid", placeItems: "center" }}>
-            {KINDS[r.kind].emoji ? (
-              <EmojiImg e={KINDS[r.kind].emoji!} crystr={KINDS[r.kind].crystr} size={18} />
+      {rows.map((r) => {
+        const icon = KINDS[r.kind].emoji ? (
+          <EmojiImg e={KINDS[r.kind].emoji!} crystr={KINDS[r.kind].crystr} size={18} />
+        ) : (
+          <EmojiImg e={`art-${KINDS[r.kind].art}`} from={`/badges/set/${KINDS[r.kind].art}.png`} crystr={KINDS[r.kind].crystr} size={21} />
+        );
+        const iconBox: React.CSSProperties = { flex: "none", width: 23, height: 21, display: "grid", placeItems: "center" };
+        return (
+          <div key={r.kind} data-detail-row style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
+            {editHref ? (
+              <Link href={editHref} aria-label={`Edit ${KINDS[r.kind].title.toLowerCase()}`} style={iconBox}>{icon}</Link>
             ) : (
-              <EmojiImg e={`art-${KINDS[r.kind].art}`} from={`/badges/set/${KINDS[r.kind].art}.png`} crystr={KINDS[r.kind].crystr} size={21} />
+              <span style={iconBox}>{icon}</span>
             )}
-          </span>
-          <span style={{ fontSize: 12.5, lineHeight: "21px", color: "var(--text-2)", minWidth: 0 }}>{r.value}</span>
-        </button>
-      ))}
+            <button
+              type="button"
+              aria-label={`${KINDS[r.kind].title}: ${r.value}`}
+              onClick={(e) => {
+                const el = e.currentTarget.parentElement as HTMLElement;
+                setTip((t) => (t?.kind === r.kind ? null : { kind: r.kind, x: 22, top: el.offsetTop + el.offsetHeight + 4 }));
+              }}
+              style={{ padding: 0, background: "none", border: 0, cursor: "pointer", color: "inherit", font: "inherit", textAlign: "left", fontSize: 12.5, lineHeight: "21px", minWidth: 0 }}
+            >
+              <span style={{ color: "var(--text-2)" }}>{r.value}</span>
+            </button>
+          </div>
+        );
+      })}
       {k && tip ? <BadgeTip x={tip.x} top={tip.top} width={width} title={k.title} line={k.line} /> : null}
     </div>
   );
