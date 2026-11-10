@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useEffect } from "react";
 import { Creature, MoveIcon, Stats } from "@/components/encounter";
-import { healHistorikal } from "@/lib/actions";
+import { favoriteHistorikal, healHistorikal } from "@/lib/actions";
+import { HeartIcon } from "@/components/icons";
 import { useDecay } from "@/components/decay";
 import { corrupt } from "@/lib/crystr";
 import { ELEMENT_COLOR, HISTORIKAL, RARITY_COLOR, RARITY_NAME, SUPER, type Element } from "@/lib/historikals";
@@ -26,7 +27,7 @@ export function HistorikalCard({
   onClose,
 }: {
   /** types: what this copy is right now, if it rolls or changes its type. */
-  hk: { slug: string; hp: number; id?: number; types?: Element[] };
+  hk: { slug: string; hp: number; id?: number; types?: Element[]; favorite?: boolean };
   /** Where it came from, as its tooltip says. */
   line?: string;
   own?: boolean;
@@ -97,6 +98,16 @@ export function HistorikalCard({
             ) : (
               <Link href="/me/historikals" className="btn btn-sm" style={{ background: "#e0398a", color: "#fff" }}>{ko ? "REVIVE" : "HEAL"} · {2 * (h.hearts - hk.hp)} MANA</Link>
             )
+          ) : null}
+          {own && hk.id ? (
+            // A heart: it goes to the top of your list.
+            <form action={favoriteHistorikal}>
+              <input type="hidden" name="item" value={hk.id} />
+              <input type="hidden" name="on" value={hk.favorite ? "0" : "1"} />
+              <button type="submit" className="btn btn-sm" aria-pressed={!!hk.favorite} style={{ display: "inline-flex", alignItems: "center", gap: 6, color: hk.favorite ? "#e0398a" : undefined }}>
+                <HeartIcon filled={!!hk.favorite} small /> {hk.favorite ? "FAVOURITE" : "FAVOURITE?"}
+              </button>
+            </form>
           ) : null}
           {own && onEditLineup ? <button type="button" className="btn btn-sm" onClick={() => { onClose(); onEditLineup(); }}>EDIT LINEUP</button> : null}
           <button type="button" className="btn btn-sm" onClick={onClose}>CLOSE</button>

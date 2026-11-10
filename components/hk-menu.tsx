@@ -131,7 +131,7 @@ export function HkMenu({ shown, tradable, items, onClose }: {
   // Every one you hold, as the collection shows them: the creature's name, rarity and hearts, its rolled types.
   const all: HeldHk[] = tradable.flatMap((b) => {
     const h = b.hk ? HISTORIKAL.get(b.hk.slug) : undefined;
-    return b.hk && h ? [{ id: b.hk.id, slug: h.slug, name: h.name, rarity: h.rarity, types: b.hk.types ?? h.types, hearts: h.hearts, hp: b.hk.hp }] : [];
+    return b.hk && h ? [{ id: b.hk.id, slug: h.slug, name: h.name, rarity: h.rarity, types: b.hk.types ?? h.types, hearts: h.hearts, hp: b.hk.hp, favorite: b.hk.favorite }] : [];
   });
   const slotPx = 56;
 
@@ -203,7 +203,7 @@ export function HkMenu({ shown, tradable, items, onClose }: {
           </div>
         )}
       </div>
-      {card ? <HistorikalCard hk={{ id: card.id, slug: card.slug, hp: card.hp, types: card.types }} own onClose={() => setCard(null)} /> : null}
+      {card ? <HistorikalCard hk={{ id: card.id, slug: card.slug, hp: card.hp, types: card.types, favorite: card.favorite }} own onClose={() => setCard(null)} /> : null}
       {ghost ? (
         // The picked-up creature rides above the finger, bigger, so you can see it is yours to drop.
         <div aria-hidden className="hk-lift" style={{ position: "fixed", left: ghost.x - 30, top: ghost.y - 66, zIndex: 60, pointerEvents: "none", filter: "drop-shadow(4px 4px 0 #0a0616)" }}>
