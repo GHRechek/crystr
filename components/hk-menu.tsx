@@ -143,11 +143,7 @@ export function HkMenu({ shown, tradable, items, onClose }: {
       <button type="button" aria-label="Close the menu" onClick={onClose} style={{ position: "fixed", inset: 0, zIndex: 40, background: "rgba(5,5,12,.55)", border: 0, cursor: "default", touchAction: "none" }} />
       <div role="dialog" aria-label="Historikals" className="hk-panel" style={{ position: "fixed", top: `calc(${area.top}px + ${TOP})`, height: view === "all" ? `calc(${area.bottom - area.top}px - ${TOP} - ${EDGE})` : undefined, left: "50%", transform: "translateX(-50%)", width: `min(80vw, calc(480px - 2 * ${EDGE}))`, maxHeight: `calc(${area.bottom - area.top}px - ${TOP} - ${EDGE})`, zIndex: 41, display: "flex", flexDirection: "column", background: "var(--blk-pur)", boxShadow: "4px 4px 0 #0a0616", overflow: "hidden" }}>
         {/* On top in both views: the lineup. In MY HISTORIKALS the slots take a drop. */}
-        {view === "menu" ? (
-          <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "12px 14px 4px" }}>
-            <span className="px" style={{ fontSize: 10, color: "#e0398a", letterSpacing: ".04em" }}>YOUR LINEUP</span>
-          </div>
-        ) : <div style={{ height: 12 }} />}
+        <div style={{ height: 12 }} />
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 6, padding: "6px 14px 12px" }}>
           {lineup.map((k, i) => {
             const b = k ? byKey.get(k) : undefined;
