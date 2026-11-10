@@ -29,8 +29,7 @@ export function FilterRow({ rarities, count, rar, setRar, type, setType, ring = 
   const line = "linear-gradient(90deg, #e0398a, #9184d9 52%, #4c7df0)";
   // Pinned to the top of whatever scrolls, so the list goes by under it.
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 8, position: "sticky", top: 0, zIndex: 2, background: ring, paddingBottom: 4 }}>
-      <span style={{ flex: 1 }} />
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, position: "sticky", top: 0, zIndex: 2, background: ring, paddingBottom: 4 }}>
       <div role="group" aria-label="Rarity" style={{ display: "flex", gap: 6, alignItems: "center" }}>
         {rarities.map((r) => {
           const on = rar === r;
