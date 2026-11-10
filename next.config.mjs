@@ -6,6 +6,9 @@ const nextConfig = {
     "/face/[spec]": ["./assets/portrait/**/*.png"],
     // Likewise the token items, read by /token.
     "/token/[spec]": ["./public/badges/items/*.png"],
+    // The sprite editor reads the shipped cells and creature pictures, and previews a face with a cell as drawn.
+    "/api/sprite": ["./assets/portrait/**/*.png", "./public/creatures/*.png"],
+    "/api/sprite/preview": ["./assets/portrait/**/*.png"],
   },
 
   // Nobody else gets to put this app inside their own page: a framed copy can

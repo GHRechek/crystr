@@ -4,7 +4,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Rays, playBuildUp, playClick, playFanfare, playLidOpen, playWhoosh } from "@/components/ask-scene";
 import { BadgeArt } from "@/components/badges";
 import { askLines } from "@/lib/ask-lines";
-import { normalizePortrait, packPortrait } from "@/lib/portrait/core";
+import { faceSrc, normalizePortrait } from "@/lib/portrait/core";
 
 /** A quest done with someone, asked face to face, on both phones at once (like a battle or a trade).
  *  The one asked holds the key: drag it to the asker's face to give it (yes), or throw it away (no),
@@ -28,7 +28,7 @@ const GRIN = "04";
 /** The asker's head on nothing, as a picture. */
 function headSrc(face: unknown, grin = false) {
   const c = normalizePortrait(face ?? {});
-  return `/face/${packPortrait(grin ? { ...c, mouth: GRIN } : c)}.png?bare=1`;
+  return faceSrc(grin ? { ...c, mouth: GRIN } : c, { bare: true });
 }
 
 /** Dragging the key: where it is, and on letting go, whether it landed on `target` or was thrown. */

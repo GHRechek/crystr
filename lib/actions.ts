@@ -9,7 +9,7 @@ import { TERMS_VERSION } from "@/lib/terms";
 import { INVISIBLE } from "@/lib/wiki-fact";
 import { DEFAULT_BANNER, isPattern, isSwatch } from "@/lib/banner";
 import { COSTS, hasStarterHandle, untilReady } from "@/lib/crystr";
-import { normalizePortrait, portraitFromId, packPortrait } from "@/lib/portrait/core";
+import { faceSrc, normalizePortrait, portraitFromId, packPortrait } from "@/lib/portrait/core";
 import { normalizeToken, unpackToken } from "@/lib/token";
 import { SPECIES } from "@/lib/species";
 import { pictureFor } from "@/lib/article-icons";
@@ -1241,7 +1241,7 @@ export async function scanPerson(handle: string, withQuests = false): Promise<Sc
     const r = by.get(slug);
     return r ? [{ slug, title: String(r.title), how: String(r.how), art: String(r.art), tiers: Number(r.tiers ?? 1), tier: 0, epic: r.kind === "goal", instant: !!r.scan_instant }] : [];
   });
-  const face = `/face/${packPortrait(p.avatar_config ? normalizePortrait(p.avatar_config) : portraitFromId(String(p.id)))}.png`;
+  const face = faceSrc(p.avatar_config ? normalizePortrait(p.avatar_config) : portraitFromId(String(p.id)));
   return { id: String(p.id), handle: String(p.handle), name: p.display_name ?? null, species: p.species ?? null, spellcaster: !!p.spellcaster, face, quests };
 }
 

@@ -8,6 +8,9 @@ import { EDGE } from "@/lib/toast";
 import { TERMS_VERSION } from "@/lib/terms";
 import { readFlash } from "@/lib/flash";
 import { SetupBanner, TabBar, Toast } from "@/components/chrome";
+import { SpriteOverrides } from "@/components/sprite-overrides";
+import { setSpriteOverrides } from "@/lib/sprites";
+import { getSpriteOverrides } from "@/lib/sprites.server";
 import { DecayFrame } from "@/components/decay";
 import { InfoMenu } from "@/components/info-menu";
 import { CatalogueSync } from "@/components/catalogue-sync";
@@ -24,7 +27,9 @@ export const dynamic = "force-dynamic";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const { profile, userId } = await requireMe();
-  const [patches, editor] = await Promise.all([getCatalogue(), isCreatureEditor()]);
+  const [patches, editor, sprites] = await Promise.all([getCatalogue(), isCreatureEditor(), getSpriteOverrides()]);
+  // Sprites a witch has edited in the app: known to every picture drawn from here, server and client.
+  setSpriteOverrides(sprites);
   const [vouches, topSixFrom, trades, agreed] = await Promise.all([
     getPendingVouches(userId),
     getTopSixNotices(userId),
@@ -129,6 +134,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           </>
         )}
 
+        <SpriteOverrides list={sprites} />
         <main className="screen">
           {/* Signing up, the card stays away (it would sit over the registry), but the fade still follows the meter. */}
           <DecayFrame mana={mana} cap={cap} card={!welcoming}>{children}</DecayFrame>

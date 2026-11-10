@@ -17,6 +17,7 @@ export default async function BugsPage() {
           ← ME
         </Link>
         <Link href="/bugs/shrink" className="btn btn-sm">SHRINK PICTURES</Link>
+        <Link href="/witch/sprites" className="btn btn-sm">SPRITES</Link>
         <div className="spacer" />
         <span className="px" style={{ fontSize: 11, color: "var(--text-3)" }}>
           {bugs.length} WAITING

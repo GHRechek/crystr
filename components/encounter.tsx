@@ -1,6 +1,7 @@
 "use client";
 
 import { useId, useCallback, useEffect, useRef, useState } from "react";
+import { spriteUrl } from "@/lib/sprites";
 import { createClient } from "@/lib/supabase/client";
 import { QuestAskScreen, type QuestView } from "@/components/quest-ask";
 import { Rays, playBuildUp, playClick, playFanfare, playLidOpen, playMythicDirge, playWhoosh } from "@/components/ask-scene";
@@ -230,10 +231,10 @@ export function Creature({ slug, size, shadow, ko, el, aura }: { slug: string; s
   // eslint-disable-next-line @next/next/no-img-element
   if (ko) return <img className="en-ko-sil" src={historikalSrc(slug, 1, el)} alt="" width={size} height={size} draggable={false} style={{ display: "block", imageRendering: "pixelated", pointerEvents: "none", filter: "grayscale(1) brightness(.6)" }} />;
   // eslint-disable-next-line @next/next/no-img-element
-  const img = <img src={shadow ? `/creatures/${slug}-s.png` : historikalSrc(slug, f, el)} alt="" width={size} height={size} draggable={false} style={{ display: "block", imageRendering: "pixelated", pointerEvents: "none" }} />;
+  const img = <img src={shadow ? spriteUrl(`creatures/${slug}-s.png`) ?? `/creatures/${slug}-s.png` : historikalSrc(slug, f, el)} alt="" width={size} height={size} draggable={false} style={{ display: "block", imageRendering: "pixelated", pointerEvents: "none" }} />;
   // Flyers and floaters bob gently.
   // The ring goes inside the bob, not around it: Safari drops a filter on the parent of an animated child.
-  const ringed = <RarityGlow slug={slug} size={size} src={shadow ? `/creatures/${slug}-s.png` : historikalSrc(slug, f, el)}>{img}</RarityGlow>;
+  const ringed = <RarityGlow slug={slug} size={size} src={shadow ? spriteUrl(`creatures/${slug}-s.png`) ?? `/creatures/${slug}-s.png` : historikalSrc(slug, f, el)}>{img}</RarityGlow>;
   if (shadow) return aura ? ringed : img;
   return HISTORIKAL.get(slug)?.hover ? <span className="hk-hover">{ringed}</span> : ringed;
 }

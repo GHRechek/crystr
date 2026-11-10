@@ -1,3 +1,4 @@
+import { spriteVersion } from "@/lib/sprites";
 import { OPTIONS, SIDES_NEAR, SIDES_OWN, TOPS, type PortraitOption } from "./manifest";
 
 // Portraits are layered 128x128 art from the Portrait Maker sprite sheets.
@@ -176,11 +177,20 @@ export function reramp(
   return out;
 }
 
+/** A bright hair swatch (blonde, grey, pink) used to land its dominant tone nearly at the ceiling, so the
+ *  highlights above it were squeezed flat and the hair lost its detail. The dominant tone now sits lower
+ *  for the bright ones: past half lightness, only part of the rest is kept. The swatch stays as chosen. */
+export function hairTone(hex: string): string {
+  const [h, s, l] = rgbToHsl(...hexToRgb(hex));
+  const l2 = l <= 0.5 ? l : 0.5 + (l - 0.5) * 0.45;
+  return hslToHex(h, s, l2);
+}
+
 /** The full source-colour → chosen-colour map for one face. */
 export function paletteFor(sw: Swatches): Map<number, [number, number, number]> {
   const table = {
     ...reramp(SKIN_SRC, SKIN_ANCHOR, sw.skin, 0.95),
-    ...reramp(HAIR_SRC, HAIR_ANCHOR, sw.hair, 0.86),
+    ...reramp(HAIR_SRC, HAIR_ANCHOR, hairTone(sw.hair), 0.86),
     ...reramp(EYE_SRC, EYE_ANCHOR, sw.eye, 0.9),
   };
 
@@ -548,6 +558,14 @@ const PACK_ORDER = Object.keys(ALLOWED).sort();
  *  spec only describes the config, so without this a fixed renderer keeps
  *  serving the broken picture out of everyone's browser cache. */
 export const RENDER = "31";
+
+/** The URL of a face: content-addressed by its packed config, plus the sprite-edit version so an edited
+ *  cell is a new URL. `bare`: just the head. */
+export function faceSrc(config: PortraitConfig, { bare = false }: { bare?: boolean } = {}): string {
+  const v = spriteVersion();
+  const q = [bare ? "bare=1" : "", v ? `v=${v}` : ""].filter(Boolean).join("&");
+  return `/face/${packPortrait(config)}.png${q ? `?${q}` : ""}`;
+}
 
 export function packPortrait(config: PortraitConfig): string {
   const c = normalizePortrait(config);

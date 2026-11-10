@@ -14,6 +14,7 @@ import {
   NONE,
   SKIN_CHOICES,
   packPortrait,
+  faceSrc,
   randomPortrait,
   sidesFor,
   sidesTaking,
@@ -70,7 +71,7 @@ export function AvatarBuilder({ start, fresh }: { start: PortraitConfig; fresh: 
         <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 0 10px" }}>
           <div style={{ width: 128, height: 128, flex: "none", borderRadius: "var(--px-r)", overflow: "hidden", lineHeight: 0 }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={`/face/${packed}.png`} alt="Your portrait" width={128} height={128} style={{ width: "100%", height: "100%", imageRendering: "pixelated" }} />
+            <img src={faceSrc(c)} alt="Your portrait" width={128} height={128} style={{ width: "100%", height: "100%", imageRendering: "pixelated" }} />
           </div>
           <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 7 }}>
             <button type="button" className="btn btn-sm" onClick={() => setC(randomPortrait())}>
@@ -197,7 +198,7 @@ const ThumbRow = memo(
               >
                 {i < span[0] || i > span[1] ? <span style={{ display: "block", width: 72, height: 72 }} /> : (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={`/face/${packPortrait(withChoice(face, control.key, v))}.png`} alt="" width={72} height={72} loading="lazy" decoding="async" style={{ display: "block", imageRendering: "pixelated", outline: on ? "3px solid var(--pur-bright)" : "none", outlineOffset: -3 }} />)}
+                <img src={faceSrc(withChoice(face, control.key, v))} alt="" width={72} height={72} loading="lazy" decoding="async" style={{ display: "block", imageRendering: "pixelated", outline: on ? "3px solid var(--pur-bright)" : "none", outlineOffset: -3 }} />)}
                 <span className="px" style={{ fontSize: 9, color: on ? "var(--pur-bright)" : "var(--muted)" }}>{name}</span>
               </button>
             );

@@ -39,7 +39,7 @@ function cell(relPath: string): Uint8ClampedArray | null {
 }
 
 /** The face, drawn. `bare`: just the head, on nothing (no background colour). */
-export function composePortrait(config: PortraitConfig, { bare = false }: { bare?: boolean } = {}): Buffer {
+export function composePortrait(config: PortraitConfig, { bare = false, overrides }: { bare?: boolean; /** Edited cells (see lib/sprites), keyed Sheet/id.png, drawn in place of the shipped ones. */ overrides?: Map<string, Uint8ClampedArray> } = {}): Buffer {
   const sw = swatchesOf(config);
   const palette = paletteFor(sw);
   const scalp = scalpFor(sw);
@@ -59,7 +59,7 @@ export function composePortrait(config: PortraitConfig, { bare = false }: { bare
   }
 
   for (const path of drawPlan(config)) {
-    const src = cell(path);
+    const src = overrides?.get(path) ?? cell(path);
     if (!src) continue;
     // The scalp colour is also a jaw shading colour, so the buzz applies to
     // the Cranium layer alone — everywhere else it stays skin.

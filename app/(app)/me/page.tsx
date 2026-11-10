@@ -27,7 +27,7 @@ import { StarRow } from "@/components/star-row";
 import { starBadges } from "@/lib/star-badges";
 import { ProfileHead } from "./face-menu";
 import { bannerOf, bannerStyle } from "@/lib/banner";
-import { portraitFromId, normalizePortrait, packPortrait } from "@/lib/portrait/core";
+import { portraitFromId, normalizePortrait, faceSrc as faceUrl } from "@/lib/portrait/core";
 import { ago, corrupt, decayLevel, capOf, BADGE_MANA, BASE_CAP, HELPS_PER_BADGE, TOKEN_GIFT_MONTHS } from "@/lib/crystr";
 import { formatBirthday } from "@/lib/birthday";
 
@@ -72,9 +72,7 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
     1,
     Math.round((Date.now() - new Date(profile.created_at).getTime()) / 86_400_000),
   );
-  const faceSrc = `/face/${packPortrait(
-    profile.avatar_config ? normalizePortrait(profile.avatar_config) : portraitFromId(userId),
-  )}.png`;
+  const faceSrc = faceUrl(profile.avatar_config ? normalizePortrait(profile.avatar_config) : portraitFromId(userId));
   const details: { kind: DetailKind; value: string }[] = (
     [
       ["birthday", formatBirthday(profile.birthday)],
