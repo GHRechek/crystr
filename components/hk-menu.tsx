@@ -3,8 +3,9 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, useTransition } from "react";
 import { BadgeFace } from "@/components/badge-chooser";
 import { Stats } from "@/components/encounter";
+import { HistorikalCard } from "@/components/historikal-card";
 import { FilterRow, HistorikalCollection, type HeldHk } from "@/components/historikal-collection";
-import { healHistorikal, setLineup } from "@/lib/actions";
+import { setLineup } from "@/lib/actions";
 import { HISTORIKAL, RARITIES, type Element, type Rarity } from "@/lib/historikals";
 import type { ShownBadge } from "@/lib/badges";
 
@@ -40,6 +41,8 @@ export function HkMenu({ shown, tradable, items, onClose }: {
 }) {
   const [view, setView] = useState<"menu" | "edit" | "all">("menu");
   const editing = view === "edit";
+  // A lineup slot, tapped outside the editor: its card, where hurt ones are healed.
+  const [card, setCard] = useState<HeldHk | null>(null);
   // The panel keeps the size the menu gives it: the other views scroll inside that, not down the screen.
   const panel = useRef<HTMLDivElement>(null);
   const [menuH, setMenuH] = useState<number | null>(null);
@@ -119,13 +122,14 @@ export function HkMenu({ shown, tradable, items, onClose }: {
       <div ref={panel} role="dialog" aria-label="Historikals" className="hk-panel" style={{ position: "fixed", top: TOP, height: view !== "menu" && menuH ? menuH : undefined, left: "50%", transform: "translateX(-50%)", width: `min(80vw, calc(480px - 2 * ${EDGE}))`, maxHeight: `calc(100vh - ${TOP} - ${EDGE})`, zIndex: 41, display: "flex", flexDirection: "column", background: "var(--blk-pur)", boxShadow: "4px 4px 0 #0a0616", overflow: "hidden" }}>
         {/* The lineup, on top in both views. */}
         <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "12px 14px 4px" }}>
+          {view === "menu" ? (
+            <button type="button" aria-label="Edit your lineup" title="Edit lineup" onClick={() => setView("edit")} style={{ background: "rgba(255,255,255,.08)", border: 0, color: "#fff", width: 24, height: 24, display: "grid", placeItems: "center", cursor: "pointer" }}><PencilIcon size={11} /></button>
+          ) : null}
           <span className="px" style={{ fontSize: 10, color: "#e0398a", letterSpacing: ".06em" }}>{editing ? "YOUR LINEUP · DRAG ONE UP, TAP A SLOT TO CLEAR IT" : view === "all" ? `YOUR LINEUP · ${all.length} HELD` : "YOUR LINEUP"}</span>
           <span style={{ flex: 1 }} />
           {view !== "menu" ? (
             <button type="button" className="px" onClick={() => setView("menu")} style={{ background: "none", border: 0, color: "#fff", fontSize: 10, letterSpacing: ".06em", padding: "6px 8px", cursor: "pointer" }}>← BACK</button>
-          ) : (
-            <button type="button" aria-label="Edit your lineup" title="Edit lineup" onClick={() => setView("edit")} style={{ background: "rgba(255,255,255,.08)", border: 0, color: "#fff", width: 32, height: 32, display: "grid", placeItems: "center", cursor: "pointer" }}><PencilIcon /></button>
-          )}
+          ) : null}
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 6, padding: "6px 14px 12px" }}>
           {lineup.map((k, i) => {
@@ -133,29 +137,19 @@ export function HkMenu({ shown, tradable, items, onClose }: {
             const h = b?.hk ? HISTORIKAL.get(b.hk.slug) : undefined;
             const hp = b?.hk?.hp ?? 0;
             const ko = !!h && hp <= 0;
-            const hurt = !!h && hp < h.hearts;
+            const held = b?.hk && h ? all.find((x) => x.id === b.hk!.id) : undefined;
             return (
               <span key={i} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, minWidth: slotPx }}>
-                <span data-slot={editing ? i : undefined} style={{ width: slotPx, height: slotPx, display: "grid", placeItems: "center", outline: editing ? "1px dashed rgba(255,255,255,.35)" : "none", outlineOffset: -1, background: editing && !b ? "rgba(255,255,255,.04)" : "none", filter: ko && !editing ? "grayscale(1) brightness(.55)" : undefined }}>
+                <span data-slot={editing ? i : undefined} style={{ width: slotPx, height: slotPx, display: "grid", placeItems: "center", outline: editing ? "1px dashed rgba(255,255,255,.35)" : "none", outlineOffset: -1, background: editing && !b ? "rgba(255,255,255,.04)" : "none", filter: ko ? "grayscale(1) brightness(.55)" : undefined }}>
                   {b ? (
                     editing ? <button type="button" className="bv-item" {...handlers(b, i)} aria-label={`${b.title}: drag to move, tap to take off`}><BadgeFace b={b} size={slotPx - 8} /></button>
-                      : <BadgeFace b={b} size={slotPx - 8} />
+                      // Outside the editor, a tap opens its card: moves, hearts, and HEAL or REVIVE when it needs it.
+                      : <button type="button" className="bv-item" onClick={() => held && setCard(held)} aria-label={`${b.title}${ko ? ", knocked out" : ""}: open its card`}><BadgeFace b={b} size={slotPx - 8} /></button>
                   ) : <span className="px" style={{ fontSize: 14, color: "rgba(255,255,255,.3)" }}>{i + 1}</span>}
                 </span>
-                {/* Its hearts, and when some are gone, the way to get them back: two mana a heart. */}
+                {/* Its hearts, the lost ones hollow. Healing is on its card. */}
                 {!editing && b?.hk && h ? (
-                  <>
-                    <Stats h={{ id: 0, slug: h.slug, name: h.name, rarity: h.rarity, types: b.hk.types ?? h.types, hearts: h.hearts }} hp={hp} k={2} only="hearts" />
-                    {ko ? <span className="px" style={{ fontSize: 9, color: "#ff5a7a", letterSpacing: ".04em" }}>DOWNED</span> : null}
-                    {hurt ? (
-                      <form action={healHistorikal}>
-                        <input type="hidden" name="item" value={b.hk.id} />
-                        <button type="submit" className="px" style={{ background: "#e0398a", color: "#fff", border: 0, fontSize: 9, letterSpacing: ".04em", padding: "5px 6px", cursor: "pointer", whiteSpace: "nowrap" }}>
-                          {ko ? "REVIVE" : "HEAL"} · {2 * (h.hearts - hp)}
-                        </button>
-                      </form>
-                    ) : null}
-                  </>
+                  <Stats h={{ id: 0, slug: h.slug, name: h.name, rarity: h.rarity, types: b.hk.types ?? h.types, hearts: h.hearts }} hp={hp} k={1.25} only="hearts" />
                 ) : null}
               </span>
             );
@@ -193,6 +187,7 @@ export function HkMenu({ shown, tradable, items, onClose }: {
           </div>
         )}
       </div>
+      {card ? <HistorikalCard hk={{ id: card.id, slug: card.slug, hp: card.hp, types: card.types }} own onClose={() => setCard(null)} /> : null}
       {ghost ? (
         <div aria-hidden style={{ position: "fixed", left: ghost.x - 24, top: ghost.y - 24, zIndex: 60, pointerEvents: "none", filter: "drop-shadow(3px 3px 0 #0a0616)" }}>
           <BadgeFace b={ghost.b} size={48} />
