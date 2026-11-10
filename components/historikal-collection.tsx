@@ -60,12 +60,14 @@ export function FilterRow({ rarities, count, rar, setRar, type, setType, ring = 
   );
 }
 
-export function HistorikalCollection({ list, ring, drag, inLineup, onOpen }: {
+export function HistorikalCollection({ list, ring, drag, lifted, inLineup, onOpen }: {
   list: HeldHk[];
   ring?: string;
   /** Pointer handlers that let a row's creature be dragged (into a lineup slot, in the Historikals panel).
    *  Only the creature takes them, so the rest of the row still scrolls the list on a touch screen. */
   drag?: (h: HeldHk) => React.HTMLAttributes<HTMLElement>;
+  /** The row whose creature is being held and dragged right now: it sits faint until it is dropped. */
+  lifted?: (h: HeldHk) => boolean;
   /** Rows already in the lineup are left out of the list. */
   inLineup?: (h: HeldHk) => boolean;
   /** Opens the card somewhere else (the panel keeps it above itself); otherwise this shows it. */
@@ -88,7 +90,7 @@ export function HistorikalCollection({ list, ring, drag, inLineup, onOpen }: {
         {rest.map((h) => {
           return (
             <li key={h.id}>
-              <button type="button" onClick={() => (onOpen ?? setCard)(h)} aria-label={`${h.name}: open its card${drag ? "; drag its picture into your lineup" : ""}`} style={{ width: "100%", border: 0, background: "none", color: "inherit", cursor: "pointer", padding: "4px 0", display: "flex", alignItems: "center", gap: 12, textAlign: "left" }}>
+              <button type="button" onClick={() => (onOpen ?? setCard)(h)} aria-label={`${h.name}: open its card${drag ? "; drag its picture into your lineup" : ""}`} style={{ width: "100%", border: 0, background: "none", color: "inherit", cursor: "pointer", padding: "4px 0", display: "flex", alignItems: "center", gap: 12, textAlign: "left", WebkitTapHighlightColor: "transparent", opacity: lifted?.(h) ? 0.3 : 1 }}>
                 <span {...(drag ? drag(h) : {})} style={drag ? { touchAction: "none", userSelect: "none", WebkitUserSelect: "none", WebkitTouchCallout: "none", cursor: "grab", lineHeight: 0 } : { lineHeight: 0 }}>
                   <Creature slug={h.slug} el={h.types[0]} size={56} ko={h.hp <= 0} />
                 </span>

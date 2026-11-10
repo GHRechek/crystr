@@ -166,7 +166,7 @@ export function HkMenu({ shown, tradable, items, onClose }: {
                   {b ? (
                     // A tap opens its card: moves, hearts, and HEAL or REVIVE when it needs it. In MY HISTORIKALS a
                     // drag moves it to another slot, or off the lineup when let go anywhere else.
-                    <button type="button" className="bv-item" {...(editing ? handlers(b, i) : {})} onClick={() => held && setCard(held)} aria-label={`${b.title}${ko ? ", knocked out" : ""}: open its card${editing ? "; drag to move it" : ""}`}><BadgeFace b={b} size={slotPx - 8} /></button>
+                    <button type="button" className="bv-item" {...(editing ? handlers(b, i) : {})} onClick={() => held && setCard(held)} style={{ opacity: ghost?.b.key === b.key ? 0.3 : 1 }} aria-label={`${b.title}${ko ? ", knocked out" : ""}: open its card${editing ? "; drag to move it" : ""}`}><BadgeFace b={b} size={slotPx - 8} /></button>
                   ) : <span className="hk-wobble" style={{ display: "inline-block" }}><Px rows={QMARK} k={3} fill="rgba(255,255,255,.45)" /></span>}
                 </span>
                 {/* Its name, then its hearts, the lost ones hollow. Healing is on its card. */}
@@ -182,7 +182,7 @@ export function HkMenu({ shown, tradable, items, onClose }: {
         {view === "all" ? (
           <div style={{ display: "flex", flexDirection: "column", gap: 10, padding: "0 14px 14px", overflowY: "auto", minHeight: 0, overscrollBehavior: "contain" }}>
             {all.length === 0 ? <span className="px" style={{ fontSize: 10, color: "rgba(255,255,255,.5)" }}>NO HISTORIKALS YET</span> : (
-              <HistorikalCollection list={all} ring="var(--blk-pur)" inLineup={(h) => lineup.includes(`i:${h.id}`)} drag={(h) => { const b = badgeOf(h); return b ? handlers(b, "grid") : {}; }} onOpen={setCard} />
+              <HistorikalCollection list={all} ring="var(--blk-pur)" inLineup={(h) => lineup.includes(`i:${h.id}`)} drag={(h) => { const b = badgeOf(h); return b ? handlers(b, "grid") : {}; }} lifted={(h) => ghost?.b.key === `i:${h.id}`} onOpen={setCard} />
             )}
           </div>
         ) : (
@@ -197,8 +197,9 @@ export function HkMenu({ shown, tradable, items, onClose }: {
       </div>
       {card ? <HistorikalCard hk={{ id: card.id, slug: card.slug, hp: card.hp, types: card.types }} own onClose={() => setCard(null)} /> : null}
       {ghost ? (
-        <div aria-hidden style={{ position: "fixed", left: ghost.x - 24, top: ghost.y - 24, zIndex: 60, pointerEvents: "none", filter: "drop-shadow(3px 3px 0 #0a0616)" }}>
-          <BadgeFace b={ghost.b} size={48} />
+        // The picked-up creature rides above the finger, bigger, so you can see it is yours to drop.
+        <div aria-hidden className="hk-lift" style={{ position: "fixed", left: ghost.x - 36, top: ghost.y - 110, zIndex: 60, pointerEvents: "none", filter: "drop-shadow(4px 4px 0 #0a0616)" }}>
+          <BadgeFace b={ghost.b} size={72} />
         </div>
       ) : null}
     </>,

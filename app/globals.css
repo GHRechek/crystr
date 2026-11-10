@@ -2114,3 +2114,8 @@ select.input { border: 0; }
 /* An empty lineup slot: a question mark that rocks on its feet, a little, now and then. */
 @keyframes hk-wobble { 0%, 70%, 100% { transform: rotate(0); } 76% { transform: rotate(-9deg); } 82% { transform: rotate(8deg); } 88% { transform: rotate(-5deg); } 94% { transform: rotate(3deg); } }
 .hk-wobble { animation: hk-wobble 3.2s ease-in-out infinite; transform-origin: 50% 90%; }
+
+/* A creature picked up to drag: it pops up above the finger. */
+@keyframes hk-lift { from { transform: translateY(14px) scale(.6); opacity: 0; } 60% { transform: translateY(-4px) scale(1.08); opacity: 1; } to { transform: none; opacity: 1; } }
+.hk-lift { animation: hk-lift .22s ease-out both; }
+.bv-item { -webkit-tap-highlight-color: transparent; }
