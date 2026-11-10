@@ -285,10 +285,20 @@ select {
 .scanlines {
   position: sticky;
   top: 0;
-  height: 100%;
-  margin-bottom: -100%;
+  /* No height of its own: a percentage margin would resolve against the WIDTH, and on a tall
+     phone that left a gap of (height - width) above the page. The lines hang off a pseudo-element
+     the height of the screen instead, which the scroll area clips. */
+  height: 0;
   pointer-events: none;
   z-index: 1;
+}
+.scanlines::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 100dvh;
   background-image: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.5) 0 1px, transparent 1px 3px);
 }
 
