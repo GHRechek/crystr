@@ -198,12 +198,29 @@ export function TypeIcon({ type, k = 2 }: { type: Element; k?: number }) {
 }
 
 /** Its types (each in its colour, or ? until you know them) then white hearts. */
-export function Stats({ h, hp, k = 3, known = true, only }: { h: HK; hp?: number; k?: number; known?: boolean; only?: "type" | "hearts" }) {
+/** The CRYSTR gradient, for a favourite's hearts: defined once per Stats that needs it, spanning each heart. */
+export const CRYSTR_HEART = "crystr-heart-grad";
+export function CrystrGradientDef() {
+  return (
+    <svg width={0} height={0} aria-hidden style={{ position: "absolute" }}>
+      <defs>
+        <linearGradient id={CRYSTR_HEART} x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stopColor="#e0398a" />
+          <stop offset="0.52" stopColor="#9184d9" />
+          <stop offset="1" stopColor="#4c7df0" />
+        </linearGradient>
+      </defs>
+    </svg>
+  );
+}
+
+export function Stats({ h, hp, k = 3, known = true, only, fav }: { h: HK; hp?: number; k?: number; known?: boolean; only?: "type" | "hearts"; /** A favourite: its hearts in the CRYSTR gradient. */ fav?: boolean }) {
   const left = hp ?? h.hearts;
   return (
     <span className="en-stats">
+      {fav ? <CrystrGradientDef /> : null}
       {only === "hearts" ? null : known && h.types?.length ? h.types.map((t) => <Pix key={t} rows={TYPE[t]} k={k} fill={ELEMENT_COLOR[t]} />) : <Pix rows={QMARK} k={k} fill="#d2cefd" />}
-      {only === "type" ? null : Array.from({ length: h.hearts }, (_, i) => <Pix key={i} rows={i >= left ? HEART_LOST : HEART} k={k} fill="#fff" />)}
+      {only === "type" ? null : Array.from({ length: h.hearts }, (_, i) => <Pix key={i} rows={i >= left ? HEART_LOST : HEART} k={k} fill={fav ? `url(#${CRYSTR_HEART})` : "#fff"} />)}
     </span>
   );
 }

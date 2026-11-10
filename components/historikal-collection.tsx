@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { Creature, MoveIcon, Stats, TypeIcon } from "@/components/encounter";
 import { HistorikalCard } from "@/components/historikal-card";
-import { HeartIcon } from "@/components/icons";
 import { useDecay } from "@/components/decay";
 import { corrupt } from "@/lib/crystr";
 import { ELEMENT_COLOR, HISTORIKAL, RARITY_COLOR, RARITY_NAME, TYPES, type Element, type Rarity } from "@/lib/historikals";
@@ -98,9 +97,8 @@ export function HistorikalCollection({ list, ring, drag, lifted, inLineup, onOpe
                 </span>
                 <span style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 7 }}>
                   <span style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-                    {h.favorite ? <HeartIcon filled small /> : null}
                     <span className="px" style={{ fontSize: 10, lineHeight: 1.35 }}>{corrupt(h.name.toUpperCase(), decay)}</span>
-                    <Stats h={h} hp={h.hp} k={1.25} only="hearts" />
+                    <Stats h={h} hp={h.hp} k={1.25} only="hearts" fav={!!h.favorite} />
                   </span>
                   <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
                     <span className="px" style={{ fontSize: 8.5 }}>{h.types.map((t, i) => <span key={t} style={{ color: ELEMENT_COLOR[t] }}>{i ? " / " : ""}{corrupt(t.toUpperCase(), decay)}</span>)}</span>
@@ -115,7 +113,7 @@ export function HistorikalCollection({ list, ring, drag, lifted, inLineup, onOpe
           );
         })}
       </ul>
-      {card ? <HistorikalCard hk={{ id: card.id, slug: card.slug, hp: card.hp, types: card.types, favorite: card.favorite }} own onClose={() => setCard(null)} /> : null}
+      {card ? <HistorikalCard hk={{ id: card.id, slug: card.slug, hp: card.hp, types: card.types, favorite: card.favorite }} own onClose={() => setCard(null)} onFavorite={(on) => setCard({ ...card, favorite: on })} /> : null}
     </>
   );
 }

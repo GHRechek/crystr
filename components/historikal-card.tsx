@@ -1,10 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Creature, MoveIcon, Stats } from "@/components/encounter";
 import { favoriteHistorikal, healHistorikal } from "@/lib/actions";
-import { HeartIcon } from "@/components/icons";
 import { useDecay } from "@/components/decay";
 import { corrupt } from "@/lib/crystr";
 import { ELEMENT_COLOR, HISTORIKAL, RARITY_COLOR, RARITY_NAME, SUPER, type Element } from "@/lib/historikals";
@@ -24,6 +23,7 @@ export function HistorikalCard({
   known,
   lineupPos,
   onEditLineup,
+  onFavorite,
   onClose,
 }: {
   /** types: what this copy is right now, if it rolls or changes its type. */
@@ -37,8 +37,13 @@ export function HistorikalCard({
   /** Its place in the lineup (0, 1, 2), if it's in it. */
   lineupPos?: number;
   onEditLineup?: () => void;
+  /** The heart was tapped: on or off, so whatever opened the card can recolour at once. */
+  onFavorite?: (on: boolean) => void;
   onClose: () => void;
 }) {
+  // The heart flips the moment it is tapped; the save follows.
+  const [fav, setFav] = useState(!!hk.favorite);
+  useEffect(() => setFav(!!hk.favorite), [hk.favorite]);
   const decay = useDecay();
   const eat = (t: string) => corrupt(t, decay);
   useEffect(() => {
@@ -66,7 +71,7 @@ export function HistorikalCard({
         ) : (
         <>
         <div className="px" style={{ fontSize: 10, display: "flex", gap: 8, alignItems: "center" }}>
-          <Stats h={{ id: 0, slug: h.slug, name: h.name, rarity: h.rarity, types, hearts: h.hearts }} hp={hk.hp} k={2} />
+          <Stats h={{ id: 0, slug: h.slug, name: h.name, rarity: h.rarity, types, hearts: h.hearts }} hp={hk.hp} k={2} fav={own && fav} />
           {ko ? <span style={{ color: "#ff5a7a" }}>KNOCKED OUT</span> : null}
         </div>
         <div className="px" style={{ fontSize: 10, textAlign: "center", lineHeight: 1.6 }}>
@@ -101,11 +106,12 @@ export function HistorikalCard({
           ) : null}
           {own && hk.id ? (
             // A heart: it goes to the top of your list.
-            <form action={favoriteHistorikal}>
+            <form action={favoriteHistorikal} onSubmit={() => { setFav(!fav); onFavorite?.(!fav); }}>
               <input type="hidden" name="item" value={hk.id} />
-              <input type="hidden" name="on" value={hk.favorite ? "0" : "1"} />
-              <button type="submit" className="btn btn-sm" aria-pressed={!!hk.favorite} style={{ display: "inline-flex", alignItems: "center", gap: 6, color: hk.favorite ? "#e0398a" : undefined }}>
-                <HeartIcon filled={!!hk.favorite} small /> {hk.favorite ? "FAVOURITE" : "FAVOURITE?"}
+              <input type="hidden" name="on" value={fav ? "0" : "1"} />
+              <button type="submit" className="btn btn-sm" aria-pressed={fav} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+                <Stats h={{ id: 0, slug: h.slug, name: h.name, rarity: h.rarity, hearts: 1 }} k={1.5} only="hearts" fav={fav} />
+                {fav ? <span className="crystr-text">FAVOURITE</span> : "FAVOURITE?"}
               </button>
             </form>
           ) : null}
