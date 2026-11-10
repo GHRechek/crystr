@@ -9,8 +9,6 @@ export default async function HistorikalsPage() {
   const { userId, profile } = await requireMe();
   const [list, picks] = await Promise.all([getHistorikals(userId), getPicksOpen()]);
   const hurt = list.filter((h) => h.hp < h.hearts).length;
-  // Your lineup (the Historikals on show in your badge display) first, in its order; then the rest.
-  const lineup = (profile.shown_badges ?? []).filter((k: string) => k.startsWith("i:")).map((k: string) => Number(k.slice(2)));
   return (
     <div className="pad" style={{ gap: 14 }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
@@ -30,9 +28,8 @@ export default async function HistorikalsPage() {
         <div className="px" style={{ fontSize: 10, color: "var(--muted)", lineHeight: 1.6, flex: 1, minWidth: 200 }}>
           <MoveIcon kind="sword" /> CUTS <MoveIcon kind="spell" /> · <MoveIcon kind="spell" /> BREAKS <MoveIcon kind="armor" /> · <MoveIcon kind="armor" /> BLOCKS <MoveIcon kind="sword" />
         </div>
-        <Link href="/me?badges=1" className="btn btn-sm">EDIT LINEUP →</Link>
       </div>
-      {list.length === 0 ? <div className="empty">NO HISTORIKALS YET</div> : <HistorikalCollection list={list} lineup={lineup} />}
+      {list.length === 0 ? <div className="empty">NO HISTORIKALS YET</div> : <HistorikalCollection list={list} />}
     </div>
   );
 }
