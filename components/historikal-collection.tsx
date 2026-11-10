@@ -27,8 +27,9 @@ export function FilterRow({ rarities, count, rar, setRar, type, setType, ring = 
   ring?: string;
 }) {
   const line = "linear-gradient(90deg, #e0398a, #9184d9 52%, #4c7df0)";
+  // Pinned to the top of whatever scrolls, so the list goes by under it.
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+    <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", position: "sticky", top: 0, zIndex: 2, background: ring, paddingBottom: 4 }}>
       <div role="group" aria-label="Rarity" style={{ display: "flex", gap: 6, alignItems: "center" }}>
         {rarities.map((r) => {
           const on = rar === r;
@@ -87,7 +88,7 @@ export function HistorikalCollection({ list, ring, drag, inLineup, onOpen }: {
           return (
             <li key={h.id}>
               <button type="button" onClick={() => (onOpen ?? setCard)(h)} aria-label={`${h.name}: open its card${drag ? "; drag its picture into your lineup" : ""}`} style={{ width: "100%", border: 0, background: "none", color: "inherit", cursor: "pointer", padding: "4px 0", display: "flex", alignItems: "center", gap: 12, textAlign: "left", opacity: inLineup?.(h) ? 0.4 : 1 }}>
-                <span {...(drag ? drag(h) : {})} style={drag ? { touchAction: "none", userSelect: "none", WebkitUserSelect: "none", cursor: "grab", lineHeight: 0 } : { lineHeight: 0 }}>
+                <span {...(drag ? drag(h) : {})} style={drag ? { touchAction: "none", userSelect: "none", WebkitUserSelect: "none", WebkitTouchCallout: "none", cursor: "grab", lineHeight: 0 } : { lineHeight: 0 }}>
                   <Creature slug={h.slug} el={h.types[0]} size={56} ko={h.hp <= 0} />
                 </span>
                 <span style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 7 }}>

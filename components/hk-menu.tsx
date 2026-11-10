@@ -56,28 +56,44 @@ export function HkMenu({ shown, tradable, items, onClose }: {
   };
   const takeOff = (slot: number) => { const next = [...lineup]; next[slot] = null; save(next); };
 
-  // Drag: press and move picks a creature up; let go over a slot drops it there.
-  const press = useRef<{ key: string; from: number | "grid"; x: number; y: number; dragging: boolean } | null>(null);
+  // Drag: hold a creature (a third of a second, still) to pick it up; let go over a slot to drop it there.
+  // A tap opens its card and a quick swipe scrolls, as they would anywhere.
+  const press = useRef<{ key: string; from: number | "grid"; x: number; y: number; dragging: boolean; timer: ReturnType<typeof setTimeout> | null } | null>(null);
   const [ghost, setGhost] = useState<{ b: ShownBadge; x: number; y: number } | null>(null);
   const handlers = (b: ShownBadge, from: number | "grid") => ({
-    onPointerDown: (e: React.PointerEvent) => { press.current = { key: b.key, from, x: e.clientX, y: e.clientY, dragging: false }; },
+    onPointerDown: (e: React.PointerEvent) => {
+      const el = e.currentTarget as HTMLElement;
+      const id = e.pointerId;
+      const p = { key: b.key, from, x: e.clientX, y: e.clientY, dragging: false, timer: null as ReturnType<typeof setTimeout> | null };
+      p.timer = setTimeout(() => {
+        if (press.current !== p) return;
+        p.dragging = true;
+        el.setPointerCapture?.(id);
+        try { navigator.vibrate?.(12); } catch { /* no buzz, no matter */ }
+        setGhost({ b, x: p.x, y: p.y });
+      }, 320);
+      press.current = p;
+    },
     onPointerMove: (e: React.PointerEvent) => {
       const p = press.current;
       if (!p) return;
-      if (!p.dragging && Math.hypot(e.clientX - p.x, e.clientY - p.y) > 6) { p.dragging = true; (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId); }
-      if (p.dragging) setGhost({ b, x: e.clientX, y: e.clientY });
+      if (p.dragging) { setGhost({ b, x: e.clientX, y: e.clientY }); return; }
+      // Moved before the hold was up: a scroll, not a drag.
+      if (Math.hypot(e.clientX - p.x, e.clientY - p.y) > 8) { if (p.timer) clearTimeout(p.timer); press.current = null; }
     },
     onPointerUp: (e: React.PointerEvent) => {
       const p = press.current; press.current = null; setGhost(null);
       if (!p) return;
+      if (p.timer) clearTimeout(p.timer);
       if (!p.dragging) return;   // a tap: the button's own click opens the card
       dragged.current = true;
       const hit = document.elementsFromPoint(e.clientX, e.clientY).map((el) => (el as HTMLElement).closest?.("[data-slot]") as HTMLElement | null).find(Boolean);
       if (hit) place(p.key, Number(hit.dataset.slot));
       else if (p.from !== "grid") takeOff(p.from);
     },
-    onPointerCancel: () => { press.current = null; setGhost(null); },
+    onPointerCancel: () => { const p = press.current; if (p?.timer) clearTimeout(p.timer); press.current = null; setGhost(null); },
     onClickCapture: (e: React.MouseEvent) => { if (dragged.current) { dragged.current = false; e.preventDefault(); e.stopPropagation(); } },
+    onContextMenu: (e: React.MouseEvent) => e.preventDefault(),
     onDragStart: (e: React.DragEvent) => e.preventDefault(),
   });
   const dragged = useRef(false);
@@ -103,7 +119,7 @@ export function HkMenu({ shown, tradable, items, onClose }: {
         {/* On top in both views: the lineup. In MY HISTORIKALS the slots take a drop. */}
         <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "12px 14px 4px" }}>
           <span className="px" style={{ fontSize: 10, color: "#e0398a", letterSpacing: ".06em", display: "inline-flex", alignItems: "center", gap: 5 }}>
-            {view === "all" ? <>DRAG &amp; DROP <TradeIcon size={12} /> TO ALTER LINEUP</> : "YOUR LINEUP"}
+            {view === "all" ? <>TAP FOR A CARD · HOLD &amp; DROP <TradeIcon size={12} /> TO ALTER LINEUP</> : "YOUR LINEUP"}
           </span>
           <span style={{ flex: 1 }} />
           {view === "all" ? (
