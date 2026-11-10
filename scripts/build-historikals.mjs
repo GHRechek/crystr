@@ -33,7 +33,7 @@ const FROM_OLD = { fire: "fire", water: "tide", grass: "nature", rock: "ward", d
 const TO_OLD = { fire: "fire", tide: "water", nature: "grass", ward: "rock", feral: "rock", dark: "dark", spirit: "light" };
 const TYPES = ["fire", "tide", "nature", "ward", "feral", "dark", "spirit"];
 const HEARTS = { common: 2, uncommon: 3, rare: 3, epic: 4, legendary: 5 };
-const MOVE_COUNT = { common: 2, uncommon: 2, rare: 3, epic: 3, legendary: 3 };
+const MOVE_COUNT = { common: 2, uncommon: 3, rare: 3, epic: 4, legendary: 4 };
 
 // Moves by type and kind. A creature's moves come from its types: its first type leads.
 const POOL = {
@@ -54,8 +54,21 @@ function makeMoves(slug, types, rarity) {
     const k2 = s % 2 ? "spell" : "armor";
     return [{ name: pick(POOL[a].sword, s >>> 3), kind: "sword" }, { name: pick(POOL[b][k2], s >>> 7), kind: k2 }];
   }
-  return [{ name: pick(POOL[a].sword, s >>> 3), kind: "sword" }, { name: pick(POOL[b].spell, s >>> 7), kind: "spell" }, { name: pick(POOL[a].armor, s >>> 11), kind: "armor" }];
+  const three = [{ name: pick(POOL[a].sword, s >>> 3), kind: "sword" }, { name: pick(POOL[b].spell, s >>> 7), kind: "spell" }, { name: pick(POOL[a].armor, s >>> 11), kind: "armor" }];
+  if (MOVE_COUNT[rarity] === 3) return three;
+  // Four: a combination, sword & armor or spell & armor, in the first type.
+  const combo = s % 2 ? "spell+armor" : "sword+armor";
+  return [...three, { name: pick(COMBO[a][combo], s >>> 13), kind: combo }];
 }
+const COMBO = {
+  fire: { "sword+armor": ["Cinder Rampart", "Blazing Bastion", "Flame Vanguard"], "spell+armor": ["Pyre Ward", "Ember Bulwark", "Heat Ward Hex"] },
+  tide: { "sword+armor": ["Tidal Bastion", "Wave Rampart", "Brine Vanguard"], "spell+armor": ["Frost Ward", "Mist Bulwark", "Tide Ward Hex"] },
+  nature: { "sword+armor": ["Bramble Bastion", "Root Rampart", "Thorn Vanguard"], "spell+armor": ["Bloom Ward", "Moss Bulwark", "Spore Ward Hex"] },
+  ward: { "sword+armor": ["Stone Bastion", "Iron Rampart", "Granite Vanguard"], "spell+armor": ["Rune Ward", "Rock Bulwark", "Stone Ward Hex"] },
+  feral: { "sword+armor": ["Fang Bastion", "Hide Rampart", "Tusk Vanguard"], "spell+armor": ["Howl Ward", "Den Bulwark", "Roar Ward Hex"] },
+  dark: { "sword+armor": ["Shadow Bastion", "Grave Rampart", "Night Vanguard"], "spell+armor": ["Hex Ward", "Gloom Bulwark", "Curse Ward Hex"] },
+  spirit: { "sword+armor": ["Halo Bastion", "Aegis Rampart", "Radiant Vanguard"], "spell+armor": ["Glow Ward", "Sanctuary Bulwark", "Bless Ward Hex"] },
+};
 
 const slugify = (n) => n.toLowerCase().replace(/['’.]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 const oldBySlug = new Map(legacy.map((h) => [h.slug, h]));
@@ -90,7 +103,7 @@ const ts = `import { spriteUrl } from "@/lib/sprites";
 export type Rarity = "common" | "uncommon" | "rare" | "epic" | "legendary";
 /** The seven types. */
 export type Element = "fire" | "tide" | "nature" | "ward" | "feral" | "dark" | "spirit";
-export type MoveKind = "sword" | "spell" | "armor";
+export type MoveKind = "sword" | "spell" | "armor" | "sword+armor" | "spell+armor";
 export type Move = { name: string; kind: MoveKind };
 /** \`types\`: one or two, the first leads. \`rnd\`: each copy rolls its first type when it's found. \`shift\`: its
  *  first type changes after every battle. \`hover\`: it flies or floats, so it bobs. \`retired\`: from before the recast; kept by whoever holds one, never found. */
@@ -106,7 +119,7 @@ export const TYPES: Element[] = ${q(TYPES)};
 export const ELEMENT_COLOR: Record<Element, string> = { fire: "#ff6a3d", tide: "#3fa9f5", nature: "#6fa86a", ward: "#a7abb6", feral: "#b0865f", dark: "#8a6fd9", spirit: "#f2e2a2" };
 
 /** Sword cuts Spell, Spell breaks Armor, Armor blocks Sword. */
-export const BEATS: Record<MoveKind, MoveKind> = { sword: "spell", spell: "armor", armor: "sword" };
+export const BEATS: Record<"sword" | "spell" | "armor", "sword" | "spell" | "armor"> = { sword: "spell", spell: "armor", armor: "sword" };
 
 /** What each type hits hard (a winning hit takes two hearts). Every type beats two and loses to two. */
 export const SUPER: Record<Element, Element[]> = { fire: ["nature", "dark"], tide: ["fire", "ward"], nature: ["tide", "feral"], ward: ["fire", "spirit"], feral: ["ward", "tide"], dark: ["spirit", "nature"], spirit: ["dark", "feral"] };

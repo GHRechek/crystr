@@ -180,7 +180,7 @@ const HEART = [".##.##.", "#######", "#######", ".#####.", "..###..", "...#..."]
 const HEART_LOST = [".##.##.", "#..#..#", "#.....#", ".#...#.", "..#.#..", "...#..."];
 /** Half a heart: the left half full, the right an outline. */
 const HEART_HALF = [".##.##.", "####..#", "####..#", ".###.#.", "..##...", "...#..."];
-const MOVE: Record<MoveKind, string[]> = {
+const MOVE: Record<"sword" | "spell" | "armor", string[]> = {
   sword: ["......#", ".....##", "....##.", "#..##..", ".###...", "..#....", ".#.#..."],
   spell: ["...#...", "...#...", "..###..", "#######", "..###..", "...#...", "...#..."],
   armor: ["#######", "#######", "#######", "#######", ".#####.", "..###..", "...#..."],
@@ -200,9 +200,11 @@ const TRADE_ARROWS = ["......#..", ".......#.", "#########", ".......#.", ".....
 const UNDO = ["..#.......", ".##.......", "#######...", ".##....#..", "..#.....#.", ".........#", ".........#", "........#.", "...#####.."];
 const SWAP = ["...#...", "....#..", "#######", "....#..", "..#.#..", ".#.....", "#######"];
 
-/** A move's kind as its little pixel icon: sword, spell or armor. */
+/** A move's kind as its little pixel icon: sword, spell or armor; a combination shows both, side by side. */
 export function MoveIcon({ kind, k = 2, fill = "#fff" }: { kind: MoveKind; k?: number; fill?: string }) {
-  return <Pix rows={MOVE[kind]} k={k} fill={fill} />;
+  const parts = kind.split("+") as ("sword" | "spell" | "armor")[];
+  if (parts.length === 1) return <Pix rows={MOVE[parts[0]]} k={k} fill={fill} />;
+  return <span style={{ display: "inline-flex", gap: Math.max(1, Math.round(k)), alignItems: "center" }}>{parts.map((p) => <Pix key={p} rows={MOVE[p]} k={k} fill={fill} />)}</span>;
 }
 
 /** One type's icon, in its colour. */
@@ -655,7 +657,7 @@ export function BattleScreen({ v, act, close }: { v: View; act: (a: Record<strin
               <div className="en-moves">
                 {(me.moves ?? []).map((m, i) => (
                   <button key={i} type="button" className={`px en-move${v.move?.m === i ? " on" : ""}`} disabled={!!v.move} onClick={() => { playClick(); act({ do: "move", m: i }); }} aria-label={`${m.name}, ${m.kind}`}>
-                    <Pix rows={MOVE[m.kind]} k={3} fill="#fff" /><span>{up(m.name)}</span>
+                    <MoveIcon kind={m.kind} k={3} /><span>{up(m.name)}</span>
                   </button>
                 ))}
                 {bench.length ? (

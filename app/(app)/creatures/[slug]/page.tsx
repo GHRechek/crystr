@@ -23,7 +23,7 @@ export default async function CreatureEditPage({ params }: { params: Promise<{ s
   const { data } = await supabase.rpc("cr_creature_holders", { p_slug: slug });
   const holders = (Array.isArray(data) ? data : []) as Holder[];
   const others = HISTORIKALS.filter((x) => !x.retired && x.slug !== slug).sort((a, b) => a.name.localeCompare(b.name));
-  const moves = [0, 1, 2].map((i) => h.moves[i]);
+  const moves = [0, 1, 2, 3].map((i) => h.moves[i]);
 
   return (
     <div className="pad" style={{ gap: 14 }}>
@@ -77,14 +77,16 @@ export default async function CreatureEditPage({ params }: { params: Promise<{ s
           </div>
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-          <span className="px" style={label}>MOVES · COMMON AND UNCOMMON USE THE FIRST TWO, RARE AND UP ALL THREE</span>
+          <span className="px" style={label}>MOVES · COMMONS USE TWO, UNCOMMONS AND RARES THREE, EPICS AND MYTHICS ALL FOUR (THE FOURTH A COMBINATION)</span>
           {moves.map((m, i) => (
             <div key={i} style={row}>
-              <input name={`move${i}`} className="input" defaultValue={m?.name ?? ""} maxLength={24} aria-label={`Move ${i + 1} name`} placeholder={i === 2 ? "Third move (rare and up)" : "Move name"} style={{ flex: 2, minWidth: 0 }} />
-              <select name={`kind${i}`} className="input" defaultValue={m?.kind ?? (["sword", "spell", "armor"][i])} aria-label={`Move ${i + 1} kind`} style={{ flex: 1 }}>
+              <input name={`move${i}`} className="input" defaultValue={m?.name ?? ""} maxLength={24} aria-label={`Move ${i + 1} name`} placeholder={i === 3 ? "Fourth move (epic and mythic)" : i === 2 ? "Third move (uncommon and up)" : "Move name"} style={{ flex: 2, minWidth: 0 }} />
+              <select name={`kind${i}`} className="input" defaultValue={m?.kind ?? (["sword", "spell", "armor", "sword+armor"][i])} aria-label={`Move ${i + 1} kind`} style={{ flex: 1 }}>
                 <option value="sword">SWORD</option>
                 <option value="spell">SPELL</option>
                 <option value="armor">ARMOR</option>
+                <option value="sword+armor">SWORD & ARMOR</option>
+                <option value="spell+armor">SPELL & ARMOR</option>
               </select>
             </div>
           ))}

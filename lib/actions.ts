@@ -1326,15 +1326,15 @@ const EDIT_WHY: Record<string, string> = {
   bad_name: "A name needs one to forty letters, and no | ; or :.",
   bad_rarity: "That isn't a rarity.",
   bad_types: "One or two types, and two different ones.",
-  bad_moves: "Commons and uncommons have two moves; rares and up have three. Each needs a name (up to 24 letters, no | ; or :) and a kind.",
+  bad_moves: "Commons have two moves, uncommons and rares three, epics and mythics four. Each needs a name (up to 24 letters, no | ; or :) and a kind.",
 };
 
 /** The creature editor: save one creature's name, rarity, types, moves and flags. */
 export async function saveCreature(fd: FormData) {
   const slug = String(fd.get("slug") ?? "");
   const rarity = String(fd.get("rarity") ?? "");
-  const n = rarity === "common" || rarity === "uncommon" ? 2 : 3;
-  const moves = [0, 1, 2].slice(0, n).map((i) => ({ name: String(fd.get(`move${i}`) ?? "").trim(), kind: String(fd.get(`kind${i}`) ?? "") }));
+  const n = rarity === "common" ? 2 : rarity === "uncommon" || rarity === "rare" ? 3 : 4;
+  const moves = [0, 1, 2, 3].slice(0, n).map((i) => ({ name: String(fd.get(`move${i}`) ?? "").trim(), kind: String(fd.get(`kind${i}`) ?? "") }));
   const types = [String(fd.get("type1") ?? ""), String(fd.get("type2") ?? "")].filter(Boolean);
   // Its first type before the change: a new one re-dresses the picture (below).
   const supabase = createClient();
