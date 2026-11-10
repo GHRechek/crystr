@@ -347,7 +347,7 @@ pink-jelly|SLIME|common|tide||2|1345|1|0|Splash:spell;Wobble:armor
 googly-slime|GOOGLY SLIME|common|tide||2|1346|1|0|Brine Bite:sword;Tidal Wave:spell
 cube-slime|CUBE SLIME|uncommon|fire|ward|3|1347|1|0|Cinder Bite:sword;Stone Hex:spell
 chef-slime|CHEF SLIME|epic|tide|feral|4|1348|1|0|Splash Jab:sword;Frenzy:spell;Mist Veil:armor
-batwing-slime|BATWING SLIME|uncommon|tide|dark|3|1349|1|0|Wave Cut:sword;Cloak:armor
+batwing-slime|BATWING SLIME|uncommon|dark|tide|3|1349|1|0|Soul Bite:sword;Tide Pool:armor
 daytona|DAYTONA|legendary|tide|dark|4|1350|0|0|Undertow:sword;Hex:spell;Shell Up:armor
 glass-slime|GLASS SLIME|common|spirit|ward|2|1351|0|0|Glint:sword;Bulwark:armor
 swamp-ooze|SWAMP OOZE|common|tide|nature|2|1352|0|0|Undertow:sword;Thorn Rain:spell
