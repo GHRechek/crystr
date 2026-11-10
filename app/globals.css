@@ -1957,12 +1957,8 @@ select.input { border: 0; }
 .en-tag-them { top: calc(24% + 56px); }
 .en-tag-fme { bottom: calc(104px + env(safe-area-inset-bottom)); }
 .en-seen { font-size: 9px; color: #b9aee0; text-shadow: 2px 2px 0 #160b2e; }
-.en-pips { display: flex; gap: 6px; margin-top: 2px; }
-.en-pips i { width: 10px; height: 10px; background: #fff; box-shadow: 2px 2px 0 #0a0616; }
-.en-pips i.ko { background: #5a3a6a; } .en-pips i.cur { outline: 2px solid #e0398a; outline-offset: 1px; }
-.en-heads { display: flex; gap: 6px; }
-.en-heads img { width: 28px; height: 28px; image-rendering: pixelated; }
-.en-heads img.cur { outline: 2px solid #e0398a; outline-offset: 1px; }
+/* Their ones still to come: silhouettes in a row above the one that is up. */
+.en-left { position: absolute; left: 0; right: 0; top: calc(24% - 51px - 44px); z-index: 3; display: flex; justify-content: center; gap: 10px; opacity: .85; }
 .en-say-big { position: absolute; left: 0; right: 0; top: 47%; z-index: 5; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; font-size: 16px; text-shadow: 3px 3px 0 #160b2e; pointer-events: none; animation: pix-in 200ms steps(4) both; }
 .en-say-big .en-vs { font-size: 11px; color: #d2cefd; } .en-say-big .en-vs i { font-style: normal; color: #e0398a; }
 .en-say-big b { font-weight: 400; color: #e0398a; }

@@ -23,7 +23,7 @@ type View = {
   mine?: HK[]; my_pick?: HK | null; their_pick?: HK | null; got?: HK | null;
   team?: HK[]; ready?: boolean; their_ready?: boolean; pick?: number | null; their_picked?: boolean; lock?: boolean; their_lock?: boolean;
   swapped?: boolean; turn?: number; quiet?: number; move?: { m?: number; swap?: number } | null; their_moved?: boolean; need?: boolean; their_need?: boolean;
-  shadow?: string; left?: number; their_pips?: { ko: boolean; cur: boolean }[]; theirs?: HK; last?: { turn: number; line: string; extra: string; a: Side; b: Side } | null;
+  shadow?: string; left?: number; their_pips?: { ko: boolean; cur: boolean; slug?: string | null }[]; theirs?: HK; last?: { turn: number; line: string; extra: string; a: Side; b: Side } | null;
   alive?: number; their_alive?: number;
   epic?: "token" | "historikal" | null; ask?: boolean; token_ok?: boolean; my_token?: unknown; want_epic?: boolean; lineup_ok?: boolean; lineup?: number[];
   stake?: { token?: boolean; item?: number } | null; their_stake?: { token?: unknown; item?: HK } | null;
@@ -599,6 +599,12 @@ export function BattleScreen({ v, act, close }: { v: View; act: (a: Record<strin
       {fighting && me && v.theirs ? (
         <>
           <div className="px en-q">{v.stage === "end" ? "" : v.stage === "replace" ? "KNOCKED OUT!" : `TURN ${v.turn}`}</div>
+          {/* What they have left to send out, as silhouettes, above the one that is up. */}
+          {(v.their_pips ?? []).some((p) => p.slug) ? (
+            <div className="en-left" aria-label="Still to come">
+              {(v.their_pips ?? []).filter((p) => p.slug).map((p, i) => <Creature key={i} slug={p.slug!} size={34} shadow />)}
+            </div>
+          ) : null}
           <div className={`en-them${(v.theirs.hp ?? 0) <= 0 ? " down" : ""}`} style={lunge ? { transform: "translateY(110px)" } : undefined}>
             {theirMythic && entrance === "fade" ? null : theirMythic && entrance === "dark" ? <Creature slug={v.theirs.slug} size={102} shadow aura /> : <Creature slug={v.theirs.slug} el={v.theirs.types?.[0]} size={102} ko={(v.theirs.hp ?? 0) <= 0} />}
           </div>
@@ -608,7 +614,6 @@ export function BattleScreen({ v, act, close }: { v: View; act: (a: Record<strin
             {theirIsMythic ? (entrance === "shown" || !theirMythic ? <BossBar hp={v.theirs.hp ?? v.theirs.hearts} hearts={v.theirs.hearts} /> : <span className="en-bossbar" aria-hidden />)
               : <Stats h={v.theirs} hp={v.theirs.hp} only="hearts" />}
             <span className="px en-seen">{v.theirs.seen?.length ? `SEEN: ${v.theirs.seen.map(up).join(" · ")}` : "MOVES: ???"}</span>
-            <span className="en-pips">{(v.their_pips ?? []).map((p, i) => <i key={i} className={`${p.ko ? "ko" : ""}${p.cur ? " cur" : ""}`} />)}</span>
           </div>
           {v.last && v.stage !== "end" ? (
             <div className="px en-say-big" key={v.last.turn}>
@@ -620,11 +625,6 @@ export function BattleScreen({ v, act, close }: { v: View; act: (a: Record<strin
           <div className="en-tag en-tag-fme">
             <span className="px en-name">{up(me.name)}</span>
             <Stats h={me} hp={me.hp} />
-            <span className="en-heads">{(v.team ?? []).map((h) => (
-              // eslint-disable-next-line @next/next/no-img-element
-              (h.hp ?? 0) <= 0 ? <span key={h.id} className="en-headko" title={h.name}><Creature slug={h.slug} el={h.types?.[0]} size={28} ko /></span>
-                : <img key={h.id} src={historikalSrc(h.slug, 1, h.types?.[0])} alt={h.name} className={h.id === v.pick ? "cur" : ""} />
-            ))}</span>
           </div>
 
           {v.stage === "end" ? (
