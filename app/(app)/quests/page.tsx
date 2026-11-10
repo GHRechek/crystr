@@ -77,7 +77,7 @@ export default async function QuestsPage(props: { searchParams: Promise<{ pick?:
           all={goalGrid(badges, progress)}
         />
       ) : (
-        <WorkingOn editable heading="FIRST STEPS" total={steps.length} items={steps} />
+        <WorkingOn editable isWitch={profile.is_witch} heading="FIRST STEPS" total={steps.length} items={steps} />
       )}
 
       {waitingCount ? (

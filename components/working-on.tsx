@@ -122,7 +122,7 @@ export function WorkingOn({ items, all, editable, person, finished, isWitch, ope
             // On someone else's page the tooltip only explains: scanning is for your own quests.
             return (
               <li key={b.key}>
-                <QuestRow b={b} scan={scan} face={face} rest={rest} />
+                <QuestRow b={b} scan={scan} face={face} rest={rest} witch={!!isWitch && !!editable && !person} />
               </li>
             );
           })}
