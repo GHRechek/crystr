@@ -54,3 +54,96 @@ export async function portraitOverrides(): Promise<Map<string, Uint8ClampedArray
   );
   return out;
 }
+
+// ------------------------------------------------------------------ edits made by the app itself
+
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import { ELEMENT_COLOR, type Element } from "@/lib/historikals";
+
+/** Save a PNG over a shipped sprite, as the witch would from the editor: into the bucket, and onto the list. */
+export async function saveSpriteOverride(supabase: SupabaseClient, path: string, png: Buffer, by: string): Promise<string | null> {
+  const up = await supabase.storage.from("sprites").upload(path, png, { upsert: true, contentType: "image/png", cacheControl: "60" });
+  if (up.error) return up.error.message;
+  const row = await supabase.from("sprite_overrides").upsert({ path, updated_at: new Date().toISOString(), updated_by: by });
+  return row.error ? row.error.message : null;
+}
+
+/** The sprite as it stands: the edit if there is one, else the shipped file. */
+async function currentSprite(supabase: SupabaseClient, path: string): Promise<PNG | null> {
+  try {
+    const { data: over } = await supabase.from("sprite_overrides").select("updated_at").eq("path", path).maybeSingle();
+    if (over) {
+      const r = await fetch(`${SPRITE_BUCKET_URL}${path}?v=${Date.parse(over.updated_at) || 0}`, { cache: "no-store" });
+      if (r.ok) return PNG.sync.read(Buffer.from(await r.arrayBuffer()));
+    }
+    return PNG.sync.read(readFileSync(join(process.cwd(), "public", path)));
+  } catch {
+    return null;
+  }
+}
+
+function rgbToHsv(r: number, g: number, b: number): [number, number, number] {
+  r /= 255; g /= 255; b /= 255;
+  const max = Math.max(r, g, b), min = Math.min(r, g, b), d = max - min;
+  let h = 0;
+  if (d) h = max === r ? ((g - b) / d) % 6 : max === g ? (b - r) / d + 2 : (r - g) / d + 4;
+  h = (h * 60 + 360) % 360;
+  return [h, max ? d / max : 0, max];
+}
+function hsvToRgb(h: number, s: number, v: number): [number, number, number] {
+  const c = v * s, x = c * (1 - Math.abs(((h / 60) % 2) - 1)), m = v - c;
+  const [r, g, b] = h < 60 ? [c, x, 0] : h < 120 ? [x, c, 0] : h < 180 ? [0, c, x] : h < 240 ? [0, x, c] : h < 300 ? [x, 0, c] : [c, 0, x];
+  return [Math.round((r + m) * 255), Math.round((g + m) * 255), Math.round((b + m) * 255)];
+}
+const hueOf = (hex: string) => rgbToHsv(parseInt(hex.slice(1, 3), 16), parseInt(hex.slice(3, 5), 16), parseInt(hex.slice(5, 7), 16))[0];
+
+/** Whether a pixel wears the type's colour. Ward is grey and Spirit pale, so they go by want of colour rather than hue. */
+function wears(type: Element, h: number, s: number, v: number): boolean {
+  if (v < 0.08) return false;
+  if (type === "ward") return s < 0.2 && v >= 0.25;
+  if (type === "spirit") return s < 0.4 && v >= 0.6;
+  if (s < 0.15) return false;
+  const d = Math.abs(h - hueOf(ELEMENT_COLOR[type]));
+  return Math.min(d, 360 - d) <= (type === "feral" ? 18 : 32);
+}
+/** The same pixel in the new type's colour, keeping its depth. */
+function dress(type: Element, h: number, s: number, v: number): [number, number, number] {
+  if (type === "ward") return hsvToRgb(220, Math.min(s, 0.08), v);
+  if (type === "spirit") return hsvToRgb(48, Math.min(Math.max(s, 0.2), 0.4), Math.max(v, 0.55));
+  // Its hue, with the colour no stronger than the type's own swatch allows: a fire orange made green
+  // would otherwise glow neon.
+  const [th, ts] = rgbToHsv(parseInt(ELEMENT_COLOR[type].slice(1, 3), 16), parseInt(ELEMENT_COLOR[type].slice(3, 5), 16), parseInt(ELEMENT_COLOR[type].slice(5, 7), 16));
+  return hsvToRgb(th, Math.min(Math.max(s, 0.25), Math.max(0.45, ts + 0.15)), v);
+}
+
+/** Every pixel that wears the old type's colour takes the new one, at its own depth. */
+export function redress(png: PNG, from: Element, to: Element): number {
+  const d = png.data;
+  let n = 0;
+  for (let i = 0; i < d.length; i += 4) {
+    if (!d[i + 3]) continue;
+    const [h, s, v] = rgbToHsv(d[i], d[i + 1], d[i + 2]);
+    if (!wears(from, h, s, v)) continue;
+    const [r, g, b] = dress(to, h, s, v);
+    d[i] = r; d[i + 1] = g; d[i + 2] = b; n++;
+  }
+  return n;
+}
+
+/** The creature's pictures (both frames) re-dressed from one first type to another: every pixel that wore the
+ *  old type's colour takes the new one, at its own depth. A rough cut, saved as an edit a witch can touch up
+ *  or reset in the sprite editor. Creatures that roll their type have a picture per type already. */
+export async function retintCreature(supabase: SupabaseClient, slug: string, from: Element, to: Element, by: string): Promise<string | null> {
+  if (from === to) return null;
+  for (const file of [`${slug}.png`, `${slug}-2.png`]) {
+    const path = `creatures/${file}`;
+    const png = await currentSprite(supabase, path);
+    if (!png) continue;
+    redress(png, from, to);
+    const why = await saveSpriteOverride(supabase, path, PNG.sync.write(png), by);
+    if (why) return why;
+  }
+  return null;
+}

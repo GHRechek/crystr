@@ -3,6 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { cookies, headers } from "next/headers";
+import { retintCreature } from "@/lib/sprites.server";
+import type { Element as HkElement } from "@/lib/historikals";
 import { createClient } from "@/lib/supabase/server";
 import { setFlash, EDGE } from "@/lib/flash";
 import { TERMS_VERSION } from "@/lib/terms";
@@ -1334,12 +1336,26 @@ export async function saveCreature(fd: FormData) {
   const n = rarity === "common" || rarity === "uncommon" ? 2 : 3;
   const moves = [0, 1, 2].slice(0, n).map((i) => ({ name: String(fd.get(`move${i}`) ?? "").trim(), kind: String(fd.get(`kind${i}`) ?? "") }));
   const types = [String(fd.get("type1") ?? ""), String(fd.get("type2") ?? "")].filter(Boolean);
+  // Its first type before the change: a new one re-dresses the picture (below).
+  const supabase = createClient();
+  const { data: was } = await supabase.from("badge_kinds").select("types, rnd").eq("slug", slug).maybeSingle();
   const r = await call("cr_edit_creature", {
     p_slug: slug,
     p: { name: String(fd.get("name") ?? ""), rarity, hearts: String(fd.get("hearts") ?? ""), types, moves, droppable: fd.get("droppable") === "on", hover: fd.get("hover") === "on", rnd: fd.get("rnd") === "on", shift: fd.get("shift") === "on" },
   });
   if (!r.ok) await setFlash("NOT SAVED", EDIT_WHY[r.code ?? ""] ?? "Something went wrong. Try again.", EDGE.purple);
-  else await setFlash("SAVED", "The creature is changed everywhere.", EDGE.blue);
+  else {
+    // A new first type: the picture takes its colour (a rough cut, in the sprite editor to touch up or reset).
+    const before = (was?.types as string[] | null)?.[0];
+    const after = types[0];
+    let note = "The creature is changed everywhere.";
+    if (before && after && before !== after && !was?.rnd && fd.get("rnd") !== "on") {
+      const { data: { user } } = await supabase.auth.getUser();
+      const why = user ? await retintCreature(supabase, slug, before as HkElement, after as HkElement, user.id) : "no user";
+      note = why ? `The creature is changed everywhere, but its picture kept its colours (${why}).` : "The creature is changed everywhere, and its picture wears the new type. Touch it up in the sprite editor if it needs it.";
+    }
+    await setFlash("SAVED", note, EDGE.blue);
+  }
   revalidatePath("/", "layout");
   redirect(`/creatures/${slug}`);
 }

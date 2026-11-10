@@ -9,6 +9,8 @@ const nextConfig = {
     // The sprite editor reads the shipped cells and creature pictures, and previews a face with a cell as drawn.
     "/api/sprite": ["./assets/portrait/**/*.png", "./public/creatures/*.png"],
     "/api/sprite/preview": ["./assets/portrait/**/*.png"],
+    // The creature editor re-dresses a creature's pictures when its first type changes.
+    "/creatures/[slug]": ["./public/creatures/*.png"],
   },
 
   // Nobody else gets to put this app inside their own page: a framed copy can
