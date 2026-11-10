@@ -45,7 +45,7 @@ export function FilterRow({ rarities, count, rar, setRar, type, setType, ring = 
         })}
       </div>
       <span aria-hidden style={{ width: 1, alignSelf: "stretch", margin: "4px 2px", background: "rgba(255,255,255,.25)" }} />
-      <div role="group" aria-label="Type" style={{ display: "grid", gridTemplateColumns: "repeat(4, auto)", gap: "0 2px", alignItems: "center", justifyItems: "center" }}>
+      <div role="group" aria-label="Type" style={{ display: "flex", gap: 2, alignItems: "center" }}>
         {TYPES.map((t) => {
           const on = type === t;
           return (
@@ -66,7 +66,7 @@ export function HistorikalCollection({ list, ring, drag, inLineup, onOpen }: {
   /** Pointer handlers that let a row's creature be dragged (into a lineup slot, in the Historikals panel).
    *  Only the creature takes them, so the rest of the row still scrolls the list on a touch screen. */
   drag?: (h: HeldHk) => React.HTMLAttributes<HTMLElement>;
-  /** Rows already in the lineup sit dim. */
+  /** Rows already in the lineup are left out of the list. */
   inLineup?: (h: HeldHk) => boolean;
   /** Opens the card somewhere else (the panel keeps it above itself); otherwise this shows it. */
   onOpen?: (h: HeldHk) => void;
@@ -76,7 +76,7 @@ export function HistorikalCollection({ list, ring, drag, inLineup, onOpen }: {
   const [type, setType] = useState<Element | null>(null);
   const [card, setCard] = useState<HeldHk | null>(null);
   const rest = list
-    .filter((h) => (!only || h.rarity === only) && (!type || h.types.includes(type)))
+    .filter((h) => !inLineup?.(h) && (!only || h.rarity === only) && (!type || h.types.includes(type)))
     .sort((a, b) => RARITIES.indexOf(a.rarity) - RARITIES.indexOf(b.rarity) || a.name.localeCompare(b.name));
   const count = (r: Rarity) => list.filter((h) => h.rarity === r).length;
 
@@ -88,7 +88,7 @@ export function HistorikalCollection({ list, ring, drag, inLineup, onOpen }: {
         {rest.map((h) => {
           return (
             <li key={h.id}>
-              <button type="button" onClick={() => (onOpen ?? setCard)(h)} aria-label={`${h.name}: open its card${drag ? "; drag its picture into your lineup" : ""}`} style={{ width: "100%", border: 0, background: "none", color: "inherit", cursor: "pointer", padding: "4px 0", display: "flex", alignItems: "center", gap: 12, textAlign: "left", opacity: inLineup?.(h) ? 0.4 : 1 }}>
+              <button type="button" onClick={() => (onOpen ?? setCard)(h)} aria-label={`${h.name}: open its card${drag ? "; drag its picture into your lineup" : ""}`} style={{ width: "100%", border: 0, background: "none", color: "inherit", cursor: "pointer", padding: "4px 0", display: "flex", alignItems: "center", gap: 12, textAlign: "left" }}>
                 <span {...(drag ? drag(h) : {})} style={drag ? { touchAction: "none", userSelect: "none", WebkitUserSelect: "none", WebkitTouchCallout: "none", cursor: "grab", lineHeight: 0 } : { lineHeight: 0 }}>
                   <Creature slug={h.slug} el={h.types[0]} size={56} ko={h.hp <= 0} />
                 </span>
