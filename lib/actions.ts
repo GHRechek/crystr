@@ -228,6 +228,12 @@ export async function submitQuest(fd: FormData) {
   );
   revalidatePath("/well");
   revalidatePath("/");
+  // Someone not yet registered came for mana to read the registry by: straight back to it, with the
+  // mana, rather than through the feed (which they cannot enter yet).
+  const sb = createClient();
+  const { data: { user: u } } = await sb.auth.getUser();
+  const { data: who } = u ? await sb.from("profiles").select("onboarded").eq("id", u.id).single() : { data: null };
+  if (who && who.onboarded === false) redirect("/welcome");
   // Handed in. Offer to show it to the City before heading back.
   redirect(`/well/${slug}/share`);
 }
@@ -525,9 +531,11 @@ export async function acceptTerms(fd: FormData) {
 /** A witch's key scanned from the registry (CONTACT YOUR LOCAL CRYSTR ADMINISTRATOR): it goes in the
  *  cookie the breach reads, as if they'd opened the witch's code with their own camera, and on to the
  *  breach, which checks it's a witch's. A profile scan is a handle; an old override key is a code. */
-export async function scanRegistryKey(key: string): Promise<string | null> {
+export async function scanRegistryKey(key: string, species?: string): Promise<string | null> {
   const jar = await cookies();
   const opts = { path: "/", maxAge: 30 * 60, httpOnly: true, sameSite: "lax" as const };
+  // What they said they are: an undead or planar stays that once let in; anything else is Forsaken.
+  jar.set("crystr.species", species === "undead" || species === "planar" ? species : "", opts);
   if (KEY_PATTERN.test(key)) {
     jar.set(BREACH_COOKIE, key, opts);
   } else if (/^[a-z0-9_.-]{1,40}$/.test(key)) {
@@ -548,7 +556,8 @@ export async function breachRegistry(): Promise<{ ok: boolean; message?: string 
   const code = jar.get(BREACH_COOKIE)?.value ?? "";
   const handle = jar.get("crystr.scan")?.value ?? "";
   if (!KEY_PATTERN.test(code) && !/^[a-z0-9_.-]{1,40}$/.test(handle)) return { ok: false, message: "No key here. Scan it again." };
-  const r = KEY_PATTERN.test(code) ? await call("cr_override_onboard", { p_code: code }) : await call("cr_override_witch", { p_handle: handle });
+  const species = jar.get("crystr.species")?.value || null;
+  const r = KEY_PATTERN.test(code) ? await call("cr_override_onboard", { p_code: code, p_species: species }) : await call("cr_override_witch", { p_handle: handle, p_species: species });
   if (!r.ok) {
     return {
       ok: false,

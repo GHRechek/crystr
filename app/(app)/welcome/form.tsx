@@ -36,10 +36,10 @@ export function WelcomeForm({
   const [scanning, setScanning] = useState(false);
   const [keyProblem, setKeyProblem] = useState<string | null>(null);
   const onKey = useCallback(async (key: string) => {
-    const why = await scanRegistryKey(key);
+    const why = await scanRegistryKey(key, species);
     // Didn't take: back to the form, which says why; tapping again scans again.
     if (why) { setKeyProblem(why); setScanning(false); }
-  }, []);
+  }, [species]);
   const [pending, start] = useTransition();
   const form = useRef<HTMLFormElement>(null);
   const draftKey = `crystr.welcome.${userId}`;
@@ -86,9 +86,9 @@ export function WelcomeForm({
   const hint = { fontSize: 12, lineHeight: 1.5, color: "var(--muted)" } as const;
   const small = { fontSize: 11, lineHeight: 1.5, color: "var(--muted)" } as const;
 
-  // "Other" is not a species the City registers. While it is chosen the form goes haywire:
-  // red, shaking, its words eaten, and the way through is the administrator.
-  const haywire = species === "other";
+  // The Forsaken family (Other, Undead, Planar) is not something the registry can take. While one is
+  // chosen the form goes haywire: red, shaking, its words eaten, and the way through is the administrator.
+  const haywire = species === "other" || species === "undead" || species === "planar";
   const t = (text: string) => (haywire ? corrupt(text, 3) : text);
 
   return (
