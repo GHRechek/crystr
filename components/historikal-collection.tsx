@@ -29,7 +29,7 @@ export function FilterRow({ rarities, count, rar, setRar, type, setType, ring = 
   const line = "linear-gradient(90deg, #e0398a, #9184d9 52%, #4c7df0)";
   // Pinned to the top of whatever scrolls, so the list goes by under it.
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", position: "sticky", top: 0, zIndex: 2, background: ring, paddingBottom: 4 }}>
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 8, position: "sticky", top: 0, zIndex: 2, background: ring, paddingBottom: 4 }}>
       <div role="group" aria-label="Rarity" style={{ display: "flex", gap: 6, alignItems: "center" }}>
         {rarities.map((r) => {
           const on = rar === r;
@@ -44,7 +44,7 @@ export function FilterRow({ rarities, count, rar, setRar, type, setType, ring = 
         })}
       </div>
       <span aria-hidden style={{ width: 1, alignSelf: "stretch", margin: "4px 2px", background: "rgba(255,255,255,.25)" }} />
-      <div role="group" aria-label="Type" style={{ display: "flex", gap: 2, alignItems: "center", flexWrap: "wrap" }}>
+      <div role="group" aria-label="Type" style={{ display: "grid", gridTemplateColumns: "repeat(4, auto)", gap: "0 2px", alignItems: "center", justifyItems: "center" }}>
         {TYPES.map((t) => {
           const on = type === t;
           return (
