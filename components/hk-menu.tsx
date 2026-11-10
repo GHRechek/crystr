@@ -198,8 +198,8 @@ export function HkMenu({ shown, tradable, items, onClose }: {
       {card ? <HistorikalCard hk={{ id: card.id, slug: card.slug, hp: card.hp, types: card.types }} own onClose={() => setCard(null)} /> : null}
       {ghost ? (
         // The picked-up creature rides above the finger, bigger, so you can see it is yours to drop.
-        <div aria-hidden className="hk-lift" style={{ position: "fixed", left: ghost.x - 36, top: ghost.y - 110, zIndex: 60, pointerEvents: "none", filter: "drop-shadow(4px 4px 0 #0a0616)" }}>
-          <BadgeFace b={ghost.b} size={72} />
+        <div aria-hidden className="hk-lift" style={{ position: "fixed", left: ghost.x - 30, top: ghost.y - 66, zIndex: 60, pointerEvents: "none", filter: "drop-shadow(4px 4px 0 #0a0616)" }}>
+          <BadgeFace b={ghost.b} size={60} />
         </div>
       ) : null}
     </>,
