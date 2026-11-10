@@ -119,19 +119,19 @@ export function HkMenu({ shown, tradable, items, onClose }: {
   return (
     <>
       <button type="button" aria-label="Close the menu" onClick={onClose} style={{ position: "fixed", inset: 0, zIndex: 40, background: "rgba(5,5,12,.55)", border: 0, cursor: "default" }} />
-      <div ref={panel} role="dialog" aria-label="Historikals" className="hk-panel" style={{ position: "fixed", top: TOP, height: view !== "menu" && menuH ? menuH : undefined, left: "50%", transform: "translateX(-50%)", width: `min(80vw, calc(480px - 2 * ${EDGE}))`, maxHeight: `calc(100vh - ${TOP} - ${EDGE})`, zIndex: 41, display: "flex", flexDirection: "column", background: "var(--blk-pur)", boxShadow: "4px 4px 0 #0a0616", overflow: "hidden" }}>
+      <div ref={panel} role="dialog" aria-label="Historikals" className="hk-panel" style={{ position: "fixed", top: TOP, height: view === "all" ? `calc(100vh - ${TOP} - ${EDGE})` : view === "edit" && menuH ? menuH : undefined, left: "50%", transform: "translateX(-50%)", width: `min(80vw, calc(480px - 2 * ${EDGE}))`, maxHeight: `calc(100vh - ${TOP} - ${EDGE})`, zIndex: 41, display: "flex", flexDirection: "column", background: "var(--blk-pur)", boxShadow: "4px 4px 0 #0a0616", overflow: "hidden" }}>
         {/* The lineup, on top in both views. */}
         <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "12px 14px 4px" }}>
           {view === "menu" ? (
             <button type="button" aria-label="Edit your lineup" title="Edit lineup" onClick={() => setView("edit")} style={{ background: "rgba(255,255,255,.08)", border: 0, color: "#fff", width: 24, height: 24, display: "grid", placeItems: "center", cursor: "pointer" }}><PencilIcon size={11} /></button>
           ) : null}
-          <span className="px" style={{ fontSize: 10, color: "#e0398a", letterSpacing: ".06em" }}>{editing ? "YOUR LINEUP · DRAG ONE UP, TAP A SLOT TO CLEAR IT" : view === "all" ? `YOUR LINEUP · ${all.length} HELD` : "YOUR LINEUP"}</span>
+          <span className="px" style={{ fontSize: 10, color: "#e0398a", letterSpacing: ".06em" }}>{editing ? "YOUR LINEUP · DRAG ONE UP, TAP A SLOT TO CLEAR IT" : view === "all" ? `MY HISTORIKALS · ${all.length}` : "YOUR LINEUP"}</span>
           <span style={{ flex: 1 }} />
           {view !== "menu" ? (
             <button type="button" className="px" onClick={() => setView("menu")} style={{ background: "none", border: 0, color: "#fff", fontSize: 10, letterSpacing: ".06em", padding: "6px 8px", cursor: "pointer" }}>← BACK</button>
           ) : null}
         </div>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 6, padding: "6px 14px 12px" }}>
+        {view === "all" ? null : <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 6, padding: "6px 14px 12px" }}>
           {lineup.map((k, i) => {
             const b = k ? byKey.get(k) : undefined;
             const h = b?.hk ? HISTORIKAL.get(b.hk.slug) : undefined;
@@ -154,7 +154,7 @@ export function HkMenu({ shown, tradable, items, onClose }: {
               </span>
             );
           })}
-        </div>
+        </div>}
 
         {editing ? (
           <div style={{ display: "flex", flexDirection: "column", gap: 10, padding: "0 14px 14px", overflowY: "auto", minHeight: 0 }}>
