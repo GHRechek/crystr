@@ -2,13 +2,15 @@
 
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { BadgeFace } from "@/components/badge-chooser";
-import { TypeIcon } from "@/components/encounter";
-import { setLineup } from "@/lib/actions";
+import { Stats, TypeIcon } from "@/components/encounter";
+import { healHistorikal, setLineup } from "@/lib/actions";
 import { HISTORIKAL, RARITIES, RARITY_COLOR, RARITY_NAME, TYPES, type Element, type Rarity } from "@/lib/historikals";
 import type { ShownBadge } from "@/lib/badges";
 
 const LINEUP = 4;
 const EDGE = "min(10vw, 48px)";
+/** The panel sits a little lower than the side gap, clear of the top bar. */
+const TOP = `calc(${EDGE} + 18px)`;
 
 /** A pixel pencil: the edit button on the lineup. */
 function PencilIcon({ size = 16 }: { size?: number }) {
@@ -103,7 +105,7 @@ export function HkMenu({ shown, tradable, items, onClose }: {
   return (
     <>
       <button type="button" aria-label="Close the menu" onClick={onClose} style={{ position: "fixed", inset: 0, zIndex: 40, background: "rgba(5,5,12,.55)", border: 0, cursor: "default" }} />
-      <div role="dialog" aria-label="Historikals" className="hk-panel" style={{ position: "fixed", top: EDGE, left: "50%", transform: "translateX(-50%)", width: `min(80vw, calc(480px - 2 * ${EDGE}))`, maxHeight: `calc(100vh - 2 * ${EDGE})`, zIndex: 41, display: "flex", flexDirection: "column", background: "var(--blk-pur)", boxShadow: "4px 4px 0 #0a0616", overflow: "hidden" }}>
+      <div role="dialog" aria-label="Historikals" className="hk-panel" style={{ position: "fixed", top: TOP, left: "50%", transform: "translateX(-50%)", width: `min(80vw, calc(480px - 2 * ${EDGE}))`, maxHeight: `calc(100vh - ${TOP} - ${EDGE})`, zIndex: 41, display: "flex", flexDirection: "column", background: "var(--blk-pur)", boxShadow: "4px 4px 0 #0a0616", overflow: "hidden" }}>
         {/* The lineup, on top in both views. */}
         <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "12px 14px 4px" }}>
           <span className="px" style={{ fontSize: 10, color: "#e0398a", letterSpacing: ".06em" }}>{editing ? "YOUR LINEUP · DRAG ONE UP, TAP A SLOT TO CLEAR IT" : "YOUR LINEUP"}</span>
@@ -114,15 +116,36 @@ export function HkMenu({ shown, tradable, items, onClose }: {
             <button type="button" aria-label="Edit your lineup" title="Edit lineup" onClick={() => setEditing(true)} style={{ background: "rgba(255,255,255,.08)", border: 0, color: "#fff", width: 32, height: 32, display: "grid", placeItems: "center", cursor: "pointer" }}><PencilIcon /></button>
           )}
         </div>
-        <div style={{ display: "flex", justifyContent: "space-between", gap: 6, padding: "6px 14px 12px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 6, padding: "6px 14px 12px" }}>
           {lineup.map((k, i) => {
             const b = k ? byKey.get(k) : undefined;
+            const h = b?.hk ? HISTORIKAL.get(b.hk.slug) : undefined;
+            const hp = b?.hk?.hp ?? 0;
+            const ko = !!h && hp <= 0;
+            const hurt = !!h && hp < h.hearts;
             return (
-              <span key={i} data-slot={editing ? i : undefined} style={{ width: slotPx, height: slotPx, display: "grid", placeItems: "center", outline: editing ? "1px dashed rgba(255,255,255,.35)" : "none", outlineOffset: -1, background: editing && !b ? "rgba(255,255,255,.04)" : "none" }}>
-                {b ? (
-                  editing ? <button type="button" className="bv-item" {...handlers(b, i)} aria-label={`${b.title}: drag to move, tap to take off`}><BadgeFace b={b} size={slotPx - 8} /></button>
-                    : <BadgeFace b={b} size={slotPx - 8} />
-                ) : <span className="px" style={{ fontSize: 14, color: "rgba(255,255,255,.3)" }}>{i + 1}</span>}
+              <span key={i} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, minWidth: slotPx }}>
+                <span data-slot={editing ? i : undefined} style={{ width: slotPx, height: slotPx, display: "grid", placeItems: "center", outline: editing ? "1px dashed rgba(255,255,255,.35)" : "none", outlineOffset: -1, background: editing && !b ? "rgba(255,255,255,.04)" : "none", filter: ko && !editing ? "grayscale(1) brightness(.55)" : undefined }}>
+                  {b ? (
+                    editing ? <button type="button" className="bv-item" {...handlers(b, i)} aria-label={`${b.title}: drag to move, tap to take off`}><BadgeFace b={b} size={slotPx - 8} /></button>
+                      : <BadgeFace b={b} size={slotPx - 8} />
+                  ) : <span className="px" style={{ fontSize: 14, color: "rgba(255,255,255,.3)" }}>{i + 1}</span>}
+                </span>
+                {/* Its hearts, and when some are gone, the way to get them back: two mana a heart. */}
+                {!editing && b?.hk && h ? (
+                  <>
+                    <Stats h={{ id: 0, slug: h.slug, name: h.name, rarity: h.rarity, types: b.hk.types ?? h.types, hearts: h.hearts }} hp={hp} k={2} only="hearts" />
+                    {ko ? <span className="px" style={{ fontSize: 9, color: "#ff5a7a", letterSpacing: ".04em" }}>DOWNED</span> : null}
+                    {hurt ? (
+                      <form action={healHistorikal}>
+                        <input type="hidden" name="item" value={b.hk.id} />
+                        <button type="submit" className="px" style={{ background: "#e0398a", color: "#fff", border: 0, fontSize: 9, letterSpacing: ".04em", padding: "5px 6px", cursor: "pointer", whiteSpace: "nowrap" }}>
+                          {ko ? "REVIVE" : "HEAL"} · {2 * (h.hearts - hp)}
+                        </button>
+                      </form>
+                    ) : null}
+                  </>
+                ) : null}
               </span>
             );
           })}
