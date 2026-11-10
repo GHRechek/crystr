@@ -2110,3 +2110,7 @@ select.input { border: 0; }
 @keyframes star-spin { 0%, 88% { transform: rotateY(0); } 100% { transform: rotateY(360deg); } }
 .star-spin { display: grid; place-items: center; animation: star-spin 7s cubic-bezier(.4, 0, .2, 1) infinite; }
 @media (prefers-reduced-motion: reduce) { .star-spin { animation: none; } }
+
+/* An empty lineup slot: a question mark that rocks on its feet, a little, now and then. */
+@keyframes hk-wobble { 0%, 70%, 100% { transform: rotate(0); } 76% { transform: rotate(-9deg); } 82% { transform: rotate(8deg); } 88% { transform: rotate(-5deg); } 94% { transform: rotate(3deg); } }
+.hk-wobble { animation: hk-wobble 3.2s ease-in-out infinite; transform-origin: 50% 90%; }

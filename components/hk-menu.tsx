@@ -15,6 +15,17 @@ const EDGE = "min(10vw, 48px)";
 /** The panel sits a little lower than the side gap, clear of the top bar. */
 const TOP = `calc(${EDGE} + 18px)`;
 
+/** Two small pixel marks for the header: an i in a ring (a card) and a question mark (an empty slot). */
+function Px({ rows, k, fill }: { rows: string[]; k: number; fill: string }) {
+  return (
+    <svg width={rows[0].length * k} height={rows.length * k} viewBox={`0 0 ${rows[0].length} ${rows.length}`} shapeRendering="crispEdges" fill={fill} aria-hidden style={{ flex: "none", display: "inline-block", verticalAlign: "middle" }}>
+      {rows.flatMap((r, y) => [...r].map((c, x) => (c === "#" ? <rect key={`${x}-${y}`} x={x} y={y} width={1} height={1} /> : null)))}
+    </svg>
+  );
+}
+const INFO = [".#####.", "#.....#", "#..#..#", "#.....#", "#..#..#", "#..#..#", "#..#..#", "#.....#", ".#####."];
+const QMARK = [".####.", "#....#", "#....#", "....#.", "...#..", "..#...", "..#...", "......", "..#..."];
+
 type Item = { label: string; go?: () => void; n?: number; cls?: string; /** Opens a view inside the panel instead. */ view?: "all" };
 
 /** The Historikals menu, from the button beside the portrait: a panel eight tenths of the screen wide, as
@@ -118,13 +129,9 @@ export function HkMenu({ shown, tradable, items, onClose }: {
       <div role="dialog" aria-label="Historikals" className="hk-panel" style={{ position: "fixed", top: TOP, height: view === "all" ? `calc(100vh - ${TOP} - ${EDGE})` : undefined, left: "50%", transform: "translateX(-50%)", width: `min(80vw, calc(480px - 2 * ${EDGE}))`, maxHeight: `calc(100vh - ${TOP} - ${EDGE})`, zIndex: 41, display: "flex", flexDirection: "column", background: "var(--blk-pur)", boxShadow: "4px 4px 0 #0a0616", overflow: "hidden" }}>
         {/* On top in both views: the lineup. In MY HISTORIKALS the slots take a drop. */}
         <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "12px 14px 4px" }}>
-          <span className="px" style={{ fontSize: 10, color: "#e0398a", letterSpacing: ".06em", display: "inline-flex", alignItems: "center", gap: 5 }}>
-            {view === "all" ? <>TAP FOR A CARD · HOLD &amp; DROP <TradeIcon size={12} /> TO ALTER LINEUP</> : "YOUR LINEUP"}
+          <span className="px" style={{ fontSize: 10, color: "#e0398a", letterSpacing: ".04em", display: "inline-flex", alignItems: "center", gap: 5, whiteSpace: "nowrap" }}>
+            {view === "all" ? <>TAP FOR <Px rows={INFO} k={1.5} fill="#e0398a" /> OR HOLD &amp; DRAG <TradeIcon size={12} /> TO ALTER LINEUP</> : "YOUR LINEUP"}
           </span>
-          <span style={{ flex: 1 }} />
-          {view === "all" ? (
-            <button type="button" className="px" onClick={() => setView("menu")} style={{ background: "none", border: 0, color: "#fff", fontSize: 10, letterSpacing: ".06em", padding: "6px 8px", cursor: "pointer" }}>← BACK</button>
-          ) : null}
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 6, padding: "6px 14px 12px" }}>
           {lineup.map((k, i) => {
@@ -136,12 +143,12 @@ export function HkMenu({ shown, tradable, items, onClose }: {
             const editing = view === "all";
             return (
               <span key={i} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, minWidth: slotPx }}>
-                <span data-slot={editing ? i : undefined} style={{ width: slotPx, height: slotPx, display: "grid", placeItems: "center", outline: editing ? "1px dashed rgba(255,255,255,.35)" : "none", outlineOffset: -1, background: editing && !b ? "rgba(255,255,255,.04)" : "none", filter: ko ? "grayscale(1) brightness(.55)" : undefined }}>
+                <span data-slot={editing ? i : undefined} style={{ width: slotPx, height: slotPx, display: "grid", placeItems: "center", filter: ko ? "grayscale(1) brightness(.55)" : undefined }}>
                   {b ? (
                     // A tap opens its card: moves, hearts, and HEAL or REVIVE when it needs it. In MY HISTORIKALS a
                     // drag moves it to another slot, or off the lineup when let go anywhere else.
                     <button type="button" className="bv-item" {...(editing ? handlers(b, i) : {})} onClick={() => held && setCard(held)} aria-label={`${b.title}${ko ? ", knocked out" : ""}: open its card${editing ? "; drag to move it" : ""}`}><BadgeFace b={b} size={slotPx - 8} /></button>
-                  ) : <span className="px" style={{ fontSize: 14, color: "rgba(255,255,255,.3)" }}>{i + 1}</span>}
+                  ) : <span className="hk-wobble" style={{ display: "inline-block" }}><Px rows={QMARK} k={3} fill="rgba(255,255,255,.45)" /></span>}
                 </span>
                 {/* Its hearts, the lost ones hollow. Healing is on its card. */}
                 {b?.hk && h ? (
@@ -155,7 +162,7 @@ export function HkMenu({ shown, tradable, items, onClose }: {
         {view === "all" ? (
           <div style={{ display: "flex", flexDirection: "column", gap: 10, padding: "0 14px 14px", overflowY: "auto", minHeight: 0 }}>
             {all.length === 0 ? <span className="px" style={{ fontSize: 10, color: "rgba(255,255,255,.5)" }}>NO HISTORIKALS YET</span> : (
-              <HistorikalCollection list={all} ring="var(--blk-pur)" inLineup={(h) => lineup.includes(`i:${h.id}`)} drag={(h) => { const b = badgeOf(h); return b ? handlers(b, "grid") : {}; }} onOpen={setCard} />
+              <HistorikalCollection list={all} ring="var(--blk-pur)" drag={(h) => { const b = badgeOf(h); return b ? handlers(b, "grid") : {}; }} onOpen={setCard} />
             )}
           </div>
         ) : (
