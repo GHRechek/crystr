@@ -109,6 +109,9 @@ export function InfoMenu({ isWitch = false, isEditor = false }: { isWitch?: bool
                 <Link href="/me/badges" className="btn btn-block" style={{ minHeight: 44, marginTop: 8 }}>
                   EDIT BADGES
                 </Link>
+                <Link href="/witch/sprites" className="btn btn-block" style={{ minHeight: 44, marginTop: 8 }}>
+                  SPRITE EDITOR
+                </Link>
               </section>
             ) : null}
 
