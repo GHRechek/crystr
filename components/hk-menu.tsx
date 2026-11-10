@@ -145,7 +145,8 @@ export function HkMenu({ shown, tradable, items, onClose }: {
         {/* On top in both views: the lineup. In MY HISTORIKALS the slots take a drop. */}
         {view === "all" ? (
           // On top: how it works, in one line, centred.
-          <div style={{ display: "flex", justifyContent: "center", padding: "12px 14px 2px" }}>
+          <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 10, padding: "12px 14px 2px" }}>
+            <button type="button" className="px crystr-text" onClick={() => setView("menu")} style={{ background: "none", border: 0, padding: 0, fontSize: 10, letterSpacing: ".04em", cursor: "pointer", whiteSpace: "nowrap", flex: "none" }}>← BACK</button>
             <span className="px" style={{ fontSize: 10, color: "#e0398a", letterSpacing: ".04em", display: "inline-flex", alignItems: "center", gap: 5, whiteSpace: "nowrap" }}>
               TAP FOR <Px rows={INFO} k={1.5} fill="#e0398a" /> OR HOLD &amp; DRAG <span style={{ display: "flex", transform: "translateY(-1px)" }}><TradeIcon size={12} /></span> TO ALTER LINEUP
             </span>
