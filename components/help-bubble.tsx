@@ -10,7 +10,7 @@ export function HelpBubble({ text, handle }: { text: string; handle: string }) {
   const [scanning, setScanning] = useState(false);
   return (
     <>
-      <HelpThought text={text} onClick={() => setScanning(true)} label={`${handle} asks: ${text}. Tap to scan their code once you have helped.`} />
+      <HelpThought text={text} helped onClick={() => setScanning(true)} label={`${handle} asks: ${text}. Tap to scan their code once you have helped.`} />
       {scanning ? <QrScanner mode="quest" only="a-helping-hand" title="I'm a Helper" how={`Helped ${handle}? Scan their code to say so. Every help brings a Historikal.`} onClose={() => setScanning(false)} /> : null}
     </>
   );
