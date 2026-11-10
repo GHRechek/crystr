@@ -70,7 +70,7 @@ export function HistorikalCollection({ list, ring }: { list: HeldHk[]; ring?: st
 
   return (
     <>
-      <FilterRow rarities={RARITIES.filter((r) => count(r))} count={count} rar={only} setRar={setOnly} type={type} setType={setType} ring={ring} />
+      <FilterRow rarities={[...RARITIES].reverse().filter((r) => count(r))} count={count} rar={only} setRar={setOnly} type={type} setType={setType} ring={ring} />
       {/* The rest, a list: the creature, then its name with its hearts beside it, then its types | its moves. */}
       <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: 4 }}>
         {rest.map((h) => {
