@@ -14,7 +14,51 @@ const RARITIES: Rarity[] = ["legendary", "epic", "rare", "uncommon", "common"];
 /** Every Historikal you hold, to look through, rarest first. Filter by rarity (the coloured circles) and by
  *  type; tap one for its card (moves, type, hearts, and healing). The lineup is edited from the Historikals
  *  menu beside your portrait, not here. */
-export function HistorikalCollection({ list }: { list: HeldHk[] }) {
+/** The filter, on one line: a circle per rarity in its colour (a count under each when given), a thin line,
+ *  then the seven types, a little smaller than they were. The chosen ones stand on a CRYSTR line. */
+export function FilterRow({ rarities, count, rar, setRar, type, setType, ring = "var(--bg)" }: {
+  rarities: Rarity[];
+  count?: (r: Rarity) => number;
+  rar: Rarity | null;
+  setRar: (r: Rarity | null) => void;
+  type: Element | null;
+  setType: (t: Element | null) => void;
+  /** The colour behind the chosen circle's white ring. */
+  ring?: string;
+}) {
+  const line = "linear-gradient(90deg, #e0398a, #9184d9 52%, #4c7df0)";
+  return (
+    <div style={{ display: "flex", alignItems: "flex-start", gap: 8, flexWrap: "wrap" }}>
+      <div role="group" aria-label="Rarity" style={{ display: "flex", gap: 6, alignItems: "flex-start" }}>
+        {rarities.map((r) => {
+          const on = rar === r;
+          const n = count?.(r);
+          return (
+            <button key={r} type="button" aria-pressed={on} aria-label={n === undefined ? RARITY_NAME[r] : `${RARITY_NAME[r]} · ${n}`} title={RARITY_NAME[r]} onClick={() => setRar(on ? null : r)} style={{ background: "none", border: 0, padding: "4px 2px 2px", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+              <span style={{ width: 14, height: 14, borderRadius: "50%", background: RARITY_COLOR[r], boxShadow: on ? `0 0 0 2px ${ring}, 0 0 0 3px #fff` : "none", opacity: rar && !on ? 0.45 : 1 }} />
+              {n === undefined ? null : <span className="px" style={{ fontSize: 7, color: on ? "#fff" : "var(--muted)", lineHeight: 1 }}>{n}</span>}
+              <span aria-hidden style={{ width: 18, height: 3, background: on ? line : "transparent" }} />
+            </button>
+          );
+        })}
+      </div>
+      <span aria-hidden style={{ width: 1, alignSelf: "stretch", margin: "4px 2px", background: "rgba(255,255,255,.25)" }} />
+      <div role="group" aria-label="Type" style={{ display: "flex", gap: 2, alignItems: "flex-start", flexWrap: "wrap" }}>
+        {TYPES.map((t) => {
+          const on = type === t;
+          return (
+            <button key={t} type="button" aria-pressed={on} aria-label={t} title={t} onClick={() => setType(on ? null : t)} style={{ background: on ? "rgba(255,255,255,.08)" : "none", border: 0, padding: "4px 3px 2px", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: 4, opacity: type && !on ? 0.45 : 1 }}>
+              <TypeIcon type={t} k={1.5} />
+              <span aria-hidden style={{ width: 14, height: 3, background: on ? line : "transparent" }} />
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+export function HistorikalCollection({ list, ring }: { list: HeldHk[]; ring?: string }) {
   const decay = useDecay();
   const [only, setOnly] = useState<Rarity | null>(null);
   const [type, setType] = useState<Element | null>(null);
@@ -23,34 +67,10 @@ export function HistorikalCollection({ list }: { list: HeldHk[] }) {
     .filter((h) => (!only || h.rarity === only) && (!type || h.types.includes(type)))
     .sort((a, b) => RARITIES.indexOf(a.rarity) - RARITIES.indexOf(b.rarity) || a.name.localeCompare(b.name));
   const count = (r: Rarity) => list.filter((h) => h.rarity === r).length;
-  const line = "linear-gradient(90deg, #e0398a, #9184d9 52%, #4c7df0)";
 
   return (
     <>
-      {/* Rarity: a circle per rarity in its colour, the chosen one on a CRYSTR line; then the seven types. */}
-      <div role="group" aria-label="Rarity" style={{ display: "flex", gap: 10, alignItems: "center" }}>
-        {RARITIES.filter((r) => count(r)).map((r) => {
-          const on = only === r;
-          return (
-            <button key={r} type="button" aria-pressed={on} aria-label={`${RARITY_NAME[r]} · ${count(r)}`} title={`${RARITY_NAME[r]} · ${count(r)}`} onClick={() => setOnly(on ? null : r)} style={{ background: "none", border: 0, padding: "4px 2px", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: 5 }}>
-              <span style={{ width: 18, height: 18, borderRadius: "50%", background: RARITY_COLOR[r], boxShadow: on ? "0 0 0 2px var(--bg), 0 0 0 3px #fff" : "none", opacity: only && !on ? 0.45 : 1 }} />
-              <span className="px" style={{ fontSize: 8, color: on ? "var(--text)" : "var(--muted)" }}>{count(r)}</span>
-              <span aria-hidden style={{ width: 22, height: 3, background: on ? line : "transparent" }} />
-            </button>
-          );
-        })}
-      </div>
-      <div role="group" aria-label="Type" style={{ display: "flex", gap: 6, alignItems: "center", flexWrap: "wrap" }}>
-        {TYPES.map((t) => {
-          const on = type === t;
-          return (
-            <button key={t} type="button" aria-pressed={on} aria-label={t} title={t} onClick={() => setType(on ? null : t)} style={{ background: on ? "rgba(255,255,255,.06)" : "none", border: 0, padding: "4px 5px 2px", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: 4, opacity: type && !on ? 0.45 : 1 }}>
-              <TypeIcon type={t} k={2} />
-              <span aria-hidden style={{ width: 18, height: 3, background: on ? line : "transparent" }} />
-            </button>
-          );
-        })}
-      </div>
+      <FilterRow rarities={RARITIES.filter((r) => count(r))} count={count} rar={only} setRar={setOnly} type={type} setType={setType} ring={ring} />
       {/* The rest, a list: the creature, then its name with its hearts beside it, then its types | its moves. */}
       <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: 4 }}>
         {rest.map((h) => {

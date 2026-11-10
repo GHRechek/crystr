@@ -2,9 +2,10 @@
 
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { BadgeFace } from "@/components/badge-chooser";
-import { Stats, TypeIcon } from "@/components/encounter";
+import { Stats } from "@/components/encounter";
+import { FilterRow, HistorikalCollection, type HeldHk } from "@/components/historikal-collection";
 import { healHistorikal, setLineup } from "@/lib/actions";
-import { HISTORIKAL, RARITIES, RARITY_COLOR, RARITY_NAME, TYPES, type Element, type Rarity } from "@/lib/historikals";
+import { HISTORIKAL, RARITIES, type Element, type Rarity } from "@/lib/historikals";
 import type { ShownBadge } from "@/lib/badges";
 
 const LINEUP = 4;
@@ -22,7 +23,7 @@ function PencilIcon({ size = 16 }: { size?: number }) {
   );
 }
 
-type Item = { label: string; go: () => void; n?: number; cls?: string };
+type Item = { label: string; go?: () => void; n?: number; cls?: string; /** Opens a view inside the panel instead. */ view?: "all" };
 
 /** The Historikals menu, from the button beside the portrait: a panel eight tenths of the screen wide, as
  *  far from the top as from the sides. Your lineup leads, with a pencil to change it; then the actions.
@@ -37,7 +38,8 @@ export function HkMenu({ shown, tradable, items, onClose }: {
   items: Item[];
   onClose: () => void;
 }) {
-  const [editing, setEditing] = useState(false);
+  const [view, setView] = useState<"menu" | "edit" | "all">("menu");
+  const editing = view === "edit";
   const [rar, setRar] = useState<Rarity | null>(null);
   const [type, setType] = useState<Element | null>(null);
   const [lineup, setLineupKeys] = useState<(string | null)[]>(() => {
@@ -99,6 +101,11 @@ export function HkMenu({ shown, tradable, items, onClose }: {
     return () => window.removeEventListener("keydown", esc);
   }, [onClose]);
 
+  // Every one you hold, as the collection shows them: the creature's name, rarity and hearts, its rolled types.
+  const all: HeldHk[] = tradable.flatMap((b) => {
+    const h = b.hk ? HISTORIKAL.get(b.hk.slug) : undefined;
+    return b.hk && h ? [{ id: b.hk.id, slug: h.slug, name: h.name, rarity: h.rarity, types: b.hk.types ?? h.types, hearts: h.hearts, hp: b.hk.hp }] : [];
+  });
   const held = tradable.filter((b) => b.hk && (!rar || rarityOf(b) === rar) && (!type || typesOf(b).includes(type)));
   const slotPx = 56;
 
@@ -108,12 +115,12 @@ export function HkMenu({ shown, tradable, items, onClose }: {
       <div role="dialog" aria-label="Historikals" className="hk-panel" style={{ position: "fixed", top: TOP, left: "50%", transform: "translateX(-50%)", width: `min(80vw, calc(480px - 2 * ${EDGE}))`, maxHeight: `calc(100vh - ${TOP} - ${EDGE})`, zIndex: 41, display: "flex", flexDirection: "column", background: "var(--blk-pur)", boxShadow: "4px 4px 0 #0a0616", overflow: "hidden" }}>
         {/* The lineup, on top in both views. */}
         <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "12px 14px 4px" }}>
-          <span className="px" style={{ fontSize: 10, color: "#e0398a", letterSpacing: ".06em" }}>{editing ? "YOUR LINEUP · DRAG ONE UP, TAP A SLOT TO CLEAR IT" : "YOUR LINEUP"}</span>
+          <span className="px" style={{ fontSize: 10, color: "#e0398a", letterSpacing: ".06em" }}>{editing ? "YOUR LINEUP · DRAG ONE UP, TAP A SLOT TO CLEAR IT" : view === "all" ? `YOUR LINEUP · ${all.length} HELD` : "YOUR LINEUP"}</span>
           <span style={{ flex: 1 }} />
-          {editing ? (
-            <button type="button" className="px" onClick={() => setEditing(false)} style={{ background: "none", border: 0, color: "#fff", fontSize: 10, letterSpacing: ".06em", padding: "6px 8px", cursor: "pointer" }}>← BACK</button>
+          {view !== "menu" ? (
+            <button type="button" className="px" onClick={() => setView("menu")} style={{ background: "none", border: 0, color: "#fff", fontSize: 10, letterSpacing: ".06em", padding: "6px 8px", cursor: "pointer" }}>← BACK</button>
           ) : (
-            <button type="button" aria-label="Edit your lineup" title="Edit lineup" onClick={() => setEditing(true)} style={{ background: "rgba(255,255,255,.08)", border: 0, color: "#fff", width: 32, height: 32, display: "grid", placeItems: "center", cursor: "pointer" }}><PencilIcon /></button>
+            <button type="button" aria-label="Edit your lineup" title="Edit lineup" onClick={() => setView("edit")} style={{ background: "rgba(255,255,255,.08)", border: 0, color: "#fff", width: 32, height: 32, display: "grid", placeItems: "center", cursor: "pointer" }}><PencilIcon /></button>
           )}
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 6, padding: "6px 14px 12px" }}>
@@ -153,30 +160,7 @@ export function HkMenu({ shown, tradable, items, onClose }: {
 
         {editing ? (
           <div style={{ display: "flex", flexDirection: "column", gap: 10, padding: "0 14px 14px", overflowY: "auto", minHeight: 0 }}>
-            {/* Rarity: a circle per rarity in its colour; the chosen one stands on a CRYSTR line. */}
-            <div role="group" aria-label="Rarity" style={{ display: "flex", gap: 10, alignItems: "center" }}>
-              {RARITIES.map((r) => {
-                const on = rar === r;
-                return (
-                  <button key={r} type="button" aria-pressed={on} aria-label={RARITY_NAME[r]} title={RARITY_NAME[r]} onClick={() => setRar(on ? null : r)} style={{ background: "none", border: 0, padding: "4px 2px", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: 5 }}>
-                    <span style={{ width: 18, height: 18, borderRadius: "50%", background: RARITY_COLOR[r], boxShadow: on ? "0 0 0 2px var(--blk-pur), 0 0 0 3px #fff" : "none", opacity: rar && !on ? 0.45 : 1 }} />
-                    <span aria-hidden style={{ width: 22, height: 3, background: on ? "linear-gradient(90deg, #e0398a, #9184d9 52%, #4c7df0)" : "transparent" }} />
-                  </button>
-                );
-              })}
-            </div>
-            {/* Type: the seven icons; the chosen one stands on the same line. */}
-            <div role="group" aria-label="Type" style={{ display: "flex", gap: 6, alignItems: "center", flexWrap: "wrap" }}>
-              {TYPES.map((t) => {
-                const on = type === t;
-                return (
-                  <button key={t} type="button" aria-pressed={on} aria-label={t} title={t} onClick={() => setType(on ? null : t)} style={{ background: on ? "rgba(255,255,255,.1)" : "none", border: 0, padding: "4px 5px 2px", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: 4, opacity: type && !on ? 0.45 : 1 }}>
-                    <TypeIcon type={t} k={2} />
-                    <span aria-hidden style={{ width: 18, height: 3, background: on ? "linear-gradient(90deg, #e0398a, #9184d9 52%, #4c7df0)" : "transparent" }} />
-                  </button>
-                );
-              })}
-            </div>
+            <FilterRow rarities={RARITIES} rar={rar} setRar={setRar} type={type} setType={setType} ring="var(--blk-pur)" />
             {/* Everything you hold, filtered. The ones already in the lineup sit dim. */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(52px, 1fr))", gap: 6 }}>
               {held.length === 0 ? <span className="px" style={{ fontSize: 10, color: "rgba(255,255,255,.5)", gridColumn: "1 / -1" }}>NONE LIKE THAT</span> : null}
@@ -191,10 +175,14 @@ export function HkMenu({ shown, tradable, items, onClose }: {
               })}
             </div>
           </div>
+        ) : view === "all" ? (
+          <div style={{ display: "flex", flexDirection: "column", gap: 10, padding: "0 14px 14px", overflowY: "auto", minHeight: 0 }}>
+            {held.length === 0 ? <span className="px" style={{ fontSize: 10, color: "rgba(255,255,255,.5)" }}>NO HISTORIKALS YET</span> : <HistorikalCollection list={all} ring="var(--blk-pur)" />}
+          </div>
         ) : (
           <div role="menu" style={{ display: "flex", flexDirection: "column", boxShadow: "inset 0 1px 0 rgba(255,255,255,.08)" }}>
-            {items.map(({ label, go, n, cls }) => (
-              <button key={label} type="button" role="menuitem" disabled={n === 0} className={`px hk-row${label.startsWith("★") ? " epic" : ""}${cls ? ` ${cls}` : ""}`} onClick={() => { onClose(); go(); }}>
+            {items.map(({ label, go, n, cls, view }) => (
+              <button key={label} type="button" role="menuitem" disabled={n === 0} className={`px hk-row${label.startsWith("★") ? " epic" : ""}${cls ? ` ${cls}` : ""}`} onClick={() => { if (view) setView(view); else { onClose(); go?.(); } }}>
                 {label}{n !== undefined ? <b className="hk-n">{n}</b> : null}
               </button>
             ))}
