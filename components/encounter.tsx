@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useId, useCallback, useEffect, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { QuestAskScreen, type QuestView } from "@/components/quest-ask";
 import { Rays, playBuildUp, playClick, playFanfare, playLidOpen, playMythicDirge, playWhoosh } from "@/components/ask-scene";
@@ -157,9 +157,19 @@ export function EncounterHost() {
 const up = (s: string) => s.toUpperCase();
 
 /** A little pixel picture from rows of # and . */
-function Pix({ rows, k, fill, dim }: { rows: string[]; k: number; fill: string; dim?: boolean }) {
+function Pix({ rows, k, fill, dim, grad }: { rows: string[]; k: number; fill: string; dim?: boolean; /** Filled with the CRYSTR gradient instead (defined inside, so every browser finds it). */ grad?: boolean }) {
+  const id = `g${useId().replace(/:/g, "")}`;
   return (
-    <svg width={rows[0].length * k} height={rows.length * k} viewBox={`0 0 ${rows[0].length} ${rows.length}`} shapeRendering="crispEdges" fill={fill} aria-hidden opacity={dim ? 0.18 : 1} style={{ flex: "none", filter: `drop-shadow(${k}px ${k}px 0 #0a0616)` }}>
+    <svg width={rows[0].length * k} height={rows.length * k} viewBox={`0 0 ${rows[0].length} ${rows.length}`} shapeRendering="crispEdges" fill={grad ? `url(#${id})` : fill} aria-hidden opacity={dim ? 0.18 : 1} style={{ flex: "none", filter: `drop-shadow(${k}px ${k}px 0 #0a0616)` }}>
+      {grad ? (
+        <defs>
+          <linearGradient id={id} x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stopColor="#e0398a" />
+            <stop offset="0.52" stopColor="#9184d9" />
+            <stop offset="1" stopColor="#4c7df0" />
+          </linearGradient>
+        </defs>
+      ) : null}
       {rows.flatMap((r, y) => [...r].map((c, x) => (c === "#" ? <rect key={`${x}-${y}`} x={x} y={y} width={1} height={1} /> : null)))}
     </svg>
   );
@@ -193,34 +203,17 @@ export function MoveIcon({ kind, k = 2, fill = "#fff" }: { kind: MoveKind; k?: n
 }
 
 /** One type's icon, in its colour. */
-export function TypeIcon({ type, k = 2, fill }: { type: Element; k?: number; /** Another colour (or a gradient url) in place of the type's own. */ fill?: string }) {
-  return <Pix rows={TYPE[type]} k={k} fill={fill ?? ELEMENT_COLOR[type]} />;
+export function TypeIcon({ type, k = 2, grad }: { type: Element; k?: number; /** In the CRYSTR gradient instead of its own colour: the chosen one in a filter. */ grad?: boolean }) {
+  return <Pix rows={TYPE[type]} k={k} fill={ELEMENT_COLOR[type]} grad={grad} />;
 }
 
 /** Its types (each in its colour, or ? until you know them) then white hearts. */
-/** The CRYSTR gradient, for a favourite's hearts: defined once per Stats that needs it, spanning each heart. */
-export const CRYSTR_HEART = "crystr-heart-grad";
-export function CrystrGradientDef() {
-  return (
-    <svg width={0} height={0} aria-hidden style={{ position: "absolute" }}>
-      <defs>
-        <linearGradient id={CRYSTR_HEART} x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0" stopColor="#e0398a" />
-          <stop offset="0.52" stopColor="#9184d9" />
-          <stop offset="1" stopColor="#4c7df0" />
-        </linearGradient>
-      </defs>
-    </svg>
-  );
-}
-
 export function Stats({ h, hp, k = 3, known = true, only, fav }: { h: HK; hp?: number; k?: number; known?: boolean; only?: "type" | "hearts"; /** A favourite: its hearts in the CRYSTR gradient. */ fav?: boolean }) {
   const left = hp ?? h.hearts;
   return (
     <span className="en-stats">
-      {fav ? <CrystrGradientDef /> : null}
       {only === "hearts" ? null : known && h.types?.length ? h.types.map((t) => <Pix key={t} rows={TYPE[t]} k={k} fill={ELEMENT_COLOR[t]} />) : <Pix rows={QMARK} k={k} fill="#d2cefd" />}
-      {only === "type" ? null : Array.from({ length: h.hearts }, (_, i) => <Pix key={i} rows={i >= left ? HEART_LOST : HEART} k={k} fill={fav ? `url(#${CRYSTR_HEART})` : "#fff"} />)}
+      {only === "type" ? null : Array.from({ length: h.hearts }, (_, i) => <Pix key={i} rows={i >= left ? HEART_LOST : HEART} k={k} fill="#fff" grad={fav} />)}
     </span>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CRYSTR_HEART, Creature, CrystrGradientDef, MoveIcon, Stats, TypeIcon } from "@/components/encounter";
+import { Creature, MoveIcon, Stats, TypeIcon } from "@/components/encounter";
 import { HistorikalCard } from "@/components/historikal-card";
 import { useDecay } from "@/components/decay";
 import { corrupt } from "@/lib/crystr";
@@ -31,7 +31,6 @@ export function FilterRow({ rarities, count, rar, setRar, type, setType, ring = 
   // CRYSTR ring; the chosen type is filled with the gradient.
   return (
     <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, position: "sticky", top: 0, zIndex: 2, background: ring, paddingBottom: 4 }}>
-      <CrystrGradientDef />
       <div role="group" aria-label="Rarity" style={{ display: "flex", gap: 6, alignItems: "center" }}>
         {rarities.map((r) => {
           const on = rar === r;
@@ -52,7 +51,7 @@ export function FilterRow({ rarities, count, rar, setRar, type, setType, ring = 
           const on = type === t;
           return (
             <button key={t} type="button" aria-pressed={on} aria-label={t} title={t} onClick={() => setType(on ? null : t)} style={{ background: "none", border: 0, padding: "4px 3px", cursor: "pointer", display: "flex", alignItems: "center", opacity: type && !on ? 0.45 : 1 }}>
-              <TypeIcon type={t} k={1.5} fill={on ? `url(#${CRYSTR_HEART})` : undefined} />
+              <TypeIcon type={t} k={1.5} grad={on} />
             </button>
           );
         })}
