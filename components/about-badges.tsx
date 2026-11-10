@@ -6,6 +6,7 @@ import Link from "next/link";
 import { TokenImage } from "@/components/badges";
 import { BadgeFace } from "@/components/badge-chooser";
 import { BadgeViewer } from "@/components/badge-viewer";
+import { HkMenu } from "@/components/hk-menu";
 import { BadgeTip } from "@/components/badge-tip";
 import { SHOW_MAX, type ShownBadge } from "@/lib/badges";
 import type { Stake } from "@/components/encounter";
@@ -133,28 +134,21 @@ export function AboutBadges({
             ) : null}
           </button>
           {menu ? (
-            <>
-              <button type="button" aria-label="Close the menu" onClick={() => setMenu(false)} style={{ position: "fixed", inset: 0, zIndex: 40, background: "transparent", border: 0, cursor: "default" }} />
-              <div role="menu" className="hk-menu" style={{ top: endPx + 8 }}>
-                {(
-                  [
-                    // Draws stack up from quests, helps, wins and birthdays; open them here, a chest at a time.
-                    ["FIND ONE!", () => setDrawing("normal"), draws?.normal ?? 0, "find"],
-                    ["SUMMON ONE!", () => setDrawing("main"), draws?.main ?? 0, "summon"],
-                    ["TRADE", () => setScan({ intent: "trade" })],
-                    // Every one you hold: hearts, type, moves, healing.
-                    ["MY HISTORIKALS", () => router.push("/me/historikals")],
-                    ["EDIT LINEUP", () => setChoosing(true)],
-                    ["BATTLE", () => setScan({ intent: "battle" })],
-                    ["★ EPIC BATTLE", () => setStaking(true)],
-                  ] as [string, () => void, number?, string?][]
-                ).map(([label, go, n, cls]) => (
-                  <button key={label} type="button" role="menuitem" disabled={n === 0} className={`px${label.startsWith("★") ? " epic" : ""}${cls ? ` ${cls}` : ""}`} onClick={() => { setMenu(false); go(); }}>
-                    {label}{n !== undefined ? <b className="hk-n">{n}</b> : null}
-                  </button>
-                ))}
-              </div>
-            </>
+            <HkMenu
+              shown={shown}
+              tradable={tradable}
+              onClose={() => setMenu(false)}
+              items={[
+                // Draws stack up from quests, helps, wins and birthdays; open them here, a chest at a time.
+                { label: "FIND ONE!", go: () => setDrawing("normal"), n: draws?.normal ?? 0, cls: "find" },
+                { label: "SUMMON ONE!", go: () => setDrawing("main"), n: draws?.main ?? 0, cls: "summon" },
+                { label: "TRADE", go: () => setScan({ intent: "trade" }) },
+                // Every one you hold: hearts, type, moves, healing.
+                { label: "MY HISTORIKALS", go: () => router.push("/me/historikals") },
+                { label: "BATTLE", go: () => setScan({ intent: "battle" }) },
+                { label: "★ EPIC BATTLE", go: () => setStaking(true) },
+              ]}
+            />
           ) : null}
           {staking ? (
             // What you put up: your Proof, or one of your Historikals. The winner takes a copy of the

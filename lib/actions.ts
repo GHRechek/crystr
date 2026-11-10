@@ -311,6 +311,13 @@ export async function setShownBadges(fd: FormData) {
   redirect("/me");
 }
 
+/** Save the display from the Historikals menu, as you edit your lineup: no flash, no redirect. */
+export async function setLineup(list: string[]) {
+  const r = await call("cr_set_shown_badges", { p_list: Array.isArray(list) ? list.filter((x) => typeof x === "string").slice(0, 5) : [] });
+  revalidatePath("/me");
+  return !!r.ok;
+}
+
 /** Save the four badges on your star row, in order. The database keeps only ones you have earned. */
 export async function setStarBadges(fd: FormData) {
   let list: unknown = [];
