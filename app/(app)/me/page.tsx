@@ -113,6 +113,7 @@ export default async function ProfilePage(props: { searchParams: Promise<{ quest
             tradable={resolveShown(tradable.map((i) => `i:${i.id}`), badges, items, profile.handle, 10000)}
             aside={null}
             tradeHref="/me/historikals"
+            codeFor={profile.handle}
             draws={draws}
             tradeCount={waiting}
             scan
