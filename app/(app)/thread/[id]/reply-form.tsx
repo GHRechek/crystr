@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useFormStatus } from "react-dom";
 import { createReply } from "@/lib/actions";
 import { COSTS } from "@/lib/crystr";
 import { Cost } from "@/components/mana";
@@ -42,21 +43,24 @@ export function ReplyForm({
       />
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
         <div className="spacer" />
-        <button
-          type="submit"
-          className={`btn${ready ? " btn-mag" : ""}`}
-          aria-disabled={!ready}
-          disabled={!ready}
-        >
-          {affordable ? (
-            <>
-              REPLY <Cost n={cost} />
-            </>
-          ) : (
-            "REST FIRST"
-          )}
-        </button>
+        <SendButton ready={ready} affordable={affordable} cost={cost} />
       </div>
     </form>
+  );
+}
+
+/** The button, which locks while the reply is on its way. */
+function SendButton({ ready, affordable, cost }: { ready: boolean; affordable: boolean; cost: number }) {
+  const { pending } = useFormStatus();
+  return (
+    <button type="submit" className={`btn${ready && !pending ? " btn-mag" : ""}`} aria-disabled={!ready || pending} disabled={!ready || pending}>
+      {pending ? "SENDING" : affordable ? (
+        <>
+          REPLY <Cost n={cost} />
+        </>
+      ) : (
+        "REST FIRST"
+      )}
+    </button>
   );
 }
