@@ -2,12 +2,13 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireMe } from "@/lib/data";
 import { getWikiChildren, getWikiFacts, getWikiPage, getWikiPageById, getWikiPages, SLUG, touchWikiPage, type WikiFact } from "@/lib/wiki";
-import { moderateWikiPage, moveFact, movePage, removeFact, renameWikiPage, setParent } from "@/lib/wiki-actions";
+import { moderateWikiPage, movePage, renameWikiPage, setParent } from "@/lib/wiki-actions";
 import { layoutPage } from "@/lib/wiki-layout";
 import { wikiText } from "@/lib/wiki-mask";
 import { WellHint } from "@/components/well-hint";
 import { runePosition } from "@/lib/wiki-runes";
 import { ArrowIcon } from "@/components/icons";
+import { WikiFactMenu } from "@/components/wiki-fact-menu";
 import { COSTS } from "@/lib/crystr";
 import { Cost } from "@/components/mana";
 import { ago, decayLevel, capOf } from "@/lib/crystr";
@@ -199,6 +200,11 @@ export default async function WikiPageView(props: { params: Promise<{ slug: stri
                 >
                   <Words text={sentence(mask(piece.fact.body))} id={piece.fact.id} />
                 </Link>
+              ) : witch ? (
+                // A witch taps the fact itself to change it, move it or take it down.
+                <WikiFactMenu key={i} id={piece.fact.id} body={piece.fact.body} slug={page.slug} first={kept[0]?.id === piece.fact.id} last={kept[kept.length - 1]?.id === piece.fact.id}>
+                  <Words text={sentence(mask(piece.fact.body))} id={piece.fact.id} />
+                </WikiFactMenu>
               ) : (
                 <span key={i} className="wiki-fact" style={FOCUS}>
                   <Words text={sentence(mask(piece.fact.body))} id={piece.fact.id} />
@@ -250,46 +256,11 @@ export default async function WikiPageView(props: { params: Promise<{ slug: stri
         </div>
       ))}
 
-      {witch && (kept.length || children.length) ? (
+      {witch && children.length ? (
         <div className="tile" style={{ padding: 12, display: "flex", flexDirection: "column", gap: 8 }}>
-          {kept.length ? (
-            <div className="px" style={{ fontSize: 11, color: "var(--pur-pale)" }}>
-              THE FACTS ON THIS PAGE · IN ORDER
-            </div>
-          ) : null}
-          {kept.map((f, i) => (
-            <div key={f.id} style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              <div style={{ flex: 1, minWidth: 0, fontSize: 12.5, color: "var(--text-2)" }}>
-                {f.body}
-                <span className="px" style={{ display: "block", fontSize: 11, color: "var(--muted)", marginTop: 2 }}>
-                  {(f.author?.handle ?? "unknown").toUpperCase()} · {ago(f.created_at).toUpperCase()}
-                </span>
-              </div>
-              <form action={moveFact} style={{ display: "flex", gap: 4 }}>
-                <input type="hidden" name="id" value={f.id} />
-                <input type="hidden" name="slug" value={page.slug} />
-                <button type="submit" name="dir" value="up" className="btn btn-sm" disabled={i === 0} aria-label="Move up" style={{ minHeight: 40, minWidth: 36, padding: 0 }}>
-                  <ArrowIcon dir="up" />
-                </button>
-                <button type="submit" name="dir" value="down" className="btn btn-sm" disabled={i === kept.length - 1} aria-label="Move down" style={{ minHeight: 40, minWidth: 36, padding: 0 }}>
-                  <ArrowIcon dir="down" />
-                </button>
-              </form>
-              <form action={removeFact}>
-                <input type="hidden" name="id" value={f.id} />
-                <input type="hidden" name="slug" value={page.slug} />
-                <button type="submit" className="btn btn-sm" style={{ minHeight: 40, fontSize: 11, padding: "0 8px" }}>
-                  TAKE DOWN
-                </button>
-              </form>
-            </div>
-          ))}
-
-          {children.length ? (
-            <div className="px" style={{ fontSize: 11, color: "var(--pur-pale)", marginTop: kept.length ? 6 : 0 }}>
-              THE PAGES UNDER THIS ONE · IN ORDER
-            </div>
-          ) : null}
+          <div className="px" style={{ fontSize: 11, color: "var(--pur-pale)" }}>
+            THE PAGES UNDER THIS ONE · IN ORDER
+          </div>
           {children.map((c, i) => (
             <div key={c.id} style={{ display: "flex", alignItems: "center", gap: 6 }}>
               <Link href={`/wiki/${c.slug}`} style={{ flex: 1, minWidth: 0, fontSize: 12.5, color: "var(--text-2)" }}>

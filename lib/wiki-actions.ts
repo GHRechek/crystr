@@ -208,6 +208,16 @@ export async function removeFact(fd: FormData) {
   revalidatePath("/wiki");
 }
 
+/** Witches: a kept fact's words, changed in place. */
+export async function editFact(fd: FormData) {
+  const r = await call("cr_wiki_edit_fact", { p_fact: Number(fd.get("id")), p_body: str(fd, "body") });
+  if (!r.ok) {
+    if (r.code === "bad_input") await setFlash("TOO LONG", "A fact is a few words: eighty letters at most.", EDGE.mag);
+    else await setFlash("NOT YOURS", "Only witches change the page.", EDGE.mag);
+  }
+  revalidatePath(`/wiki/${str(fd, "slug")}`);
+}
+
 /** Witches: a kept fact one place up or down the page. */
 export async function moveFact(fd: FormData) {
   const r = await call("cr_wiki_move_fact", { p_fact: Number(fd.get("id")), p_dir: str(fd, "dir") === "up" ? -1 : 1 });
