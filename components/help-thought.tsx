@@ -26,7 +26,7 @@ export function HelpThought({ text, muted, face = 104, onClick, label }: {
     return () => ro.disconnect();
   }, [text]);
   return (
-    <button type="button" className="helpcall" onClick={onClick} aria-label={label} style={{ position: "absolute", left: 16 + face * 0.75, right: 12, bottom: 30, zIndex: 2 }}>
+    <button type="button" className="helpcall" onClick={onClick} aria-label={label} style={{ position: "absolute", left: 16 + face * 0.75, right: 10, bottom: 30, zIndex: 2 }}>
       <span style={{ display: "flex", alignItems: "center", flex: "none" }}>
         <HelpMark size={h} />
       </span>
