@@ -28,9 +28,9 @@ export function HelpThought({ text, muted, face = 104, onClick, label }: {
   return (
     <button type="button" className="helpcall" onClick={onClick} aria-label={label} style={{ position: "absolute", left: 16 + face * 0.75, right: 10, bottom: 30, zIndex: 2 }}>
       <span style={{ display: "flex", alignItems: "center", flex: "none" }}>
-        <HelpMark size={h} />
+        <HelpMark size={h} fill="#fff" />
       </span>
-      <span ref={words} style={{ color: muted ? "var(--muted)" : undefined }}>{text}</span>
+      <span ref={words} style={{ opacity: muted ? 0.75 : 1 }}>{text}</span>
     </button>
   );
 }

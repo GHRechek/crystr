@@ -1,5 +1,5 @@
 /** The mark on a call for help: a pixel question mark in the CRYSTR colours, pink down to blue. */
-export function HelpMark({ size = 14 }: { size?: number }) {
+export function HelpMark({ size = 14, fill }: { size?: number; /** A plain colour instead of the gradient, for when it sits on the gradient. */ fill?: string }) {
   // A question mark, five wide and nine tall.
   const rows = [".###.", "#...#", "#...#", "....#", "...#.", "..#..", "..#..", ".....", "..#.."];
   return (
@@ -11,7 +11,7 @@ export function HelpMark({ size = 14 }: { size?: number }) {
           <stop offset="1" stopColor="#4c7df0" />
         </linearGradient>
       </defs>
-      {rows.flatMap((r, y) => [...r].map((c, x) => (c === "#" ? <rect key={`${x}-${y}`} x={x} y={y} width={1} height={1} fill="url(#helpmark)" /> : null)))}
+      {rows.flatMap((r, y) => [...r].map((c, x) => (c === "#" ? <rect key={`${x}-${y}`} x={x} y={y} width={1} height={1} fill={fill ?? "url(#helpmark)"} /> : null)))}
     </svg>
   );
 }
