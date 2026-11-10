@@ -74,7 +74,7 @@ for (const [i, r] of roster.entries()) {
   const old = oldBySlug.get(slug);
   // A creature that takes over an old one keeps its moves when it still has as many.
   const moves = old && old.moves.length === MOVE_COUNT[r.rarity] ? old.moves : makeMoves(slug, types, r.rarity);
-  out.push({ slug, name: r.name, rarity: r.rarity, types, hearts: HEARTS[r.rarity], moves, rnd: !!r.rnd && !r.shift, shift: !!r.shift, hover: !!r.hover, sort: 1000 + i, pickerId: r.id });
+  out.push({ slug, name: r.name, rarity: r.rarity, types, hearts: r.hearts ?? HEARTS[r.rarity], moves, rnd: !!r.rnd && !r.shift, shift: !!r.shift, hover: !!r.hover, sort: 1000 + i, pickerId: r.id });
 }
 const inRoster = new Set(out.map((h) => h.slug));
 const retired = legacy.filter((h) => !inRoster.has(h.slug)).map((h, i) => ({ ...h, types: [FROM_OLD[h.element]], retired: true, sort: 3000 + i }));

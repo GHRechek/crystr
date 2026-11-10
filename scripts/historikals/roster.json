@@ -87,7 +87,8 @@
 "one": false,
 "shift": false,
 "slug": null,
-"hover": true
+"hover": true,
+"hearts": 4
 },
 {
 "id": "ghost_1457",
@@ -195,7 +196,8 @@
 "one": false,
 "shift": false,
 "slug": null,
-"hover": true
+"hover": true,
+"hearts": 4
 },
 {
 "id": "ghost_1498",
@@ -438,7 +440,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hearts": 4
 },
 {
 "id": "spider_1881",
@@ -608,7 +611,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hearts": 4
 },
 {
 "id": "goblin_1888",
@@ -846,7 +850,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hearts": 4
 },
 {
 "id": "goblin_1924",
@@ -982,7 +987,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hearts": 4
 },
 {
 "id": "skeleton_1714",
@@ -1339,7 +1345,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hearts": 3
 },
 {
 "id": "rat_135",
@@ -1373,7 +1380,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hearts": 3
 },
 {
 "id": "rat_147",
@@ -1543,7 +1551,8 @@
 "rnd": true,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hearts": 3
 },
 {
 "id": "orc_929",
@@ -1577,7 +1586,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hearts": 3
 },
 {
 "id": "orc_931",
@@ -2155,7 +2165,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hearts": 4
 },
 {
 "id": "dwarf_751",
@@ -3894,7 +3905,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hearts": 4
 },
 {
 "id": "displacer-beast_2308",
@@ -4957,7 +4969,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hearts": 4
 },
 {
 "id": "boss-2270_2270",
@@ -5042,7 +5055,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hearts": 4
 },
 {
 "id": "white-rabbit_230",
@@ -5161,7 +5175,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hearts": 4
 },
 {
 "id": "boss-2238_2238",
@@ -5178,7 +5193,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hearts": 4
 },
 {
 "id": "snail_340",
@@ -5999,7 +6015,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hearts": 4
 },
 {
 "id": "slime_1687",
@@ -6522,7 +6539,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hearts": 4
 },
 {
 "id": "sea-monster_1231",
@@ -6539,7 +6557,8 @@
 "rnd": false,
 "one": false,
 "shift": false,
-"slug": null
+"slug": null,
+"hearts": 4
 },
 {
 "id": "sea-monster_1310",

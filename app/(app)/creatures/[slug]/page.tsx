@@ -50,12 +50,20 @@ export default async function CreatureEditPage({ params }: { params: Promise<{ s
           <span className="px" style={label}>NAME</span>
           <input name="name" className="input" defaultValue={h.name} maxLength={40} required />
         </label>
-        <label style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-          <span className="px" style={label}>RARITY · HEARTS FOLLOW IT (2, 3, 3, 4, 4)</span>
-          <select name="rarity" className="input" defaultValue={h.rarity}>
-            {RARITIES.map((r) => <option key={r} value={r}>{RARITY_NAME[r].toUpperCase()}</option>)}
-          </select>
-        </label>
+        <div style={row}>
+          <label style={{ display: "flex", flexDirection: "column", gap: 5, flex: 1 }}>
+            <span className="px" style={label}>RARITY</span>
+            <select name="rarity" className="input" defaultValue={h.rarity}>
+              {RARITIES.map((r) => <option key={r} value={r}>{RARITY_NAME[r].toUpperCase()}</option>)}
+            </select>
+          </label>
+          <label style={{ display: "flex", flexDirection: "column", gap: 5, width: 110 }}>
+            <span className="px" style={label}>HEARTS</span>
+            <select name="hearts" className="input" defaultValue={String(h.hearts)} aria-label="Hearts">
+              {[1, 2, 3, 4, 5].map((n) => <option key={n} value={n}>{n}</option>)}
+            </select>
+          </label>
+        </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
           <span className="px" style={label}>TYPES · THE FIRST LEADS</span>
           <div style={row}>

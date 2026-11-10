@@ -1312,7 +1312,7 @@ export async function saveCreature(fd: FormData) {
   const types = [String(fd.get("type1") ?? ""), String(fd.get("type2") ?? "")].filter(Boolean);
   const r = await call("cr_edit_creature", {
     p_slug: slug,
-    p: { name: String(fd.get("name") ?? ""), rarity, types, moves, droppable: fd.get("droppable") === "on", hover: fd.get("hover") === "on", rnd: fd.get("rnd") === "on", shift: fd.get("shift") === "on" },
+    p: { name: String(fd.get("name") ?? ""), rarity, hearts: String(fd.get("hearts") ?? ""), types, moves, droppable: fd.get("droppable") === "on", hover: fd.get("hover") === "on", rnd: fd.get("rnd") === "on", shift: fd.get("shift") === "on" },
   });
   if (!r.ok) await setFlash("NOT SAVED", EDIT_WHY[r.code ?? ""] ?? "Something went wrong. Try again.", EDGE.purple);
   else await setFlash("SAVED", "The creature is changed everywhere.", EDGE.blue);
