@@ -143,11 +143,11 @@ export function HkMenu({ shown, tradable, items, onClose }: {
       <button type="button" aria-label="Close the menu" onClick={onClose} style={{ position: "fixed", inset: 0, zIndex: 40, background: "rgba(5,5,12,.55)", border: 0, cursor: "default", touchAction: "none" }} />
       <div role="dialog" aria-label="Historikals" className="hk-panel" style={{ position: "fixed", top: `calc(${area.top}px + ${TOP})`, height: view === "all" ? `calc(${area.bottom - area.top}px - ${TOP} - ${EDGE})` : undefined, left: "50%", transform: "translateX(-50%)", width: `min(80vw, calc(480px - 2 * ${EDGE}))`, maxHeight: `calc(${area.bottom - area.top}px - ${TOP} - ${EDGE})`, zIndex: 41, display: "flex", flexDirection: "column", background: "var(--blk-pur)", boxShadow: "4px 4px 0 #0a0616", overflow: "hidden" }}>
         {/* On top in both views: the lineup. In MY HISTORIKALS the slots take a drop. */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: view === "all" ? "center" : "flex-start", gap: 8, padding: "12px 14px 4px" }}>
-          <span className="px" style={{ fontSize: 10, color: "#e0398a", letterSpacing: ".04em", display: "inline-flex", alignItems: "center", gap: 5, whiteSpace: "nowrap" }}>
-            {view === "all" ? <>TAP FOR <Px rows={INFO} k={1.5} fill="#e0398a" /> OR HOLD &amp; DRAG <span style={{ display: "flex", transform: "translateY(-1px)" }}><TradeIcon size={12} /></span> TO ALTER LINEUP</> : "YOUR LINEUP"}
-          </span>
-        </div>
+        {view === "menu" ? (
+          <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "12px 14px 4px" }}>
+            <span className="px" style={{ fontSize: 10, color: "#e0398a", letterSpacing: ".04em" }}>YOUR LINEUP</span>
+          </div>
+        ) : <div style={{ height: 12 }} />}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 6, padding: "6px 14px 12px" }}>
           {lineup.map((k, i) => {
             const b = k ? byKey.get(k) : undefined;
@@ -180,11 +180,19 @@ export function HkMenu({ shown, tradable, items, onClose }: {
         </div>
 
         {view === "all" ? (
+          <>
+          {/* Between the lineup and the picker: how it works, in one line, centred. */}
+          <div style={{ display: "flex", justifyContent: "center", padding: "0 14px 10px" }}>
+            <span className="px" style={{ fontSize: 10, color: "#e0398a", letterSpacing: ".04em", display: "inline-flex", alignItems: "center", gap: 5, whiteSpace: "nowrap" }}>
+              TAP FOR <Px rows={INFO} k={1.5} fill="#e0398a" /> OR HOLD &amp; DRAG <span style={{ display: "flex", transform: "translateY(-1px)" }}><TradeIcon size={12} /></span> TO ALTER LINEUP
+            </span>
+          </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 10, padding: "0 14px 14px", overflowY: "auto", minHeight: 0, overscrollBehavior: "contain" }}>
             {all.length === 0 ? <span className="px" style={{ fontSize: 10, color: "rgba(255,255,255,.5)" }}>NO HISTORIKALS YET</span> : (
               <HistorikalCollection list={all} ring="var(--blk-pur)" inLineup={(h) => lineup.includes(`i:${h.id}`)} drag={(h) => { const b = badgeOf(h); return b ? handlers(b, "grid") : {}; }} lifted={(h) => ghost?.b.key === `i:${h.id}`} onOpen={setCard} />
             )}
           </div>
+          </>
         ) : (
           <div role="menu" style={{ display: "flex", flexDirection: "column", boxShadow: "inset 0 1px 0 rgba(255,255,255,.08)" }}>
             {items.map(({ label, go, n, cls, view }) => (
