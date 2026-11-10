@@ -150,7 +150,7 @@ export function HkMenu({ shown, tradable, items, onClose }: {
           </span>
         </div>
       ) : null}
-      <div role="dialog" aria-label="Historikals" className="hk-panel" style={{ position: "fixed", top: `calc(${area.top}px + ${TOP} - ${view === "all" ? 12 : 0}px)`, height: view === "all" ? `calc(${area.bottom - area.top}px - ${TOP} - ${EDGE} + 12px)` : undefined, left: "50%", transform: "translateX(-50%)", width: "min(80vw, 320px)", maxHeight: `calc(${area.bottom - area.top}px - ${TOP} - ${EDGE} + ${view === "all" ? 12 : 0}px)`, zIndex: 41, display: "flex", flexDirection: "column", background: "var(--blk-pur)", boxShadow: "4px 4px 0 #0a0616", overflow: "hidden" }}>
+      <div role="dialog" aria-label="Historikals" className="hk-panel" style={{ position: "fixed", top: `calc(${area.top}px + ${TOP} - 12px)`, height: `calc(${area.bottom - area.top}px - ${TOP} - ${EDGE} + 12px)`, left: "50%", transform: "translateX(-50%)", width: "min(80vw, 320px)", maxHeight: `calc(${area.bottom - area.top}px - ${TOP} - ${EDGE} + 12px)`, zIndex: 41, display: "flex", flexDirection: "column", background: "var(--blk-pur)", boxShadow: "4px 4px 0 #0a0616", overflow: "hidden" }}>
         {/* On top in both views: the lineup. In MY HISTORIKALS the slots take a drop. */}
         <div style={{ height: 12 }} />
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 6, padding: "6px 14px 12px" }}>
