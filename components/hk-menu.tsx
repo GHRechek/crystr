@@ -140,7 +140,7 @@ export function HkMenu({ shown, tradable, items, onClose }: {
   if (typeof document === "undefined") return null;
   return createPortal(
     <>
-      <button type="button" aria-label="Close the menu" onClick={onClose} style={{ position: "fixed", inset: 0, zIndex: 40, background: "rgba(5,5,12,.82)", border: 0, cursor: "default", touchAction: "none" }} />
+      <button type="button" aria-label="Close the menu" onClick={onClose} style={{ position: "fixed", inset: 0, zIndex: 40, background: "rgba(5,5,12,.93)", border: 0, cursor: "default", touchAction: "none" }} />
       {view === "all" ? (
         // Just above the box: BACK, then how it works, in one line, centred over the panel.
         <div style={{ position: "fixed", top: `calc(${area.top}px + ${TOP} - 50px)`, left: "50%", transform: "translateX(-50%)", width: "min(80vw, 320px)", zIndex: 41, display: "flex", justifyContent: "center", alignItems: "center", gap: 10, pointerEvents: "none" }}>
