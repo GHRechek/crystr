@@ -1,29 +1,19 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useMemo, useRef, useState, useTransition } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { BadgeFace } from "@/components/badge-chooser";
 import { TradeIcon } from "@/components/about-badges";
 import { Stats } from "@/components/encounter";
 import { HistorikalCard } from "@/components/historikal-card";
-import { FilterRow, HistorikalCollection, type HeldHk } from "@/components/historikal-collection";
+import { HistorikalCollection, type HeldHk } from "@/components/historikal-collection";
 import { setLineup } from "@/lib/actions";
-import { HISTORIKAL, RARITIES, type Element, type Rarity } from "@/lib/historikals";
+import { HISTORIKAL } from "@/lib/historikals";
 import type { ShownBadge } from "@/lib/badges";
 
 const LINEUP = 4;
 const EDGE = "min(10vw, 48px)";
 /** The panel sits a little lower than the side gap, clear of the top bar. */
 const TOP = `calc(${EDGE} + 18px)`;
-
-/** A pixel pencil: the edit button on the lineup. */
-function PencilIcon({ size = 16 }: { size?: number }) {
-  const rows = [".....##", "....#.#", "...#..#", "..#..#.", ".#..#..", "#..#...", "#.#....", "##....."];
-  return (
-    <svg width={size} height={size} viewBox="0 0 7 8" shapeRendering="crispEdges" fill="currentColor" aria-hidden style={{ display: "block" }}>
-      {rows.flatMap((r, y) => [...r].map((c, x) => (c === "#" ? <rect key={`${x}-${y}`} x={x} y={y} width={1} height={1} /> : null)))}
-    </svg>
-  );
-}
 
 type Item = { label: string; go?: () => void; n?: number; cls?: string; /** Opens a view inside the panel instead. */ view?: "all" };
 
@@ -40,24 +30,15 @@ export function HkMenu({ shown, tradable, items, onClose }: {
   items: Item[];
   onClose: () => void;
 }) {
-  const [view, setView] = useState<"menu" | "edit" | "all">("menu");
-  const editing = view === "edit";
-  // A lineup slot, tapped outside the editor: its card, where hurt ones are healed.
+  const [view, setView] = useState<"menu" | "all">("menu");
+  // A tapped Historikal, in the lineup or the list: its card, where hurt ones are healed.
   const [card, setCard] = useState<HeldHk | null>(null);
-  // The panel keeps the size the menu gives it: the other views scroll inside that, not down the screen.
-  const panel = useRef<HTMLDivElement>(null);
-  const [menuH, setMenuH] = useState<number | null>(null);
-  useLayoutEffect(() => { if (view === "menu" && panel.current) setMenuH(panel.current.offsetHeight); }, [view]);
-  const [rar, setRar] = useState<Rarity | null>(null);
-  const [type, setType] = useState<Element | null>(null);
   const [lineup, setLineupKeys] = useState<(string | null)[]>(() => {
     const hk = shown.filter((b) => b.hk).map((b) => b.key);
     return Array.from({ length: LINEUP }, (_, i) => hk[i] ?? null);
   });
   const [, start] = useTransition();
   const byKey = useMemo(() => new Map([...tradable, ...shown].map((b) => [b.key, b])), [tradable, shown]);
-  const rarityOf = (b: ShownBadge): Rarity | undefined => (b.hk ? HISTORIKAL.get(b.hk.slug)?.rarity : undefined);
-  const typesOf = (b: ShownBadge): Element[] => b.hk?.types ?? (b.hk ? HISTORIKAL.get(b.hk.slug)?.types ?? [] : []);
 
   // Save: the new lineup takes the Historikal places in the display, in order; the badges keep theirs.
   const save = (next: (string | null)[]) => {
@@ -74,11 +55,6 @@ export function HkMenu({ shown, tradable, items, onClose }: {
     save(next);
   };
   const takeOff = (slot: number) => { const next = [...lineup]; next[slot] = null; save(next); };
-  const add = (key: string) => {
-    if (lineup.includes(key)) return;
-    const free = lineup.indexOf(null);
-    if (free >= 0) place(key, free);
-  };
 
   // Drag: press and move picks a creature up; let go over a slot drops it there.
   const press = useRef<{ key: string; from: number | "grid"; x: number; y: number; dragging: boolean } | null>(null);
@@ -94,14 +70,18 @@ export function HkMenu({ shown, tradable, items, onClose }: {
     onPointerUp: (e: React.PointerEvent) => {
       const p = press.current; press.current = null; setGhost(null);
       if (!p) return;
-      if (!p.dragging) { if (p.from === "grid") add(p.key); else takeOff(p.from); return; }
+      if (!p.dragging) return;   // a tap: the button's own click opens the card
+      dragged.current = true;
       const hit = document.elementsFromPoint(e.clientX, e.clientY).map((el) => (el as HTMLElement).closest?.("[data-slot]") as HTMLElement | null).find(Boolean);
       if (hit) place(p.key, Number(hit.dataset.slot));
       else if (p.from !== "grid") takeOff(p.from);
     },
     onPointerCancel: () => { press.current = null; setGhost(null); },
+    onClickCapture: (e: React.MouseEvent) => { if (dragged.current) { dragged.current = false; e.preventDefault(); e.stopPropagation(); } },
     onDragStart: (e: React.DragEvent) => e.preventDefault(),
   });
+  const dragged = useRef(false);
+  const badgeOf = (h: HeldHk) => byKey.get(`i:${h.id}`);
 
   useEffect(() => {
     const esc = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -114,71 +94,53 @@ export function HkMenu({ shown, tradable, items, onClose }: {
     const h = b.hk ? HISTORIKAL.get(b.hk.slug) : undefined;
     return b.hk && h ? [{ id: b.hk.id, slug: h.slug, name: h.name, rarity: h.rarity, types: b.hk.types ?? h.types, hearts: h.hearts, hp: b.hk.hp }] : [];
   });
-  const held = tradable.filter((b) => b.hk && (!rar || rarityOf(b) === rar) && (!type || typesOf(b).includes(type)));
   const slotPx = 56;
 
   return (
     <>
       <button type="button" aria-label="Close the menu" onClick={onClose} style={{ position: "fixed", inset: 0, zIndex: 40, background: "rgba(5,5,12,.55)", border: 0, cursor: "default" }} />
-      <div ref={panel} role="dialog" aria-label="Historikals" className="hk-panel" style={{ position: "fixed", top: TOP, height: view === "all" ? `calc(100vh - ${TOP} - ${EDGE})` : view === "edit" && menuH ? menuH : undefined, left: "50%", transform: "translateX(-50%)", width: `min(80vw, calc(480px - 2 * ${EDGE}))`, maxHeight: `calc(100vh - ${TOP} - ${EDGE})`, zIndex: 41, display: "flex", flexDirection: "column", background: "var(--blk-pur)", boxShadow: "4px 4px 0 #0a0616", overflow: "hidden" }}>
-        {/* The lineup, on top in both views. */}
+      <div role="dialog" aria-label="Historikals" className="hk-panel" style={{ position: "fixed", top: TOP, height: view === "all" ? `calc(100vh - ${TOP} - ${EDGE})` : undefined, left: "50%", transform: "translateX(-50%)", width: `min(80vw, calc(480px - 2 * ${EDGE}))`, maxHeight: `calc(100vh - ${TOP} - ${EDGE})`, zIndex: 41, display: "flex", flexDirection: "column", background: "var(--blk-pur)", boxShadow: "4px 4px 0 #0a0616", overflow: "hidden" }}>
+        {/* On top in both views: the lineup. In MY HISTORIKALS the slots take a drop. */}
         <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "12px 14px 4px" }}>
-          {view === "menu" ? (
-            <button type="button" aria-label="Edit your lineup" title="Edit lineup" onClick={() => setView("edit")} style={{ background: "rgba(255,255,255,.08)", border: 0, color: "#fff", width: 24, height: 24, display: "grid", placeItems: "center", cursor: "pointer" }}><PencilIcon size={11} /></button>
-          ) : null}
           <span className="px" style={{ fontSize: 10, color: "#e0398a", letterSpacing: ".06em", display: "inline-flex", alignItems: "center", gap: 5 }}>
-            {editing ? <>DRAG &amp; DROP <TradeIcon size={12} /> TO ALTER LINEUP</> : view === "all" ? `MY HISTORIKALS · ${all.length}` : "YOUR LINEUP"}
+            {view === "all" ? <>DRAG &amp; DROP <TradeIcon size={12} /> TO ALTER LINEUP</> : "YOUR LINEUP"}
           </span>
           <span style={{ flex: 1 }} />
-          {view !== "menu" ? (
+          {view === "all" ? (
             <button type="button" className="px" onClick={() => setView("menu")} style={{ background: "none", border: 0, color: "#fff", fontSize: 10, letterSpacing: ".06em", padding: "6px 8px", cursor: "pointer" }}>← BACK</button>
           ) : null}
         </div>
-        {view === "all" ? null : <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 6, padding: "6px 14px 12px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 6, padding: "6px 14px 12px" }}>
           {lineup.map((k, i) => {
             const b = k ? byKey.get(k) : undefined;
             const h = b?.hk ? HISTORIKAL.get(b.hk.slug) : undefined;
             const hp = b?.hk?.hp ?? 0;
             const ko = !!h && hp <= 0;
             const held = b?.hk && h ? all.find((x) => x.id === b.hk!.id) : undefined;
+            const editing = view === "all";
             return (
               <span key={i} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, minWidth: slotPx }}>
                 <span data-slot={editing ? i : undefined} style={{ width: slotPx, height: slotPx, display: "grid", placeItems: "center", outline: editing ? "1px dashed rgba(255,255,255,.35)" : "none", outlineOffset: -1, background: editing && !b ? "rgba(255,255,255,.04)" : "none", filter: ko ? "grayscale(1) brightness(.55)" : undefined }}>
                   {b ? (
-                    editing ? <button type="button" className="bv-item" {...handlers(b, i)} aria-label={`${b.title}: drag to move, tap to take off`}><BadgeFace b={b} size={slotPx - 8} /></button>
-                      // Outside the editor, a tap opens its card: moves, hearts, and HEAL or REVIVE when it needs it.
-                      : <button type="button" className="bv-item" onClick={() => held && setCard(held)} aria-label={`${b.title}${ko ? ", knocked out" : ""}: open its card`}><BadgeFace b={b} size={slotPx - 8} /></button>
+                    // A tap opens its card: moves, hearts, and HEAL or REVIVE when it needs it. In MY HISTORIKALS a
+                    // drag moves it to another slot, or off the lineup when let go anywhere else.
+                    <button type="button" className="bv-item" {...(editing ? handlers(b, i) : {})} onClick={() => held && setCard(held)} aria-label={`${b.title}${ko ? ", knocked out" : ""}: open its card${editing ? "; drag to move it" : ""}`}><BadgeFace b={b} size={slotPx - 8} /></button>
                   ) : <span className="px" style={{ fontSize: 14, color: "rgba(255,255,255,.3)" }}>{i + 1}</span>}
                 </span>
                 {/* Its hearts, the lost ones hollow. Healing is on its card. */}
-                {!editing && b?.hk && h ? (
+                {b?.hk && h ? (
                   <Stats h={{ id: 0, slug: h.slug, name: h.name, rarity: h.rarity, types: b.hk.types ?? h.types, hearts: h.hearts }} hp={hp} k={1.25} only="hearts" />
                 ) : null}
               </span>
             );
           })}
-        </div>}
+        </div>
 
-        {editing ? (
+        {view === "all" ? (
           <div style={{ display: "flex", flexDirection: "column", gap: 10, padding: "0 14px 14px", overflowY: "auto", minHeight: 0 }}>
-            <FilterRow rarities={RARITIES} rar={rar} setRar={setRar} type={type} setType={setType} ring="var(--blk-pur)" />
-            {/* Everything you hold, filtered. The ones already in the lineup sit dim. */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(52px, 1fr))", gap: 6 }}>
-              {held.length === 0 ? <span className="px" style={{ fontSize: 10, color: "rgba(255,255,255,.5)", gridColumn: "1 / -1" }}>NONE LIKE THAT</span> : null}
-              {held.map((b) => {
-                const inLineup = lineup.includes(b.key);
-                const ko = (b.hk?.hp ?? 1) <= 0;
-                return (
-                  <button key={b.key} type="button" className="bv-item" {...handlers(b, "grid")} aria-label={`${b.title}${inLineup ? ", in your lineup" : ko ? ", knocked out" : ""}`} style={{ opacity: inLineup ? 0.35 : 1, filter: ko ? "grayscale(1) brightness(.6)" : undefined, display: "grid", placeItems: "center", height: 56 }}>
-                    <BadgeFace b={b} size={44} />
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        ) : view === "all" ? (
-          <div style={{ display: "flex", flexDirection: "column", gap: 10, padding: "0 14px 14px", overflowY: "auto", minHeight: 0 }}>
-            {held.length === 0 ? <span className="px" style={{ fontSize: 10, color: "rgba(255,255,255,.5)" }}>NO HISTORIKALS YET</span> : <HistorikalCollection list={all} ring="var(--blk-pur)" />}
+            {all.length === 0 ? <span className="px" style={{ fontSize: 10, color: "rgba(255,255,255,.5)" }}>NO HISTORIKALS YET</span> : (
+              <HistorikalCollection list={all} ring="var(--blk-pur)" inLineup={(h) => lineup.includes(`i:${h.id}`)} drag={(h) => { const b = badgeOf(h); return b ? handlers(b, "grid") : {}; }} onOpen={setCard} />
+            )}
           </div>
         ) : (
           <div role="menu" style={{ display: "flex", flexDirection: "column", boxShadow: "inset 0 1px 0 rgba(255,255,255,.08)" }}>
