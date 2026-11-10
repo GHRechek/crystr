@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, useTransition } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, useTransition } from "react";
 import { BadgeFace } from "@/components/badge-chooser";
 import { Stats } from "@/components/encounter";
 import { FilterRow, HistorikalCollection, type HeldHk } from "@/components/historikal-collection";
@@ -40,6 +40,10 @@ export function HkMenu({ shown, tradable, items, onClose }: {
 }) {
   const [view, setView] = useState<"menu" | "edit" | "all">("menu");
   const editing = view === "edit";
+  // The panel keeps the size the menu gives it: the other views scroll inside that, not down the screen.
+  const panel = useRef<HTMLDivElement>(null);
+  const [menuH, setMenuH] = useState<number | null>(null);
+  useLayoutEffect(() => { if (view === "menu" && panel.current) setMenuH(panel.current.offsetHeight); }, [view]);
   const [rar, setRar] = useState<Rarity | null>(null);
   const [type, setType] = useState<Element | null>(null);
   const [lineup, setLineupKeys] = useState<(string | null)[]>(() => {
@@ -112,7 +116,7 @@ export function HkMenu({ shown, tradable, items, onClose }: {
   return (
     <>
       <button type="button" aria-label="Close the menu" onClick={onClose} style={{ position: "fixed", inset: 0, zIndex: 40, background: "rgba(5,5,12,.55)", border: 0, cursor: "default" }} />
-      <div role="dialog" aria-label="Historikals" className="hk-panel" style={{ position: "fixed", top: TOP, left: "50%", transform: "translateX(-50%)", width: `min(80vw, calc(480px - 2 * ${EDGE}))`, maxHeight: `calc(100vh - ${TOP} - ${EDGE})`, zIndex: 41, display: "flex", flexDirection: "column", background: "var(--blk-pur)", boxShadow: "4px 4px 0 #0a0616", overflow: "hidden" }}>
+      <div ref={panel} role="dialog" aria-label="Historikals" className="hk-panel" style={{ position: "fixed", top: TOP, height: view !== "menu" && menuH ? menuH : undefined, left: "50%", transform: "translateX(-50%)", width: `min(80vw, calc(480px - 2 * ${EDGE}))`, maxHeight: `calc(100vh - ${TOP} - ${EDGE})`, zIndex: 41, display: "flex", flexDirection: "column", background: "var(--blk-pur)", boxShadow: "4px 4px 0 #0a0616", overflow: "hidden" }}>
         {/* The lineup, on top in both views. */}
         <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "12px 14px 4px" }}>
           <span className="px" style={{ fontSize: 10, color: "#e0398a", letterSpacing: ".06em" }}>{editing ? "YOUR LINEUP · DRAG ONE UP, TAP A SLOT TO CLEAR IT" : view === "all" ? `YOUR LINEUP · ${all.length} HELD` : "YOUR LINEUP"}</span>
