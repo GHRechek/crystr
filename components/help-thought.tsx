@@ -3,9 +3,9 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import { HelpMark } from "@/components/help-mark";
 
-/** A call for help in a banner: the question mark stands on the portrait, three quarters of the way
- *  across it, and the box with the words starts right after. The mark is as tall as the words: one line,
- *  one line's height; three lines, all three. `face` is the portrait's width; both sit 16px in. */
+/** A call for help in a banner: a speech bubble, rounded, no outline, its point toward the portrait,
+ *  starting three quarters of the way across it. Inside, the question mark then the words; the mark is as
+ *  tall as the words: one line, one line's height; three lines, all three. `face` is the portrait's width. */
 export function HelpThought({ text, muted, face = 104, onClick, label }: {
   text: string;
   /** No words yet: the prompt, greyed. */
@@ -14,12 +14,12 @@ export function HelpThought({ text, muted, face = 104, onClick, label }: {
   onClick?: () => void;
   label?: string;
 }) {
-  const box = useRef<HTMLSpanElement>(null);
-  const [h, setH] = useState(22);
+  const words = useRef<HTMLSpanElement>(null);
+  const [h, setH] = useState(18);
   useLayoutEffect(() => {
-    const el = box.current;
+    const el = words.current;
     if (!el) return;
-    const read = () => setH(Math.max(18, el.getBoundingClientRect().height - 20));   // the box's padding comes off
+    const read = () => setH(Math.max(16, el.getBoundingClientRect().height));
     read();
     const ro = new ResizeObserver(read);
     ro.observe(el);
@@ -30,9 +30,7 @@ export function HelpThought({ text, muted, face = 104, onClick, label }: {
       <span style={{ display: "flex", alignItems: "center", flex: "none" }}>
         <HelpMark size={h} />
       </span>
-      <span ref={box} className="helpcall-box">
-        <span style={{ color: muted ? "var(--muted)" : undefined }}>{text}</span>
-      </span>
+      <span ref={words} style={{ color: muted ? "var(--muted)" : undefined }}>{text}</span>
     </button>
   );
 }
