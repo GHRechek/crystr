@@ -58,7 +58,17 @@ export function FilterRow({ rarities, count, rar, setRar, type, setType, ring = 
   );
 }
 
-export function HistorikalCollection({ list, ring }: { list: HeldHk[]; ring?: string }) {
+export function HistorikalCollection({ list, ring, drag, inLineup, onOpen }: {
+  list: HeldHk[];
+  ring?: string;
+  /** Pointer handlers that let a row's creature be dragged (into a lineup slot, in the Historikals panel).
+   *  Only the creature takes them, so the rest of the row still scrolls the list on a touch screen. */
+  drag?: (h: HeldHk) => React.HTMLAttributes<HTMLElement>;
+  /** Rows already in the lineup sit dim. */
+  inLineup?: (h: HeldHk) => boolean;
+  /** Opens the card somewhere else (the panel keeps it above itself); otherwise this shows it. */
+  onOpen?: (h: HeldHk) => void;
+}) {
   const decay = useDecay();
   const [only, setOnly] = useState<Rarity | null>(null);
   const [type, setType] = useState<Element | null>(null);
@@ -76,8 +86,10 @@ export function HistorikalCollection({ list, ring }: { list: HeldHk[]; ring?: st
         {rest.map((h) => {
           return (
             <li key={h.id}>
-              <button type="button" onClick={() => setCard(h)} aria-label={`${h.name}: open its card`} style={{ width: "100%", border: 0, background: "none", color: "inherit", cursor: "pointer", padding: "4px 0", display: "flex", alignItems: "center", gap: 12, textAlign: "left" }}>
-                <Creature slug={h.slug} el={h.types[0]} size={56} ko={h.hp <= 0} />
+              <button type="button" onClick={() => (onOpen ?? setCard)(h)} aria-label={`${h.name}: open its card${drag ? "; drag its picture into your lineup" : ""}`} style={{ width: "100%", border: 0, background: "none", color: "inherit", cursor: "pointer", padding: "4px 0", display: "flex", alignItems: "center", gap: 12, textAlign: "left", opacity: inLineup?.(h) ? 0.4 : 1 }}>
+                <span {...(drag ? drag(h) : {})} style={drag ? { touchAction: "none", userSelect: "none", WebkitUserSelect: "none", cursor: "grab", lineHeight: 0 } : { lineHeight: 0 }}>
+                  <Creature slug={h.slug} el={h.types[0]} size={56} ko={h.hp <= 0} />
+                </span>
                 <span style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 7 }}>
                   <span style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
                     <span className="px" style={{ fontSize: 10, lineHeight: 1.35 }}>{corrupt(h.name.toUpperCase(), decay)}</span>
