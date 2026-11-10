@@ -30,8 +30,8 @@ export function HelpThought({ text, muted, face = 104, onClick, label }: {
   }, [text]);
   return (
     <button type="button" className="helpcall" onClick={onClick} aria-label={label} style={{ position: "absolute", left: 16 + face * 0.75, right: 10, top: 22, transform: "translateY(-100%)", zIndex: 2 }}>
-      {/* The mark on a square the colour of the Historikals button, in the gradient, as tall as the words. */}
-      <span style={{ display: "grid", placeItems: "center", flex: "none", alignSelf: "stretch", minWidth: h + 8, padding: "0 4px", background: "var(--blk-pur)" }}>
+      {/* The mark, as tall as the words. */}
+      <span style={{ display: "flex", alignItems: "center", flex: "none" }}>
         <HelpMark size={h} />
       </span>
       <span ref={words} style={{ opacity: muted ? 0.75 : 1 }}>{text}</span>
