@@ -5,7 +5,10 @@ import { HelpMark } from "@/components/help-mark";
 
 /** A call for help in a banner: a speech bubble, rounded, no outline, its point toward the portrait,
  *  starting three quarters of the way across it. Inside, the question mark then the words; the mark is as
- *  tall as the words: one line, one line's height; three lines, all three. `face` is the portrait's width. */
+ *  tall as the words: one line, one line's height; three lines, all three. `face` is the portrait's width.
+ *  It is placed inside the block that holds the portrait (which overlaps the banner by half the face), so
+ *  it paints over the portrait but under anything that block opens on top, like the scanner. Its bottom
+ *  sits 30px above the banner's foot: 22px below that block's top. */
 export function HelpThought({ text, muted, face = 104, onClick, label }: {
   text: string;
   /** No words yet: the prompt, greyed. */
@@ -26,7 +29,7 @@ export function HelpThought({ text, muted, face = 104, onClick, label }: {
     return () => ro.disconnect();
   }, [text]);
   return (
-    <button type="button" className="helpcall" onClick={onClick} aria-label={label} style={{ position: "absolute", left: 16 + face * 0.75, right: 10, bottom: 30, zIndex: 2 }}>
+    <button type="button" className="helpcall" onClick={onClick} aria-label={label} style={{ position: "absolute", left: 16 + face * 0.75, right: 10, top: 22, transform: "translateY(-100%)", zIndex: 2 }}>
       {/* The mark on a square the colour of the Historikals button, in the gradient, as tall as the words. */}
       <span style={{ display: "grid", placeItems: "center", flex: "none", alignSelf: "stretch", minWidth: h + 8, padding: "0 4px", background: "var(--blk-pur)" }}>
         <HelpMark size={h} />

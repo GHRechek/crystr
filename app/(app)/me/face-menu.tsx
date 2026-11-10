@@ -40,18 +40,6 @@ export function ProfileHead({
       <div style={{ position: "relative" }}>
                 <div style={{ height: 112, ...banner }} />
 
-        {/* The thought floats in the banner, tail stepping down to the face. */}
-        {!editing ? (
-          <HelpThought
-            text={mood || "What do you need help with?"}
-            muted={!mood}
-            face={FACE}
-            onClick={() => {
-              setOpen(true);
-              setEditing(true);
-            }}
-          />
-        ) : null}
       </div>
 
       <div
@@ -67,6 +55,18 @@ export function ProfileHead({
           zIndex: 1,
         }}
       >
+        {/* The call for help floats in the banner above, its point stepping down to the face. */}
+        {!editing ? (
+          <HelpThought
+            text={mood || "What do you need help with?"}
+            muted={!mood}
+            face={FACE}
+            onClick={() => {
+              setOpen(true);
+              setEditing(true);
+            }}
+          />
+        ) : null}
         <div style={{ display: "flex", alignItems: "flex-end", gap: 11, position: "relative" }}>
           <button
             type="button"

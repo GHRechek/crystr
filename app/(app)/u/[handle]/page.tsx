@@ -65,10 +65,10 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
       {/* The banner, and their thought floating in it with its tail stepping down to the face, as on your own. */}
       <div style={{ position: "relative" }}>
         <div style={{ height: 112, ...bannerStyle(bannerOf(person)) }} />
-        {person.mood ? <HelpBubble text={corrupt(person.mood, decay)} handle={person.handle} /> : null}
       </div>
 
       <div style={{ padding: "0 16px", marginTop: -52, position: "relative", zIndex: 1, display: "flex", flexDirection: "column", gap: 12 }}>
+        {person.mood ? <HelpBubble text={corrupt(person.mood, decay)} handle={person.handle} /> : null}
         <div style={{ display: "flex", alignItems: "flex-end", gap: 12 }}>
           {me.is_witch ? (
             <WitchFace person={person} species={person.species} quests={questGrid(badges).filter((b) => b.locked)} />
