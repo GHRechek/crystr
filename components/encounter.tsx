@@ -52,7 +52,7 @@ const supabase = () => createClient();
 export type Stake = { token: true } | { item: number };
 /** Why a battle couldn't start, in words. */
 export const START_PROBLEM: Record<string, string> = {
-  no_lineup: "Your lineup isn't ready. Put four Historikals with hearts left in your badge display (EDIT LINEUP), then try again.",
+  no_lineup: "Your lineup isn't ready: it needs four Historikals with hearts left.",
   proof_resting: "Your Proof is resting: it was lost in the last three months. Stake a Historikal instead.",
   bad_stake: "That Historikal can't be staked. Pick another.",
 };

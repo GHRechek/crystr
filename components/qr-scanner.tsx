@@ -6,15 +6,18 @@ import { useRouter } from "next/navigation";
 import jsQR from "jsqr";
 import { BadgeArt } from "@/components/badges";
 import { scanPerson, type Scanned } from "@/lib/actions";
-import { startEncounter, startQuestAsk, type Stake } from "@/components/encounter";
+import { START_PROBLEM, startEncounter, startQuestAsk, type Stake } from "@/components/encounter";
 import { targetLabel } from "@/lib/species";
 
 /** The camera, full screen, looking for another person's CRYSTR code. A code that points at a
  *  profile (…/u/<handle>) opens the trade page with that person. */
-export function QrScanner({ onClose, tradesHref, waiting, mode = "general", only, title, how, intent, stake }: { only?: string; title?: string; how?: string; onClose: () => void; tradesHref?: string; waiting?: number; /** "general": trade, open a profile, or say they helped you. "quest": only the quests you can do with them. */ mode?: "general" | "quest"; /** Straight to a trade or a battle with whoever is scanned (from the Historikals menu); a battle with a stake is epic. */ intent?: "trade" | "battle"; stake?: Stake }) {
+export function QrScanner({ onClose, tradesHref, waiting, mode = "general", only, title, how, intent, stake, onLineup }: { /** A battle could not start for want of a lineup: set one, then carry on with this person. */ onLineup?: (otherId: string) => void; only?: string; title?: string; how?: string; onClose: () => void; tradesHref?: string; waiting?: number; /** "general": trade, open a profile, or say they helped you. "quest": only the quests you can do with them. */ mode?: "general" | "quest"; /** Straight to a trade or a battle with whoever is scanned (from the Historikals menu); a battle with a stake is epic. */ intent?: "trade" | "battle"; stake?: Stake }) {
   const router = useRouter();
   const video = useRef<HTMLVideoElement>(null);
   const [err, setErr] = useState<string | null>(null);
+  // The person a battle was about to start with, when it was your lineup that stopped it.
+  const [lineupFor, setLineupFor] = useState<string | null>(null);
+  const fail = (why: string, otherId: string) => { setErr(why); if (why === START_PROBLEM.no_lineup && onLineup) setLineupFor(otherId); };
   const [found, setFound] = useState<Scanned | null>(null);
   const [view, setView] = useState<"pick" | "quests">(mode === "quest" ? "quests" : "pick");
   const [sent, setSent] = useState<string[]>([]);
@@ -64,7 +67,7 @@ export function QrScanner({ onClose, tradesHref, waiting, mode = "general", only
               }
               if (!intent) return setFound(p);
               const why = await startEncounter(intent, p.id, stake);
-              if (why) setErr(why);
+              if (why) fail(why, p.id);
               else onClose();
             });
             return;
@@ -131,7 +134,7 @@ export function QrScanner({ onClose, tradesHref, waiting, mode = "general", only
                 [
                   // Trades and battles happen right here, on both phones at once.
                   ["⇄", "TRADE", async () => { const why = await startEncounter("trade", found.id); if (why) setErr(why); else onClose(); }],
-                  ["⚔", "BATTLE", async () => { const why = await startEncounter("battle", found.id); if (why) setErr(why); else onClose(); }],
+                  ["⚔", "BATTLE", async () => { const why = await startEncounter("battle", found.id); if (why) fail(why, found.id); else onClose(); }],
                   ["☺", "PROFILE", () => { router.push(`/u/${found.handle}`); onClose(); }],
                 ] as [string, string, () => void][]
               ).map(([icon, label, go]) => (
@@ -187,8 +190,12 @@ export function QrScanner({ onClose, tradesHref, waiting, mode = "general", only
         <div aria-hidden style={{ position: "absolute", width: "62%", aspectRatio: "1", border: "4px solid #e0398a", outline: "4px solid #4c7df0", borderRadius: 0, boxShadow: "0 0 0 999px rgba(18,14,36,.6)" }} />
       </div>
       )}
-      <div style={{ padding: "14px 16px 22px", fontSize: 12.5, lineHeight: 1.5, color: err ? "var(--mag-soft)" : "var(--pur-pale)", textAlign: "center", background: "#2b1f4f" }}>
-        {found ? (view === "quests" ? err ?? "Pick one: it opens on their phone, and they hold the key." : "") : err ?? (mode === "quest" ? (title ? `${title}: ${how ?? ""} Point the camera at their code: it opens on their phone, and they have thirty seconds to give you the key. (They show their code from ME: tap their picture.)` : "Point the camera at their code to see which quests you can do with them.") : "Point the camera at the code on someone's profile menu.")}
+      <div style={{ padding: "14px 16px 22px", fontSize: 12.5, lineHeight: 1.5, color: err ? "var(--mag-soft)" : "var(--pur-pale)", textAlign: "center", background: "#2b1f4f", display: "flex", flexDirection: "column", gap: 10, alignItems: "center" }}>
+        <span>{found ? (view === "quests" ? err ?? "Pick one: it opens on their phone, and they hold the key." : err ?? "") : err ?? (mode === "quest" ? (title ? `${title}: ${how ?? ""} Point the camera at their code: it opens on their phone, and they have thirty seconds to give you the key. (They show their code from ME: tap their picture.)` : "Point the camera at their code to see which quests you can do with them.") : "Point the camera at the code on someone's profile menu.")}</span>
+        {lineupFor && onLineup ? (
+          // Set the lineup in MY HISTORIKALS; the battle picks up with this person once it is set.
+          <button type="button" className="btn btn-purple" onClick={() => onLineup(lineupFor)} style={{ minHeight: 44, padding: "0 18px" }}>SET YOUR LINEUP</button>
+        ) : null}
       </div>
     </div>
   );

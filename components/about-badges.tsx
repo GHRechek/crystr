@@ -9,7 +9,7 @@ import { BadgeViewer } from "@/components/badge-viewer";
 import { HkMenu } from "@/components/hk-menu";
 import { BadgeTip } from "@/components/badge-tip";
 import { SHOW_MAX, type ShownBadge } from "@/lib/badges";
-import type { Stake } from "@/components/encounter";
+import { startEncounter, type Stake } from "@/components/encounter";
 import { DrawScene, type DrawKind } from "@/components/draw-scene";
 import { HistorikalCard } from "@/components/historikal-card";
 import { useRouter } from "next/navigation";
@@ -70,6 +70,8 @@ export function AboutBadges({
   const lineupKeys = shown.filter((b) => b.key.startsWith("i:")).map((b) => b.key);
   const router = useRouter();
   const [camera, setScan] = useState<{ intent?: "trade" | "battle"; stake?: Stake } | null>(null);
+  // A battle that waits on your lineup: once MY HISTORIKALS closes, it starts with this person.
+  const [pending, setPending] = useState<{ intent: "trade" | "battle"; stake?: Stake; otherId: string } | null>(null);
   const box = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(300);
 
@@ -141,7 +143,15 @@ export function AboutBadges({
               shown={shown}
               tradable={tradable}
               startOn={menu || "menu"}
-              onClose={() => setMenu(false)}
+              onClose={() => {
+                setMenu(false);
+                if (pending) {
+                  const p = pending;
+                  setPending(null);
+                  // Lineup set: the battle goes on. If it still cannot start, the scanner comes back to say why.
+                  void startEncounter(p.intent, p.otherId, p.stake).then((why) => { if (why) setScan({ intent: p.intent, stake: p.stake }); });
+                }
+              }}
               items={[
                 // Every one you hold: hearts, type, moves, healing, and the lineup.
                 { label: "MY HISTORIKALS", view: "all" },
@@ -180,7 +190,7 @@ export function AboutBadges({
             </div>
           ) : null}
           {drawing ? <DrawScene kind={drawing} count={drawing === "main" ? draws?.main ?? 0 : draws?.normal ?? 0} onClose={() => { setDrawing(null); router.refresh(); }} /> : null}
-          {camera ? <QrScanner onClose={() => setScan(null)} tradesHref={tradeHref} waiting={tradeCount} intent={camera.intent} stake={camera.stake} /> : null}
+          {camera ? <QrScanner onClose={() => setScan(null)} tradesHref={tradeHref} waiting={tradeCount} intent={camera.intent} stake={camera.stake} onLineup={(otherId) => { setPending({ intent: camera.intent ?? "battle", stake: camera.stake, otherId }); setScan(null); setMenu("all"); }} /> : null}
         </>
       ) : tradeHref ? (
         <Link
