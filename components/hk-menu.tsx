@@ -4,7 +4,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState, useTransition } 
 import { createPortal } from "react-dom";
 import { BadgeFace } from "@/components/badge-chooser";
 import { TradeIcon } from "@/components/about-badges";
-import { Stats } from "@/components/encounter";
+import { Stats, TypeIcon } from "@/components/encounter";
 import { HistorikalCard } from "@/components/historikal-card";
 import { HistorikalCollection, type HeldHk } from "@/components/historikal-collection";
 import { setLineup } from "@/lib/actions";
@@ -143,7 +143,14 @@ export function HkMenu({ shown, tradable, items, onClose }: {
       <button type="button" aria-label="Close the menu" onClick={onClose} style={{ position: "fixed", inset: 0, zIndex: 40, background: "rgba(5,5,12,.55)", border: 0, cursor: "default", touchAction: "none" }} />
       <div role="dialog" aria-label="Historikals" className="hk-panel" style={{ position: "fixed", top: `calc(${area.top}px + ${TOP})`, height: view === "all" ? `calc(${area.bottom - area.top}px - ${TOP} - ${EDGE})` : undefined, left: "50%", transform: "translateX(-50%)", width: `min(80vw, calc(480px - 2 * ${EDGE}))`, maxHeight: `calc(${area.bottom - area.top}px - ${TOP} - ${EDGE})`, zIndex: 41, display: "flex", flexDirection: "column", background: "var(--blk-pur)", boxShadow: "4px 4px 0 #0a0616", overflow: "hidden" }}>
         {/* On top in both views: the lineup. In MY HISTORIKALS the slots take a drop. */}
-        <div style={{ height: 12 }} />
+        {view === "all" ? (
+          // On top: how it works, in one line, centred.
+          <div style={{ display: "flex", justifyContent: "center", padding: "12px 14px 2px" }}>
+            <span className="px" style={{ fontSize: 10, color: "#e0398a", letterSpacing: ".04em", display: "inline-flex", alignItems: "center", gap: 5, whiteSpace: "nowrap" }}>
+              TAP FOR <Px rows={INFO} k={1.5} fill="#e0398a" /> OR HOLD &amp; DRAG <span style={{ display: "flex", transform: "translateY(-1px)" }}><TradeIcon size={12} /></span> TO ALTER LINEUP
+            </span>
+          </div>
+        ) : <div style={{ height: 12 }} />}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 6, padding: "6px 14px 12px" }}>
           {lineup.map((k, i) => {
             const b = k ? byKey.get(k) : undefined;
@@ -164,12 +171,12 @@ export function HkMenu({ shown, tradable, items, onClose }: {
                 {/* Its types, small, then its name on the same line; then its hearts, the lost ones hollow. Healing is on its card. */}
                 {b?.hk && h ? (
                   <span style={{ display: "flex", alignItems: "center", gap: 3, maxWidth: "100%" }}>
-                    <Stats h={{ id: 0, slug: h.slug, name: h.name, rarity: h.rarity, types: b.hk.types ?? h.types, hearts: h.hearts }} k={1} only="type" />
+                    <span style={{ display: "flex", gap: 1, flex: "none" }}>{(b.hk.types ?? h.types).map((t) => <TypeIcon key={t} type={t} k={1} />)}</span>
                     <span className="px" style={{ fontSize: 8, color: "#fff", letterSpacing: ".03em", minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", lineHeight: 1.2 }}>{h.name.toUpperCase()}</span>
                   </span>
                 ) : null}
                 {b?.hk && h ? (
-                  <Stats h={{ id: 0, slug: h.slug, name: h.name, rarity: h.rarity, types: b.hk.types ?? h.types, hearts: h.hearts }} hp={hp} k={1.25} only="hearts" />
+                  <Stats h={{ id: 0, slug: h.slug, name: h.name, rarity: h.rarity, types: b.hk.types ?? h.types, hearts: h.hearts }} hp={hp} k={1.25} only="hearts" fav={!!b.hk.favorite} />
                 ) : null}
               </span>
             );
@@ -178,12 +185,6 @@ export function HkMenu({ shown, tradable, items, onClose }: {
 
         {view === "all" ? (
           <>
-          {/* Between the lineup and the picker: how it works, in one line, centred. */}
-          <div style={{ display: "flex", justifyContent: "center", padding: "6px 14px 16px" }}>
-            <span className="px" style={{ fontSize: 10, color: "#e0398a", letterSpacing: ".04em", display: "inline-flex", alignItems: "center", gap: 5, whiteSpace: "nowrap" }}>
-              TAP FOR <Px rows={INFO} k={1.5} fill="#e0398a" /> OR HOLD &amp; DRAG <span style={{ display: "flex", transform: "translateY(-1px)" }}><TradeIcon size={12} /></span> TO ALTER LINEUP
-            </span>
-          </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 10, padding: "0 14px 14px", overflowY: "auto", minHeight: 0, overscrollBehavior: "contain" }}>
             {all.length === 0 ? <span className="px" style={{ fontSize: 10, color: "rgba(255,255,255,.5)" }}>NO HISTORIKALS YET</span> : (
               <HistorikalCollection list={all} ring="var(--blk-pur)" inLineup={(h) => lineup.includes(`i:${h.id}`)} drag={(h) => { const b = badgeOf(h); return b ? handlers(b, "grid") : {}; }} lifted={(h) => ghost?.b.key === `i:${h.id}`} onOpen={setCard} />
@@ -200,7 +201,7 @@ export function HkMenu({ shown, tradable, items, onClose }: {
           </div>
         )}
       </div>
-      {card ? <HistorikalCard hk={{ id: card.id, slug: card.slug, hp: card.hp, types: card.types, favorite: card.favorite }} own onClose={() => setCard(null)} /> : null}
+      {card ? <HistorikalCard hk={{ id: card.id, slug: card.slug, hp: card.hp, types: card.types, favorite: card.favorite }} own onClose={() => setCard(null)} onFavorite={(on) => setCard({ ...card, favorite: on })} /> : null}
       {ghost ? (
         // The picked-up creature rides above the finger, bigger, so you can see it is yours to drop.
         <div aria-hidden className="hk-lift" style={{ position: "fixed", left: ghost.x - 30, top: ghost.y - 66, zIndex: 60, pointerEvents: "none", filter: "drop-shadow(4px 4px 0 #0a0616)" }}>
