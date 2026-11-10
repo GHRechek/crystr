@@ -9,6 +9,7 @@ import { WellHint } from "@/components/well-hint";
 import { runePosition } from "@/lib/wiki-runes";
 import { ArrowIcon } from "@/components/icons";
 import { WikiFactMenu } from "@/components/wiki-fact-menu";
+import { WikiReviewMenu } from "@/components/wiki-review-menu";
 import { COSTS } from "@/lib/crystr";
 import { Cost } from "@/components/mana";
 import { ago, decayLevel, capOf } from "@/lib/crystr";
@@ -86,7 +87,9 @@ export default async function WikiPageView(props: { params: Promise<{ slug: stri
   // In page order (by slot), so a fact that is moved up or down shows up in its new place.
   const kept = facts.filter((f) => f.status === "kept").sort((x, y) => x.slot - y.slot);
   const mine = facts.filter((f) => f.status !== "kept" && f.author?.id === userId);
-  const shown = [...kept, ...mine.filter((m) => m.status === "pending")].sort((x, y) => x.slot - y.slot);
+  // A witch sees everything still waiting, in place on the page, and reads it from there.
+  const waiting = witch ? facts.filter((f) => f.status === "pending") : mine.filter((m) => m.status === "pending");
+  const shown = [...kept, ...waiting].sort((x, y) => x.slot - y.slot);
   const filled = kept.length;
   const paragraphs = layoutPage(page.id, shown, children);
 
@@ -132,6 +135,11 @@ export default async function WikiPageView(props: { params: Promise<{ slug: stri
           <div className="px" style={{ fontSize: 11, color: "var(--muted)" }}>
             {filled} {filled === 1 ? "FACT" : "FACTS"} · EDITED {ago(page.updated_at)}
             {page.updated_by ? ` BY ${page.updated_by.handle}` : ""}
+            {witch && waiting.length ? (
+              <span style={{ color: "var(--pur-pale)" }}>
+                {" "}· {waiting.length} WAITING FOR YOU · TAP IT TO READ
+              </span>
+            ) : null}
           </div>
           {parent ? (
             <Link href={`/wiki/${parent.slug}`} className="px" style={{ fontSize: 11, color: "var(--pur-pale)", display: "inline-flex", alignItems: "center", gap: 6 }}>
@@ -184,6 +192,11 @@ export default async function WikiPageView(props: { params: Promise<{ slug: stri
                     })()}
                   </span>
                 </Link>
+              ) : piece.fact.status === "pending" && witch ? (
+                // A witch taps a waiting fact to keep it, in these or their own words, or send it back.
+                <WikiReviewMenu key={i} id={piece.fact.id} body={piece.fact.body} who={piece.fact.author?.handle ?? "unknown"} when={ago(piece.fact.created_at)}>
+                  <Words text={sentence(mask(piece.fact.body))} id={piece.fact.id} />
+                </WikiReviewMenu>
               ) : piece.fact.status === "pending" ? (
                 <Link
                   key={i}
