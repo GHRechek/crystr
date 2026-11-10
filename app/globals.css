@@ -2134,3 +2134,7 @@ select.input { border: 0; }
 .helpcall-words { min-width: 0; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; overflow-wrap: anywhere; }
 .helpcall::after { content: ""; position: absolute; left: 14px; bottom: -9px; width: 0; height: 0; border-top: 10px solid #e0398a; border-right: 12px solid transparent; }
 .helpcall:hover { filter: brightness(1.08); }
+
+/* The Historikals panel: nothing in it is text to select, so a hold picks up a creature and never a
+   phone's Copy / Translate bubble over the names. */
+.hk-panel, .hk-panel * { user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
