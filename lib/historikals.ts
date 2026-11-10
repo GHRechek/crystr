@@ -385,7 +385,7 @@ export const HISTORIKALS: Historikal[] = [
   { slug: "googly-slime", name: "Googly Slime", rarity: "common", types: ["tide"], hearts: 2, moves: [{ name: "Brine Bite", kind: "sword" }, { name: "Tidal Wave", kind: "spell" }], rnd: true },
   { slug: "cube-slime", name: "Cube Slime", rarity: "uncommon", types: ["fire", "ward"], hearts: 3, moves: [{ name: "Cinder Bite", kind: "sword" }, { name: "Stone Hex", kind: "spell" }], rnd: true },
   { slug: "chef-slime", name: "Chef Slime", rarity: "epic", types: ["tide", "feral"], hearts: 4, moves: [{ name: "Splash Jab", kind: "sword" }, { name: "Frenzy", kind: "spell" }, { name: "Mist Veil", kind: "armor" }], rnd: true },
-  { slug: "batwing-slime", name: "Batwing Slime", rarity: "uncommon", types: ["tide", "dark"], hearts: 3, moves: [{ name: "Wave Cut", kind: "sword" }, { name: "Cloak", kind: "armor" }], rnd: true, hover: true },
+  { slug: "batwing-slime", name: "Batwing Slime", rarity: "uncommon", types: ["dark", "tide"], hearts: 3, moves: [{ name: "Soul Bite", kind: "sword" }, { name: "Tide Pool", kind: "armor" }], rnd: true, hover: true },
   { slug: "daytona", name: "Daytona", rarity: "legendary", types: ["tide", "dark"], hearts: 4, moves: [{ name: "Undertow", kind: "sword" }, { name: "Hex", kind: "spell" }, { name: "Shell Up", kind: "armor" }] },
   { slug: "glass-slime", name: "Glass Slime", rarity: "common", types: ["spirit", "ward"], hearts: 2, moves: [{ name: "Glint", kind: "sword" }, { name: "Bulwark", kind: "armor" }] },
   { slug: "swamp-ooze", name: "Swamp Ooze", rarity: "common", types: ["tide", "nature"], hearts: 2, moves: [{ name: "Undertow", kind: "sword" }, { name: "Thorn Rain", kind: "spell" }] },
