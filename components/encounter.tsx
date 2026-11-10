@@ -595,7 +595,7 @@ export function BattleScreen({ v, act, close }: { v: View; act: (a: Record<strin
             {theirIsMythic ? <span className="px en-mythtag">MYTHIC</span> : null}
             <span className={`px en-name${theirIsMythic ? " en-mythname" : ""}`}>{up(v.theirs.name)}</span>
             {theirIsMythic ? (entrance === "shown" || !theirMythic ? <BossBar hp={v.theirs.hp ?? v.theirs.hearts} hearts={v.theirs.hearts} /> : <span className="en-bossbar" aria-hidden />)
-              : <Stats h={v.theirs} hp={v.theirs.hp} known={!!v.theirs.types} />}
+              : <Stats h={v.theirs} hp={v.theirs.hp} only="hearts" />}   /* their types stay unseen: hearts only */
             <span className="px en-seen">{v.theirs.seen?.length ? `SEEN: ${v.theirs.seen.map(up).join(" · ")}` : "MOVES: ???"}</span>
             <span className="en-pips">{(v.their_pips ?? []).map((p, i) => <i key={i} className={`${p.ko ? "ko" : ""}${p.cur ? " cur" : ""}`} />)}</span>
           </div>
