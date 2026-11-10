@@ -74,9 +74,15 @@ export const LAYER_ALIASES: Record<string, Record<number, number>> = {
   Eyebrows: { [(0x84 << 16) | (0x5e << 8) | 0x4b]: (0x42 << 16) | (0x30 << 8) | 0x24 },
 };
 
-export const SKIN_CHOICES = [
+/** The skins there were when faces were first handed out: a face rolled from an id picks from these. */
+const ROLLED_SKIN_CHOICES = [
   "#f3c99e", "#ffdfc4", "#e0ac69", "#c68642", "#8d5524", "#5c3a21",
   "#cfe3d4", "#cdc0e8", "#bcd8e8", "#e8c0cf", "#b9c4a0",
+];
+export const SKIN_CHOICES = [
+  ...ROLLED_SKIN_CHOICES,
+  // Added later: a whitish grey, for the undead.
+  "#d8d9dc",
 ];
 /** The hair colours there were when faces were first handed out: a face rolled from an id picks from these. */
 const ROLLED_HAIR_CHOICES = [
@@ -438,7 +444,7 @@ export function portraitFromId(id: string): PortraitConfig {
   for (const [key, list] of Object.entries(ALLOWED)) {
     // Sides added later (cut from a style) aren't rolled: a face nobody chose
     // keeps the hair it was first given.
-    const pool = list.filter((v, i) => v !== NONE && !(key === "hair_back" && SIDES_OWN[v]) && !(key === "hair_colour" && !ROLLED_HAIR_CHOICES.includes(v as string)) && !(key === "eyewear" && i >= ROLLED_EYEWEAR));
+    const pool = list.filter((v, i) => v !== NONE && !(key === "hair_back" && SIDES_OWN[v]) && !(key === "skin" && !ROLLED_SKIN_CHOICES.includes(v as string)) && !(key === "hair_colour" && !ROLLED_HAIR_CHOICES.includes(v as string)) && !(key === "eyewear" && i >= ROLLED_EYEWEAR));
     if (pool.length) out[key] = pool[hash(`${id}:${key}`) % pool.length];
   }
   for (const [key, pct] of Object.entries(ODDS)) {
