@@ -178,6 +178,8 @@ function Pix({ rows, k, fill, dim, grad }: { rows: string[]; k: number; fill: st
 const HEART = [".##.##.", "#######", "#######", ".#####.", "..###..", "...#..."];
 /** A lost heart: just its outline. */
 const HEART_LOST = [".##.##.", "#..#..#", "#.....#", ".#...#.", "..#.#..", "...#..."];
+/** Half a heart: the left half full, the right an outline. */
+const HEART_HALF = [".##.##.", "####..#", "####..#", ".###.#.", "..##...", "...#..."];
 const MOVE: Record<MoveKind, string[]> = {
   sword: ["......#", ".....##", "....##.", "#..##..", ".###...", "..#....", ".#.#..."],
   spell: ["...#...", "...#...", "..###..", "#######", "..###..", "...#...", "...#..."],
@@ -214,7 +216,7 @@ export function Stats({ h, hp, k = 3, known = true, only, fav }: { h: HK; hp?: n
   return (
     <span className="en-stats">
       {only === "hearts" ? null : known && h.types?.length ? h.types.map((t) => <Pix key={t} rows={TYPE[t]} k={k} fill={ELEMENT_COLOR[t]} />) : <Pix rows={QMARK} k={k} fill="#d2cefd" />}
-      {only === "type" ? null : Array.from({ length: h.hearts }, (_, i) => <Pix key={i} rows={i >= left ? HEART_LOST : HEART} k={k} fill="#fff" grad={fav} />)}
+      {only === "type" ? null : Array.from({ length: h.hearts }, (_, i) => <Pix key={i} rows={i + 1 <= left ? HEART : i < left ? HEART_HALF : HEART_LOST} k={k} fill="#fff" grad={fav} />)}
     </span>
   );
 }
