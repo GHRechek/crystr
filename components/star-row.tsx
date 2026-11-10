@@ -6,14 +6,7 @@ import { EmojiImg } from "@/components/emoji-img";
 import { BadgeArt, TokenImage } from "@/components/badges";
 import { BadgeTip } from "@/components/badge-tip";
 import { ROMAN, type BadgeRow } from "@/lib/badges";
-
-/** The badges for a star row: the ones picked (in order), or, until some are picked, the four newest earned. */
-export function starBadges(picked: string[] | null | undefined, badges: BadgeRow[]): BadgeRow[] {
-  const earned = badges.filter((b) => b.earned_at);
-  const chosen = (picked ?? []).map((s) => earned.find((b) => b.slug === s)).filter((b): b is BadgeRow => !!b);
-  if (chosen.length) return chosen.slice(0, 4);
-  return [...earned].sort((a, b) => String(b.earned_at).localeCompare(String(a.earned_at))).slice(0, 4);
-}
+export { starBadges } from "@/lib/star-badges";
 
 /** A profile's star row, where OBSESSED WITH was: a purple star, the person's Proof, then four small badges.
  *  Tap the Proof or a badge and a bubble says what it is. On your own profile the star opens the page where
