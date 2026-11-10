@@ -2122,3 +2122,10 @@ select.input { border: 0; }
 
 /* Words in the CRYSTR gradient. */
 .crystr-text { background: linear-gradient(90deg, #e0398a, #9184d9 52%, #4c7df0); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+/* A call for help in a banner: no box of its own; the question mark stands on the portrait and the words
+   sit in a box after it. */
+.helpcall { display: flex; align-items: stretch; gap: 6px; padding: 0; background: none; border: 0; text-align: left; font-family: inherit; cursor: pointer; max-width: 100%; }
+.helpcall-box { flex: 1; min-width: 0; display: flex; align-items: center; padding: 10px 13px; background: var(--surface); border-radius: var(--px-r); box-shadow: 0 0 0 1px var(--edge); font-size: 12.5px; line-height: 1.45; color: var(--text-2); }
+.helpcall-box > span { min-width: 0; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; overflow-wrap: anywhere; }
+.helpcall:hover .helpcall-box { background: var(--surface-2); box-shadow: 0 0 0 1px var(--edge-hover); }

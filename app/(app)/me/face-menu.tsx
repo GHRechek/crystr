@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useState, type CSSProperties } from "react";
 import { setMood } from "@/lib/actions";
 import { QrCode } from "@/components/qr";
-import { HelpMark } from "@/components/help-mark";
+import { HelpThought } from "@/components/help-thought";
 
 /** The portrait's size, and how tall the banner is when it carries the shown badges: a row of
  *  badges (63 pixels), a gap, and the thought below them, clear of the portrait. */
@@ -42,18 +42,15 @@ export function ProfileHead({
 
         {/* The thought floats in the banner, tail stepping down to the face. */}
         {!editing ? (
-          <button
-            type="button"
-            className="thought"
+          <HelpThought
+            text={mood || "What do you need help with?"}
+            muted={!mood}
+            face={FACE}
             onClick={() => {
               setOpen(true);
               setEditing(true);
             }}
-            style={{ position: "absolute", left: FACE + 28, right: 16, bottom: 30 }}
-          >
-            <HelpMark size={32} />
-            {mood ? <span>{mood}</span> : <span style={{ color: "var(--muted)" }}>What do you need help with?</span>}
-          </button>
+          />
         ) : null}
       </div>
 
