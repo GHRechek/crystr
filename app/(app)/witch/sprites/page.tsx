@@ -32,6 +32,10 @@ export default async function SpritesPage() {
 
   const overrides = (await getSpriteOverrides()).map((o) => o.path);
 
+  // The test face's own parts: every control, so two parts can be seen together while one is drawn.
+  const OPTIONAL = new Set(["eyebrows", "hair_back", "top", "beard", "scars", "blemishes", "horns", "eyewear", "jewellery", "jewellery2", "earrings", "eyeshadow"]);
+  const controls = Object.entries(OPTIONS).map(([key, options]) => ({ key, ids: [...(OPTIONAL.has(key) ? ["none"] : []), ...options.map((o) => o.id).filter((i) => i !== "none")] }));
+
   return (
     <div className="pad" style={{ gap: 12 }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
@@ -41,7 +45,7 @@ export default async function SpritesPage() {
       <p style={{ margin: 0, fontSize: 12.5, lineHeight: 1.6, color: "var(--text-3)" }}>
         Draw on a portrait part or a Historikal&apos;s picture. Saving puts your version in front of the one the app shipped with, for everyone, at once. Reset brings the shipped one back.
       </p>
-      <SpriteEditor sheets={sheets} creatures={creatures} overrides={overrides} skins={SKIN_CHOICES} hairs={HAIR_CHOICES} />
+      <SpriteEditor sheets={sheets} creatures={creatures} overrides={overrides} skins={SKIN_CHOICES} hairs={HAIR_CHOICES} controls={controls} />
     </div>
   );
 }

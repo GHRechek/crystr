@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { OPTIONS } from "@/lib/portrait/manifest";
 
 type Sheet = { sheet: string; ids: string[] };
 type Creature = { slug: string; name: string; files: string[] };
@@ -12,13 +13,23 @@ const MAX_UNDO = 60;
  *  Historikal's picture (its own size). Pencil, eraser, fill, eyedropper; the picture's own colours as a
  *  palette, plus any colour; undo and redo; zoom. SAVE writes it over the shipped file (lib/sprites);
  *  RESET takes that back. */
-export function SpriteEditor({ sheets, creatures, overrides, skins, hairs }: {
+/** Which control, set to which option, draws this cell (Sheet/id). */
+function controlFor(cell: string): { key: string; id: string } | null {
+  for (const [key, options] of Object.entries(OPTIONS)) for (const o of options) if (o.cells.includes(cell)) return { key, id: o.id };
+  return null;
+}
+const LABEL: Record<string, string> = { jaw: "JAW", ears: "EARS", eyes: "EYES", eyebrows: "BROWS", nose: "NOSE", mouth: "MOUTH", beard: "BEARD", hair_back: "HAIR SIDES", top: "HAIR TOP", scars: "SCARS", blemishes: "MARKS", horns: "HORNS", eyewear: "EYEWEAR", jewellery: "JEWELLERY", earrings: "EARRINGS", eyeshadow: "EYESHADOW", jewellery2: "MORE JEWELLERY" };
+const FIRST = ["top", "hair_back", "jaw", "eyes", "eyebrows", "beard", "eyewear", "mouth", "nose", "ears", "earrings", "horns", "scars", "blemishes", "eyeshadow", "jewellery", "jewellery2"];
+
+export function SpriteEditor({ sheets, creatures, overrides, skins, hairs, controls }: {
   sheets: Sheet[];
   creatures: Creature[];
   /** Paths already edited, to say so. */
   overrides: string[];
   skins: string[];
   hairs: string[];
+  /** Every portrait control and its option ids, to dress the test face. */
+  controls: { key: string; ids: string[] }[];
 }) {
   const [mode, setMode] = useState<"portrait" | "creature">("portrait");
   const [sheet, setSheet] = useState(sheets.find((s) => s.sheet === "HairSides")?.sheet ?? sheets[0]?.sheet ?? "");
@@ -49,6 +60,12 @@ export function SpriteEditor({ sheets, creatures, overrides, skins, hairs }: {
   const [grid, setGrid] = useState(true);
   const [skin, setSkin] = useState(skins[1] ?? skins[0] ?? "#ffdfc4");
   const [hair, setHair] = useState(hairs[0] ?? "#6c4620");
+  // The test face's parts. The part being drawn is set to the cell; the rest are yours to choose, so two
+  // parts (a hair top with a hair side) can be seen together.
+  const [parts, setParts] = useState<Record<string, string>>({ top: "16", hair_back: "28", jaw: "06", eyes: "00", eyebrows: "03", nose: "01", mouth: "24", ears: "01" });
+  const cellCtl = mode === "portrait" && sheet && id ? controlFor(`${sheet}/${id}`) : null;
+  useEffect(() => { if (cellCtl) setParts((p) => (p[cellCtl.key] === cellCtl.id ? p : { ...p, [cellCtl.key]: cellCtl.id })); }, [cellCtl?.key, cellCtl?.id]);   // eslint-disable-line react-hooks/exhaustive-deps
+  const ordered = useMemo(() => [...controls].sort((a, b) => FIRST.indexOf(a.key) - FIRST.indexOf(b.key)), [controls]);
 
   // Load the sprite whenever the path changes.
   useEffect(() => {
@@ -216,14 +233,14 @@ export function SpriteEditor({ sheets, creatures, overrides, skins, hairs }: {
     const tick = ++previewTick.current;
     const t = window.setTimeout(async () => {
       const png = await toPng();
-      const r = await fetch("/api/sprite/preview", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ cell: path.slice("portrait/".length).replace(/\.png$/, ""), png, skin, hair }) });
+      const r = await fetch("/api/sprite/preview", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ cell: path.slice("portrait/".length).replace(/\.png$/, ""), png, skin, hair, face: parts }) });
       if (!r.ok || tick !== previewTick.current) return;
       const url = URL.createObjectURL(await r.blob());
       setPreview((old) => { if (old) URL.revokeObjectURL(old); return url; });
     }, 350);
     return () => window.clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mode, img, path, skin, hair, stroke]);
+  }, [mode, img, path, skin, hair, parts, stroke]);
 
   const [busy, setBusy] = useState(false);
   const save = async () => {
@@ -264,24 +281,26 @@ export function SpriteEditor({ sheets, creatures, overrides, skins, hairs }: {
     } finally { setBusy(false); }
   };
 
-  const sel: React.CSSProperties = { fontSize: 13, minHeight: 40 };
+  const sel: React.CSSProperties = { fontSize: 12, minHeight: 36, padding: "0 6px" };
+  const small: React.CSSProperties = { minHeight: 36, padding: "0 10px", fontSize: 10, flex: "none" };
   const tb = (t: Tool, label: string) => (
-    <button key={t} type="button" className={`btn btn-sm${tool === t ? " btn-purple" : ""}`} onClick={() => setTool(t)} aria-pressed={tool === t} style={{ minHeight: 40, flex: 1 }}>{label}</button>
+    <button key={t} type="button" className={`btn btn-sm${tool === t ? " btn-purple" : ""}`} onClick={() => setTool(t)} aria-pressed={tool === t} style={small}>{label}</button>
   );
+  const edit = (k: string, v: string) => setParts((p) => ({ ...p, [k]: v }));
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: 10, margin: "0 -16px", padding: "0 16px" }}>
       {/* What to draw on. */}
       <div style={{ display: "flex", gap: 6 }}>
-        <button type="button" className={`btn btn-sm${mode === "portrait" ? " btn-purple" : ""}`} onClick={() => setMode("portrait")} style={{ flex: 1, minHeight: 40 }}>PORTRAIT PARTS</button>
-        <button type="button" className={`btn btn-sm${mode === "creature" ? " btn-purple" : ""}`} onClick={() => setMode("creature")} style={{ flex: 1, minHeight: 40 }}>HISTORIKALS</button>
+        <button type="button" className={`btn btn-sm${mode === "portrait" ? " btn-purple" : ""}`} onClick={() => setMode("portrait")} style={{ flex: 1, minHeight: 36 }}>PORTRAIT PARTS</button>
+        <button type="button" className={`btn btn-sm${mode === "creature" ? " btn-purple" : ""}`} onClick={() => setMode("creature")} style={{ flex: 1, minHeight: 36 }}>HISTORIKALS</button>
       </div>
       {mode === "portrait" ? (
         <div style={{ display: "flex", gap: 6 }}>
           <select className="input" value={sheet} onChange={(e) => setSheet(e.target.value)} aria-label="Sheet" style={{ ...sel, flex: 1 }}>
             {sheets.map((s) => <option key={s.sheet} value={s.sheet}>{s.sheet}</option>)}
           </select>
-          <select className="input" value={id} onChange={(e) => setId(e.target.value)} aria-label="Cell" style={{ ...sel, width: 96 }}>
+          <select className="input" value={id} onChange={(e) => setId(e.target.value)} aria-label="Cell" style={{ ...sel, width: 92 }}>
             {ids.map((i) => <option key={i} value={i}>{i}{edited.has(`portrait/${sheet}/${i}.png`) ? " ✎" : ""}</option>)}
           </select>
         </div>
@@ -296,63 +315,77 @@ export function SpriteEditor({ sheets, creatures, overrides, skins, hairs }: {
         </div>
       )}
 
-      {/* The canvas, and the test face beside it when there is room. */}
-      <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "flex-start" }}>
-        <div ref={wrap} style={{ flex: "1 1 240px", minWidth: 0, overflow: "auto", maxHeight: "60vh", background: "#1a1630", boxShadow: "0 0 0 1px var(--edge)" }}>
-          {img ? (
-            <canvas ref={canvas} onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onPointerCancel={onUp} onContextMenu={(e) => e.preventDefault()} style={{ display: "block", touchAction: "none", cursor: tool === "pick" ? "crosshair" : "cell", imageRendering: "pixelated" }} />
-          ) : (
-            <div className="px" style={{ padding: 20, fontSize: 11, color: "var(--muted)" }}>{note || "LOADING"}</div>
-          )}
-        </div>
-        {mode === "portrait" ? (
-          <div style={{ flex: "0 0 auto", display: "flex", flexDirection: "column", gap: 6, alignItems: "center" }}>
-            {preview ? <img src={preview} alt="" width={128} height={128} style={{ display: "block", width: 128, height: 128, imageRendering: "pixelated", boxShadow: "0 0 0 1px var(--edge)" }} /> : <div style={{ width: 128, height: 128, background: "#1a1630" }} />}
+      {/* The test face and its parts (portrait), or the picture at app size (creature). */}
+      {mode === "portrait" ? (
+        <div style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
+          {preview ? <img src={preview} alt="" width={128} height={128} style={{ display: "block", width: 112, height: 112, flex: "none", imageRendering: "pixelated", boxShadow: "0 0 0 1px var(--edge)" }} /> : <div style={{ width: 112, height: 112, flex: "none", background: "#1a1630" }} />}
+          <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 4 }}>
             <div style={{ display: "flex", gap: 4 }}>
-              <select className="input" value={skin} onChange={(e) => setSkin(e.target.value)} aria-label="Skin for the test face" style={{ ...sel, width: 60, background: skin, color: "#000" }}>
-                {skins.map((s) => <option key={s} value={s} style={{ background: s }}>{s}</option>)}
+              <select className="input" value={skin} onChange={(e) => setSkin(e.target.value)} aria-label="Skin for the test face" style={{ ...sel, flex: 1, background: skin, color: "#000" }}>
+                {skins.map((s) => <option key={s} value={s} style={{ background: s }}>SKIN {s}</option>)}
               </select>
-              <select className="input" value={hair} onChange={(e) => setHair(e.target.value)} aria-label="Hair colour for the test face" style={{ ...sel, width: 60, background: hair, color: "#fff" }}>
-                {hairs.map((s) => <option key={s} value={s} style={{ background: s }}>{s}</option>)}
+              <select className="input" value={hair} onChange={(e) => setHair(e.target.value)} aria-label="Hair colour for the test face" style={{ ...sel, flex: 1, background: hair, color: "#fff" }}>
+                {hairs.map((s) => <option key={s} value={s} style={{ background: s }}>HAIR {s}</option>)}
               </select>
             </div>
+            {/* Every part, in a row that scrolls sideways. The one being drawn is pinned to the cell. */}
+            <div style={{ display: "flex", gap: 4, overflowX: "auto", paddingBottom: 2, scrollbarWidth: "none" }}>
+              {ordered.map((c) => {
+                const pinned = cellCtl?.key === c.key;
+                return (
+                  <label key={c.key} className="px" style={{ display: "flex", flexDirection: "column", gap: 2, fontSize: 8, color: pinned ? "#e0398a" : "var(--muted)", flex: "none" }}>
+                    {LABEL[c.key] ?? c.key.toUpperCase()}
+                    <select className="input" value={pinned ? cellCtl!.id : parts[c.key] ?? "none"} disabled={pinned} onChange={(e) => edit(c.key, e.target.value)} style={{ ...sel, minHeight: 32, width: 72, fontSize: 11 }}>
+                      {(pinned ? [cellCtl!.id] : c.ids).map((i) => <option key={i} value={i}>{i}</option>)}
+                    </select>
+                  </label>
+                );
+              })}
+            </div>
           </div>
-        ) : img ? (
-          <div style={{ flex: "0 0 auto", display: "flex", gap: 8, alignItems: "flex-end" }}>
-            <canvas ref={(c) => { if (!c || !img) return; c.width = img.w * 2; c.height = img.h * 2; const x = c.getContext("2d")!; x.imageSmoothingEnabled = false; const t = document.createElement("canvas"); t.width = img.w; t.height = img.h; t.getContext("2d")!.putImageData(new ImageData(new Uint8ClampedArray(img.px), img.w, img.h), 0, 0); x.drawImage(t, 0, 0, img.w * 2, img.h * 2); }} style={{ display: "block", imageRendering: "pixelated", background: "var(--blk-pur)" }} />
-          </div>
-        ) : null}
+        </div>
+      ) : img ? (
+        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          <canvas ref={(c) => { if (!c || !img) return; c.width = img.w * 2; c.height = img.h * 2; const x = c.getContext("2d")!; x.imageSmoothingEnabled = false; const t = document.createElement("canvas"); t.width = img.w; t.height = img.h; t.getContext("2d")!.putImageData(new ImageData(new Uint8ClampedArray(img.px), img.w, img.h), 0, 0); x.drawImage(t, 0, 0, img.w * 2, img.h * 2); }} style={{ display: "block", imageRendering: "pixelated", background: "var(--blk-pur)" }} />
+          <span className="px" style={{ fontSize: 9, color: "var(--muted)" }}>AS IN THE APP</span>
+        </div>
+      ) : null}
+
+      {/* The canvas: scrolls both ways when zoomed in. */}
+      <div ref={wrap} style={{ overflow: "auto", maxHeight: "52vh", background: "#1a1630", boxShadow: "0 0 0 1px var(--edge)", overscrollBehavior: "contain" }}>
+        {img ? (
+          <canvas ref={canvas} onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onPointerCancel={onUp} onContextMenu={(e) => e.preventDefault()} style={{ display: "block", touchAction: "none", cursor: tool === "pick" ? "crosshair" : "cell", imageRendering: "pixelated" }} />
+        ) : (
+          <div className="px" style={{ padding: 20, fontSize: 11, color: "var(--muted)" }}>{note || "LOADING"}</div>
+        )}
+      </div>
+      <div className="px" style={{ fontSize: 9, color: note.startsWith("COULD") ? "#ff5a7a" : "var(--muted)", minHeight: 12 }}>
+        {note || (path ? `${path}${edited.has(path) ? " · EDITED IN THE APP" : " · AS SHIPPED"}${loadedFrom && dirty ? " · UNSAVED" : ""}` : "")}
       </div>
 
-      {/* Tools. */}
-      <div style={{ display: "flex", gap: 4 }}>
-        {tb("pencil", "PENCIL")}{tb("eraser", "ERASER")}{tb("fill", "FILL")}{tb("pick", "PICK")}
-      </div>
-      <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
-        <input type="color" value={colour} onChange={(e) => setColour(e.target.value)} aria-label="Colour" style={{ width: 44, height: 40, padding: 0, border: 0, background: "none" }} />
-        <span className="px" style={{ fontSize: 10, color: "var(--muted)", width: 64 }}>{colour.toUpperCase()}</span>
-        <span style={{ flex: 1 }} />
-        <button type="button" className="btn btn-sm" onClick={() => setZoom((z) => Math.max(1, (z || fitScale) - 1))} style={{ minHeight: 40, minWidth: 40 }} aria-label="Zoom out">−</button>
-        <button type="button" className="btn btn-sm" onClick={() => setZoom(0)} style={{ minHeight: 40 }}>FIT</button>
-        <button type="button" className="btn btn-sm" onClick={() => setZoom((z) => Math.min(24, (z || fitScale) + 1))} style={{ minHeight: 40, minWidth: 40 }} aria-label="Zoom in">+</button>
-        <button type="button" className={`btn btn-sm${grid ? " btn-purple" : ""}`} onClick={() => setGrid((g) => !g)} style={{ minHeight: 40 }}>GRID</button>
-      </div>
-      <div style={{ display: "flex", gap: 3, flexWrap: "wrap" }}>
-        {palette.map((c) => (
-          <button key={c} type="button" onClick={() => { setColour(c); if (tool !== "fill") setTool("pencil"); }} aria-label={c} title={c} style={{ width: 24, height: 24, background: c, border: 0, boxShadow: colour === c ? "0 0 0 2px #fff" : "0 0 0 1px rgba(255,255,255,.2)", cursor: "pointer" }} />
-        ))}
-      </div>
-
-      {/* Undo, save. */}
-      <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-        <button type="button" className="btn btn-sm" onClick={doUndo} disabled={!undo.current.length} style={{ minHeight: 40 }}>UNDO</button>
-        <button type="button" className="btn btn-sm" onClick={doRedo} disabled={!redo.current.length} style={{ minHeight: 40 }}>REDO</button>
-        <span style={{ flex: 1 }} />
-        {path && edited.has(path) ? <button type="button" className="btn btn-sm" onClick={reset} disabled={busy} style={{ minHeight: 40 }}>RESET</button> : null}
-        <button type="button" className="btn btn-sm btn-purple" onClick={save} disabled={busy || !img || !dirty} style={{ minHeight: 40 }}>SAVE</button>
-      </div>
-      <div className="px" style={{ fontSize: 10, color: note.startsWith("COULD") ? "#ff5a7a" : "var(--muted)", minHeight: 14 }}>
-        {note || (path ? `${path}${edited.has(path) ? " · EDITED IN THE APP" : " · AS SHIPPED"}${loadedFrom && dirty ? " · UNSAVED CHANGES" : ""}` : "")}
+      {/* The one toolbar, pinned to the foot of the screen: tools, undo, zoom; then the colour, the palette and SAVE. */}
+      <div style={{ position: "sticky", bottom: 0, zIndex: 5, margin: "0 -16px", padding: "8px 12px 10px", background: "var(--device)", boxShadow: "0 -1px 0 var(--edge)", display: "flex", flexDirection: "column", gap: 6 }}>
+        <div style={{ display: "flex", gap: 4, overflowX: "auto", scrollbarWidth: "none" }}>
+          {tb("pencil", "PENCIL")}{tb("eraser", "ERASE")}{tb("fill", "FILL")}{tb("pick", "PICK")}
+          <span style={{ width: 4, flex: "none" }} />
+          <button type="button" className="btn btn-sm" onClick={doUndo} disabled={!undo.current.length} style={small}>UNDO</button>
+          <button type="button" className="btn btn-sm" onClick={doRedo} disabled={!redo.current.length} style={small}>REDO</button>
+          <span style={{ width: 4, flex: "none" }} />
+          <button type="button" className="btn btn-sm" onClick={() => setZoom((z) => Math.max(1, (z || fitScale) - 1))} style={small} aria-label="Zoom out">−</button>
+          <button type="button" className="btn btn-sm" onClick={() => setZoom(0)} style={small}>FIT</button>
+          <button type="button" className="btn btn-sm" onClick={() => setZoom((z) => Math.min(24, (z || fitScale) + 1))} style={small} aria-label="Zoom in">+</button>
+          <button type="button" className={`btn btn-sm${grid ? " btn-purple" : ""}`} onClick={() => setGrid((g) => !g)} style={small}>GRID</button>
+        </div>
+        <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+          <input type="color" value={colour} onChange={(e) => setColour(e.target.value)} aria-label="Colour" style={{ width: 36, height: 36, padding: 0, border: 0, background: "none", flex: "none" }} />
+          <div style={{ flex: 1, minWidth: 0, display: "flex", gap: 3, overflowX: "auto", scrollbarWidth: "none", padding: "2px 0" }}>
+            {palette.map((c) => (
+              <button key={c} type="button" onClick={() => { setColour(c); if (tool !== "fill") setTool("pencil"); }} aria-label={c} title={c} style={{ width: 26, height: 26, flex: "none", background: c, border: 0, boxShadow: colour === c ? "0 0 0 2px #fff" : "0 0 0 1px rgba(255,255,255,.2)", cursor: "pointer" }} />
+            ))}
+          </div>
+          {path && edited.has(path) ? <button type="button" className="btn btn-sm" onClick={reset} disabled={busy} style={small}>RESET</button> : null}
+          <button type="button" className="btn btn-sm btn-purple" onClick={save} disabled={busy || !img || !dirty} style={small}>SAVE</button>
+        </div>
       </div>
     </div>
   );

@@ -39,8 +39,10 @@ export async function POST(request: Request) {
   const ctl = controlFor(cell);
   if (ctl) {
     raw[ctl.key] = ctl.id;
-    if (ctl.key === "hair_back") raw.top = SIDES_OWN[ctl.id] ?? ctl.id;
-    if (ctl.key === "top") raw.hair_back = ctl.id;
+    // The other half of the hair is the witch's to choose (normalizePortrait puts it right if the pair
+    // cannot go together); only when nothing was chosen does it follow the cell.
+    if (ctl.key === "hair_back" && !raw.top) raw.top = SIDES_OWN[ctl.id] ?? ctl.id;
+    if (ctl.key === "top" && !raw.hair_back) raw.hair_back = ctl.id;
   }
   if (body.skin) raw.skin = body.skin;
   if (body.hair) raw.hair_colour = body.hair;
