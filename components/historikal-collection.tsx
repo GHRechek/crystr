@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Creature, MoveIcon, Stats, TypeIcon } from "@/components/encounter";
+import { CRYSTR_HEART, Creature, CrystrGradientDef, MoveIcon, Stats, TypeIcon } from "@/components/encounter";
 import { HistorikalCard } from "@/components/historikal-card";
 import { useDecay } from "@/components/decay";
 import { corrupt } from "@/lib/crystr";
@@ -27,18 +27,21 @@ export function FilterRow({ rarities, count, rar, setRar, type, setType, ring = 
   ring?: string;
 }) {
   const line = "linear-gradient(90deg, #e0398a, #9184d9 52%, #4c7df0)";
-  // Pinned to the top of whatever scrolls, so the list goes by under it.
+  // Pinned to the top of whatever scrolls, so the list goes by under it. The chosen rarity wears a
+  // CRYSTR ring; the chosen type is filled with the gradient.
   return (
     <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, position: "sticky", top: 0, zIndex: 2, background: ring, paddingBottom: 4 }}>
+      <CrystrGradientDef />
       <div role="group" aria-label="Rarity" style={{ display: "flex", gap: 6, alignItems: "center" }}>
         {rarities.map((r) => {
           const on = rar === r;
           const n = count?.(r);
           return (
             <button key={r} type="button" aria-pressed={on} aria-label={n === undefined ? RARITY_NAME[r] : `${RARITY_NAME[r]} · ${n}`} title={RARITY_NAME[r]} onClick={() => setRar(on ? null : r)} style={{ background: "none", border: 0, padding: "4px 2px 2px", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
-              <span style={{ width: 14, height: 14, borderRadius: "50%", background: RARITY_COLOR[r], boxShadow: on ? `0 0 0 2px ${ring}, 0 0 0 3px #fff` : "none", opacity: rar && !on ? 0.45 : 1 }} />
+              <span style={{ width: 20, height: 20, borderRadius: "50%", padding: 2, background: on ? line : "transparent", display: "grid", placeItems: "center" }}>
+                <span style={{ width: 14, height: 14, borderRadius: "50%", background: RARITY_COLOR[r], boxShadow: on ? `0 0 0 1px ${ring}` : "none", opacity: rar && !on ? 0.45 : 1 }} />
+              </span>
               {n === undefined ? null : <span className="px" style={{ fontSize: 7, color: on ? "#fff" : "var(--muted)", lineHeight: 1 }}>{n}</span>}
-              <span aria-hidden style={{ width: 18, height: 3, background: on ? line : "transparent" }} />
             </button>
           );
         })}
@@ -48,9 +51,8 @@ export function FilterRow({ rarities, count, rar, setRar, type, setType, ring = 
         {TYPES.map((t) => {
           const on = type === t;
           return (
-            <button key={t} type="button" aria-pressed={on} aria-label={t} title={t} onClick={() => setType(on ? null : t)} style={{ background: on ? "rgba(255,255,255,.08)" : "none", border: 0, padding: "4px 3px 2px", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: 4, opacity: type && !on ? 0.45 : 1 }}>
-              <TypeIcon type={t} k={1.5} />
-              <span aria-hidden style={{ width: 14, height: 3, background: on ? line : "transparent" }} />
+            <button key={t} type="button" aria-pressed={on} aria-label={t} title={t} onClick={() => setType(on ? null : t)} style={{ background: "none", border: 0, padding: "4px 3px", cursor: "pointer", display: "flex", alignItems: "center", opacity: type && !on ? 0.45 : 1 }}>
+              <TypeIcon type={t} k={1.5} fill={on ? `url(#${CRYSTR_HEART})` : undefined} />
             </button>
           );
         })}

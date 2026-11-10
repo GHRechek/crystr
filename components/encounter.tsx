@@ -193,8 +193,8 @@ export function MoveIcon({ kind, k = 2, fill = "#fff" }: { kind: MoveKind; k?: n
 }
 
 /** One type's icon, in its colour. */
-export function TypeIcon({ type, k = 2 }: { type: Element; k?: number }) {
-  return <Pix rows={TYPE[type]} k={k} fill={ELEMENT_COLOR[type]} />;
+export function TypeIcon({ type, k = 2, fill }: { type: Element; k?: number; /** Another colour (or a gradient url) in place of the type's own. */ fill?: string }) {
+  return <Pix rows={TYPE[type]} k={k} fill={fill ?? ELEMENT_COLOR[type]} />;
 }
 
 /** Its types (each in its colour, or ? until you know them) then white hearts. */
