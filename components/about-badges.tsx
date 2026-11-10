@@ -12,7 +12,6 @@ import { SHOW_MAX, type ShownBadge } from "@/lib/badges";
 import type { Stake } from "@/components/encounter";
 import { DrawScene, type DrawKind } from "@/components/draw-scene";
 import { HistorikalCard } from "@/components/historikal-card";
-import { QrCode } from "@/components/qr";
 import { useRouter } from "next/navigation";
 
 /** The strip under the About Me text: the person's token (passed in as children), then up to five
@@ -34,7 +33,6 @@ export function AboutBadges({
   openAtStart,
   token,
   known,
-  codeFor,
 }: {
   children?: React.ReactNode;
   shown: ShownBadge[];
@@ -49,8 +47,6 @@ export function AboutBadges({
   tradeCount?: number;
   /** The trade icon opens the camera to scan someone's code instead of going to the trade menu. */
   scan?: boolean;
-  /** Your own row: your handle, for the code button before the Historikals one (your code, big, to be scanned). */
-  codeFor?: string;
   /** On someone else's profile: the creatures (slugs) the viewer holds themselves, whose cards they may read in full. */
   known?: string[];
   /** Draws waiting to be opened: FIND ONE! (normal) and SUMMON ONE! (main). */
@@ -74,9 +70,6 @@ export function AboutBadges({
   const lineupKeys = shown.filter((b) => b.key.startsWith("i:")).map((b) => b.key);
   const router = useRouter();
   const [camera, setScan] = useState<{ intent?: "trade" | "battle"; stake?: Stake } | null>(null);
-  const [code, setCode] = useState(false);
-  const [origin, setOrigin] = useState("");
-  useEffect(() => setOrigin(window.location.origin), []);
   const box = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(300);
 
@@ -119,10 +112,9 @@ export function AboutBadges({
   const EVEN = 7;
   const LEAD_PX = 104 / 2 - EVEN;
   const endPx = leads ? LEAD_PX : compact ? Math.round(px * 1.35) : px;
-  const codeBtn = leads && !!codeFor;
-  const nItems = (leads ? 1 : 0) + (codeBtn ? 1 : 0) + (token ? 1 : 0) + nBadges + (eyeEnd ? 1 : 0);
+  const nItems = (leads ? 1 : 0) + (token ? 1 : 0) + nBadges + (eyeEnd ? 1 : 0);
   // Four Historikals now: packed beside the button(s), their middles level with the buttons' middles.
-  const shared = leads ? Math.max(22, Math.min(endPx, Math.floor((width + PORTRAIT_GAP - EVEN * nItems - endPx * (codeBtn ? 2 : 1) - (eyeEnd ? px : 0)) / Math.max(1, nBadges + (token ? 1 : 0))))) : 0;
+  const shared = leads ? Math.max(22, Math.min(endPx, Math.floor((width + PORTRAIT_GAP - EVEN * nItems - endPx - (eyeEnd ? px : 0)) / Math.max(1, nBadges + (token ? 1 : 0))))) : 0;
   // Elsewhere (someone else's profile) the Proof leads, a size up, and the badges step down to fit.
   const tokPx = leads ? shared : compact ? Math.round(px * 1.35) : px;
   const badgePx = leads
@@ -136,15 +128,9 @@ export function AboutBadges({
   const tipBadge = tip ? shown.find((b) => b.key === tip.key) : undefined;
   const iconPx = compact ? Math.round(endPx * 0.5) : 22;
   const leadBtn: React.CSSProperties = leads ? { ...endBtn, marginLeft: EVEN - PORTRAIT_GAP } : endBtn;
-  const codeEl = codeBtn ? (
-    <button type="button" aria-label="Your code: show it to be scanned" title="Your code" onClick={() => setCode(true)} style={leadBtn}>
-      <QrGlyph size={Math.round(endPx * 0.6)} />
-    </button>
-  ) : null;
   const tradeEl = tradeHref && scan ? (
         <>
-          {codeEl}
-          <button type="button" aria-label="Historikals: trade, battle, or edit your lineup" aria-haspopup="menu" aria-expanded={!!menu} title="Historikals" onClick={() => setMenu((m) => (m ? false : "menu"))} style={codeBtn ? endBtn : leadBtn}>
+          <button type="button" aria-label="Historikals: trade, battle, or edit your lineup" aria-haspopup="menu" aria-expanded={!!menu} title="Historikals" onClick={() => setMenu((m) => (m ? false : "menu"))} style={leadBtn}>
             <TradeIcon size={iconPx} />
             {tradeCount ? (
               <span aria-hidden className="px" style={{ position: "absolute", top: -6, right: -6, minWidth: 16, height: 16, display: "grid", placeItems: "center", fontSize: 10, lineHeight: 1, background: "var(--pur)", color: "#fff", borderRadius: 0 }}>{tradeCount}</span>
@@ -195,16 +181,6 @@ export function AboutBadges({
           ) : null}
           {drawing ? <DrawScene kind={drawing} count={drawing === "main" ? draws?.main ?? 0 : draws?.normal ?? 0} onClose={() => { setDrawing(null); router.refresh(); }} /> : null}
           {camera ? <QrScanner onClose={() => setScan(null)} tradesHref={tradeHref} waiting={tradeCount} intent={camera.intent} stake={camera.stake} /> : null}
-          {code && codeFor ? (
-            // Your code, big, for someone to scan: to help you, trade with you, or battle you.
-            <div role="dialog" aria-label="Your code" onClick={() => setCode(false)} style={{ position: "fixed", inset: 0, zIndex: 95, background: "rgba(5,3,12,.85)", display: "grid", placeItems: "center", padding: 20 }}>
-              <div onClick={(e) => e.stopPropagation()} style={{ background: "#fff", padding: 14, display: "flex", flexDirection: "column", alignItems: "center", gap: 10, boxShadow: "6px 6px 0 #0a0616" }}>
-                {origin ? <QrCode text={`${origin}/u/${codeFor}`} size={232} label="Your code. Someone scans it to help you, trade with you, or battle you." /> : <div style={{ width: 232, height: 232 }} />}
-                <div className="px" style={{ fontSize: 11, color: "#1a1033", letterSpacing: ".06em" }}>YOUR CODE · {codeFor.toUpperCase()}</div>
-                <button type="button" className="btn btn-sm" onClick={() => setCode(false)} style={{ minHeight: 40, alignSelf: "stretch" }}>CLOSE</button>
-              </div>
-            </div>
-          ) : null}
         </>
       ) : tradeHref ? (
         <Link
@@ -315,7 +291,7 @@ function EyeIcon() {
 
 /** A little pixel monster face: scan someone to trade or battle Historikals. */
 /** A little QR code in the CRYSTR gradient: three finder squares and a scatter of modules, as the eye expects one. */
-function QrGlyph({ size = 22 }: { size?: number }) {
+export function QrGlyph({ size = 22 }: { size?: number }) {
   const id = `qr${useId().replace(/:/g, "")}`;
   const rows = [
     "#######.#.#######",

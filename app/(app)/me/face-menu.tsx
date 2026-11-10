@@ -5,6 +5,7 @@ import { useEffect, useState, type CSSProperties } from "react";
 import { setMood } from "@/lib/actions";
 import { QrCode } from "@/components/qr";
 import { HelpThought } from "@/components/help-thought";
+import { YourCode } from "@/components/your-code";
 
 /** The portrait's size, and how tall the banner is when it carries the shown badges: a row of
  *  badges (63 pixels), a gap, and the thought below them, clear of the portrait. */
@@ -32,6 +33,7 @@ export function ProfileHead({
 }) {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(false);
+  const [showCode, setShowCode] = useState(false);
   const [origin, setOrigin] = useState("");
   useEffect(() => setOrigin(window.location.origin), []);
 
@@ -65,8 +67,10 @@ export function ProfileHead({
               setOpen(true);
               setEditing(true);
             }}
+            onCode={() => setShowCode(true)}
           />
         ) : null}
+        {showCode ? <YourCode handle={handle} onClose={() => setShowCode(false)} /> : null}
         <div style={{ display: "flex", alignItems: "flex-end", gap: 11, position: "relative" }}>
           <button
             type="button"
