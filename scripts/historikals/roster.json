@@ -569,7 +569,7 @@
 "sprite": 1805,
 "art": 1805,
 "name": "Office Zombie",
-"rarity": "common",
+"rarity": "uncommon",
 "types": [
 "shadow",
 "light"
@@ -655,10 +655,10 @@
 "sprite": 1892,
 "art": 1892,
 "name": "Goblin Bandit",
-"rarity": "common",
+"rarity": "rare",
 "types": [
 "shadow",
-"shadow"
+"nature"
 ],
 "rnd": false,
 "one": false,
@@ -723,7 +723,7 @@
 "sprite": 1903,
 "art": 1903,
 "name": "Goblin Bard",
-"rarity": "uncommon",
+"rarity": "rare",
 "types": [
 "light",
 "light"
@@ -894,9 +894,9 @@
 "sprite": 1932,
 "art": 1932,
 "name": "Clever Goblin",
-"rarity": "common",
+"rarity": "uncommon",
 "types": [
-"shadow",
+"nature",
 "shadow"
 ],
 "rnd": false,
@@ -1647,7 +1647,7 @@
 "sprite": 936,
 "art": 936,
 "name": "Orc Prowler",
-"rarity": "common",
+"rarity": "uncommon",
 "types": [
 "shadow",
 "earth"
@@ -1715,7 +1715,7 @@
 "sprite": 943,
 "art": 943,
 "name": "Orc Raider",
-"rarity": "common",
+"rarity": "uncommon",
 "types": [
 "normal",
 "nature"
@@ -1851,7 +1851,7 @@
 "sprite": 957,
 "art": 957,
 "name": "Orc Marauder",
-"rarity": "common",
+"rarity": "uncommon",
 "types": [
 "normal",
 "normal"

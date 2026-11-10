@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import jsQR from "jsqr";
 import { BadgeArt } from "@/components/badges";
@@ -15,6 +16,15 @@ export function QrScanner({ onClose, tradesHref, waiting, mode = "general", only
   const router = useRouter();
   const video = useRef<HTMLVideoElement>(null);
   const [err, setErr] = useState<string | null>(null);
+  // Where the screen starts, under the app's top bar: the scanner is drawn from there, so its header
+  // (and the close) is never under that bar, whatever the page did.
+  const [top, setTop] = useState(0);
+  useLayoutEffect(() => {
+    const read = () => setTop(document.querySelector(".screen")?.getBoundingClientRect().top ?? 0);
+    read();
+    window.addEventListener("resize", read);
+    return () => window.removeEventListener("resize", read);
+  }, []);
   // The person a battle was about to start with, when it was your lineup that stopped it.
   const [lineupFor, setLineupFor] = useState<string | null>(null);
   const fail = (why: string, otherId: string) => { setErr(why); if (why === START_PROBLEM.no_lineup && onLineup) setLineupFor(otherId); };
@@ -102,8 +112,9 @@ export function QrScanner({ onClose, tradesHref, waiting, mode = "general", only
     };
   }, [onClose, router, mode]);
 
-  return (
-    <div className="full-sheet" role="dialog" aria-label="Scan someone's code" style={{ position: "fixed", inset: 0, zIndex: 90, maxWidth: 480, margin: "0 auto", background: "#120e24", display: "flex", flexDirection: "column" }}>
+  if (typeof document === "undefined") return null;
+  return createPortal(
+    <div role="dialog" aria-label="Scan someone's code" style={{ position: "fixed", top, left: 0, right: 0, bottom: 0, zIndex: 90, maxWidth: 480, margin: "0 auto", background: "#120e24", display: "flex", flexDirection: "column", paddingBottom: "env(safe-area-inset-bottom)" }}>
       {/* What the scan is for, big, on the CRYSTR colours. */}
       <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "16px 16px 14px", background: "linear-gradient(90deg,#e0398a,#9184d9 52%,#4c7df0)" }}>
         <div className="px" style={{ fontSize: 20, lineHeight: 1.2, color: "#fff", textShadow: "2px 2px 0 #1a1033" }}>{mode === "quest" ? (title ?? "QUEST").toUpperCase() : intent === "trade" ? "TRADE" : intent === "battle" ? (stake ? "EPIC BATTLE" : "BATTLE") : "GET HISTORIKAL"}</div>
@@ -197,6 +208,7 @@ export function QrScanner({ onClose, tradesHref, waiting, mode = "general", only
           <button type="button" className="btn btn-purple" onClick={() => onLineup(lineupFor)} style={{ minHeight: 44, padding: "0 18px" }}>SET YOUR LINEUP</button>
         ) : null}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

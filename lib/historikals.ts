@@ -35,7 +35,7 @@ export const kindArtSrc = (art: string) => (art.startsWith("creatures/") ? `/${a
 /** A Historikal's picture: frame 1 or 2. One that rolls its type is drawn in the colour of the type it rolled. */
 export const historikalSrc = (slug: string, frame: 1 | 2 = 1, el?: Element) => {
   const file = `${slug}${el && HISTORIKAL.get(slug)?.rnd && el !== HISTORIKAL.get(slug)?.types[0] ? `--${el}` : ""}${frame === 2 ? "-2" : ""}.png`;
-  // A witch's edit in the app stands in for the shipped file.
+  // A witch's edit in the app stands in for the shipped file (lib/sprites).
   return spriteUrl(`creatures/${file}`) ?? `/creatures/${file}`;
 };
 
@@ -72,16 +72,16 @@ export const HISTORIKALS: Historikal[] = [
   { slug: "zombie-boss", name: "Zombie Boss", rarity: "rare", types: ["dark", "spirit"], hearts: 3, moves: [{ name: "Night Slash", kind: "sword" }, { name: "Radiance", kind: "spell" }, { name: "Fade", kind: "armor" }] },
   { slug: "dr-zombie", name: "Dr. Zombie", rarity: "uncommon", types: ["spirit", "dark"], hearts: 3, moves: [{ name: "Glint", kind: "sword" }, { name: "Fade", kind: "armor" }] },
   { slug: "zombie", name: "Droner", rarity: "common", types: ["dark", "spirit"], hearts: 2, moves: [{ name: "Fang", kind: "sword" }, { name: "Hex", kind: "spell" }] },
-  { slug: "office-zombie", name: "Office Zombie", rarity: "common", types: ["dark", "spirit"], hearts: 2, moves: [{ name: "Shadow Claw", kind: "sword" }, { name: "Ether Guard", kind: "armor" }] },
+  { slug: "office-zombie", name: "Office Zombie", rarity: "uncommon", types: ["dark", "spirit"], hearts: 3, moves: [{ name: "Shadow Claw", kind: "sword" }, { name: "Ether Guard", kind: "armor" }] },
   { slug: "girl-zombie", name: "Girl Zombie", rarity: "uncommon", types: ["dark", "spirit"], hearts: 3, moves: [{ name: "Soul Bite", kind: "sword" }, { name: "Ether Guard", kind: "armor" }] },
   { slug: "barbossi", name: "Barbossi", rarity: "legendary", types: ["dark", "feral"], hearts: 4, moves: [{ name: "Soul Bite", kind: "sword" }, { name: "Frenzy", kind: "spell" }, { name: "Fade", kind: "armor" }] },
   { slug: "goblin-spearman", name: "Goblin Spearman", rarity: "uncommon", types: ["feral", "ward"], hearts: 3, moves: [{ name: "Tusk", kind: "sword" }, { name: "Hunker", kind: "armor" }] },
   { slug: "the-gablier", name: "The Gablier", rarity: "legendary", types: ["dark", "tide"], hearts: 5, moves: [{ name: "Night Slash", kind: "sword" }, { name: "Whirlpool", kind: "spell" }, { name: "Gloom Wall", kind: "armor" }] },
-  { slug: "goblin-bandit", name: "Goblin Bandit", rarity: "common", types: ["dark"], hearts: 2, moves: [{ name: "Gloom Jab", kind: "sword" }, { name: "Blight", kind: "spell" }] },
+  { slug: "goblin-bandit", name: "Goblin Bandit", rarity: "rare", types: ["dark", "nature"], hearts: 3, moves: [{ name: "Gloom Jab", kind: "sword" }, { name: "Thorn Rain", kind: "spell" }, { name: "Fade", kind: "armor" }] },
   { slug: "science-goblin", name: "Science Goblin", rarity: "uncommon", types: ["spirit", "dark"], hearts: 3, moves: [{ name: "Smite", kind: "sword" }, { name: "Hex", kind: "spell" }] },
   { slug: "zombie-goblin", name: "Zombie Goblin", rarity: "common", types: ["ward", "dark"], hearts: 2, moves: [{ name: "Shield Bash", kind: "sword" }, { name: "Wail", kind: "spell" }] },
   { slug: "the-goblin-king", name: "The Goblin King", rarity: "legendary", types: ["nature", "spirit"], hearts: 5, moves: [{ name: "Root Snap", kind: "sword" }, { name: "Blessing", kind: "spell" }, { name: "Briar Wall", kind: "armor" }] },
-  { slug: "goblin-bard", name: "Goblin Bard", rarity: "uncommon", types: ["spirit"], hearts: 3, moves: [{ name: "Glint", kind: "sword" }, { name: "Shield", kind: "armor" }] },
+  { slug: "goblin-bard", name: "Goblin Bard", rarity: "rare", types: ["spirit"], hearts: 3, moves: [{ name: "Glint", kind: "sword" }, { name: "Halo", kind: "spell" }, { name: "Sanctuary", kind: "armor" }] },
   { slug: "goblin", name: "Widdle Goblin", rarity: "common", types: ["nature", "feral"], hearts: 2, moves: [{ name: "Stab", kind: "sword" }, { name: "Hide", kind: "armor" }] },
   { slug: "goblin-berserker", name: "Goblin Berserker", rarity: "rare", types: ["feral", "fire"], hearts: 3, moves: [{ name: "Tusk", kind: "sword" }, { name: "Inferno", kind: "spell" }, { name: "Dodge", kind: "armor" }] },
   { slug: "torcher", name: "Torcher", rarity: "uncommon", types: ["fire", "spirit"], hearts: 3, moves: [{ name: "Blaze Fang", kind: "sword" }, { name: "Aegis", kind: "armor" }] },
@@ -91,7 +91,7 @@ export const HISTORIKALS: Historikal[] = [
   { slug: "girt", name: "Girt", rarity: "legendary", types: ["spirit", "nature"], hearts: 4, moves: [{ name: "Radiant Jab", kind: "sword" }, { name: "Thorn Rain", kind: "spell" }, { name: "Sanctuary", kind: "armor" }] },
   { slug: "goblin-conjurer", name: "Goblin Conjurer", rarity: "uncommon", types: ["dark", "spirit"], hearts: 3, moves: [{ name: "Dusk Fang", kind: "sword" }, { name: "Gleam", kind: "spell" }], rnd: true },
   { slug: "feral-goblin", name: "Feral Goblin", rarity: "common", types: ["fire", "feral"], hearts: 2, moves: [{ name: "Flare Kick", kind: "sword" }, { name: "Roar", kind: "spell" }] },
-  { slug: "clever-goblin", name: "Clever Goblin", rarity: "common", types: ["dark"], hearts: 2, moves: [{ name: "Grim Reap", kind: "sword" }, { name: "Gloom Wall", kind: "armor" }] },
+  { slug: "clever-goblin", name: "Clever Goblin", rarity: "uncommon", types: ["nature", "dark"], hearts: 3, moves: [{ name: "Root Snap", kind: "sword" }, { name: "Gloom Wall", kind: "armor" }] },
   { slug: "gymbroh", name: "Gymbroh", rarity: "epic", types: ["feral", "fire"], hearts: 4, moves: [{ name: "Bite", kind: "sword" }, { name: "Fireball", kind: "spell" }, { name: "Scurry", kind: "armor" }] },
   { slug: "antlered-goblin", name: "Antlered Goblin", rarity: "rare", types: ["nature", "feral"], hearts: 3, moves: [{ name: "Pounce", kind: "sword" }, { name: "Howl", kind: "spell" }, { name: "Briar Wall", kind: "armor" }] },
   { slug: "skeleton", name: "Just A Skeleton", rarity: "common", types: ["dark", "ward"], hearts: 2, moves: [{ name: "Bone Rattle", kind: "sword" }, { name: "Grave Guard", kind: "armor" }] },
@@ -135,11 +135,11 @@ export const HISTORIKALS: Historikal[] = [
   { slug: "orc-mystic", name: "Orc Mystic", rarity: "uncommon", types: ["feral", "spirit"], hearts: 3, moves: [{ name: "Bite", kind: "sword" }, { name: "Sun Flare", kind: "spell" }] },
   { slug: "orc-gladiator", name: "Orc Gladiator", rarity: "common", types: ["feral", "ward"], hearts: 2, moves: [{ name: "Fang", kind: "sword" }, { name: "Rumble", kind: "spell" }] },
   { slug: "orc-blademaster", name: "Orc Blademaster", rarity: "uncommon", types: ["ward", "tide"], hearts: 3, moves: [{ name: "Quake Stomp", kind: "sword" }, { name: "Ice Wall", kind: "armor" }] },
-  { slug: "orc-prowler", name: "Orc Prowler", rarity: "common", types: ["dark", "ward"], hearts: 2, moves: [{ name: "Gloom Jab", kind: "sword" }, { name: "Rumble", kind: "spell" }] },
+  { slug: "orc-prowler", name: "Orc Prowler", rarity: "uncommon", types: ["dark", "ward"], hearts: 3, moves: [{ name: "Gloom Jab", kind: "sword" }, { name: "Rumble", kind: "spell" }] },
   { slug: "orc-ninja", name: "Orc Ninja", rarity: "epic", types: ["dark", "tide"], hearts: 4, moves: [{ name: "Grim Reap", kind: "sword" }, { name: "Bubble Hex", kind: "spell" }, { name: "Cloak", kind: "armor" }] },
   { slug: "chainmail-orc", name: "Chainmail Orc", rarity: "common", types: ["spirit", "ward"], hearts: 2, moves: [{ name: "Smite", kind: "sword" }, { name: "Iron Skin", kind: "armor" }] },
   { slug: "orc-defender", name: "Orc Defender", rarity: "common", types: ["spirit", "ward"], hearts: 2, moves: [{ name: "Radiant Jab", kind: "sword" }, { name: "Stone Hex", kind: "spell" }] },
-  { slug: "orc-raider", name: "Orc Raider", rarity: "common", types: ["feral", "nature"], hearts: 2, moves: [{ name: "Fang", kind: "sword" }, { name: "Pollen Burst", kind: "spell" }] },
+  { slug: "orc-raider", name: "Orc Raider", rarity: "uncommon", types: ["feral", "nature"], hearts: 3, moves: [{ name: "Fang", kind: "sword" }, { name: "Pollen Burst", kind: "spell" }] },
   { slug: "orc-mercenary", name: "Orc Mercenary", rarity: "common", types: ["feral", "spirit"], hearts: 2, moves: [{ name: "Claw", kind: "sword" }, { name: "Ether Guard", kind: "armor" }] },
   { slug: "orc-champion", name: "Orc Champion", rarity: "common", types: ["ward", "spirit"], hearts: 2, moves: [{ name: "Lunge", kind: "sword" }, { name: "Haunt", kind: "spell" }] },
   { slug: "orc-guard", name: "Orc Guard", rarity: "common", types: ["ward", "spirit"], hearts: 2, moves: [{ name: "Boulder Fist", kind: "sword" }, { name: "Sun Flare", kind: "spell" }] },
@@ -147,7 +147,7 @@ export const HISTORIKALS: Historikal[] = [
   { slug: "bone-collector", name: "Bone Collector", rarity: "common", types: ["feral", "nature"], hearts: 2, moves: [{ name: "Bite", kind: "sword" }, { name: "Sap Drain", kind: "spell" }] },
   { slug: "sneaky-orc", name: "Sneaky Orc", rarity: "common", types: ["dark", "feral"], hearts: 2, moves: [{ name: "Bone Rattle", kind: "sword" }, { name: "Howl", kind: "spell" }] },
   { slug: "orc", name: "Orc", rarity: "common", types: ["ward", "nature"], hearts: 2, moves: [{ name: "Thorn Lash", kind: "sword" }, { name: "Pollen Burst", kind: "spell" }] },
-  { slug: "orc-marauder", name: "Orc Marauder", rarity: "common", types: ["feral"], hearts: 2, moves: [{ name: "Claw", kind: "sword" }, { name: "Musk", kind: "spell" }] },
+  { slug: "orc-marauder", name: "Orc Marauder", rarity: "uncommon", types: ["feral"], hearts: 3, moves: [{ name: "Claw", kind: "sword" }, { name: "Musk", kind: "spell" }] },
   { slug: "orc-scout", name: "Orc Scout", rarity: "common", types: ["nature", "feral"], hearts: 2, moves: [{ name: "Pounce", kind: "sword" }, { name: "Bristle", kind: "armor" }] },
   { slug: "stone-golem", name: "Stone Golem", rarity: "uncommon", types: ["ward"], hearts: 3, moves: [{ name: "Boulder Fist", kind: "sword" }, { name: "Sandstorm", kind: "spell" }] },
   { slug: "ember-golem", name: "Ember Golem", rarity: "common", types: ["ward", "fire"], hearts: 2, moves: [{ name: "Quake Stomp", kind: "sword" }, { name: "Inferno", kind: "spell" }] },

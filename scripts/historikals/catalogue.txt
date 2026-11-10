@@ -30,16 +30,16 @@ brainebelle|BRAINEBELLE|uncommon|dark|spirit|3|1028|0|0|Bone Rattle:sword;Glow V
 zombie-boss|ZOMBIE BOSS|rare|dark|spirit|3|1029|0|0|Night Slash:sword;Radiance:spell;Fade:armor
 dr-zombie|DR. ZOMBIE|uncommon|spirit|dark|3|1030|0|0|Glint:sword;Fade:armor
 zombie|DRONER|common|dark|spirit|2|1031|0|0|Fang:sword;Hex:spell
-office-zombie|OFFICE ZOMBIE|common|dark|spirit|2|1032|0|0|Shadow Claw:sword;Ether Guard:armor
+office-zombie|OFFICE ZOMBIE|uncommon|dark|spirit|3|1032|0|0|Shadow Claw:sword;Ether Guard:armor
 girl-zombie|GIRL ZOMBIE|uncommon|dark|spirit|3|1033|0|0|Soul Bite:sword;Ether Guard:armor
 barbossi|BARBOSSI|legendary|dark|feral|4|1034|0|0|Soul Bite:sword;Frenzy:spell;Fade:armor
 goblin-spearman|GOBLIN SPEARMAN|uncommon|feral|ward|3|1035|0|0|Tusk:sword;Hunker:armor
 the-gablier|THE GABLIER|legendary|dark|tide|5|1036|0|0|Night Slash:sword;Whirlpool:spell;Gloom Wall:armor
-goblin-bandit|GOBLIN BANDIT|common|dark||2|1037|0|0|Gloom Jab:sword;Blight:spell
+goblin-bandit|GOBLIN BANDIT|rare|dark|nature|3|1037|0|0|Gloom Jab:sword;Thorn Rain:spell;Fade:armor
 science-goblin|SCIENCE GOBLIN|uncommon|spirit|dark|3|1038|0|0|Smite:sword;Hex:spell
 zombie-goblin|ZOMBIE GOBLIN|common|ward|dark|2|1039|0|0|Shield Bash:sword;Wail:spell
 the-goblin-king|THE GOBLIN KING|legendary|nature|spirit|5|1040|0|0|Root Snap:sword;Blessing:spell;Briar Wall:armor
-goblin-bard|GOBLIN BARD|uncommon|spirit||3|1041|0|0|Glint:sword;Shield:armor
+goblin-bard|GOBLIN BARD|rare|spirit||3|1041|0|0|Glint:sword;Halo:spell;Sanctuary:armor
 goblin|WIDDLE GOBLIN|common|nature|feral|2|1042|0|0|Stab:sword;Hide:armor
 goblin-berserker|GOBLIN BERSERKER|rare|feral|fire|3|1043|0|0|Tusk:sword;Inferno:spell;Dodge:armor
 torcher|TORCHER|uncommon|fire|spirit|3|1044|0|0|Blaze Fang:sword;Aegis:armor
@@ -49,7 +49,7 @@ gobclopse|GOBCLOPSE|epic|ward|feral|4|1047|0|0|Smash:sword;Musk:spell;Brace:armo
 girt|GIRT|legendary|spirit|nature|4|1048|0|0|Radiant Jab:sword;Thorn Rain:spell;Sanctuary:armor
 goblin-conjurer|GOBLIN CONJURER|uncommon|dark|spirit|3|1049|1|0|Dusk Fang:sword;Gleam:spell
 feral-goblin|FERAL GOBLIN|common|fire|feral|2|1050|0|0|Flare Kick:sword;Roar:spell
-clever-goblin|CLEVER GOBLIN|common|dark||2|1051|0|0|Grim Reap:sword;Gloom Wall:armor
+clever-goblin|CLEVER GOBLIN|uncommon|nature|dark|3|1051|0|0|Root Snap:sword;Gloom Wall:armor
 gymbroh|GYMBROH|epic|feral|fire|4|1052|0|0|Bite:sword;Fireball:spell;Scurry:armor
 antlered-goblin|ANTLERED GOBLIN|rare|nature|feral|3|1053|0|0|Pounce:sword;Howl:spell;Briar Wall:armor
 skeleton|JUST A SKELETON|common|dark|ward|2|1054|0|0|Bone Rattle:sword;Grave Guard:armor
@@ -93,11 +93,11 @@ lil-legs|LIL' LEGS|legendary|spirit|nature|3|1091|0|0|Glint:sword;Overgrow:spell
 orc-mystic|ORC MYSTIC|uncommon|feral|spirit|3|1092|0|0|Bite:sword;Sun Flare:spell
 orc-gladiator|ORC GLADIATOR|common|feral|ward|2|1093|0|0|Fang:sword;Rumble:spell
 orc-blademaster|ORC BLADEMASTER|uncommon|ward|tide|3|1094|0|0|Quake Stomp:sword;Ice Wall:armor
-orc-prowler|ORC PROWLER|common|dark|ward|2|1095|0|0|Gloom Jab:sword;Rumble:spell
+orc-prowler|ORC PROWLER|uncommon|dark|ward|3|1095|0|0|Gloom Jab:sword;Rumble:spell
 orc-ninja|ORC NINJA|epic|dark|tide|4|1096|0|0|Grim Reap:sword;Bubble Hex:spell;Cloak:armor
 chainmail-orc|CHAINMAIL ORC|common|spirit|ward|2|1097|0|0|Smite:sword;Iron Skin:armor
 orc-defender|ORC DEFENDER|common|spirit|ward|2|1098|0|0|Radiant Jab:sword;Stone Hex:spell
-orc-raider|ORC RAIDER|common|feral|nature|2|1099|0|0|Fang:sword;Pollen Burst:spell
+orc-raider|ORC RAIDER|uncommon|feral|nature|3|1099|0|0|Fang:sword;Pollen Burst:spell
 orc-mercenary|ORC MERCENARY|common|feral|spirit|2|1100|0|0|Claw:sword;Ether Guard:armor
 orc-champion|ORC CHAMPION|common|ward|spirit|2|1101|0|0|Lunge:sword;Haunt:spell
 orc-guard|ORC GUARD|common|ward|spirit|2|1102|0|0|Boulder Fist:sword;Sun Flare:spell
@@ -105,7 +105,7 @@ orc-veteran|ORC VETERAN|common|ward|spirit|2|1103|0|0|Quake Stomp:sword;Radiance
 bone-collector|BONE COLLECTOR|common|feral|nature|2|1104|0|0|Bite:sword;Sap Drain:spell
 sneaky-orc|SNEAKY ORC|common|dark|feral|2|1105|0|0|Bone Rattle:sword;Howl:spell
 orc|ORC|common|ward|nature|2|1106|0|0|Thorn Lash:sword;Pollen Burst:spell
-orc-marauder|ORC MARAUDER|common|feral||2|1107|0|0|Claw:sword;Musk:spell
+orc-marauder|ORC MARAUDER|uncommon|feral||3|1107|0|0|Claw:sword;Musk:spell
 orc-scout|ORC SCOUT|common|nature|feral|2|1108|0|0|Pounce:sword;Bristle:armor
 stone-golem|STONE GOLEM|uncommon|ward||3|1109|0|0|Boulder Fist:sword;Sandstorm:spell
 ember-golem|EMBER GOLEM|common|ward|fire|2|1110|0|0|Quake Stomp:sword;Inferno:spell
