@@ -854,6 +854,9 @@ select {
    would be the one round thing in a 16-bit interface. */
 .thought {
   max-width: 100%;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
   padding: 8px 11px;
   text-align: left;
   background: var(--surface);
@@ -869,6 +872,7 @@ select {
 /* The truncation lives on the text, not the bubble — clipping the bubble
    takes the tail with it, since the tail hangs outside the box. */
 .thought > span {
+  min-width: 0;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;

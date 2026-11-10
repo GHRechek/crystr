@@ -353,8 +353,8 @@ export const firstStepGrid = (badges: BadgeRow[]): ShownBadge[] =>
     target: b.peer_target ?? undefined,
   }));
 
-/** Help Someone Else: always a Main Quest, pinned at the top. Every ten confirmed helps brings a tradable badge, and the count starts again. */
-export function helpingRow(badges: BadgeRow[], helps: number): ShownBadge | null {
+/** Help Someone Else: always at the top. Every confirmed help brings a find draw; the row keeps no count. */
+export function helpingRow(badges: BadgeRow[], _helps?: number): ShownBadge | null {
   const b = badges.find((x) => x.slug === "a-helping-hand");
   if (!b) return null;
   return {
@@ -363,7 +363,6 @@ export function helpingRow(badges: BadgeRow[], helps: number): ShownBadge | null
     title: "I'm a Helper",
     line: "Help someone with their problem. Scan their QR to confirm!",
     locked: false,
-    progress: { n: helps % 3, of: 3 },
   };
 }
 

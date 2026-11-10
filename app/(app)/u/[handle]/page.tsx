@@ -6,6 +6,7 @@ import { Avatar } from "@/components/bits";
 import { AboutBadges } from "@/components/about-badges";
 import { ProfileDetails, type DetailKind } from "@/components/profile-details";
 import { StarRow } from "@/components/star-row";
+import { HelpMark } from "@/components/help-mark";
 import { starBadges } from "@/lib/star-badges";
 import { WorkingOn } from "@/components/working-on";
 import { achievementGrid, resolveShown, resolveWorking, helpingRow, questGrid, firstStepGrid, firstStepsDone } from "@/lib/badges";
@@ -64,6 +65,7 @@ export default async function PersonPage(props: { params: Promise<{ handle: stri
         <div style={{ height: 112, ...bannerStyle(bannerOf(person)) }} />
         {person.mood ? (
           <div className="thought thought-still" style={{ position: "absolute", left: 104 + 28, right: 16, bottom: 30 }}>
+            <HelpMark />
             <span>{corrupt(person.mood, decay)}</span>
           </div>
         ) : null}
