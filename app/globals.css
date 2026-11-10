@@ -300,7 +300,12 @@ select {
   top: 0;
   height: 100dvh;
   background-image: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.5) 0 1px, transparent 1px 3px);
+  /* The low-mana wash: what shows through is drained and blurred (lib/crystr DECAY_FILTER). */
+  -webkit-backdrop-filter: var(--decay-filter, none);
+  backdrop-filter: var(--decay-filter, none);
 }
+/* A sheet that fills the screen: its first row keeps clear of the phone's status bar, its last of the home bar. */
+.full-sheet { padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); box-sizing: border-box; }
 
 .tabbar {
   flex: none;

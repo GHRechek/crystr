@@ -100,7 +100,7 @@ export function QrScanner({ onClose, tradesHref, waiting, mode = "general", only
   }, [onClose, router, mode]);
 
   return (
-    <div role="dialog" aria-label="Scan someone's code" style={{ position: "fixed", inset: 0, zIndex: 90, maxWidth: 480, margin: "0 auto", background: "#120e24", display: "flex", flexDirection: "column" }}>
+    <div className="full-sheet" role="dialog" aria-label="Scan someone's code" style={{ position: "fixed", inset: 0, zIndex: 90, maxWidth: 480, margin: "0 auto", background: "#120e24", display: "flex", flexDirection: "column" }}>
       {/* What the scan is for, big, on the CRYSTR colours. */}
       <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "16px 16px 14px", background: "linear-gradient(90deg,#e0398a,#9184d9 52%,#4c7df0)" }}>
         <div className="px" style={{ fontSize: 20, lineHeight: 1.2, color: "#fff", textShadow: "2px 2px 0 #1a1033" }}>{mode === "quest" ? (title ?? "QUEST").toUpperCase() : intent === "trade" ? "TRADE" : intent === "battle" ? (stake ? "EPIC BATTLE" : "BATTLE") : "GET HISTORIKAL"}</div>

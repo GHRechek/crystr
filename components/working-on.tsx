@@ -141,7 +141,7 @@ export function WorkingOn({ items, all, editable, person, finished, isWitch, ope
       ) : null}
 
       {open && editable ? (
-        <div role="dialog" aria-label="Choose your main quests" style={{ position: "fixed", inset: 0, zIndex: 80, display: "flex", flexDirection: "column", maxWidth: 480, margin: "0 auto" }}>
+        <div className="full-sheet" role="dialog" aria-label="Choose your main quests" style={{ position: "fixed", inset: 0, zIndex: 80, display: "flex", flexDirection: "column", maxWidth: 480, margin: "0 auto" }}>
           <form action={setWorkingOn} style={{ flex: 1, minHeight: 0, overflowY: "auto", background: "var(--device)", padding: "16px 16px 24px", display: "flex", flexDirection: "column", gap: 10 }}>
             <input type="hidden" name="list" value={JSON.stringify(pick)} />
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>

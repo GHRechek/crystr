@@ -79,7 +79,7 @@ export function WitchKeyScanner({ title, why, problem, onKey, onClose }: { title
   }, [onKey]);
 
   return (
-    <div role="dialog" aria-label={title} style={{ position: "fixed", inset: 0, zIndex: 90, maxWidth: 480, margin: "0 auto", background: "#120e24", display: "flex", flexDirection: "column" }}>
+    <div className="full-sheet" role="dialog" aria-label={title} style={{ position: "fixed", inset: 0, zIndex: 90, maxWidth: 480, margin: "0 auto", background: "#120e24", display: "flex", flexDirection: "column" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "14px 16px" }}>
         <div className="px" style={{ fontSize: 18, lineHeight: 1.2, color: "#fff", textShadow: "2px 2px 0 #1a1033" }}>{title}</div>
         <span className="spacer" />

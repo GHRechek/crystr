@@ -62,7 +62,7 @@ export function WitchFace({ person, quests, species }: { person: Author; quests:
       ) : null}
 
       {sheet ? (
-        <div role="dialog" aria-label="Mark a quest done" style={{ position: "fixed", inset: 0, zIndex: 90, maxWidth: 480, margin: "0 auto", background: "var(--device)", display: "flex", flexDirection: "column" }}>
+        <div className="full-sheet" role="dialog" aria-label="Mark a quest done" style={{ position: "fixed", inset: 0, zIndex: 90, maxWidth: 480, margin: "0 auto", background: "var(--device)", display: "flex", flexDirection: "column" }}>
           <div style={{ display: "flex", alignItems: "center", padding: "14px 16px 8px", gap: 8 }}>
             <div className="px" style={{ fontSize: 12, color: "var(--pur-soft)" }}>DONE BY {person.handle.toUpperCase()}</div>
             <span className="spacer" />

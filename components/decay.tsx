@@ -51,7 +51,7 @@ export function DecayFrame({ mana, cap, card = true, children }: { mana: number;
 
   return (
     <DecayLevel.Provider value={level}>
-      <div className="scanlines" style={{ opacity: SCAN_OPACITY[level] }} />
+      <div className="scanlines" style={{ opacity: SCAN_OPACITY[level], ["--decay-filter" as string]: DECAY_FILTER[level] }} />
       {shown ? (
         <div className="signal-float">
           <div className="signal-card" role="alertdialog" aria-labelledby="signal-title" aria-describedby="signal-text">
@@ -80,8 +80,10 @@ export function DecayFrame({ mana, cap, card = true, children }: { mana: number;
           </div>
         </div>
       ) : null}
-      {/* A page that fills the screen (the face maker, which keeps its face pinned that way) makes this as tall as the screen. */}
-      <div className="decay-wrap" style={{ filter: DECAY_FILTER[level] }}>{children}</div>
+      {/* A page that fills the screen (the face maker, which keeps its face pinned that way) makes this as tall as the screen.
+          The wash itself is a backdrop filter on the scanlines: a filter here would turn every position: fixed
+          overlay inside the page (the scanner, the sheets) page-relative, and they would scroll away. */}
+      <div className="decay-wrap">{children}</div>
     </DecayLevel.Provider>
   );
 }

@@ -111,7 +111,7 @@ export function BadgeViewer({
   const handlers = (b: ShownBadge, from: From) => ({ onPointerDown: down(b, from), onPointerMove: move, onPointerUp: up, onPointerCancel: cancel, onDragStart: (e: React.DragEvent) => e.preventDefault() });
 
   return (
-    <div role={inline ? undefined : "dialog"} aria-label="All badges" style={inline ? { display: "flex", flexDirection: "column" } : { position: "fixed", inset: 0, zIndex: 80, maxWidth: 480, margin: "0 auto", background: "var(--device)", display: "flex", flexDirection: "column" }}>
+    <div className={inline ? undefined : "full-sheet"} role={inline ? undefined : "dialog"} aria-label="All badges" style={inline ? { display: "flex", flexDirection: "column" } : { position: "fixed", inset: 0, zIndex: 80, maxWidth: 480, margin: "0 auto", background: "var(--device)", display: "flex", flexDirection: "column" }}>
       <form action={editable ? setShownBadges : undefined} style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}>
         <input type="hidden" name="list" value={JSON.stringify(pick)} />
         <div style={{ display: "flex", alignItems: "center", gap: 10, padding: inline ? "4px 0 8px" : "14px 16px 8px" }}>
