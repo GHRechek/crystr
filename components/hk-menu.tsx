@@ -154,10 +154,6 @@ export function HkMenu({ shown, tradable, items, onClose }: {
             const editing = view === "all";
             return (
               <span key={i} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, minWidth: slotPx, maxWidth: slotPx + 16 }}>
-                {/* Its type(s) over its head. */}
-                <span style={{ height: 10, display: "flex", alignItems: "center" }}>
-                  {b?.hk && h ? <Stats h={{ id: 0, slug: h.slug, name: h.name, rarity: h.rarity, types: b.hk.types ?? h.types, hearts: h.hearts }} k={1.25} only="type" /> : null}
-                </span>
                 <span data-slot={editing ? i : undefined} style={{ width: slotPx, height: slotPx, display: "grid", placeItems: "center", filter: ko ? "grayscale(1) brightness(.55)" : undefined }}>
                   {b ? (
                     // A tap opens its card: moves, hearts, and HEAL or REVIVE when it needs it. In MY HISTORIKALS a
@@ -165,8 +161,13 @@ export function HkMenu({ shown, tradable, items, onClose }: {
                     <button type="button" className="bv-item" {...(editing ? handlers(b, i) : {})} onClick={() => held && setCard(held)} style={{ visibility: ghost?.b.key === b.key ? "hidden" : "visible" }} aria-label={`${b.title}${ko ? ", knocked out" : ""}: open its card${editing ? "; drag to move it" : ""}`}><BadgeFace b={b} size={slotPx - 8} /></button>
                   ) : <span className="hk-wobble" style={{ display: "inline-block" }}><Px rows={QMARK} k={3} fill="rgba(255,255,255,.45)" /></span>}
                 </span>
-                {/* Its name, then its hearts, the lost ones hollow. Healing is on its card. */}
-                {b?.hk && h ? <span className="px" style={{ fontSize: 7, color: "#fff", letterSpacing: ".03em", maxWidth: "100%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", lineHeight: 1.2 }}>{h.name.toUpperCase()}</span> : null}
+                {/* Its types, small, then its name on the same line; then its hearts, the lost ones hollow. Healing is on its card. */}
+                {b?.hk && h ? (
+                  <span style={{ display: "flex", alignItems: "center", gap: 3, maxWidth: "100%" }}>
+                    <Stats h={{ id: 0, slug: h.slug, name: h.name, rarity: h.rarity, types: b.hk.types ?? h.types, hearts: h.hearts }} k={1} only="type" />
+                    <span className="px" style={{ fontSize: 8, color: "#fff", letterSpacing: ".03em", minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", lineHeight: 1.2 }}>{h.name.toUpperCase()}</span>
+                  </span>
+                ) : null}
                 {b?.hk && h ? (
                   <Stats h={{ id: 0, slug: h.slug, name: h.name, rarity: h.rarity, types: b.hk.types ?? h.types, hearts: h.hearts }} hp={hp} k={1.25} only="hearts" />
                 ) : null}
