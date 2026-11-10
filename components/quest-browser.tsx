@@ -20,7 +20,10 @@ export function QuestBrowser({
   items,
   pending,
   initialMode,
+  witch,
 }: {
+  /** A witch sees a small back-room button on each quest to cross it off for themselves. */
+  witch?: boolean;
   /** Open on one of the filters, e.g. "with" for the quests you do with someone. */
   initialMode?: (typeof MODES)[number][0];
   items: ShownBadge[];
@@ -64,6 +67,7 @@ export function QuestBrowser({
               <QuestRow
                 b={b}
                 scan={!!b.peer && (b.locked || !!b.again?.ready)}
+                witch={witch}
                 face={<span style={{ display: "block", opacity: struck ? 0.4 : b.locked ? 0.85 : 1 }}><BadgeFace b={b} size={42} /></span>}
                 rest={
                   <>

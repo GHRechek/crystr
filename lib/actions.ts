@@ -1176,6 +1176,20 @@ export async function witchGrant(fd: FormData) {
   revalidatePath("/", "layout");
 }
 
+/** A witch crosses off one of their own quests, from the quest list. */
+export async function witchSelfDone(fd: FormData) {
+  const r = await call("cr_witch_self_done", { p_slug: str(fd, "slug") });
+  if (!r.ok) {
+    if (r.code === "have_it") await setFlash("ALREADY YOURS", "You have that one, and it is not due again yet.", EDGE.purple);
+    else if (r.code === "forbidden") await setFlash("WITCHES ONLY", "Only a witch can do that.", EDGE.mag);
+    else await wentWrong();
+  } else {
+    await setFlash("CROSSED OFF", "Marked as done.", EDGE.blue);
+  }
+  revalidatePath("/quests");
+  revalidatePath("/", "layout");
+}
+
 /** A witch sets what someone is, from their profile: the undead and others the registry has no line
  *  for become Forsaken this way. */
 export async function witchSetSpecies(fd: FormData) {

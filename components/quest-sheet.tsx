@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { witchSelfDone } from "@/lib/actions";
 import { BadgeFace } from "@/components/badge-chooser";
 import { QrScanner } from "@/components/qr-scanner";
 import type { ShownBadge } from "@/lib/badges";
@@ -61,7 +62,7 @@ const article = (t: string) => (/^[aeiou]/i.test(t) ? "an" : "a");
 /** One quest in a list. Tap it (the badge or the name) and a tooltip opens in the middle of the screen
  *  saying how it is earned, with a button to scan a code if it needs one. A quest that needs scanning
  *  has a badge that trembles every few seconds. */
-export function QuestRow({ b, face, rest, scan, bare }: { b: ShownBadge; face: React.ReactNode; rest: React.ReactNode; scan?: boolean; bare?: boolean }) {
+export function QuestRow({ b, face, rest, scan, bare, witch }: { b: ShownBadge; face: React.ReactNode; rest: React.ReactNode; scan?: boolean; bare?: boolean; /** Show the witch's cross-it-off button. */ witch?: boolean }) {
   const [tip, setTip] = useState(false);
   const [scanning, setScanning] = useState(false);
   const slug = b.key.slice(2);
@@ -134,6 +135,12 @@ export function QuestRow({ b, face, rest, scan, bare }: { b: ShownBadge; face: R
                 CLOSE
               </button>
             </div>
+            {witch && (b.locked || readyAgain) ? (
+              <form action={witchSelfDone} style={{ marginTop: 6 }}>
+                <input type="hidden" name="slug" value={slug} />
+                <button type="submit" className="btn btn-sm" style={{ minHeight: 32, fontSize: 9, color: "var(--muted)" }} title="Back room: a witch marks this quest done for themselves">⚑ CROSS OFF (WITCH)</button>
+              </form>
+            ) : null}
           </div>
         </div>
       ) : null}

@@ -139,7 +139,7 @@ export default async function QuestsPage(props: { searchParams: Promise<{ pick?:
 
       <div id="side-quests" style={{ scrollMarginTop: 12 }}>
         {head("SIDE QUESTS", "var(--mag-soft)", <span className="px" style={{ fontSize: 11, color: "var(--muted)" }}>{quests.filter((b) => !b.locked).length} / {quests.length}</span>)}
-        <QuestBrowser key={sp.mode ?? "all"} items={quests} pending={pending} initialMode={sp.mode === "with" || sp.mode === "show" || sp.mode === "do" ? sp.mode : undefined} />
+        <QuestBrowser key={sp.mode ?? "all"} items={quests} pending={pending} witch={!!profile.is_witch} initialMode={sp.mode === "with" || sp.mode === "show" || sp.mode === "do" ? sp.mode : undefined} />
       </div>
 
           </>
