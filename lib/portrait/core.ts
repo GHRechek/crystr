@@ -78,14 +78,18 @@ export const SKIN_CHOICES = [
   "#f3c99e", "#ffdfc4", "#e0ac69", "#c68642", "#8d5524", "#5c3a21",
   "#cfe3d4", "#cdc0e8", "#bcd8e8", "#e8c0cf", "#b9c4a0",
 ];
-export const HAIR_CHOICES = [
+/** The hair colours there were when faces were first handed out: a face rolled from an id picks from these. */
+const ROLLED_HAIR_CHOICES = [
   "#6c4620", "#2a2230", "#8a5a33", "#c98b4b", "#e6d3a3", "#b6bdc9",
   "#e0398a", "#9184d9", "#4c7df0", "#3fae86", "#d94a3a", "#f0a6c6",
-  // Added later, so never rolled for a face nobody chose (see portraitFromId): true scarlet.
-  "#ff2400",
 ];
-/** The hair colours there were when faces were first handed out: a face rolled from an id picks from these. */
-const ROLLED_HAIR = 12;
+export const HAIR_CHOICES = [
+  // Brown, then a dark brown (added later), then black.
+  "#6c4620", "#45301a", "#2a2230", "#8a5a33", "#c98b4b", "#e6d3a3", "#b6bdc9",
+  "#e0398a", "#9184d9", "#4c7df0", "#3fae86", "#d94a3a", "#f0a6c6",
+  // Blood red (it was scarlet, #ff2400; faces that chose that were moved to this).
+  "#8a0f1e",
+];
 /** Eyewear a face nobody chose can roll: none and the first seven. The clear-lens six came later. */
 const ROLLED_EYEWEAR = 8;
 export const EYE_CHOICES = [
@@ -434,7 +438,7 @@ export function portraitFromId(id: string): PortraitConfig {
   for (const [key, list] of Object.entries(ALLOWED)) {
     // Sides added later (cut from a style) aren't rolled: a face nobody chose
     // keeps the hair it was first given.
-    const pool = list.filter((v, i) => v !== NONE && !(key === "hair_back" && SIDES_OWN[v]) && !(key === "hair_colour" && i >= ROLLED_HAIR) && !(key === "eyewear" && i >= ROLLED_EYEWEAR));
+    const pool = list.filter((v, i) => v !== NONE && !(key === "hair_back" && SIDES_OWN[v]) && !(key === "hair_colour" && !ROLLED_HAIR_CHOICES.includes(v as string)) && !(key === "eyewear" && i >= ROLLED_EYEWEAR));
     if (pool.length) out[key] = pool[hash(`${id}:${key}`) % pool.length];
   }
   for (const [key, pct] of Object.entries(ODDS)) {
