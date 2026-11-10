@@ -142,12 +142,12 @@ export function AboutBadges({
               tradable={tradable}
               onClose={() => setMenu(false)}
               items={[
+                // Every one you hold: hearts, type, moves, healing, and the lineup.
+                { label: "MY HISTORIKALS", view: "all" },
                 // Draws stack up from quests, helps, wins and birthdays; open them here, a chest at a time.
                 { label: "FIND ONE!", go: () => setDrawing("normal"), n: draws?.normal ?? 0, cls: "find" },
                 { label: "SUMMON ONE!", go: () => setDrawing("main"), n: draws?.main ?? 0, cls: "summon" },
                 { label: "TRADE", go: () => setScan({ intent: "trade" }) },
-                // Every one you hold: hearts, type, moves, healing.
-                { label: "MY HISTORIKALS", view: "all" },
                 { label: "BATTLE", go: () => setScan({ intent: "battle" }) },
                 { label: "★ EPIC BATTLE", go: () => setStaking(true) },
               ]}
