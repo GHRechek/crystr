@@ -32,7 +32,7 @@ const FROM_OLD = { fire: "fire", water: "tide", grass: "nature", rock: "ward", d
 // And back: the old single-element column stays filled, so anything still reading it keeps working.
 const TO_OLD = { fire: "fire", tide: "water", nature: "grass", ward: "rock", feral: "rock", dark: "dark", spirit: "light" };
 const TYPES = ["fire", "tide", "nature", "ward", "feral", "dark", "spirit"];
-const HEARTS = { common: 2, uncommon: 3, rare: 3, epic: 4, legendary: 4 };
+const HEARTS = { common: 2, uncommon: 3, rare: 3, epic: 4, legendary: 5 };
 const MOVE_COUNT = { common: 2, uncommon: 2, rare: 3, epic: 3, legendary: 3 };
 
 // Moves by type and kind. A creature's moves come from its types: its first type leads.
