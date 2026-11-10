@@ -1293,6 +1293,14 @@ export async function pickHistorikal(fd: FormData) {
   redirect("/me/historikals");
 }
 
+/** A heart on one of your Historikals: it sorts to the top of your list. Quiet; the list shows it. */
+export async function favoriteHistorikal(fd: FormData) {
+  const r = await call("cr_favorite", { p_item: Number(fd.get("item")), p_on: fd.get("on") === "1" });
+  if (!r.ok) await setFlash("NOT YOURS", "That Historikal has moved on.", EDGE.purple);
+  revalidatePath("/me/historikals");
+  revalidatePath("/", "layout");
+}
+
 export async function healHistorikal(fd: FormData) {
   const r = await call("cr_heal", { p_item: Number(fd.get("item")) });
   if (!r.ok) {

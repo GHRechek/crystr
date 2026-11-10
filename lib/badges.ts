@@ -71,6 +71,7 @@ export type BadgeItem = {
   occasion: "helped" | "birthday" | "battle" | "epic" | "pick" | "quest" | null;
   /** A Historikal's hearts left (null = all of them). */
   hp?: number | null;
+  favorite?: boolean | null;
   /** The type this copy rolled when it was found, for a creature that rolls one. */
   rolled?: string | null;
   kindRow: { title: string; blurb: string; art: string } | null;
@@ -133,7 +134,7 @@ export type ShownBadge = {
   /** A tradable badge: just its picture. */
   src?: string;
   /** A Historikal: which creature, and its hearts left (for its card). */
-  hk?: { id: number; slug: string; hp: number; types?: Element[] };
+  hk?: { id: number; slug: string; hp: number; types?: Element[]; favorite?: boolean };
   title: string;
   /** How it is earned, for the tooltip. */
   line: string;
@@ -212,7 +213,7 @@ export function resolveShown(
           : ({ birthday: "Found on a birthday.", battle: "Won in battle.", epic: "Summoned for a main quest.", helped: "Found for helping.", quest: "Found on a quest.", pick: "A gift." } as Record<string, string>)[it.occasion ?? ""] ?? "";
       const line = `${what}${from ? ` ${from}` : ""}`;
       out.push({ key, src: hk && it.kind_slug ? historikalSrc(it.kind_slug, 1, rolled) : kindArtSrc(it.kindRow.art), title: it.kindRow.title.toUpperCase(), line,
-        hk: hk && it.kind_slug ? { id: it.id, slug: it.kind_slug, hp: Math.min(hk.hearts, it.hp ?? hk.hearts), types } : undefined });
+        hk: hk && it.kind_slug ? { id: it.id, slug: it.kind_slug, hp: Math.min(hk.hearts, it.hp ?? hk.hearts), types, favorite: !!it.favorite } : undefined });
     }
   }
   return out.slice(0, limit);

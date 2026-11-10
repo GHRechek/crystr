@@ -3,11 +3,12 @@
 import { useState } from "react";
 import { Creature, MoveIcon, Stats, TypeIcon } from "@/components/encounter";
 import { HistorikalCard } from "@/components/historikal-card";
+import { HeartIcon } from "@/components/icons";
 import { useDecay } from "@/components/decay";
 import { corrupt } from "@/lib/crystr";
 import { ELEMENT_COLOR, HISTORIKAL, RARITY_COLOR, RARITY_NAME, TYPES, type Element, type Rarity } from "@/lib/historikals";
 
-export type HeldHk = { id: number; slug: string; name: string; rarity: Rarity; types: Element[]; hearts: number; hp: number };
+export type HeldHk = { id: number; slug: string; name: string; rarity: Rarity; types: Element[]; hearts: number; hp: number; favorite?: boolean };
 
 const RARITIES: Rarity[] = ["legendary", "epic", "rare", "uncommon", "common"];
 
@@ -68,7 +69,7 @@ export function HistorikalCollection({ list, ring, drag, lifted, inLineup, onOpe
   drag?: (h: HeldHk) => React.HTMLAttributes<HTMLElement>;
   /** The row whose creature is being held and dragged right now: it is gone from its place until dropped. */
   lifted?: (h: HeldHk) => boolean;
-  /** Rows already in the lineup are left out of the list. */
+  /** Rows already in the lineup sit greyed out. */
   inLineup?: (h: HeldHk) => boolean;
   /** Opens the card somewhere else (the panel keeps it above itself); otherwise this shows it. */
   onOpen?: (h: HeldHk) => void;
@@ -78,8 +79,9 @@ export function HistorikalCollection({ list, ring, drag, lifted, inLineup, onOpe
   const [type, setType] = useState<Element | null>(null);
   const [card, setCard] = useState<HeldHk | null>(null);
   const rest = list
-    .filter((h) => !inLineup?.(h) && (!only || h.rarity === only) && (!type || h.types.includes(type)))
-    .sort((a, b) => RARITIES.indexOf(a.rarity) - RARITIES.indexOf(b.rarity) || a.name.localeCompare(b.name));
+    .filter((h) => (!only || h.rarity === only) && (!type || h.types.includes(type)))
+    // Your favourites first, then rarest first.
+    .sort((a, b) => Number(!!b.favorite) - Number(!!a.favorite) || RARITIES.indexOf(a.rarity) - RARITIES.indexOf(b.rarity) || a.name.localeCompare(b.name));
   const count = (r: Rarity) => list.filter((h) => h.rarity === r).length;
 
   return (
@@ -90,12 +92,13 @@ export function HistorikalCollection({ list, ring, drag, lifted, inLineup, onOpe
         {rest.map((h) => {
           return (
             <li key={h.id}>
-              <button type="button" onClick={() => (onOpen ?? setCard)(h)} aria-label={`${h.name}: open its card${drag ? "; drag its picture into your lineup" : ""}`} style={{ width: "100%", border: 0, background: "none", color: "inherit", cursor: "pointer", padding: "4px 0", display: "flex", alignItems: "center", gap: 12, textAlign: "left", WebkitTapHighlightColor: "transparent", visibility: lifted?.(h) ? "hidden" : "visible" }}>
+              <button type="button" onClick={() => (onOpen ?? setCard)(h)} aria-label={`${h.name}: open its card${drag ? "; drag its picture into your lineup" : ""}`} style={{ width: "100%", border: 0, background: "none", color: "inherit", cursor: "pointer", padding: "4px 0", display: "flex", alignItems: "center", gap: 12, textAlign: "left", WebkitTapHighlightColor: "transparent", visibility: lifted?.(h) ? "hidden" : "visible", opacity: inLineup?.(h) ? 0.4 : 1 }}>
                 <span {...(drag ? drag(h) : {})} style={drag ? { touchAction: "none", userSelect: "none", WebkitUserSelect: "none", WebkitTouchCallout: "none", cursor: "grab", lineHeight: 0 } : { lineHeight: 0 }}>
                   <Creature slug={h.slug} el={h.types[0]} size={56} ko={h.hp <= 0} />
                 </span>
                 <span style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 7 }}>
                   <span style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+                    {h.favorite ? <HeartIcon filled small /> : null}
                     <span className="px" style={{ fontSize: 10, lineHeight: 1.35 }}>{corrupt(h.name.toUpperCase(), decay)}</span>
                     <Stats h={h} hp={h.hp} k={1.25} only="hearts" />
                   </span>
@@ -112,7 +115,7 @@ export function HistorikalCollection({ list, ring, drag, lifted, inLineup, onOpe
           );
         })}
       </ul>
-      {card ? <HistorikalCard hk={{ id: card.id, slug: card.slug, hp: card.hp, types: card.types }} own onClose={() => setCard(null)} /> : null}
+      {card ? <HistorikalCard hk={{ id: card.id, slug: card.slug, hp: card.hp, types: card.types, favorite: card.favorite }} own onClose={() => setCard(null)} /> : null}
     </>
   );
 }
