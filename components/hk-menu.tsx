@@ -34,15 +34,17 @@ type Item = { label: string; go?: () => void; n?: number; cls?: string; /** Open
  *  The pencil turns the panel into the lineup editor: the four slots stay on top, and under them, behind
  *  a rarity row and a type row, every Historikal you hold, to drag into a slot (or tap: it takes the
  *  first free one). Tap a slot to empty it. Every change saves. BACK returns to the actions. */
-export function HkMenu({ shown, tradable, items, onClose }: {
+export function HkMenu({ shown, tradable, items, startOn = "menu", onClose }: {
   /** Your display as it is: Historikals in it are the lineup, in order; the rest are badges and stay put. */
   shown: ShownBadge[];
   /** Every Historikal you hold. */
   tradable: ShownBadge[];
   items: Item[];
+  /** Open straight on MY HISTORIKALS (from a card's EDIT LINEUP). */
+  startOn?: "menu" | "all";
   onClose: () => void;
 }) {
-  const [view, setView] = useState<"menu" | "all">("menu");
+  const [view, setView] = useState<"menu" | "all">(startOn);
   // Where the screen (between the top bar and the tab bar) sits in the viewport: the panel keeps to it.
   const [area, setArea] = useState<{ top: number; bottom: number }>({ top: 0, bottom: 0 });
   useLayoutEffect(() => {

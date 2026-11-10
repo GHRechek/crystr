@@ -66,7 +66,7 @@ export function AboutBadges({
   const [tip, setTip] = useState<{ key: string; x: number; top: number } | null>(null);
   const [choosing, setChoosing] = useState(!!openAtStart && !!editable);
   // The Historikals menu, the stake picked for an epic battle, and the camera once you've chosen.
-  const [menu, setMenu] = useState(false);
+  const [menu, setMenu] = useState<false | "menu" | "all">(false);
   const [staking, setStaking] = useState(false);
   const [drawing, setDrawing] = useState<DrawKind | null>(null);
   // A Historikal tapped in the row opens its card (moves shown on your own, hidden on someone else's).
@@ -144,7 +144,7 @@ export function AboutBadges({
   const tradeEl = tradeHref && scan ? (
         <>
           {codeEl}
-          <button type="button" aria-label="Historikals: trade, battle, or edit your lineup" aria-haspopup="menu" aria-expanded={menu} title="Historikals" onClick={() => setMenu((m) => !m)} style={codeBtn ? endBtn : leadBtn}>
+          <button type="button" aria-label="Historikals: trade, battle, or edit your lineup" aria-haspopup="menu" aria-expanded={!!menu} title="Historikals" onClick={() => setMenu((m) => (m ? false : "menu"))} style={codeBtn ? endBtn : leadBtn}>
             <TradeIcon size={iconPx} />
             {tradeCount ? (
               <span aria-hidden className="px" style={{ position: "absolute", top: -6, right: -6, minWidth: 16, height: 16, display: "grid", placeItems: "center", fontSize: 10, lineHeight: 1, background: "var(--pur)", color: "#fff", borderRadius: 0 }}>{tradeCount}</span>
@@ -154,6 +154,7 @@ export function AboutBadges({
             <HkMenu
               shown={shown}
               tradable={tradable}
+              startOn={menu || "menu"}
               onClose={() => setMenu(false)}
               items={[
                 // Every one you hold: hearts, type, moves, healing, and the lineup.
@@ -296,7 +297,7 @@ export function AboutBadges({
       ) : tipBadge && tip ? (
         <BadgeTip x={tip.x} top={tip.top} width={width} title={tipBadge.title} line={tipBadge.line} />
       ) : null}
-      {card?.hk ? <HistorikalCard hk={card.hk} line={card.line} own={!!editable} known={known?.includes(card.hk.slug)} lineupPos={lineupKeys.indexOf(card.key)} onEditLineup={editable ? () => setChoosing(true) : undefined} onClose={() => setCard(null)} /> : null}
+      {card?.hk ? <HistorikalCard hk={card.hk} line={card.line} own={!!editable} known={known?.includes(card.hk.slug)} lineupPos={lineupKeys.indexOf(card.key)} onEditLineup={editable && scan ? () => setMenu("all") : undefined} onClose={() => setCard(null)} /> : null}
       {choosing ? <BadgeViewer earned={earned} tradable={tradable} current={shown.map((b) => b.key)} editable={editable} aside={aside} onClose={() => setChoosing(false)} /> : null}
     </div>
   );

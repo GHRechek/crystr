@@ -206,12 +206,13 @@ export function resolveShown(
       // A creature that rolls its type: this copy's types lead with the one it rolled, and its picture is that colour.
       const rolled = hk?.rnd && it.rolled ? (it.rolled as Element) : undefined;
       const types = hk ? (rolled ? [...new Set([rolled, ...hk.types.slice(1)])] : hk.types) : [];
-      const what = hk ? `${hk.rarity[0].toUpperCase()}${hk.rarity.slice(1)} ${types.join("/")} Historikal, ${hk.hearts} hearts.` : "A Historikal.";
+      // The card shows the rarity, types and hearts itself; its line says only where it came from.
+      const what = hk ? "" : "A Historikal.";
       const from =
         it.earned_by && it.earned_by !== it.owner_id
           ? `Came from ${it.maker?.handle ?? "someone"}.`
           : ({ birthday: "Found on a birthday.", battle: "Won in battle.", epic: "Summoned for a main quest.", helped: "Found for helping.", quest: "Found on a quest.", pick: "A gift." } as Record<string, string>)[it.occasion ?? ""] ?? "";
-      const line = `${what}${from ? ` ${from}` : ""}`;
+      const line = [what, from].filter(Boolean).join(" ");
       out.push({ key, src: hk && it.kind_slug ? historikalSrc(it.kind_slug, 1, rolled) : kindArtSrc(it.kindRow.art), title: it.kindRow.title.toUpperCase(), line,
         hk: hk && it.kind_slug ? { id: it.id, slug: it.kind_slug, hp: Math.min(hk.hearts, it.hp ?? hk.hearts), types, favorite: !!it.favorite } : undefined });
     }
