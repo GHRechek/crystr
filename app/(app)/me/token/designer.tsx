@@ -260,10 +260,10 @@ export function TokenDesigner({ start, fresh, how = "", canGive = false, onUse }
     setPanel(null);
   }
 
-  // Bigger in steps, as far as the picture has room for it; smaller back down to as drawn, no further.
+  // Bigger in steps, as far as the picture has room for it; smaller in steps, down to the smallest there is.
   const sizeNow = sel ? d[`${sel}_size`] : NORMAL_SIZE;
   const biggerTo = sel ? SIZES.find((n) => n > sizeNow && n <= maxSizeFor(d[sel], d[`${sel}_turn`])) : undefined;
-  const smallerTo = sel && sizeNow > NORMAL_SIZE ? [...SIZES].reverse().find((n) => n < sizeNow && n >= NORMAL_SIZE) : undefined;
+  const smallerTo = sel ? [...SIZES].reverse().find((n) => n < sizeNow) : undefined;
   const sizeTo = (n: SizeKey | undefined) => sel && n && set({ [`${sel}_size`]: n } as Partial<TokenDesign>);
   const turnBy = (n: number) => sel && set({ [`${sel}_turn`]: ((d[`${sel}_turn`] + n + 8) % 8) as Turn } as Partial<TokenDesign>);
   const flip = () => sel && set({ [`${sel}_flip`]: !d[`${sel}_flip`] } as Partial<TokenDesign>);

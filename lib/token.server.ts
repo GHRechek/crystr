@@ -8,7 +8,7 @@ import { SLOTS, TOKEN_SIZE, itemSrc, colourHex, isFramed, normalizeToken, turned
 // then up to five items from the uploaded set, flipped, turned (in 45-degree steps) or
 // shrunk as asked, each centred where it was dragged to. An item set behind the badge is
 // drawn first and the shape over it, so only what hangs out past the edge shows; the rest
-// go on after, in the saved order, the last on top. The shape takes the middle 22 of
+// go on after, in the saved order, the last on top. The shape takes the middle 24 of
 // the 32 cells, small on purpose: an item at its drawn size reaches the rim, one dragged
 // outward hangs over it, a shrunk one sits inside like heraldry. The browser shows it two
 // to four times larger with the pixels kept square.
@@ -68,9 +68,9 @@ function tones(hex: string): Tones {
 
 const N = TOKEN_SIZE;
 const C = N / 2;
-/** The full shape's reach from the centre: 22 cells across, leaving room to hang over. A
+/** The full shape's reach from the centre: 24 cells across, leaving room to hang over. A
  *  badge at 75 or 50 is the same shape, smaller. */
-const R = 11;
+const R = 12;
 
 // Inside tests take the pixel's centre. Each shape is a family by size, so the framed
 // kinds can draw the same shape again, three cells in.

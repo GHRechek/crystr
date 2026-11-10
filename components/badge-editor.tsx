@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { TOKEN_ART_VERSION } from "@/lib/token";
 import { TokenDesigner } from "@/app/(app)/me/token/designer";
 import { defaultToken, unpackToken } from "@/lib/token";
 
@@ -91,7 +92,7 @@ export function BadgeEditor({ draft, setDraft, used = [] }: { draft: BadgeDraft;
           {draft.custom ? <input type="hidden" name="art_custom" value={draft.custom} /> : null}
           <button type="button" className="btn" onClick={() => setPicking(true)} style={{ minHeight: 64, justifyContent: "flex-start", gap: 12 }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={draft.custom ? `/token/${draft.custom}.png` : `/badges/set/${draft.art}.png`} alt="" width={46} height={46} style={{ imageRendering: "pixelated", display: "block" }} />
+            <img src={draft.custom ? `/token/${draft.custom}.png?a=${TOKEN_ART_VERSION}` : `/badges/set/${draft.art}.png`} alt="" width={46} height={46} style={{ imageRendering: "pixelated", display: "block" }} />
             <span className="px" style={{ fontSize: 11 }}>PICK A PICTURE</span>
           </button>
         </div>

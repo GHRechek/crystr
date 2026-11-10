@@ -11,7 +11,7 @@
 // and the compositor (server, lib/token.server.ts); /token/<packed>.png draws one, and the
 // packed spec fully describes it.
 
-/** The picture is 32 cells; the badge shape takes the middle 22. */
+/** The picture is 32 cells; the badge shape takes the middle 24. */
 export const TOKEN_SIZE = 32;
 
 /** The colours a shape and its rim can be. Keys are what is saved. */
@@ -57,7 +57,7 @@ export type ShapeKey = (typeof SHAPES)[number]["key"];
  *  icons could shrink, which are drawn as they were. */
 export const SIZES = [55, 70, 85, 100, 125, 150, 175, 200] as const;
 export type SizeKey = (typeof SIZES)[number];
-/** The smallest size the editor will go down to. */
+/** As drawn. The editor goes smaller than this too, down to the first of SIZES. */
 export const NORMAL_SIZE: SizeKey = 100;
 
 /** The badge shape's size, in hundredths of the full one. */
@@ -1537,7 +1537,9 @@ export function unpackToken(packed: string): TokenDesign | null {
   return packToken(d) === packed ? d : null;
 }
 
-export const tokenSrc = (design: TokenDesign): string => `/token/${packToken(design)}.png`;
+/** The picture is cached by its URL forever; TOKEN_ART_VERSION changes when the drawing itself does (the shape grew). */
+export const TOKEN_ART_VERSION = 2;
+export const tokenSrc = (design: TokenDesign): string => `/token/${packToken(design)}.png?a=${TOKEN_ART_VERSION}`;
 
 /** "Marrow's Token": the first word of the character's name, or the handle. */
 export function tokenTitle(displayName: string | null | undefined, handle: string): string {

@@ -1,4 +1,5 @@
 import { BADGE_GLYPH, itemTitle, type BadgeItem, type BadgeRow, type TradeItem } from "@/lib/badges";
+import { TOKEN_ART_VERSION } from "@/lib/token";
 import { BADGE_MANA, HELPS_PER_BADGE } from "@/lib/crystr";
 import { normalizeToken, tokenSrc } from "@/lib/token";
 import { kindArtSrc } from "@/lib/historikals";
@@ -136,7 +137,7 @@ export function BadgeArt({
           larger so the pixels stay sharp. */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src={b.art.startsWith("token:") ? `/token/${b.art.slice(6)}.png` : `/badges/${b.art}`}
+        src={b.art.startsWith("token:") ? `/token/${b.art.slice(6)}.png?a=${TOKEN_ART_VERSION}` : `/badges/${b.art}`}
         alt=""
         width={size}
         height={size}
