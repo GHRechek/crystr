@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, useTransition } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, useTransition } from "react";
+import { createPortal } from "react-dom";
 import { BadgeFace } from "@/components/badge-chooser";
 import { TradeIcon } from "@/components/about-badges";
 import { Stats } from "@/components/encounter";
@@ -42,6 +43,17 @@ export function HkMenu({ shown, tradable, items, onClose }: {
   onClose: () => void;
 }) {
   const [view, setView] = useState<"menu" | "all">("menu");
+  // Where the screen (between the top bar and the tab bar) sits in the viewport: the panel keeps to it.
+  const [area, setArea] = useState<{ top: number; bottom: number }>({ top: 0, bottom: 0 });
+  useLayoutEffect(() => {
+    const read = () => {
+      const r = document.querySelector(".screen")?.getBoundingClientRect();
+      setArea(r ? { top: r.top, bottom: r.bottom } : { top: 0, bottom: window.innerHeight });
+    };
+    read();
+    window.addEventListener("resize", read);
+    return () => window.removeEventListener("resize", read);
+  }, []);
   // A tapped Historikal, in the lineup or the list: its card, where hurt ones are healed.
   const [card, setCard] = useState<HeldHk | null>(null);
   const [lineup, setLineupKeys] = useState<(string | null)[]>(() => {
@@ -123,10 +135,13 @@ export function HkMenu({ shown, tradable, items, onClose }: {
   });
   const slotPx = 56;
 
-  return (
+  // Through a portal to the body: inside the page, the low-mana filter on the decay wrapper would turn
+  // position: fixed into page-relative, and the panel would scroll away with the profile.
+  if (typeof document === "undefined") return null;
+  return createPortal(
     <>
-      <button type="button" aria-label="Close the menu" onClick={onClose} style={{ position: "fixed", inset: 0, zIndex: 40, background: "rgba(5,5,12,.55)", border: 0, cursor: "default" }} />
-      <div role="dialog" aria-label="Historikals" className="hk-panel" style={{ position: "fixed", top: TOP, height: view === "all" ? `calc(100vh - ${TOP} - ${EDGE})` : undefined, left: "50%", transform: "translateX(-50%)", width: `min(80vw, calc(480px - 2 * ${EDGE}))`, maxHeight: `calc(100vh - ${TOP} - ${EDGE})`, zIndex: 41, display: "flex", flexDirection: "column", background: "var(--blk-pur)", boxShadow: "4px 4px 0 #0a0616", overflow: "hidden" }}>
+      <button type="button" aria-label="Close the menu" onClick={onClose} style={{ position: "fixed", inset: 0, zIndex: 40, background: "rgba(5,5,12,.55)", border: 0, cursor: "default", touchAction: "none" }} />
+      <div role="dialog" aria-label="Historikals" className="hk-panel" style={{ position: "fixed", top: `calc(${area.top}px + ${TOP})`, height: view === "all" ? `calc(${area.bottom - area.top}px - ${TOP} - ${EDGE})` : undefined, left: "50%", transform: "translateX(-50%)", width: `min(80vw, calc(480px - 2 * ${EDGE}))`, maxHeight: `calc(${area.bottom - area.top}px - ${TOP} - ${EDGE})`, zIndex: 41, display: "flex", flexDirection: "column", background: "var(--blk-pur)", boxShadow: "4px 4px 0 #0a0616", overflow: "hidden" }}>
         {/* On top in both views: the lineup. In MY HISTORIKALS the slots take a drop. */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: view === "all" ? "center" : "flex-start", gap: 8, padding: "12px 14px 4px" }}>
           <span className="px" style={{ fontSize: 10, color: "#e0398a", letterSpacing: ".04em", display: "inline-flex", alignItems: "center", gap: 5, whiteSpace: "nowrap" }}>
@@ -165,7 +180,7 @@ export function HkMenu({ shown, tradable, items, onClose }: {
         </div>
 
         {view === "all" ? (
-          <div style={{ display: "flex", flexDirection: "column", gap: 10, padding: "0 14px 14px", overflowY: "auto", minHeight: 0 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10, padding: "0 14px 14px", overflowY: "auto", minHeight: 0, overscrollBehavior: "contain" }}>
             {all.length === 0 ? <span className="px" style={{ fontSize: 10, color: "rgba(255,255,255,.5)" }}>NO HISTORIKALS YET</span> : (
               <HistorikalCollection list={all} ring="var(--blk-pur)" inLineup={(h) => lineup.includes(`i:${h.id}`)} drag={(h) => { const b = badgeOf(h); return b ? handlers(b, "grid") : {}; }} onOpen={setCard} />
             )}
@@ -186,6 +201,7 @@ export function HkMenu({ shown, tradable, items, onClose }: {
           <BadgeFace b={ghost.b} size={48} />
         </div>
       ) : null}
-    </>
+    </>,
+    document.body,
   );
 }
