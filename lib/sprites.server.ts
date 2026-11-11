@@ -111,12 +111,13 @@ function wears(type: Element, h: number, s: number, v: number): boolean {
 /** The same pixel in the new type's colour, keeping its depth. */
 function dress(type: Element, h: number, s: number, v: number): [number, number, number] {
   if (type === "ward") return hsvToRgb(220, Math.min(s, 0.08), v);
-  // Spirit is pale: a light cream, keeping only a little of the pixel's depth so the drawing still reads.
-  if (type === "spirit") return hsvToRgb(48, Math.min(Math.max(s * 0.6, 0.12), 0.3), Math.min(0.97, 0.62 + v * 0.35));
+  // Spirit is pale: a light cream above the linework, which keeps its depth so the drawing still reads.
+  if (type === "spirit") return hsvToRgb(48, Math.min(Math.max(s * 0.6, 0.12), 0.3), v < 0.35 ? v : Math.min(0.95, 0.42 + v * 0.55));
   // Its hue, with the colour no stronger than the type's own swatch allows: a fire orange made green
   // would otherwise glow neon.
   const [th, ts] = rgbToHsv(parseInt(ELEMENT_COLOR[type].slice(1, 3), 16), parseInt(ELEMENT_COLOR[type].slice(3, 5), 16), parseInt(ELEMENT_COLOR[type].slice(5, 7), 16));
-  return hsvToRgb(th, Math.min(Math.max(s, 0.25), Math.max(0.45, ts + 0.15)), v);
+  // The shadow side comes up a little: a dark purple shade turned brown reads as mud at the same depth.
+  return hsvToRgb(th, Math.min(Math.max(s, 0.25), Math.max(0.45, ts + 0.15)), v < 0.45 ? v + (0.45 - v) * 0.35 : v);
 }
 
 /** Every pixel that wears the old type's colour takes the new one, at its own depth. When the picture does not
