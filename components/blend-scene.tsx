@@ -226,8 +226,8 @@ export function BlendScene({ offers, onDone, onClose }: {
 
           {/* The one on offer, or the one going in. */}
           {cur && (stage === "offer" || stage === "going" || stage === "abandon") ? (
-            <div id="bl-sprite" className={`bl-sprite${drag ? " is-held" : ""}`} {...handlers}
-              style={stage === "going" ? undefined : { transform: `translate(${W / 2 + (drag?.x ?? 0)}px, ${H - 120 + (drag?.y ?? 0)}px)`, cursor: stage === "offer" ? "grab" : "default", touchAction: "none" }}>
+            <div key={`${cur.id}-${stage === "going" ? "going" : "offer"}`} id="bl-sprite" className={`bl-sprite${drag ? " is-held" : ""}`} {...handlers}
+              style={stage === "going" ? undefined : { transform: `translate(${W / 2 + (drag?.x ?? 0)}px, ${H - 120 + (drag?.y ?? 0)}px)`, opacity: 1, filter: "none", cursor: stage === "offer" ? "grab" : "default", touchAction: "none" }}>
               {sprite}
             </div>
           ) : null}
