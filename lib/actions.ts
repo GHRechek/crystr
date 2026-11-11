@@ -1303,6 +1303,17 @@ export async function favoriteHistorikal(fd: FormData) {
   revalidatePath("/", "layout");
 }
 
+/** Four Historikals of one rarity become one of the next rarity up. The panel asked "are you sure" already;
+ *  this answers with what came out, or why nothing did. */
+export async function recycleHistorikals(ids: number[]): Promise<{ ok: true; item: number; slug: string; name: string; rolled: string | null; evolved: boolean } | { ok: false; code: string }> {
+  const r = await call("cr_recycle", { p_items: ids.filter((n) => Number.isInteger(n)).slice(0, 4) });
+  if (!r.ok) return { ok: false, code: String(r.code ?? "error") };
+  revalidatePath("/me/historikals");
+  revalidatePath("/", "layout");
+  const x = r as unknown as { item: number; slug: string; name: string; rolled: string | null; evolved: boolean };
+  return { ok: true, item: Number(x.item), slug: String(x.slug), name: String(x.name), rolled: x.rolled ? String(x.rolled) : null, evolved: !!x.evolved };
+}
+
 export async function healHistorikal(fd: FormData) {
   const r = await call("cr_heal", { p_item: Number(fd.get("item")) });
   if (!r.ok) {

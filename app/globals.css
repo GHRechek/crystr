@@ -2134,3 +2134,9 @@ select.input { border: 0; }
 /* The Historikals panel: nothing in it is text to select, so a hold picks up a creature and never a
    phone's Copy / Translate bubble over the names. */
 .hk-panel, .hk-panel * { user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+
+/* MY HISTORIKALS: the recycle bar. Flakes rise off each empty aura; the symbol rocks now and then. */
+.hk-flake { display: block; opacity: 0; animation: hk-rise linear infinite; }
+@keyframes hk-rise { 0% { transform: translate(0, 4px); opacity: 0; } 12% { opacity: 1; } 70% { opacity: .8; } 100% { transform: translate(var(--dx, 0), -30px) scale(.5); opacity: 0; } }
+.hk-recycle { animation: hk-wob 6s ease-in-out infinite; }
+@keyframes hk-wob { 0%, 86%, 100% { transform: rotate(0); } 88% { transform: rotate(-9deg); } 91% { transform: rotate(8deg); } 94% { transform: rotate(-6deg); } 97% { transform: rotate(4deg); } }

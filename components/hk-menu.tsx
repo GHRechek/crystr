@@ -7,8 +7,10 @@ import { TradeIcon } from "@/components/about-badges";
 import { Stats, TypeIcon } from "@/components/encounter";
 import { HistorikalCard } from "@/components/historikal-card";
 import { HistorikalCollection, type HeldHk } from "@/components/historikal-collection";
-import { setLineup } from "@/lib/actions";
-import { HISTORIKAL } from "@/lib/historikals";
+import { RecycleBar } from "@/components/recycle-bar";
+import { recycleHistorikals, setLineup } from "@/lib/actions";
+import { HISTORIKAL, RARITY_NAME, type Rarity } from "@/lib/historikals";
+import { useRouter } from "next/navigation";
 import type { ShownBadge } from "@/lib/badges";
 
 const LINEUP = 4;
@@ -63,6 +65,13 @@ export function HkMenu({ shown, tradable, items, startOn = "menu", onClose }: {
     return Array.from({ length: LINEUP }, (_, i) => hk[i] ?? null);
   });
   const [, start] = useTransition();
+  const router = useRouter();
+  // RECYCLE: the four auras under the list, and what they hold. Tap the symbol: with fewer than four it
+  // explains; with four it asks, and only YES, I'M SURE goes through. A note (title, body, maybe a yes)
+  // sits over the panel meanwhile.
+  const [bin, setBin] = useState<(string | null)[]>([null, null, null, null]);
+  const [note, setNote] = useState<{ title: string; body: string; yes?: () => void } | null>(null);
+  const [busy, setBusy] = useState(false);
   const byKey = useMemo(() => new Map([...tradable, ...shown].map((b) => [b.key, b])), [tradable, shown]);
 
   // Save: the new lineup takes the Historikal places in the display, in order; the badges keep theirs.
@@ -112,8 +121,11 @@ export function HkMenu({ shown, tradable, items, startOn = "menu", onClose }: {
       if (p.timer) clearTimeout(p.timer);
       if (!p.dragging) return;   // a tap: the button's own click opens the card
       dragged.current = true;
-      const hit = document.elementsFromPoint(e.clientX, e.clientY).map((el) => (el as HTMLElement).closest?.("[data-slot]") as HTMLElement | null).find(Boolean);
+      const under = document.elementsFromPoint(e.clientX, e.clientY);
+      const hit = under.map((el) => (el as HTMLElement).closest?.("[data-slot]") as HTMLElement | null).find(Boolean);
+      const aura = under.map((el) => (el as HTMLElement).closest?.("[data-spot]") as HTMLElement | null).find(Boolean);
       if (hit) place(p.key, Number(hit.dataset.slot));
+      else if (aura) toBin(p.key, Number(aura.dataset.spot));
       else if (p.from !== "grid") takeOff(p.from);
     },
     onPointerCancel: () => { const p = press.current; if (p?.timer) clearTimeout(p.timer); press.current = null; setGhost(null); },
@@ -123,6 +135,53 @@ export function HkMenu({ shown, tradable, items, startOn = "menu", onClose }: {
   });
   const dragged = useRef(false);
   const badgeOf = (h: HeldHk) => byKey.get(`i:${h.id}`);
+
+  // Into an aura: not from the lineup, not a favourite (the database refuses both too).
+  const toBin = (key: string, spot: number) => {
+    const b = byKey.get(key);
+    if (!b?.hk) return;
+    if (lineup.includes(key)) { setNote({ title: "IN YOUR LINEUP", body: "Take it off your lineup first." }); return; }
+    if (b.hk.favorite) { setNote({ title: "A FAVOURITE", body: "Un-favourite it first, if you mean it." }); return; }
+    setBin((cur) => { const next = cur.map((k) => (k === key ? null : k)); next[spot] = key; return next; });
+  };
+  const binned = bin.map((k) => (k ? byKey.get(k) ?? null : null));
+  const binIds = binned.flatMap((b) => (b?.hk ? [b.hk.id] : []));
+  const recycle = () => {
+    if (busy) return;
+    const held = binned.filter((b): b is ShownBadge => !!b?.hk);
+    if (held.length < 4) {
+      setNote({ title: "RECYCLE", body: "Drop four Historikals of one rarity into the auras and they become one of the next rarity up, chosen by chance. Now and then one evolves instead. Mythics are the top and can't go in." });
+      return;
+    }
+    const rars = new Set(held.map((b) => HISTORIKAL.get(b.hk!.slug)?.rarity));
+    if (rars.size > 1) { setNote({ title: "ONE RARITY", body: "All four must share a rarity. Swap one out." }); return; }
+    const rar = [...rars][0] as Rarity;
+    if (rar === "legendary") { setNote({ title: "THE TOP", body: "Mythics can't be recycled. There is nothing above them." }); return; }
+    const up = (["common", "uncommon", "rare", "epic", "legendary"] as Rarity[])[["common", "uncommon", "rare", "epic"].indexOf(rar) + 1];
+    setNote({
+      title: "ARE YOU SURE?",
+      body: `You'll lose these four ${RARITY_NAME[rar]}s for good. One ${RARITY_NAME[up]} comes out, and chance decides which.`,
+      yes: () => {
+        setNote(null); setBusy(true);
+        start(async () => {
+          const r = await recycleHistorikals(binIds);
+          setBusy(false);
+          if (!r.ok) {
+            const why: Record<string, string> = { mixed: "All four must share a rarity.", top: "Mythics can't be recycled.", favorite: "One of them is a favourite.", lineup: "One of them is in your lineup.", in_battle: "One of them is in a battle.", not_yours: "One of them has moved on.", none: "There is nothing to be had just now." };
+            setNote({ title: "NOT THIS TIME", body: why[r.code] ?? "Something went wrong. Try again." });
+            return;
+          }
+          setBin([null, null, null, null]);
+          const h = HISTORIKAL.get(r.slug);
+          const rolled = r.rolled && h?.rnd ? (r.rolled as HeldHk["types"][number]) : null;
+          const types = h ? (rolled ? [...new Set([rolled, ...h.types.slice(1)])] : h.types) : [];
+          router.refresh();
+          if (h) setCard({ id: r.item, slug: r.slug, name: h.name, rarity: h.rarity, types, hearts: h.hearts, hp: h.hearts, favorite: false });
+          setNote({ title: r.evolved ? "IT EVOLVED!" : "RECYCLED!", body: `${r.name.toUpperCase()} joins your Historikals.` });
+        });
+      },
+    });
+  };
 
   useEffect(() => {
     const esc = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -189,11 +248,13 @@ export function HkMenu({ shown, tradable, items, startOn = "menu", onClose }: {
 
         {view === "all" ? (
           <>
-          <div style={{ display: "flex", flexDirection: "column", gap: 10, padding: "0 14px 14px", overflowY: "auto", minHeight: 0, overscrollBehavior: "contain" }}>
+          <div aria-hidden style={{ flex: "none", height: 1, margin: "0 0 8px", background: "linear-gradient(90deg, #e0398a, #9184d9 52%, #4c7df0)" }} />
+          <div style={{ display: "flex", flexDirection: "column", gap: 10, padding: "0 14px 14px", overflowY: "auto", minHeight: 0, overscrollBehavior: "contain", flex: 1 }}>
             {all.length === 0 ? <span className="px" style={{ fontSize: 10, color: "rgba(255,255,255,.5)" }}>NO HISTORIKALS YET</span> : (
-              <HistorikalCollection list={all} ring="var(--blk-pur)" inLineup={(h) => lineup.includes(`i:${h.id}`)} drag={(h) => { const b = badgeOf(h); return b ? handlers(b, "grid") : {}; }} lifted={(h) => ghost?.b.key === `i:${h.id}`} onOpen={setCard} />
+              <HistorikalCollection list={all.filter((h) => !bin.includes(`i:${h.id}`))} dense ring="var(--blk-pur)" inLineup={(h) => lineup.includes(`i:${h.id}`)} drag={(h) => { const b = badgeOf(h); return b ? handlers(b, "grid") : {}; }} lifted={(h) => ghost?.b.key === `i:${h.id}`} onOpen={setCard} />
             )}
           </div>
+          <RecycleBar spots={binned} onClear={(i) => setBin((cur) => { const next = [...cur]; next[i] = null; return next; })} onRecycle={recycle} />
           </>
         ) : (
           <div role="menu" style={{ display: "flex", flexDirection: "column", boxShadow: "inset 0 1px 0 rgba(255,255,255,.08)" }}>
@@ -206,6 +267,22 @@ export function HkMenu({ shown, tradable, items, startOn = "menu", onClose }: {
         )}
       </div>
       {card ? <HistorikalCard hk={{ id: card.id, slug: card.slug, hp: card.hp, types: card.types, favorite: card.favorite }} own onClose={() => setCard(null)} onFavorite={(on) => setCard({ ...card, favorite: on })} /> : null}
+      {note ? (
+        <div role="alertdialog" aria-label={note.title} onClick={() => setNote(null)} style={{ position: "fixed", inset: 0, zIndex: 96, background: "rgba(5,3,12,.7)", display: "grid", placeItems: "center", padding: 20 }}>
+          <div onClick={(e) => e.stopPropagation()} style={{ width: "min(80vw, 300px)", background: "var(--blk-pur)", boxShadow: "4px 4px 0 #0a0616", padding: "18px 16px 16px", display: "flex", flexDirection: "column", gap: 12 }}>
+            <span className="px crystr-text" style={{ fontSize: 13, letterSpacing: ".06em" }}>{note.title}</span>
+            <span className="px" style={{ fontSize: 9.5, lineHeight: 1.8, color: "#fff", letterSpacing: ".03em" }}>{note.body}</span>
+            {note.yes ? (
+              <div style={{ display: "flex", gap: 8 }}>
+                <button type="button" className="px" onClick={note.yes} style={{ flex: 1, minHeight: 40, border: 0, cursor: "pointer", background: "#e0398a", color: "#fff", fontSize: 10, letterSpacing: ".06em", boxShadow: "3px 3px 0 #0a0616" }}>YES, I&apos;M SURE</button>
+                <button type="button" className="px" onClick={() => setNote(null)} style={{ flex: 1, minHeight: 40, border: 0, cursor: "pointer", background: "rgba(255,255,255,.12)", color: "#fff", fontSize: 10, letterSpacing: ".06em", boxShadow: "3px 3px 0 #0a0616" }}>NO</button>
+              </div>
+            ) : (
+              <button type="button" className="px" onClick={() => setNote(null)} style={{ minHeight: 40, border: 0, cursor: "pointer", background: "rgba(255,255,255,.12)", color: "#fff", fontSize: 10, letterSpacing: ".06em", boxShadow: "3px 3px 0 #0a0616" }}>OK</button>
+            )}
+          </div>
+        </div>
+      ) : null}
       {ghost ? (
         // The picked-up creature rides above the finger, bigger, so you can see it is yours to drop.
         <div aria-hidden className="hk-lift" style={{ position: "fixed", left: ghost.x - 30, top: ghost.y - 66, zIndex: 60, pointerEvents: "none", filter: "drop-shadow(4px 4px 0 #0a0616)" }}>
