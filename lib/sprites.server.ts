@@ -118,18 +118,38 @@ function dress(type: Element, h: number, s: number, v: number): [number, number,
   return hsvToRgb(th, Math.min(Math.max(s, 0.25), Math.max(0.45, ts + 0.15)), v);
 }
 
-/** Every pixel that wears the old type's colour takes the new one, at its own depth. */
+/** Every pixel that wears the old type's colour takes the new one, at its own depth. When the picture does not
+ *  really wear that colour (a spirit creature drawn in purple, say), the sprite's dominant hue family is what
+ *  changes instead: the costume, whatever colour the artist gave it. */
 export function redress(png: PNG, from: Element, to: Element): number {
   const d = png.data;
-  let n = 0;
-  for (let i = 0; i < d.length; i += 4) {
-    if (!d[i + 3]) continue;
-    const [h, s, v] = rgbToHsv(d[i], d[i + 1], d[i + 2]);
-    if (!wears(from, h, s, v)) continue;
-    const [r, g, b] = dress(to, h, s, v);
-    d[i] = r; d[i + 1] = g; d[i + 2] = b; n++;
+  const px: [number, number, number, number][] = [];
+  for (let i = 0; i < d.length; i += 4) if (d[i + 3]) px.push([i, ...rgbToHsv(d[i], d[i + 1], d[i + 2])]);
+  const wearing = px.filter(([, h, s, v]) => wears(from, h, s, v));
+  let chosen = wearing;
+  // Spirit and ward are "colourless" types, and pale or grey pixels are more often skin and highlights than
+  // the type's colour: for those, go by the dominant hue whenever the sprite has one.
+  if (from === "spirit" || from === "ward" || wearing.length < Math.max(12, px.length * 0.08)) {
+    // Dominant hue: the fullest of twelve hue bins among coloured pixels, with its neighbours.
+    // Skin and hat leather (peach and tan) are not a costume: they sit out the vote, unless nothing else is coloured.
+    const skinLike = (h: number, s: number, v: number) => h >= 12 && h <= 48 && s >= 0.18 && s <= 0.55 && v >= 0.45;
+    const vote = (allowSkin: boolean) => {
+      const bins = new Array(12).fill(0);
+      for (const [, h, s, v] of px) if (s >= 0.25 && v >= 0.15 && (allowSkin || !skinLike(h, s, v))) bins[Math.floor(h / 30) % 12]++;
+      return [bins.indexOf(Math.max(...bins)), Math.max(...bins), allowSkin] as const;
+    };
+    let [top, n, allowSkin] = vote(false);
+    if (n < Math.max(8, px.length * 0.06)) [top, n, allowSkin] = vote(true);
+    if (n < Math.max(8, px.length * 0.06)) { if (!wearing.length) return 0; } else {
+      const near = (h: number) => { const b = Math.floor(h / 30) % 12; return b === top || b === (top + 1) % 12 || b === (top + 11) % 12; };
+      chosen = px.filter(([, h, s, v]) => s >= 0.2 && v >= 0.12 && near(h) && (allowSkin || !skinLike(h, s, v)));
+    }
   }
-  return n;
+  for (const [i, h, s, v] of chosen) {
+    const [r, g, b] = dress(to, h, s, v);
+    d[i] = r; d[i + 1] = g; d[i + 2] = b;
+  }
+  return chosen.length;
 }
 
 /** The creature's pictures (both frames) re-dressed from one first type to another: every pixel that wore the
