@@ -1,4 +1,4 @@
-/** The "1000 Pixel Art Icons" pack, as public/badges/pack/<category>-<n>.png (16px, outline darkened), for the
+/** The "1000 Pixel Art Icons" pack, as public/badges/pack/<category>-<n>.png (16px, outline darkened to #0b0510), for the
  *  badge maker's picture picker. Each category's pictures are numbered 1 to its count. Keep in step with
  *  scripts/pack-icons.py, which copies them in. */
 export const PACK_CATEGORIES: { slug: string; label: string; count: number }[] = [

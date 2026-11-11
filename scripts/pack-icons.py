@@ -15,7 +15,7 @@ TYPES = {"fire": ("Nature", 8), "tide": ("Nature", 20), "nature": ("Nature", 101
 MOVES = {"sword": ("Weapons", 3), "spell": ("Smileys & People", 152), "armor": ("Smileys & People", 165)}
 
 # The pack outlines everything in a dusky purple (#442434); the app wants it darker.
-OUTLINE_FROM, OUTLINE_TO = (0x44, 0x24, 0x34), (0x16, 0x0a, 0x1e)
+OUTLINE_FROM, OUTLINE_TO = (0x44, 0x24, 0x34), (0x0b, 0x05, 0x10)
 
 def pick(cat, n):
     im = Image.open(os.path.join(PACK, cat, "16x16px", f"{cat} {n}.png")).convert("RGBA"); px = im.load()
@@ -39,8 +39,8 @@ def tint_type(img, hex_):
             if l > 0.92 and s < 0.2: continue  # white glints stay white
             # Lean on the element's own colour: its saturation, and part way to its lightness (cream stays cream).
             l2 = max(l, 0.36) if l < 0.2 else l
-            l2 = l2 + (tl - l2) * 0.35
-            s2 = s * 0.3 if ts < 0.15 else min(0.95, ts * 0.9 + s * 0.1)
+            l2 = l2 + (tl - l2) * 0.25
+            s2 = s * 0.3 if ts < 0.15 else min(0.95, ts * 0.7 + s * 0.3)
             r2, g2, b2 = colorsys.hls_to_rgb(th, l2, s2)
             px[x, y] = (round(r2 * 255), round(g2 * 255), round(b2 * 255), a)
     return out
@@ -56,8 +56,8 @@ def tint(img, hex_):
             h, l, s = colorsys.rgb_to_hls(r / 255, g / 255, b / 255)
             if (r, g, b) == OUTLINE_TO or l < 0.2: continue  # outline and deep shadow stay
             if ts < 0.15: s2 = s * 0.25  # a grey element (ward): wash the colour out instead
-            else: s2 = min(0.92, ts * 0.8 + s * 0.2) if s >= 0.15 else min(0.7, ts)  # the element's own saturation, grey steel included
-            l2 = l + (tl - l) * 0.45  # and part way to its lightness, so cream reads cream
+            else: s2 = min(0.92, ts * 0.65 + s * 0.35) if s >= 0.15 else min(0.7, ts)  # the element's colour, with the drawing's own shading kept
+            l2 = l + (tl - l) * 0.3  # and part way to its lightness, so cream reads cream
             r2, g2, b2 = colorsys.hls_to_rgb(th, l2, s2)
             px[x, y] = (round(r2 * 255), round(g2 * 255), round(b2 * 255), a)
     return out

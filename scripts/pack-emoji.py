@@ -32,7 +32,7 @@ def pick(cat, n):
     for y in range(im.height):
         for x in range(im.width):
             r, g, b, a = px[x, y]
-            if (r, g, b) == (0x44, 0x24, 0x34): px[x, y] = (0x16, 0x0a, 0x1e, a)
+            if (r, g, b) == (0x44, 0x24, 0x34): px[x, y] = (0x0b, 0x05, 0x10, a)
     return im
 
 def write(key, im):
