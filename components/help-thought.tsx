@@ -34,15 +34,16 @@ export function HelpThought({ text, muted, face = 104, onClick, label, onCode, h
     ro.observe(el);
     return () => ro.disconnect();
   }, [text]);
-  const side = h + 10;
+  // The code's square: white, a little smaller than the words, with the code filling most of it.
+  const side = h + 4;
   const style: React.CSSProperties = { position: "absolute", left: 16 + face * 0.75, right: 16, top: 22, transform: "translateY(-100%)", zIndex: 2 };
   return (
     <span className="helpcall" style={style}>
       <button type="button" onClick={onClick} aria-label={label} style={{ flex: 1, minWidth: 0, background: "none", border: 0, padding: 0, color: "inherit", font: "inherit", textAlign: "left", cursor: "pointer" }}>
         <span ref={words} className="helpcall-words" style={{ opacity: muted ? 0.75 : 1 }}>{text}</span>
       </button>
-      <button type="button" onClick={onCode ?? onClick} aria-label={helped ? "I helped them: scan their code" : "Your code: show it to be scanned"} title={helped ? "I helped them" : "Your code"} style={{ position: "relative", width: side, height: side, flex: "none", display: "grid", placeItems: "center", background: "var(--blk-pur)", border: 0, padding: 0, cursor: "pointer" }}>
-        <QrGlyph size={Math.round(side * 0.66)} />
+      <button type="button" onClick={onCode ?? onClick} aria-label={helped ? "I helped them: scan their code" : "Your code: show it to be scanned"} title={helped ? "I helped them" : "Your code"} style={{ position: "relative", width: side, height: side, flex: "none", display: "grid", placeItems: "center", background: "#fff", border: 0, padding: 0, cursor: "pointer" }}>
+        <QrGlyph size={Math.round(side * 0.82)} />
         {helped ? (
           <span style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center" }}>
             <HelpMark size={Math.round(side * 0.5)} fill="#fff" edge />

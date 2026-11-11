@@ -824,6 +824,19 @@ export async function peekOverride(code: string): Promise<{ ok: true; witch: str
 
 /** Every badge there is, and when this person earned each one (null if not yet) and at
  *  what tier. */
+/** Badges earned, or stepped up, that have not had their moment yet: the reveal shows each, then marks it seen. */
+export type UnseenBadge = { slug: string; title: string; art: string | null; tiers: number; tier: number; up: boolean };
+export async function getUnseenBadges(userId: string): Promise<UnseenBadge[]> {
+  const supabase = createClient();
+  const { data } = await supabase.from("user_badges").select("badge_slug, tier, upgraded_at, badges(title, art, tiers)").eq("user_id", userId).eq("seen", false).order("earned_at");
+  return (data ?? []).flatMap((r) => {
+    const b = (Array.isArray(r.badges) ? r.badges[0] : r.badges) as { title: string; art: string | null; tiers: number } | null;
+    if (!b) return [];
+    const tier = Number(r.tier ?? 1);
+    return [{ slug: String(r.badge_slug), title: String(b.title), art: b.art ?? null, tiers: Number(b.tiers ?? 1), tier, up: tier > 1 && !!r.upgraded_at }];
+  });
+}
+
 export async function getBadges(userId: string): Promise<BadgeRow[]> {
   const supabase = createClient();
   const [all, mine, again] = await Promise.all([

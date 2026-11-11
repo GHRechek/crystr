@@ -32,7 +32,7 @@ function headSrc(face: unknown, grin = false) {
 }
 
 /** Dragging the key: where it is, and on letting go, whether it landed on `target` or was thrown. */
-function useKey(enabled: boolean, target: React.RefObject<HTMLElement | null>, onDrop: () => void, onThrow?: () => void, onTap?: () => void) {
+export function useKey(enabled: boolean, target: React.RefObject<HTMLElement | null>, onDrop: () => void, onThrow?: () => void, onTap?: () => void) {
   const [pos, setPos] = useState<{ x: number; y: number } | null>(null);
   const [fling, setFling] = useState<{ x: number; y: number } | null>(null);
   const start = useRef<{ x: number; y: number } | null>(null);
@@ -72,7 +72,7 @@ function useKey(enabled: boolean, target: React.RefObject<HTMLElement | null>, o
 }
 
 // eslint-disable-next-line @next/next/no-img-element
-const KeyImg = () => <img src="/ask/key.png" alt="" width={59} height={108} draggable={false} style={{ display: "block", imageRendering: "pixelated", pointerEvents: "none" }} />;
+export const KeyImg = () => <img src="/ask/key.png" alt="" width={59} height={108} draggable={false} style={{ display: "block", imageRendering: "pixelated", pointerEvents: "none" }} />;
 
 export function QuestAskScreen({ v, close, answer, end }: { v: QuestView; close: () => void; answer: (yes: boolean) => Promise<void>; end: () => Promise<void> }) {
   return v.me === "b" ? <Asked v={v} close={close} answer={answer} end={end} /> : <Asker v={v} close={close} end={end} />;

@@ -1303,6 +1303,11 @@ export async function favoriteHistorikal(fd: FormData) {
   revalidatePath("/", "layout");
 }
 
+/** The reveal has shown this badge: it is seen, and will not be shown again. */
+export async function badgeSeen(slug: string) {
+  await call("cr_badge_seen", { p_slug: String(slug).slice(0, 60) });
+}
+
 /** Four Historikals of one rarity become one of the next rarity up. The panel asked "are you sure" already;
  *  this answers with what came out, or why nothing did. */
 export async function recycleHistorikals(ids: number[]): Promise<{ ok: true; item: number; slug: string; name: string; rolled: string | null; evolved: boolean } | { ok: false; code: string }> {

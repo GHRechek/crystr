@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { requireMe, getCatalogue, isCreatureEditor, getQuests, getPendingVouches, getTopSixNotices, getTradeNotices, hasAcceptedTerms, claimBirthdayBadge, getUnreadThreadIds } from "@/lib/data";
+import { requireMe, getCatalogue, isCreatureEditor, getQuests, getPendingVouches, getTopSixNotices, getTradeNotices, hasAcceptedTerms, claimBirthdayBadge, getUnreadThreadIds, getUnseenBadges } from "@/lib/data";
 import { birthdayBadgeDue } from "@/lib/birthday";
 import { EDGE } from "@/lib/toast";
 import { TERMS_VERSION } from "@/lib/terms";
@@ -20,6 +20,7 @@ import { VouchBanner } from "@/components/vouch-banner";
 import { TopSixBanner } from "@/components/top-six-banner";
 import { TradeBanner } from "@/components/trade-banner";
 import { EncounterHost } from "@/components/encounter";
+import { BadgeReveal } from "@/components/badge-reveal";
 import { BADGE_MANA, BASE_CAP, WELCOME_CAP, hasStarterHandle, manaColor } from "@/lib/crystr";
 import { BREACH_COOKIE, SCAN_COOKIE } from "@/lib/breach";
 
@@ -76,6 +77,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     (gift
       ? { k: "HAPPY BIRTHDAY", t: "The City gives you a Historikal draw for the day. Open it from the monster button beside your portrait: FIND ONE!", e: EDGE.mag }
       : null);
+  // Badges earned, or stepped up, that have not had their chest yet.
+  const unseen = welcoming ? [] : await getUnseenBadges(userId);
   const mana = profile.mana;
   // Running low (a quarter or less), or signing up and not yet full: the potion opens a restore
   // sheet with the Well's tasks.
@@ -144,6 +147,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
         {/* Someone has scanned you to trade or battle: it opens here, on both phones. */}
         {welcoming ? null : <EncounterHost />}
+        {unseen.length ? <BadgeReveal key={unseen.map((b) => b.slug).join(",")} list={unseen} /> : null}
 
         <TabBar welcoming={welcoming} unreadWhispers={unreadWhispers} />
       </div>
