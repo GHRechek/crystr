@@ -248,7 +248,7 @@ export function BlendScene({ offers, onDone, onClose }: {
               <div className="bl-ask-box">
                 <span className="px crystr-text" style={{ fontSize: 13, letterSpacing: ".06em", textAlign: "center" }}>{stage === "error" ? "NOT THIS TIME" : "ARE YOU SURE?"}</span>
                 <span className="px" style={{ fontSize: 9.5, lineHeight: 1.8, color: "#fff", letterSpacing: ".03em", textAlign: "center" }}>
-                  {stage === "confirm" ? `These four ${RARITY_NAME[cur?.rarity ?? "common"]}s go into the void for good. One ${RARITY_NAME[cur?.rarity === "rare" ? "epic" : cur?.rarity === "uncommon" ? "rare" : "uncommon"]} comes out, and chance decides which.`
+                  {stage === "confirm" ? `These four ${RARITY_NAME[cur?.rarity ?? "common"]}s go into the void for good. One ${RARITY_NAME[cur?.rarity === "rare" ? "epic" : cur?.rarity === "uncommon" ? "rare" : "uncommon"]} comes out, of the types that go in.`
                     : stage === "abandon" ? "Your other sacrifices will have meant nothing." : err}
                 </span>
                 {stage === "error" ? (

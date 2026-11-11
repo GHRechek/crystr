@@ -2,13 +2,17 @@
 -- in your pot; the fourth of a rarity resolves the pot into one of the next rarity up (the same odds as
 -- cr_recycle: an evolution one time in eight when one of the four has one a tier up). Backing out
 -- empties the pot: those sacrifices meant nothing.
+-- What comes out is of the types that went in: only a creature whose every type was fed can come out,
+-- and the more of a type went in, the likelier the result carries it.
 
 create table if not exists public.blend_pots (
   user_id uuid primary key references public.profiles(id) on delete cascade,
   rarity text not null,
   slugs text[] not null default '{}',
+  types text[] not null default '{}',
   updated_at timestamptz not null default now()
 );
+alter table public.blend_pots add column if not exists types text[] not null default '{}';
 alter table public.blend_pots enable row level security;
 drop policy if exists "own pot" on public.blend_pots;
 create policy "own pot" on public.blend_pots for select using (user_id = auth.uid());
@@ -36,14 +40,16 @@ grant execute on function public.cr_blend_abandon() to authenticated;
 create or replace function public.cr_blend_feed(p_item bigint)
 returns jsonb language plpgsql security definer set search_path to 'public' as $$
 declare
-  v_slug text; v_rar text; v_pot_rar text; v_slugs text[]; v_next text; v_out text; v_title text; v_evolved boolean := false;
-  it bigint; v_rolled text; v_shown jsonb;
+  v_slug text; v_rar text; v_pot_rar text; v_slugs text[]; v_types text[]; v_mine text[]; v_next text; v_out text; v_title text; v_evolved boolean := false;
+  it bigint; v_rolled text; v_shown jsonb; v_i public.badge_items; v_k public.badge_kinds;
 begin
   if auth.uid() is null then return jsonb_build_object('ok', false, 'code', 'auth'); end if;
-  select i.kind_slug, k.rarity into v_slug, v_rar
+  select i.*, k.* into v_i, v_k
     from public.badge_items i join public.badge_kinds k on k.slug = i.kind_slug
    where i.id = p_item and i.owner_id = auth.uid() and i.kind = 'tradable' for update of i;
   if not found then return jsonb_build_object('ok', false, 'code', 'not_yours'); end if;
+  v_slug := v_k.slug; v_rar := v_k.rarity;
+  v_mine := coalesce(public.cr_hk_types(v_i, v_k), v_k.types, '{}');
   if v_rar in ('epic', 'legendary') then return jsonb_build_object('ok', false, 'code', 'top'); end if;
   if exists (select 1 from public.badge_items where id = p_item and favorite) then return jsonb_build_object('ok', false, 'code', 'favorite'); end if;
   select shown_badges into v_shown from public.profiles where id = auth.uid();
@@ -54,16 +60,17 @@ begin
   end if;
 
   -- The pot: this rarity, or empty.
-  select rarity, slugs into v_pot_rar, v_slugs from public.blend_pots where user_id = auth.uid() for update;
+  select rarity, slugs, types into v_pot_rar, v_slugs, v_types from public.blend_pots where user_id = auth.uid() for update;
   if found and v_pot_rar <> v_rar then return jsonb_build_object('ok', false, 'code', 'mixed', 'count', cardinality(v_slugs), 'rarity', v_pot_rar); end if;
-  if not found then v_slugs := '{}'; end if;
+  if not found then v_slugs := '{}'; v_types := '{}'; end if;
 
   perform set_config('crystr.economy', 'on', true);
   delete from public.badge_items where id = p_item;
   v_slugs := v_slugs || v_slug;
+  v_types := v_types || v_mine;
   if cardinality(v_slugs) < 4 then
-    insert into public.blend_pots (user_id, rarity, slugs, updated_at) values (auth.uid(), v_rar, v_slugs, now())
-      on conflict (user_id) do update set rarity = excluded.rarity, slugs = excluded.slugs, updated_at = now();
+    insert into public.blend_pots (user_id, rarity, slugs, types, updated_at) values (auth.uid(), v_rar, v_slugs, v_types, now())
+      on conflict (user_id) do update set rarity = excluded.rarity, slugs = excluded.slugs, types = excluded.types, updated_at = now();
     return jsonb_build_object('ok', true, 'done', false, 'count', cardinality(v_slugs), 'rarity', v_rar);
   end if;
 
@@ -77,6 +84,17 @@ begin
      where k.active and k.rarity = v_next order by random() limit 1;
     v_evolved := v_out is not null;
   end if;
+  -- Of the types that went in: a candidate's every type must have been fed, and its weight is how many
+  -- of the fed types it carries (so three fire and one feral lean fire). Weighted draw: random^(1/w).
+  if v_out is null then
+    select k.slug into v_out
+      from public.badge_kinds k
+     where k.active and k.droppable and k.rarity = v_next and k.types is not null and k.types <@ v_types
+     order by power(random(), 1.0 / greatest(1, (select count(*) from unnest(v_types) t where t = any(k.types)))) desc
+     limit 1;
+  end if;
+  -- Nothing of exactly those types at that rarity: anything sharing a type, then anything at all.
+  if v_out is null then select slug into v_out from public.badge_kinds where active and droppable and rarity = v_next and types && v_types order by random() limit 1; end if;
   if v_out is null then select slug into v_out from public.badge_kinds where active and droppable and rarity = v_next order by random() limit 1; end if;
   if v_out is null then return jsonb_build_object('ok', false, 'code', 'none'); end if;
   insert into public.badge_items (kind, kind_slug, earned_by, owner_id, occasion, seen)
