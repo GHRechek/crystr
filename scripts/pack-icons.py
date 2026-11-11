@@ -25,9 +25,16 @@ def pick(cat, n):
             if (r, g, b) == OUTLINE_FROM: px[x, y] = (*OUTLINE_TO, a)
     return im
 
-def tint_type(img, hex_):
+NEAR_BLACK = (0x0e, 0x0a, 0x16)
+
+def luma(r, g, b):
+    """Perceived lightness, so an orange shade on a yellow base still reads as a shade once both take one hue."""
+    return 0.299 * r + 0.587 * g + 0.114 * b
+
+def tint_type(img, hex_, el=None):
     """A type icon in its element's colour: every pixel but the outline takes the hue, and the very dark ones
-    (the paw print) come up to a middle lightness so the colour shows."""
+    (the paw print) come up to a middle lightness so the colour shows. A pale element (spirit) goes pale, not
+    gold; the dark moon's shadowed face goes near black."""
     r, g, b = (int(hex_[i:i + 2], 16) / 255 for i in (1, 3, 5))
     th, tl, ts = colorsys.rgb_to_hls(r, g, b)
     out = img.copy(); px = out.load()
@@ -37,15 +44,17 @@ def tint_type(img, hex_):
             if not a or (r, g, b) == OUTLINE_TO: continue
             h, l, s = colorsys.rgb_to_hls(r / 255, g / 255, b / 255)
             if l > 0.92 and s < 0.2: continue  # white glints stay white
-            # Lean on the element's own colour: its saturation, and part way to its lightness (cream stays cream).
-            l2 = max(l, 0.36) if l < 0.2 else l
-            l2 = l2 + (tl - l2) * 0.25
-            s2 = s * 0.3 if ts < 0.15 else min(0.95, ts * 0.7 + s * 0.3)
+            if el == "dark" and l < 0.4: px[x, y] = (*NEAR_BLACK, a); continue
+            l2 = max(l, 0.36) if l < 0.2 else luma(r / 255, g / 255, b / 255)
+            if tl > 0.7: l2 = l2 + (tl - l2) * 0.5; s2 = min(0.95, ts * 0.45 + s * 0.15)
+            else: l2 = l2 + (tl - l2) * 0.25; s2 = s * 0.3 if ts < 0.15 else min(0.95, ts * 0.7 + s * 0.3)
             r2, g2, b2 = colorsys.hls_to_rgb(th, l2, s2)
             px[x, y] = (round(r2 * 255), round(g2 * 255), round(b2 * 255), a)
     return out
 
 def tint(img, hex_):
+    """A move icon hue-shifted onto its element. Lightness comes from each pixel's perceived brightness, so the
+    pack's orange-on-yellow shading survives the one hue; a pale element (spirit) goes pale rather than gold."""
     r, g, b = (int(hex_[i:i + 2], 16) / 255 for i in (1, 3, 5))
     th, tl, ts = colorsys.rgb_to_hls(r, g, b)
     out = img.copy(); px = out.load()
@@ -56,14 +65,16 @@ def tint(img, hex_):
             h, l, s = colorsys.rgb_to_hls(r / 255, g / 255, b / 255)
             if (r, g, b) == OUTLINE_TO or l < 0.2: continue  # outline and deep shadow stay
             if ts < 0.15: s2 = s * 0.25  # a grey element (ward): wash the colour out instead
-            else: s2 = min(0.92, ts * 0.65 + s * 0.35) if s >= 0.15 else min(0.7, ts)  # the element's colour, with the drawing's own shading kept
-            l2 = l + (tl - l) * 0.3  # and part way to its lightness, so cream reads cream
+            elif tl > 0.7: s2 = min(0.9, ts * 0.45 + s * 0.15)
+            else: s2 = min(0.92, ts * 0.65 + s * 0.35) if s >= 0.15 else min(0.7, ts)
+            lm = luma(r / 255, g / 255, b / 255) if s >= 0.15 else l
+            l2 = lm + (tl - lm) * (0.5 if tl > 0.7 else 0.3)
             r2, g2, b2 = colorsys.hls_to_rgb(th, l2, s2)
             px[x, y] = (round(r2 * 255), round(g2 * 255), round(b2 * 255), a)
     return out
 
 os.makedirs(OUT, exist_ok=True)
-for el, (c, n) in TYPES.items(): tint_type(pick(c, n), ELEMENT_COLOR[el]).save(os.path.join(OUT, f"type-{el}.png"))
+for el, (c, n) in TYPES.items(): tint_type(pick(c, n), ELEMENT_COLOR[el], el).save(os.path.join(OUT, f"type-{el}.png"))
 for kind, (c, n) in MOVES.items():
     im = pick(c, n); im.save(os.path.join(OUT, f"move-{kind}.png"))
     for el, col in ELEMENT_COLOR.items(): tint(im, col).save(os.path.join(OUT, f"move-{kind}-{el}.png"))
