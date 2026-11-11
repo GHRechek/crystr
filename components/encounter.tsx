@@ -161,8 +161,14 @@ export function EncounterHost() {
 
 const up = (s: string) => s.toUpperCase();
 
+/** The colour this far (0..1) from hex `a` to hex `b`: a pixel gradient, one colour per column, with no SVG gradient to go wrong. */
+function mix(a: string, b: string, t: number) {
+  const n = (h: string, i: number) => parseInt(h.slice(1 + i * 2, 3 + i * 2), 16);
+  const c = (i: number) => Math.round(n(a, i) + (n(b, i) - n(a, i)) * t).toString(16).padStart(2, "0");
+  return `#${c(0)}${c(1)}${c(2)}`;
+}
 /** A little pixel picture from rows of # and . */
-function Pix({ rows, k, fill, dim, grad, fill2 }: { rows: string[]; k: number; fill: string; dim?: boolean; /** Filled with the CRYSTR gradient instead (defined inside, so every browser finds it). */ grad?: boolean; /** The right half in this colour instead: a move with two elements. */ fill2?: string }) {
+function Pix({ rows, k, fill, dim, grad, fill2, to }: { rows: string[]; k: number; fill: string; dim?: boolean; /** Filled with the CRYSTR gradient instead (defined inside, so every browser finds it). */ grad?: boolean; /** The right half in this colour instead: a move with two elements. */ fill2?: string; /** A gradient across it from `fill` to this colour: a creature's hearts, in both its types. */ to?: string }) {
   const id = `g${useId().replace(/:/g, "")}`;
   const half = Math.ceil(rows[0].length / 2);
   return (
@@ -176,7 +182,7 @@ function Pix({ rows, k, fill, dim, grad, fill2 }: { rows: string[]; k: number; f
           </linearGradient>
         </defs>
       ) : null}
-      {rows.flatMap((r, y) => [...r].map((c, x) => (c === "#" ? <rect key={`${x}-${y}`} x={x} y={y} width={1} height={1} fill={fill2 && !grad && x >= half ? fill2 : undefined} /> : null)))}
+      {rows.flatMap((r, y) => [...r].map((c, x) => (c === "#" ? <rect key={`${x}-${y}`} x={x} y={y} width={1} height={1} fill={grad ? undefined : to ? mix(fill, to, x / (rows[0].length - 1)) : fill2 && x >= half ? fill2 : undefined} /> : null)))}
     </svg>
   );
 }
@@ -242,9 +248,10 @@ export function Stats({ h, hp, k = 3, known = true, only, fav }: { h: HK; hp?: n
   const left = hp ?? h.hearts;
   return (
     <span className="en-stats">
-      {only === "hearts" ? null : known && h.types?.length ? h.types.map((t) => <Pix key={t} rows={TYPE[t]} k={k} fill={ELEMENT_COLOR[t]} />) : <Pix rows={QMARK} k={k} fill="#d2cefd" />}
-      {/* Hearts in the second type's colour: the second type is what it defends with. White with no second type. */}
-      {only === "type" ? null : Array.from({ length: h.hearts }, (_, i) => <Pix key={i} rows={i + 1 <= left ? HEART : i < left ? HEART_HALF : HEART_LOST} k={k} fill={h.types?.[1] ? ELEMENT_COLOR[h.types[1]] : "#fff"} />)}
+      {/* Only its primary type up front; its hearts carry both. */}
+      {only === "hearts" ? null : known && h.types?.length ? <Pix rows={TYPE[h.types[0]]} k={k} fill={ELEMENT_COLOR[h.types[0]]} /> : <Pix rows={QMARK} k={k} fill="#d2cefd" />}
+      {/* Each heart a gradient of its two types, primary to secondary; a single type's hearts are solid in that colour. */}
+      {only === "type" ? null : Array.from({ length: h.hearts }, (_, i) => <Pix key={i} rows={i + 1 <= left ? HEART : i < left ? HEART_HALF : HEART_LOST} k={k} fill={h.types?.[0] ? ELEMENT_COLOR[h.types[0]] : "#fff"} to={h.types?.[1] ? ELEMENT_COLOR[h.types[1]] : undefined} />)}
     </span>
   );
 }

@@ -214,7 +214,7 @@ export function HkMenu({ shown, tradable, items, startOn = "menu", onClose }: {
                 {/* Its types, small, then its name on the same line; then its hearts, the lost ones hollow. Healing is on its card. */}
                 {b?.hk && h ? (
                   <span style={{ display: "flex", alignItems: "center", gap: 3, maxWidth: "100%" }}>
-                    <span style={{ display: "flex", gap: 1, flex: "none" }}>{(b.hk.types ?? h.types).map((t) => <TypeIcon key={t} type={t} k={1} />)}</span>
+                    <span style={{ display: "flex", gap: 1, flex: "none" }}><TypeIcon type={(b.hk.types ?? h.types)[0]} k={1} /></span>
                     <span className="px" style={{ fontSize: 8, color: "#fff", letterSpacing: ".03em", minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", lineHeight: 1.2 }}>{h.name.toUpperCase()}</span>
                   </span>
                 ) : null}
