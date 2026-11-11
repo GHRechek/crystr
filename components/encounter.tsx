@@ -162,8 +162,9 @@ export function EncounterHost() {
 const up = (s: string) => s.toUpperCase();
 
 /** A little pixel picture from rows of # and . */
-function Pix({ rows, k, fill, dim, grad }: { rows: string[]; k: number; fill: string; dim?: boolean; /** Filled with the CRYSTR gradient instead (defined inside, so every browser finds it). */ grad?: boolean }) {
+function Pix({ rows, k, fill, dim, grad, fill2 }: { rows: string[]; k: number; fill: string; dim?: boolean; /** Filled with the CRYSTR gradient instead (defined inside, so every browser finds it). */ grad?: boolean; /** The right half in this colour instead: a move with two elements. */ fill2?: string }) {
   const id = `g${useId().replace(/:/g, "")}`;
+  const half = Math.ceil(rows[0].length / 2);
   return (
     <svg width={rows[0].length * k} height={rows.length * k} viewBox={`0 0 ${rows[0].length} ${rows.length}`} shapeRendering="crispEdges" fill={grad ? `url(#${id})` : fill} aria-hidden opacity={dim ? 0.18 : 1} style={{ flex: "none", filter: `drop-shadow(${k}px ${k}px 0 #0a0616)` }}>
       {grad ? (
@@ -175,7 +176,7 @@ function Pix({ rows, k, fill, dim, grad }: { rows: string[]; k: number; fill: st
           </linearGradient>
         </defs>
       ) : null}
-      {rows.flatMap((r, y) => [...r].map((c, x) => (c === "#" ? <rect key={`${x}-${y}`} x={x} y={y} width={1} height={1} /> : null)))}
+      {rows.flatMap((r, y) => [...r].map((c, x) => (c === "#" ? <rect key={`${x}-${y}`} x={x} y={y} width={1} height={1} fill={fill2 && !grad && x >= half ? fill2 : undefined} /> : null)))}
     </svg>
   );
 }
@@ -205,15 +206,14 @@ const UNDO = ["..#.......", ".##.......", "#######...", ".##....#..", "..#.....#
 const SWAP = ["...#...", "....#..", "#######", "....#..", "..#.#..", ".#.....", "#######"];
 
 const BOLT = ["..##.", ".##..", "####.", "..##.", ".#...", "#...."];
-/** A move's kind as its little pixel icon (sword, spell or armor), then its element icons; a charge adds a bolt. */
+/** A move's kind as its little pixel icon (sword, spell or armor) in its element's colour, split down the
+ *  middle when it has two; a charge adds a bolt. */
 export function MoveIcon({ kind, k = 2, fill = "#fff", el, charge }: { kind: MoveKind; k?: number; fill?: string; el?: Element[]; charge?: boolean }) {
-  const base = <Pix rows={MOVE[kind] ?? MOVE.sword} k={k} fill={fill} />;
-  if (!el?.length && !charge) return base;
-  return (
-    <span style={{ display: "inline-flex", gap: Math.max(1, Math.round(k)), alignItems: "center" }}>
-      {base}{(el ?? []).map((t) => <TypeIcon key={t} type={t} k={k} />)}{charge ? <Pix rows={BOLT} k={k} fill="#fff" /> : null}
-    </span>
-  );
+  const c1 = el?.[0] ? ELEMENT_COLOR[el[0]] : fill;
+  const c2 = el?.[1] ? ELEMENT_COLOR[el[1]] : undefined;
+  const base = <Pix rows={MOVE[kind] ?? MOVE.sword} k={k} fill={c1} fill2={c2} />;
+  if (!charge) return base;
+  return <span style={{ display: "inline-flex", gap: Math.max(1, Math.round(k)), alignItems: "center" }}>{base}<Pix rows={BOLT} k={k} fill="#fff" /></span>;
 }
 
 /** The charging aura: flakes in the charge's element colour rising off the creature, most behind it, a few in front. */
