@@ -44,9 +44,9 @@ declare
   it bigint; v_rolled text; v_shown jsonb; v_i public.badge_items; v_k public.badge_kinds;
 begin
   if auth.uid() is null then return jsonb_build_object('ok', false, 'code', 'auth'); end if;
-  select i.*, k.* into v_i, v_k
-    from public.badge_items i join public.badge_kinds k on k.slug = i.kind_slug
-   where i.id = p_item and i.owner_id = auth.uid() and i.kind = 'tradable' for update of i;
+  select i.* into v_i from public.badge_items i where i.id = p_item and i.owner_id = auth.uid() and i.kind = 'tradable' for update;
+  if not found then return jsonb_build_object('ok', false, 'code', 'not_yours'); end if;
+  select k.* into v_k from public.badge_kinds k where k.slug = v_i.kind_slug;
   if not found then return jsonb_build_object('ok', false, 'code', 'not_yours'); end if;
   v_slug := v_k.slug; v_rar := v_k.rarity;
   v_mine := coalesce(public.cr_hk_types(v_i, v_k), v_k.types, '{}');
