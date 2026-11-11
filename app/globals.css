@@ -2156,10 +2156,9 @@ select.input { border: 0; }
 .bl-sprite.is-held { filter: drop-shadow(3px 3px 0 #160b2e); z-index: 7; }
 .bl-bubble { position: absolute; left: 50%; top: 50%; margin: -96px 0 0 10px; background: #fff; color: #1a1033; font-size: 11px; letter-spacing: .05em; padding: 8px 11px; white-space: nowrap; box-shadow: 2px 2px 0 #000; transform: translate(-50%, -100%); z-index: 8; animation: pix-in 200ms steps(3) both; }
 .bl-bubble::after { content: ""; position: absolute; left: 12px; bottom: -8px; border-top: 8px solid #fff; border-right: 9px solid transparent; }
-.bl-name { position: absolute; left: 0; right: 0; top: 468px; text-align: center; font-size: 11px; color: #fff; letter-spacing: .06em; text-shadow: 2px 2px 0 #000; z-index: 6; }
-.bl-yes, .bl-no { position: absolute; top: 500px; width: 110px; border: 0; background: none; cursor: pointer; font-size: 10px; letter-spacing: .06em; line-height: 1.6; text-shadow: 2px 2px 0 #000; z-index: 6; }
-.bl-yes { left: 18px; color: #9184d9; text-align: left; }
-.bl-no { right: 18px; color: #e0398a; text-align: right; }
+.bl-yes, .bl-no { border: 0; background: none; cursor: pointer; padding: 0; z-index: 6; pointer-events: auto; }
+.bl-yes { color: #9184d9; }
+.bl-no { color: #e0398a; }
 .bl-hint { position: absolute; left: 0; right: 0; top: 584px; text-align: center; font-size: 9px; color: #8fa2ff; letter-spacing: .08em; text-shadow: 2px 2px 0 #000; animation: tremble 3s ease-in-out infinite; z-index: 6; }
 .bl-rise { position: absolute; left: 50%; top: 50%; margin: -64px 0 0 -64px; line-height: 0; z-index: 6; animation: bl-rise 1.4s steps(10) both; }
 @keyframes bl-rise { from { transform: translateY(60px) scale(.2); opacity: 0; } to { transform: none; opacity: 1; } }

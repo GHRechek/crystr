@@ -6,6 +6,7 @@ import { playBuildUp, playFanfare, playWhoosh } from "@/components/ask-scene";
 import { Creature } from "@/components/encounter";
 import { abandonBlend, feedBlend, type BlendFeed } from "@/lib/actions";
 import { HISTORIKAL, RARITY_COLOR, RARITY_NAME, type Element, type Rarity } from "@/lib/historikals";
+import { cadence, creatureVoice, playCry, speakBabble, type Beat } from "@/lib/babble";
 import { historikalSrc } from "@/lib/historikals";
 
 /** One of the four going in: what the scene needs to draw it and to name it. */
@@ -24,6 +25,13 @@ const LINES: { test: RegExp; lines: string[]; chance: number }[] = [
   { test: /goblin|orc|troll|ogre|gremlin/, lines: ["OI!", "NOT AGAIN!", "WAS IT SOMETHING I SAID?", "AAAAAH!"], chance: 0.5 },
 ];
 const ANY = ["AAAAAH!", "A NEW CHANCE…", "I'M NOT READY!", "CHANGE IS INEVITABLE…", "HERE WE GO…"];
+/** What it cries as the void takes it: beasts roar, rats squeak, the undead wail, the rest scream. */
+function cryFor(slug: string): "roar" | "squeak" | "wail" | "scream" {
+  if (/rat|mouse/.test(slug)) return "squeak";
+  if (LINES[2].test.test(slug)) return "roar";
+  if (LINES[0].test.test(slug)) return "wail";
+  return "scream";
+}
 function lineFor(slug: string): string | null {
   for (const f of LINES) if (f.test.test(slug)) return Math.random() < f.chance ? f.lines[Math.floor(Math.random() * f.lines.length)] : null;
   return Math.random() < 0.33 ? ANY[Math.floor(Math.random() * ANY.length)] : null;
@@ -75,7 +83,14 @@ export function BlendScene({ offers, onDone, onClose }: {
   const [fed, setFed] = useState(0);
   const [got, setGot] = useState<{ item: number; slug: string; name: string; types: Element[]; rarity: Rarity; evolved: boolean } | null>(null);
   const [err, setErr] = useState("");
-  const [line, setLine] = useState<string | null>(null);
+  const [line, setLine] = useState<{ words: string[]; beats: Beat[]; t0: number } | null>(null);
+  const [shown, setShown] = useState(0);
+  // The words of the line turn up on the cadence they are spoken at.
+  useEffect(() => {
+    if (!line) { setShown(0); return; }
+    const ids = line.beats.map((b, k) => window.setTimeout(() => setShown(k + 1), Math.max(0, b.at * 1000)));
+    return () => ids.forEach((id) => window.clearTimeout(id));
+  }, [line]);
   const [frame, setFrame] = useState(0);
   const scene = useRef<HTMLDivElement>(null);
   const dust = useRef<HTMLCanvasElement>(null);
@@ -105,11 +120,20 @@ export function BlendScene({ offers, onDone, onClose }: {
   };
 
   // Going in: the server first (it is gone at once), then the show.
-  const anim = useRef<{ t0: number; px: Px[]; src: string; done: BlendFeed | null } | null>(null);
+  const anim = useRef<{ t0: number; px: Px[]; src: string; done: BlendFeed | null; cried?: boolean } | null>(null);
+  const stop = useRef<() => void>(() => undefined);
   const go = async () => {
     if (stage !== "offer" || !cur) return;
     setStage("going"); setDrag(null);
-    setLine(lineFor(cur.slug));
+    const said = lineFor(cur.slug);
+    const voice = creatureVoice(cur.slug, HISTORIKAL.get(cur.slug)?.hearts ?? 3);
+    if (said) {
+      const words = said.split(/\s+/);
+      const beats = cadence(words, voice.rate ?? 1.35);
+      setLine({ words, beats, t0: performance.now() });
+      window.setTimeout(() => speakBabble(words, voice, { beats }), 600);
+    } else setLine(null);
+    stop.current = () => undefined;
     playWhoosh();
     const src = historikalSrc(cur.slug, 1, cur.types[0]);
     const [px, r] = await Promise.all([pixelsOf(src), feedBlend(cur.id)]);
@@ -137,7 +161,7 @@ export function BlendScene({ offers, onDone, onClose }: {
         else if (u < 3.8) { const f = Math.floor((u - 3.0) / 0.1) % 2; spr.style.transform = `translate(${CX}px, ${CY}px)`; spr.style.filter = f ? "brightness(0) invert(1)" : "brightness(0) invert(1) sepia(1) saturate(9) hue-rotate(295deg)"; }
         else spr.style.opacity = "0";
       }
-      if (u >= 3.0 && u < 3.1) { playBuildUp(); }
+      if (u >= 3.0 && !a.cried) { a.cried = true; playBuildUp(); const c = offers[i]; if (c) playCry(cryFor(c.slug), creatureVoice(c.slug, HISTORIKAL.get(c.slug)?.hearts ?? 3)); }
       if (u >= 3.8) {
         const w = (u - 3.8) / 3.0;
         const L = (g: number) => { g = Math.max(0, g); const Lr = 64 * (1 - g * g); const La = Math.PI + 0.55 + g * (1 + g) * Math.PI * 2 * 0.5; return [CX + Math.cos(La) * Lr, CY + Math.sin(La) * Lr * 1.3, g] as const; };
@@ -178,7 +202,7 @@ export function BlendScene({ offers, onDone, onClose }: {
   const no = () => { if (fed === 0) onClose(); else setStage("abandon"); };
   const abandon = async () => { await abandonBlend(); onDone(null); };
 
-  const bub = line && stage === "going" ? line : null;
+  const bub = line && stage === "going" && shown > 0 ? line.words.slice(0, shown).join(" ") : null;
   const sprite = cur ? <Creature slug={cur.slug} el={cur.types[0]} size={64} /> : null;
 
   return (
@@ -204,9 +228,8 @@ export function BlendScene({ offers, onDone, onClose }: {
 
           {stage === "offer" && cur ? (
             <>
-              <div className="px bl-name">{up(cur.name)}</div>
-              <button type="button" className="px bl-yes" onClick={() => void go()}>YES,<br />INTO THE VOID</button>
-              <button type="button" className="px bl-no" onClick={no}>NO,<br />TAKE IT BACK</button>
+              <button type="button" className="px ask-hint ask-yes bl-yes" onClick={() => void go()}><b>YES!</b><span>INTO</span><span style={{ marginTop: 0 }}>THE VOID!</span></button>
+              <button type="button" className="px ask-hint ask-no bl-no" onClick={no}><b>NO!</b><span>TAKE IT</span><span style={{ marginTop: 0 }}>BACK!</span></button>
               <div className="px bl-hint">DRAG IT UP INTO THE VOID</div>
             </>
           ) : null}
