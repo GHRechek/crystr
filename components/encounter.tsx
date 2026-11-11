@@ -193,9 +193,9 @@ const HEART_LOST = [".##.##.", "#..#..#", "#.....#", ".#...#.", "..#.#..", "...#
 const HEART_HALF = [".##.##.", "####..#", "####..#", ".###.#.", "..##...", "...#..."];
 const MOVE: Record<"sword" | "spell" | "armor", string[]> = {
   sword: ["......#", ".....##", "....##.", "#..##..", ".###...", "..#....", ".#.#..."],
-  // An open hand, fingers spread, thumb out to the left: a spell. A fist, side on, punching right from its forearm: armor.
+  // An open hand, fingers spread, thumb out to the left: a spell. A fist, thumb curled over the top, four fingers down the right: armor. Drawn finer than the others (more cells, a smaller step).
   spell: ["..#.#.#", "..#.#.#", "#.#.#.#", ".######", ".######", ".#####.", "..###.."],
-  armor: ["....####.", "...#.#.##", "#########", "####.#.##", "#########", "...#.#.##", "....#####", ".....###."],
+  armor: [".......####....", ".....########..", "...##########..", "..#########....", ".##############", "###############", "###############", "############...", "###############", "###############", "############...", "###############", "###############", "############...", "###############", ".#############.", "...##########..", ".....#######..."],
 };
 const TYPE: Record<Element, string[]> = {
   fire: ["...#...", "..##...", "..###..", ".####.#", ".######", "#######", ".#####."],
@@ -218,7 +218,7 @@ const BOLT = ["..##.", ".##..", "####.", "..##.", ".#...", "#...."];
 export function MoveIcon({ kind, k = 2, fill = "#fff", el, charge }: { kind: MoveKind; k?: number; fill?: string; el?: Element[]; charge?: boolean }) {
   const c1 = el?.[0] ? ELEMENT_COLOR[el[0]] : fill;
   const c2 = el?.[1] ? ELEMENT_COLOR[el[1]] : undefined;
-  const base = <Pix rows={MOVE[kind] ?? MOVE.sword} k={k} fill={c1} fill2={c2} />;
+  const base = <Pix rows={MOVE[kind] ?? MOVE.sword} k={kind === "armor" ? Math.max(1, k - 1) : k} fill={c1} fill2={c2} />;
   if (!charge) return base;
   return <span style={{ display: "inline-flex", gap: Math.max(1, Math.round(k)), alignItems: "center" }}>{base}<Pix rows={BOLT} k={k} fill="#fff" /></span>;
 }
