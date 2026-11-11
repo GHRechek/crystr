@@ -15,8 +15,8 @@ import { RarityGlow } from "@/components/rarity-glow";
    phones, and keeps it fresh about once a second while it is open. */
 
 /** `types` (one or two, the first leads) is missing until you know it. `element` is the old single type: unused. */
-export type HK = { id: number; slug: string; name: string; rarity: Rarity; element?: string; types?: Element[]; hearts: number; moves?: { name: string; kind: MoveKind; charge?: Element }[]; hp?: number; seen?: string[] };
-type Side = { swap: boolean; from: string; to: string; move: string | null; hit: number; charge?: boolean; unleash?: Element | null };
+export type HK = { id: number; slug: string; name: string; rarity: Rarity; element?: string; types?: Element[]; hearts: number; moves?: { name: string; kind: MoveKind; el: Element[]; charge?: boolean }[]; hp?: number; seen?: string[] };
+type Side = { swap: boolean; from: string; to: string; move: string | null; hit: number; charge?: boolean; unleash?: Element[] | null };
 type View = {
   ok: boolean; id: number; kind: "trade" | "battle"; stage: string; seq: number; me: "a" | "b";
   them: { handle: string; name: string | null }; off_by: "me" | "them" | null;
@@ -25,9 +25,9 @@ type View = {
   swapped?: boolean; turn?: number; quiet?: number; move?: { m?: number; swap?: number } | null; their_moved?: boolean; need?: boolean; their_need?: boolean;
   shadow?: string; left?: number; their_pips?: { ko: boolean; cur: boolean; slug?: string | null }[]; theirs?: HK; last?: { turn: number; line: string; extra: string; a: Side; b: Side } | null;
   /** Your creature charged last round: this round its charge comes out, whatever you do. */
-  charging?: { item: number; m: number; el: Element } | null;
-  /** Theirs is charging: next round it comes out as this element. */
-  their_charging?: { el: Element } | null;
+  charging?: { item: number; m: number; el: Element[] } | null;
+  /** Theirs is charging: next round it comes out with these elements. */
+  their_charging?: { el: Element[] } | null;
   alive?: number; their_alive?: number;
   epic?: "token" | "historikal" | null; ask?: boolean; token_ok?: boolean; my_token?: unknown; want_epic?: boolean; lineup_ok?: boolean; lineup?: number[];
   stake?: { token?: boolean; item?: number } | null; their_stake?: { token?: unknown; item?: HK } | null;
@@ -205,16 +205,20 @@ const UNDO = ["..#.......", ".##.......", "#######...", ".##....#..", "..#.....#
 const SWAP = ["...#...", "....#..", "#######", "....#..", "..#.#..", ".#.....", "#######"];
 
 const BOLT = ["..##.", ".##..", "####.", "..##.", ".#...", "#...."];
-/** A move's kind as its little pixel icon: sword, spell or armor; a charge move adds a bolt in its element's colour. */
-export function MoveIcon({ kind, k = 2, fill = "#fff", charge }: { kind: MoveKind; k?: number; fill?: string; charge?: Element }) {
+/** A move's kind as its little pixel icon (sword, spell or armor), then its element icons; a charge adds a bolt. */
+export function MoveIcon({ kind, k = 2, fill = "#fff", el, charge }: { kind: MoveKind; k?: number; fill?: string; el?: Element[]; charge?: boolean }) {
   const base = <Pix rows={MOVE[kind] ?? MOVE.sword} k={k} fill={fill} />;
-  if (!charge) return base;
-  return <span style={{ display: "inline-flex", gap: Math.max(1, Math.round(k)), alignItems: "center" }}>{base}<Pix rows={BOLT} k={k} fill={ELEMENT_COLOR[charge]} /></span>;
+  if (!el?.length && !charge) return base;
+  return (
+    <span style={{ display: "inline-flex", gap: Math.max(1, Math.round(k)), alignItems: "center" }}>
+      {base}{(el ?? []).map((t) => <TypeIcon key={t} type={t} k={k} />)}{charge ? <Pix rows={BOLT} k={k} fill="#fff" /> : null}
+    </span>
+  );
 }
 
 /** The charging aura: flakes in the charge's element colour rising off the creature, most behind it, a few in front. */
-export function ChargeAura({ el, size, children }: { el: Element; size: number; children: React.ReactNode }) {
-  const c = ELEMENT_COLOR[el];
+export function ChargeAura({ el, size, children }: { el: Element[]; size: number; children: React.ReactNode }) {
+  const cols = el.map((t) => ELEMENT_COLOR[t]);
   const flakes = useMemo(() => {
     let a = 9;
     const r = () => { a = (a * 1103515245 + 12345) & 0x7fffffff; return a / 0x7fffffff; };
@@ -222,7 +226,7 @@ export function ChargeAura({ el, size, children }: { el: Element; size: number; 
   }, [size]);
   return (
     <span className="en-aura" style={{ width: size, height: size }}>
-      {flakes.map((f, i) => <i key={i} style={{ left: f.x * size, top: f.y * size, width: f.sz, height: f.sz, background: c, zIndex: f.front ? 3 : 1, ["--dx" as string]: `${f.dx}px`, ["--h" as string]: `-${f.h}px`, animationDelay: `${f.d}s`, animationDuration: `${f.dur}s` }} />)}
+      {flakes.map((f, i) => <i key={i} style={{ left: f.x * size, top: f.y * size, width: f.sz, height: f.sz, background: cols[i % cols.length] ?? "#fff", zIndex: f.front ? 3 : 1, ["--dx" as string]: `${f.dx}px`, ["--h" as string]: `-${f.h}px`, animationDelay: `${f.d}s`, animationDuration: `${f.dur}s` }} />)}
       <span style={{ position: "relative", zIndex: 2, display: "block", lineHeight: 0 }}>{children}</span>
     </span>
   );
@@ -660,7 +664,7 @@ export function BattleScreen({ v, act, close }: { v: View; act: (a: Record<strin
           </div>
           {v.last && v.stage !== "end" ? (
             <div className="px en-say-big" key={v.last.turn}>
-              <span className="en-vs">{v.last[mySide].swap ? `${up(v.last[mySide].from)} → ${up(v.last[mySide].to)}` : v.last[mySide].charge ? "CHARGING UP" : v.last[mySide].unleash ? `${up(v.last[mySide].unleash)} CHARGE · ${up(v.last[mySide].move ?? "")}` : up(v.last[mySide].move ?? "")} <i>vs</i> {v.last[theirSide].swap ? "SWAP" : v.last[theirSide].charge ? "CHARGING UP" : v.last[theirSide].unleash ? `${up(v.last[theirSide].unleash)} CHARGE · ${up(v.last[theirSide].move ?? "")}` : up(v.last[theirSide].move ?? "")}</span>
+              <span className="en-vs">{v.last[mySide].swap ? `${up(v.last[mySide].from)} → ${up(v.last[mySide].to)}` : v.last[mySide].charge ? "CHARGING UP" : v.last[mySide].unleash ? `CHARGED ${up(v.last[mySide].move ?? "")}` : up(v.last[mySide].move ?? "")} <i>vs</i> {v.last[theirSide].swap ? "SWAP" : v.last[theirSide].charge ? "CHARGING UP" : v.last[theirSide].unleash ? `CHARGED ${up(v.last[theirSide].move ?? "")}` : up(v.last[theirSide].move ?? "")}</span>
               <span>{v.last.line}</span>{v.last.extra ? <b>{v.last.extra}</b> : null}
             </div>
           ) : null}
@@ -692,13 +696,13 @@ export function BattleScreen({ v, act, close }: { v: View; act: (a: Record<strin
               <button type="button" className="px en-back" onClick={() => setSwapping(false)}>BACK</button>
             </div></div>
           ) : v.charging ? (
-            <div className="px en-status" style={{ color: ELEMENT_COLOR[v.charging.el] }}>CHARGING {up(v.charging.el)}… IT COMES OUT THIS ROUND{v.move ? <><br />WAITING ON {up(v.them.handle)}<Dots /></> : null}</div>
+            <div className="px en-status" style={{ color: ELEMENT_COLOR[v.charging.el[0]] }}>CHARGING {v.charging.el.map(up).join(" & ")}… IT COMES OUT THIS ROUND{v.move ? <><br />WAITING ON {up(v.them.handle)}<Dots /></> : null}</div>
           ) : (
             <>
               <div className="en-moves">
                 {(me.moves ?? []).map((m, i) => (
-                  <button key={i} type="button" className={`px en-move${v.move?.m === i ? " on" : ""}`} disabled={!!v.move} onClick={() => { playClick(); act({ do: "move", m: i }); }} aria-label={`${m.name}, ${m.kind}${m.charge ? `, charges as ${m.charge}` : ""}`}>
-                    <MoveIcon kind={m.kind} k={3} charge={m.charge} /><span>{up(m.name)}</span>{m.charge ? <small style={{ color: ELEMENT_COLOR[m.charge], fontSize: 7, letterSpacing: ".06em" }}>CHARGE · {up(m.charge)}</small> : null}
+                  <button key={i} type="button" className={`px en-move${v.move?.m === i ? " on" : ""}`} disabled={!!v.move} onClick={() => { playClick(); act({ do: "move", m: i }); }} aria-label={`${m.name}, ${m.kind}, ${m.el.join(" and ")}${m.charge ? ", a charge" : ""}`}>
+                    <MoveIcon kind={m.kind} k={3} el={m.el} charge={m.charge} /><span>{up(m.name)}</span>{m.charge ? <small style={{ color: "#ffe38b", fontSize: 7, letterSpacing: ".06em" }}>CHARGE</small> : null}
                   </button>
                 ))}
                 {bench.length ? (

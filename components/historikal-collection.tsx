@@ -106,7 +106,7 @@ export function HistorikalCollection({ list, ring, drag, lifted, inLineup, onOpe
                     <span className="px" style={{ fontSize: 8.5 }}>{h.types.map((t, i) => <span key={t} style={{ color: ELEMENT_COLOR[t] }}>{i ? " / " : ""}{corrupt(t.toUpperCase(), decay)}</span>)}</span>
                     <span aria-hidden style={{ color: "var(--muted)", fontSize: 10, lineHeight: 1 }}>|</span>
                     <span style={{ display: "flex", gap: 4 }} aria-hidden>
-                      {(HISTORIKAL.get(h.slug)?.moves ?? []).map((m) => <MoveIcon key={m.name} kind={m.kind} charge={m.charge} k={1.25} fill="var(--muted)" />)}
+                      {(HISTORIKAL.get(h.slug)?.moves ?? []).map((m) => <MoveIcon key={m.name} kind={m.kind} el={m.el} charge={m.charge} k={1.25} fill="var(--muted)" />)}
                     </span>
                   </span>
                 </span>

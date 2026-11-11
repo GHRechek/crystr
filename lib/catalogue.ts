@@ -34,7 +34,7 @@ export function patchesFrom(rows: CatalogueRow[]): CreaturePatch[] {
     if (!b || !r.types?.length || !r.hearts || !r.moves) continue;
     const p: CreaturePatch = {
       slug: r.slug, name: r.title.toUpperCase() === b.name.toUpperCase() ? b.name : titleCase(r.title), rarity: r.rarity, types: r.types,
-      hearts: r.hearts, moves: r.moves.map((m) => ({ name: m.name, kind: m.kind })), retired: !r.droppable, hover: r.hover, rnd: r.rnd, shift: r.shift,
+      hearts: r.hearts, moves: r.moves.map((m) => ({ name: m.name, kind: m.kind, el: m.el ?? [], ...(m.charge ? { charge: true } : {}) })), retired: !r.droppable, hover: r.hover, rnd: r.rnd, shift: r.shift,
     };
     const { slug: _s, ...rest } = p;
     if (!same(rest, b)) out.push(p);

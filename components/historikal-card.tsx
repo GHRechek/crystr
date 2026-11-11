@@ -84,7 +84,7 @@ export function HistorikalCard({
           {own ? (
             h.moves.map((m) => (
               <div key={m.name} className="px" style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 11 }}>
-                <MoveIcon kind={m.kind} charge={m.charge} /> {eat(up(m.name))} <span style={{ color: m.charge ? ELEMENT_COLOR[m.charge] : "var(--muted)", fontSize: 9 }}>{m.charge ? `${up(m.kind)} · CHARGES ${up(m.charge)}` : up(m.kind)}</span>
+                <MoveIcon kind={m.kind} el={m.el} charge={m.charge} /> {eat(up(m.name))} <span style={{ color: "var(--muted)", fontSize: 9 }}>{up(m.kind)}{m.charge ? " · CHARGE" : ""}</span>
               </div>
             ))
           ) : (

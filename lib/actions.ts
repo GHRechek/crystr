@@ -1367,8 +1367,11 @@ const EDIT_WHY: Record<string, string> = {
 export async function saveCreature(fd: FormData) {
   const slug = String(fd.get("slug") ?? "");
   const rarity = String(fd.get("rarity") ?? "");
-  const n = rarity === "common" ? 2 : rarity === "uncommon" || rarity === "rare" ? 3 : 4;
-  const moves = [0, 1, 2, 3].slice(0, n).map((i) => ({ name: String(fd.get(`move${i}`) ?? "").trim(), kind: String(fd.get(`kind${i}`) ?? ""), ...(i === 3 && fd.get("charge3") ? { charge: String(fd.get("charge3")) } : {}) }));
+  const n = rarity === "common" || rarity === "uncommon" ? 3 : 4;
+  const moves = [0, 1, 2, 3].slice(0, n).map((i) => {
+    const el = [String(fd.get(`el${i}`) ?? ""), i === 3 ? String(fd.get("el3b") ?? "") : ""].filter(Boolean);
+    return { name: String(fd.get(`move${i}`) ?? "").trim(), kind: String(fd.get(`kind${i}`) ?? ""), el, ...(i === 3 && rarity === "legendary" ? { charge: true } : {}) };
+  });
   const types = [String(fd.get("type1") ?? ""), String(fd.get("type2") ?? "")].filter(Boolean);
   // Its first type before the change: a new one re-dresses the picture (below).
   const supabase = createClient();

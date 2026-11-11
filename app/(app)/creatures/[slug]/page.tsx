@@ -77,7 +77,7 @@ export default async function CreatureEditPage({ params }: { params: Promise<{ s
           </div>
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-          <span className="px" style={label}>MOVES · COMMONS USE TWO, UNCOMMONS AND RARES THREE, EPICS AND MYTHICS ALL FOUR (THE FOURTH CHARGES, AS ITS OWN ELEMENT)</span>
+          <span className="px" style={label}>MOVES · COMMONS AND UNCOMMONS USE THREE, RARES AND UP FOUR · EACH HAS ITS ELEMENT (AN EPIC'S OR MYTHIC'S FOURTH HAS TWO; A MYTHIC'S FOURTH CHARGES)</span>
           {moves.map((m, i) => (
             <div key={i} style={row}>
               <input name={`move${i}`} className="input" defaultValue={m?.name ?? ""} maxLength={24} aria-label={`Move ${i + 1} name`} placeholder={i === 3 ? "Fourth move (epic and mythic)" : i === 2 ? "Third move (uncommon and up)" : "Move name"} style={{ flex: 2, minWidth: 0 }} />
@@ -86,9 +86,13 @@ export default async function CreatureEditPage({ params }: { params: Promise<{ s
                 <option value="spell">SPELL</option>
                 <option value="armor">ARMOR</option>
               </select>
+              <select name={`el${i}`} className="input" defaultValue={m?.el?.[0] ?? (i === 2 ? h.types[1] ?? h.types[0] : i === 3 ? TYPES.find((t) => !h.types.includes(t)) : h.types[0])} aria-label={`Move ${i + 1} element`} style={{ flex: 1 }}>
+                {TYPES.map((t) => <option key={t} value={t}>{t.toUpperCase()}</option>)}
+              </select>
               {i === 3 ? (
-                <select name="charge3" className="input" defaultValue={m?.charge ?? TYPES.find((t) => !h.types.includes(t))} aria-label="Charge element" style={{ flex: 1 }}>
-                  {TYPES.filter((t) => !h.types.includes(t)).map((t) => <option key={t} value={t}>CHARGE · {t.toUpperCase()}</option>)}
+                <select name="el3b" className="input" defaultValue={m?.el?.[1] ?? ""} aria-label="Second element (epic or mythic)" style={{ flex: 1 }}>
+                  <option value="">— ONE ELEMENT —</option>
+                  {TYPES.map((t) => <option key={t} value={t}>+ {t.toUpperCase()}</option>)}
                 </select>
               ) : null}
             </div>
