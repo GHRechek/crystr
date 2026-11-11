@@ -8,7 +8,8 @@ import { Stats, TypeIcon } from "@/components/encounter";
 import { HistorikalCard } from "@/components/historikal-card";
 import { HistorikalCollection, type HeldHk } from "@/components/historikal-collection";
 import { RecycleBar } from "@/components/recycle-bar";
-import { recycleHistorikals, setLineup } from "@/lib/actions";
+import { BlendScene, type BlendOffer } from "@/components/blend-scene";
+import { setLineup } from "@/lib/actions";
 import { HISTORIKAL, RARITY_NAME, type Rarity } from "@/lib/historikals";
 import { useRouter } from "next/navigation";
 import type { ShownBadge } from "@/lib/badges";
@@ -71,7 +72,7 @@ export function HkMenu({ shown, tradable, items, startOn = "menu", onClose }: {
   // sits over the panel meanwhile.
   const [bin, setBin] = useState<(string | null)[]>([null, null, null, null]);
   const [note, setNote] = useState<{ title: string; body: string; yes?: () => void } | null>(null);
-  const [busy, setBusy] = useState(false);
+  const [blend, setBlend] = useState<BlendOffer[] | null>(null);
   const byKey = useMemo(() => new Map([...tradable, ...shown].map((b) => [b.key, b])), [tradable, shown]);
 
   // Save: the new lineup takes the Historikal places in the display, in order; the badges keep theirs.
@@ -149,7 +150,6 @@ export function HkMenu({ shown, tradable, items, startOn = "menu", onClose }: {
   const binned = bin.map((k) => (k ? byKey.get(k) ?? null : null));
   const binIds = binned.flatMap((b) => (b?.hk ? [b.hk.id] : []));
   const recycle = () => {
-    if (busy) return;
     const held = binned.filter((b): b is ShownBadge => !!b?.hk);
     if (held.length < 4) {
       setNote({ title: "MANA BLEND", body: "Combine four Historikals of the same quality and get a new one from the next tier. Commons, uncommons and rares only." });
@@ -159,30 +159,8 @@ export function HkMenu({ shown, tradable, items, startOn = "menu", onClose }: {
     if (rars.size > 1) { setNote({ title: "ONE RARITY", body: "All four must share a rarity. Swap one out." }); return; }
     const rar = [...rars][0] as Rarity;
     if (rar === "epic" || rar === "legendary") { setNote({ title: "TOO RARE", body: "Epics and mythics can't be recycled." }); return; }
-    const up = (["common", "uncommon", "rare", "epic", "legendary"] as Rarity[])[["common", "uncommon", "rare", "epic"].indexOf(rar) + 1];
-    setNote({
-      title: "ARE YOU SURE?",
-      body: `You'll lose these four ${RARITY_NAME[rar]}s for good. One ${RARITY_NAME[up]} comes out, and chance decides which.`,
-      yes: () => {
-        setNote(null); setBusy(true);
-        start(async () => {
-          const r = await recycleHistorikals(binIds);
-          setBusy(false);
-          if (!r.ok) {
-            const why: Record<string, string> = { mixed: "All four must share a rarity.", top: "Epics and mythics can't be recycled.", favorite: "One of them is a favourite.", lineup: "One of them is in your lineup.", in_battle: "One of them is in a battle.", not_yours: "One of them has moved on.", none: "There is nothing to be had just now." };
-            setNote({ title: "NOT THIS TIME", body: why[r.code] ?? "Something went wrong. Try again." });
-            return;
-          }
-          setBin([null, null, null, null]);
-          const h = HISTORIKAL.get(r.slug);
-          const rolled = r.rolled && h?.rnd ? (r.rolled as HeldHk["types"][number]) : null;
-          const types = h ? (rolled ? [...new Set([rolled, ...h.types.slice(1)])] : h.types) : [];
-          router.refresh();
-          if (h) setCard({ id: r.item, slug: r.slug, name: h.name, rarity: h.rarity, types, hearts: h.hearts, hp: h.hearts, favorite: false });
-          setNote({ title: r.evolved ? "IT EVOLVED!" : "BLENDED!", body: `${r.name.toUpperCase()} joins your Historikals.` });
-        });
-      },
-    });
+    // The void takes them one at a time; the scene asks first.
+    setBlend(held.map((b) => { const h = HISTORIKAL.get(b.hk!.slug)!; return { id: b.hk!.id, slug: h.slug, name: h.name, rarity: h.rarity, types: b.hk!.types ?? h.types }; }));
   };
 
   useEffect(() => {
@@ -269,6 +247,12 @@ export function HkMenu({ shown, tradable, items, startOn = "menu", onClose }: {
         )}
       </div>
       {card ? <HistorikalCard hk={{ id: card.id, slug: card.slug, hp: card.hp, types: card.types, favorite: card.favorite }} own onClose={() => setCard(null)} onFavorite={(on) => setCard({ ...card, favorite: on })} /> : null}
+      {blend ? (
+        <BlendScene offers={blend} onClose={() => setBlend(null)} onDone={(got) => {
+          setBlend(null); setBin([null, null, null, null]); router.refresh();
+          if (got) { const h = HISTORIKAL.get(got.slug); setCard({ id: got.item, slug: got.slug, name: got.name, rarity: got.rarity, types: got.types, hearts: h?.hearts ?? 2, hp: h?.hearts ?? 2, favorite: false }); }
+        }} />
+      ) : null}
       {note ? (
         <div role="alertdialog" aria-label={note.title} onClick={() => setNote(null)} style={{ position: "fixed", inset: 0, zIndex: 96, background: "rgba(5,3,12,.7)", display: "grid", placeItems: "center", padding: 20 }}>
           <div onClick={(e) => e.stopPropagation()} style={{ width: "min(80vw, 300px)", background: "var(--blk-pur)", boxShadow: "4px 4px 0 #0a0616", padding: "18px 16px 16px", display: "flex", flexDirection: "column", gap: 12 }}>

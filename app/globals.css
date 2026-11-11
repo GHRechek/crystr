@@ -2140,3 +2140,33 @@ select.input { border: 0; }
 @keyframes hk-rise { 0% { transform: translate(0, 4px); opacity: 0; } 12% { opacity: 1; } 70% { opacity: .8; } 100% { transform: translate(var(--dx, 0), -30px) scale(.5); opacity: 0; } }
 .hk-recycle { animation: hk-wob 6s ease-in-out infinite; }
 @keyframes hk-wob { 0%, 86%, 100% { transform: rotate(0); } 88% { transform: rotate(-9deg); } 91% { transform: rotate(8deg); } 94% { transform: rotate(-6deg); } 97% { transform: rotate(4deg); } }
+
+/* MANA BLEND: the void. Laid out at 390×640 and scaled to the screen. */
+.bl-scene { position: fixed; inset: 0; z-index: 120; background: #2e1051; overflow: hidden; }
+.bl-stage { position: absolute; left: 50%; top: 50%; width: 390px; height: 640px; transform-origin: center; user-select: none; -webkit-user-select: none; }
+.bl-star { position: absolute; background: #f7b8dc; opacity: 0; animation: bl-tw steps(1) infinite; pointer-events: none; }
+@keyframes bl-tw { 0%, 60% { opacity: 0; } 61%, 78% { opacity: 1; } 79%, 88% { opacity: .5; } 89%, 100% { opacity: 0; } }
+.bl-portal { position: absolute; left: 50%; top: 50%; width: 354px; height: 354px; margin: -177px 0 0 -177px; image-rendering: pixelated; background-size: 354px 354px; background-repeat: no-repeat; }
+.bl-dust { position: absolute; left: 0; top: 0; width: 390px; height: 640px; pointer-events: none; z-index: 5; }
+.bl-flash { position: absolute; inset: 0; z-index: 4; background: var(--rc); pointer-events: none; animation: bl-flash 900ms steps(6) both; }
+@keyframes bl-flash { 0% { opacity: .9; } 100% { opacity: 0; } }
+.bl-title { position: absolute; left: 0; right: 0; top: 44px; text-align: center; font-size: 15px; color: #fff; letter-spacing: .08em; text-shadow: 2px 2px 0 #000; z-index: 6; }
+.bl-count { position: absolute; left: 0; right: 0; top: 70px; text-align: center; font-size: 9px; color: #d2cefd; letter-spacing: .08em; text-shadow: 2px 2px 0 #000; z-index: 6; }
+.bl-sprite { position: absolute; left: 0; top: 0; margin: -32px 0 0 -32px; line-height: 0; z-index: 3; }
+.bl-sprite.is-held { filter: drop-shadow(3px 3px 0 #160b2e); z-index: 7; }
+.bl-bubble { position: absolute; left: 50%; top: 50%; margin: -96px 0 0 10px; background: #fff; color: #1a1033; font-size: 11px; letter-spacing: .05em; padding: 8px 11px; white-space: nowrap; box-shadow: 2px 2px 0 #000; transform: translate(-50%, -100%); z-index: 8; animation: pix-in 200ms steps(3) both; }
+.bl-bubble::after { content: ""; position: absolute; left: 12px; bottom: -8px; border-top: 8px solid #fff; border-right: 9px solid transparent; }
+.bl-name { position: absolute; left: 0; right: 0; top: 468px; text-align: center; font-size: 11px; color: #fff; letter-spacing: .06em; text-shadow: 2px 2px 0 #000; z-index: 6; }
+.bl-yes, .bl-no { position: absolute; top: 500px; width: 110px; border: 0; background: none; cursor: pointer; font-size: 10px; letter-spacing: .06em; line-height: 1.6; text-shadow: 2px 2px 0 #000; z-index: 6; }
+.bl-yes { left: 18px; color: #9184d9; text-align: left; }
+.bl-no { right: 18px; color: #e0398a; text-align: right; }
+.bl-hint { position: absolute; left: 0; right: 0; top: 584px; text-align: center; font-size: 9px; color: #8fa2ff; letter-spacing: .08em; text-shadow: 2px 2px 0 #000; animation: tremble 3s ease-in-out infinite; z-index: 6; }
+.bl-rise { position: absolute; left: 50%; top: 50%; margin: -64px 0 0 -64px; line-height: 0; z-index: 6; animation: bl-rise 1.4s steps(10) both; }
+@keyframes bl-rise { from { transform: translateY(60px) scale(.2); opacity: 0; } to { transform: none; opacity: 1; } }
+.bl-got { position: absolute; left: 0; right: 0; top: 440px; text-align: center; font-size: 20px; letter-spacing: .06em; text-shadow: 3px 3px 0 #000; z-index: 6; animation: pix-in 240ms steps(4) 1.2s both; }
+.bl-sub { position: absolute; left: 0; right: 0; top: 476px; text-align: center; font-size: 10px; color: #d2cefd; letter-spacing: .06em; text-shadow: 2px 2px 0 #000; z-index: 6; animation: pix-in 240ms steps(4) 1.4s both; }
+.bl-done { position: absolute; left: 50%; top: 540px; transform: translateX(-50%); border: 0; background: #3a64cc; color: #fff; font-size: 11px; letter-spacing: .08em; padding: 12px 28px; box-shadow: 3px 3px 0 #000; cursor: pointer; z-index: 6; animation: pix-in 240ms steps(4) 1.8s both; }
+.bl-ask { position: absolute; inset: 0; z-index: 9; background: rgba(5, 3, 12, .7); display: grid; place-items: center; padding: 20px; }
+.bl-ask-box { width: 300px; background: var(--blk-pur); box-shadow: 4px 4px 0 #0a0616; padding: 18px 16px 16px; display: flex; flex-direction: column; gap: 12px; }
+.bl-btn { flex: 1; min-height: 40px; border: 0; cursor: pointer; background: rgba(255,255,255,.12); color: #fff; font-size: 10px; letter-spacing: .06em; box-shadow: 3px 3px 0 #0a0616; }
+.bl-btn.is-yes { background: #e0398a; }

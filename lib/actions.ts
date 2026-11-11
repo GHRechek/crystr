@@ -1308,6 +1308,24 @@ export async function badgeSeen(slug: string) {
   await call("cr_badge_seen", { p_slug: String(slug).slice(0, 60) });
 }
 
+/** MANA BLEND, one at a time: this Historikal goes into the void. The fourth of a rarity resolves the pot. */
+export type BlendFeed = { ok: true; done: false; count: number; rarity: string } | { ok: true; done: true; item: number; slug: string; name: string; rolled: string | null; evolved: boolean } | { ok: false; code: string; count?: number; rarity?: string };
+export async function feedBlend(item: number): Promise<BlendFeed> {
+  const r = await call("cr_blend_feed", { p_item: Number(item) });
+  revalidatePath("/me/historikals");
+  revalidatePath("/", "layout");
+  if (!r.ok) return { ok: false, code: String(r.code ?? "error"), count: Number((r as { count?: number }).count ?? 0), rarity: String((r as { rarity?: string }).rarity ?? "") };
+  const x = r as unknown as { done: boolean; count: number; rarity: string; item?: number; slug?: string; name?: string; rolled?: string | null; evolved?: boolean };
+  if (!x.done) return { ok: true, done: false, count: Number(x.count), rarity: String(x.rarity) };
+  return { ok: true, done: true, item: Number(x.item), slug: String(x.slug), name: String(x.name), rolled: x.rolled ? String(x.rolled) : null, evolved: !!x.evolved };
+}
+/** Backing out of a blend part way: the pot is emptied, and what went in is gone. */
+export async function abandonBlend(): Promise<number> {
+  const r = await call("cr_blend_abandon", {});
+  revalidatePath("/", "layout");
+  return Number((r as { lost?: number }).lost ?? 0);
+}
+
 /** Four Historikals of one rarity become one of the next rarity up. The panel asked "are you sure" already;
  *  this answers with what came out, or why nothing did. */
 export async function recycleHistorikals(ids: number[]): Promise<{ ok: true; item: number; slug: string; name: string; rolled: string | null; evolved: boolean } | { ok: false; code: string }> {
