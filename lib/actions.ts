@@ -1363,7 +1363,9 @@ const EDIT_WHY: Record<string, string> = {
   bad_name: "A name needs one to forty letters, and no | ; or :.",
   bad_rarity: "That isn't a rarity.",
   bad_types: "One or two types, and two different ones.",
-  bad_moves: "Commons have two moves, uncommons and rares three, epics and mythics four. Each needs a name (up to 24 letters, no | ; or :) and a kind.",
+  bad_moves: "Commons and uncommons have three moves, rares and up four. Each needs a name (up to 24 letters, no | ; or :) and a kind.",
+  bad_el: "Every move needs one element; only an epic's or mythic's fourth takes two, and they must differ.",
+  bad_charge: "Only a mythic's fourth move charges.",
 };
 
 /** The creature editor: save one creature's name, rarity, types, moves and flags. */

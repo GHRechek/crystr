@@ -29,7 +29,7 @@ create or replace function public.cr_match_el(f jsonb, t jsonb, p_primary text d
     from v;
 $$;
 
--- The engine, passing the attacker's primary type and rarity along.
+-- The engine, passing the attacker's primary type and rarity along; a charge that comes out lands first.
 create or replace function public.cr_enc_act(p_id bigint, p_act jsonb)
 returns jsonb language plpgsql security definer set search_path to 'public' as $function$
 declare e public.encounters; me text; th text; s jsonb; act text := p_act->>'do'; vs text; it bigint; ids bigint[];
@@ -182,6 +182,32 @@ begin
       elsif swb or cb then
         rb := public.cr_match_el(ta, fb->'types', fa->'types'->>0, fa->>'rarity'); hit_b := (rb->>'hit')::int + (case when ua then 2 else 0 end); hit_a := (rb->>'recoil')::int; extra := rb->>'label';
         line := upper(fa->'moves'->((ma->>'m')::int)->>'name') || ' HITS ' || upper(fb->>'name');
+      elsif ua <> ub then
+        -- A charge comes out first, clear of the kind triangle. If it downs them, their move never lands;
+        -- otherwise theirs follows, judged against the charger's kind as usual.
+        if ua then
+          rb := public.cr_match_el(ta, fb->'types', fa->'types'->>0, fa->>'rarity'); hit_b := (rb->>'hit')::int + 2; extra := rb->>'label';
+          line := upper(fa->'moves'->((ma->>'m')::int)->>'name') || ' COMES OUT FIRST!';
+          if (s->'hp'->'b'->>(s->'pick'->>'b'))::int - hit_b > 0 then
+            sc := public.cr_kind_score(ka, kb);
+            if sc < 0 then
+              ra := public.cr_match_el(tb, fa->'types', fb->'types'->>0, fb->>'rarity'); hit_a := (ra->>'hit')::int; hit_b := hit_b + (ra->>'recoil')::int;
+            elsif sc = 0 then
+              ra := public.cr_match_el(tb, fa->'types', fb->'types'->>0, fb->>'rarity'); if (ra->>'weak')::int > 0 then hit_a := (ra->>'hit')::int - 1; end if;
+            end if;
+          end if;
+        else
+          ra := public.cr_match_el(tb, fa->'types', fb->'types'->>0, fb->>'rarity'); hit_a := (ra->>'hit')::int + 2; extra := ra->>'label';
+          line := upper(fb->'moves'->((mb->>'m')::int)->>'name') || ' COMES OUT FIRST!';
+          if (s->'hp'->'a'->>(s->'pick'->>'a'))::int - hit_a > 0 then
+            sc := public.cr_kind_score(kb, ka);
+            if sc < 0 then
+              rb := public.cr_match_el(ta, fb->'types', fa->'types'->>0, fa->>'rarity'); hit_b := (rb->>'hit')::int; hit_a := hit_a + (rb->>'recoil')::int;
+            elsif sc = 0 then
+              rb := public.cr_match_el(ta, fb->'types', fa->'types'->>0, fa->>'rarity'); if (rb->>'weak')::int > 0 then hit_b := (rb->>'hit')::int - 1; end if;
+            end if;
+          end if;
+        end if;
       else
         sc := public.cr_kind_score(ka, kb);
         if sc = 0 then
@@ -269,3 +295,51 @@ begin
   return jsonb_build_object('ok', true);
 end;
 $function$;
+
+-- The creature editor's save: its loop counter was named o, which clashed with a column alias and threw on every save.
+create or replace function public.cr_edit_creature(p_slug text, p jsonb)
+returns jsonb language plpgsql security definer set search_path to 'public' as $function$
+declare k public.badge_kinds; v_name text; v_rar text; v_types text[]; v_moves jsonb; m jsonb; n int; before jsonb; oi int := 0;
+begin
+  if not public.cr_is_editor() then return jsonb_build_object('ok', false, 'code', 'not_editor'); end if;
+  select * into k from public.badge_kinds where slug = p_slug and types is not null for update;
+  if not found then return jsonb_build_object('ok', false, 'code', 'missing'); end if;
+  before := public.cr_creature_row(k);
+  v_name := upper(btrim(coalesce(p->>'name', k.title)));
+  if length(v_name) not between 1 and 40 or v_name ~ '[|;:]' then return jsonb_build_object('ok', false, 'code', 'bad_name'); end if;
+  v_rar := coalesce(p->>'rarity', k.rarity);
+  if v_rar not in ('common', 'uncommon', 'rare', 'epic', 'legendary') then return jsonb_build_object('ok', false, 'code', 'bad_rarity'); end if;
+  if p ? 'types' then select array_agg(t order by o) into v_types from jsonb_array_elements_text(p->'types') with ordinality x(t, o) where t <> ''; else v_types := k.types; end if;
+  if coalesce(array_length(v_types, 1), 0) not between 1 and 2 or not v_types <@ array['fire', 'tide', 'nature', 'ward', 'feral', 'dark', 'spirit']
+     or (array_length(v_types, 1) = 2 and v_types[1] = v_types[2]) then return jsonb_build_object('ok', false, 'code', 'bad_types'); end if;
+  v_moves := coalesce(p->'moves', k.moves);
+  n := case v_rar when 'common' then 3 when 'uncommon' then 3 else 4 end;
+  if jsonb_typeof(v_moves) <> 'array' or jsonb_array_length(v_moves) <> n then return jsonb_build_object('ok', false, 'code', 'bad_moves', 'need', n); end if;
+  for m in select * from jsonb_array_elements(v_moves) loop
+    oi := oi + 1;
+    if coalesce(m->>'kind', '') not in ('sword', 'spell', 'armor') or length(btrim(coalesce(m->>'name', ''))) not between 1 and 24 or m->>'name' ~ '[|;:]' then
+      return jsonb_build_object('ok', false, 'code', 'bad_moves', 'need', n); end if;
+    -- Elements: one on every move, two only on the fourth of an epic or a mythic; a mythic's fourth charges.
+    if jsonb_typeof(m->'el') <> 'array' or jsonb_array_length(m->'el') not between 1 and 2
+       or exists (select 1 from jsonb_array_elements_text(m->'el') t where t not in ('fire', 'tide', 'nature', 'ward', 'feral', 'dark', 'spirit'))
+       or (jsonb_array_length(m->'el') = 2 and (oi < 4 or v_rar not in ('epic', 'legendary') or m->'el'->>0 = m->'el'->>1)) then
+      return jsonb_build_object('ok', false, 'code', 'bad_el'); end if;
+    if coalesce((m->>'charge')::boolean, false) <> (oi = 4 and v_rar = 'legendary') then return jsonb_build_object('ok', false, 'code', 'bad_charge'); end if;
+  end loop;
+  v_moves := (select jsonb_agg(jsonb_build_object('name', btrim(x->>'name'), 'kind', x->>'kind', 'el', x->'el') || case when coalesce((x->>'charge')::boolean, false) then '{"charge":true}'::jsonb else '{}'::jsonb end order by o) from jsonb_array_elements(v_moves) with ordinality e(x, o));
+  update public.badge_kinds set title = v_name, rarity = v_rar, types = v_types, moves = v_moves,
+         hearts = case when (p->>'hearts') ~ '^[1-5]$' then (p->>'hearts')::int else case v_rar when 'common' then 2 when 'uncommon' then 3 when 'rare' then 3 when 'legendary' then 5 else 4 end end,
+         element = case v_types[1] when 'fire' then 'fire' when 'tide' then 'water' when 'nature' then 'grass' when 'ward' then 'rock' when 'feral' then 'rock' when 'dark' then 'dark' when 'spirit' then 'light' end,
+         blurb = 'A ' || v_rar || ' ' || initcap(v_types[1]) || coalesce('/' || initcap(v_types[2]), '') || ' Historikal.',
+         droppable = coalesce((p->>'droppable')::boolean, k.droppable), hover = coalesce((p->>'hover')::boolean, k.hover),
+         rnd = coalesce((p->>'rnd')::boolean, k.rnd), shift = coalesce((p->>'shift')::boolean, k.shift)
+   where slug = p_slug returning * into k;
+  insert into public.creature_edits (by, slug, before, after) values (auth.uid(), p_slug, before, public.cr_creature_row(k));
+  return jsonb_build_object('ok', true, 'creature', public.cr_creature_row(k));
+end;
+$function$;
+
+-- The kinds by their new names.
+create or replace function public.cr_kind_line(w text, l text) returns text language sql immutable set search_path = public as $$
+  select case w when 'sword' then 'PIERCE THROUGH SOFT!' when 'spell' then 'SOFT COVERS HARD!' else 'HARD BREAKS PIERCE!' end;
+$$;
