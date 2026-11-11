@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { requireMe, getPicksOpen, getLegendariesTaken } from "@/lib/data";
+import { requireMe, getPicksOpen, getLegendariesTaken, getCatalogue } from "@/lib/data";
 import { capOf, corrupt, decayLevel } from "@/lib/crystr";
 import { pickHistorikal } from "@/lib/actions";
 import { Creature, Stats } from "@/components/encounter";
@@ -10,6 +10,8 @@ const ORDER: Rarity[] = ["legendary", "epic", "rare", "uncommon", "common"];
 
 /** Spending a gifted pick: every Historikal there is, and you choose one. */
 export default async function PickPage({ searchParams }: { searchParams: Promise<{ s?: string }> }) {
+  // The editor's changes to the catalogue, before any creature is read: the layout fetches them too, but in parallel with this page.
+  await getCatalogue();
   const { profile } = await requireMe();
   // Low on mana, the names go the way of every other word in the City.
   const decay = decayLevel(profile.mana, capOf(profile));

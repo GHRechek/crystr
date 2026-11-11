@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { requireMe } from "@/lib/data";
+import { requireMe, getCatalogue } from "@/lib/data";
 import { HISTORIKALS, TYPES } from "@/lib/historikals";
 import { HAIR_CHOICES, SKIN_CHOICES } from "@/lib/portrait/core";
 import { OPTIONS } from "@/lib/portrait/manifest";
@@ -10,6 +10,8 @@ import { SpriteEditor } from "@/components/sprite-editor";
 /** The sprite editor, for witches: draw on a portrait cell or a Historikal's picture, in the app, and save
  *  it over the file the app shipped with. See lib/sprites. */
 export default async function SpritesPage() {
+  // The editor's changes to the catalogue, before any creature is read: the layout fetches them too, but in parallel with this page.
+  await getCatalogue();
   const { profile } = await requireMe();
   if (!profile.is_witch) redirect("/me");
 

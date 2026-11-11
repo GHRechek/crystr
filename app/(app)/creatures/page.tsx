@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { requireMe, isCreatureEditor } from "@/lib/data";
+import { requireMe, isCreatureEditor, getCatalogue } from "@/lib/data";
 import { CreatureIndex } from "@/components/creature-index";
 
 /** The creature editor (for the people in creature_editors): every creature, to find and open. */
 export default async function CreaturesPage() {
+  // The editor's changes to the catalogue, before any creature is read: the layout fetches them too, but in parallel with this page.
+  await getCatalogue();
   await requireMe();
   if (!(await isCreatureEditor())) notFound();
   return (

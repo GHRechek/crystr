@@ -111,7 +111,8 @@ function wears(type: Element, h: number, s: number, v: number): boolean {
 /** The same pixel in the new type's colour, keeping its depth. */
 function dress(type: Element, h: number, s: number, v: number): [number, number, number] {
   if (type === "ward") return hsvToRgb(220, Math.min(s, 0.08), v);
-  if (type === "spirit") return hsvToRgb(48, Math.min(Math.max(s, 0.2), 0.4), Math.max(v, 0.55));
+  // Spirit is pale: a light cream, keeping only a little of the pixel's depth so the drawing still reads.
+  if (type === "spirit") return hsvToRgb(48, Math.min(Math.max(s * 0.6, 0.12), 0.3), Math.min(0.97, 0.62 + v * 0.35));
   // Its hue, with the colour no stronger than the type's own swatch allows: a fire orange made green
   // would otherwise glow neon.
   const [th, ts] = rgbToHsv(parseInt(ELEMENT_COLOR[type].slice(1, 3), 16), parseInt(ELEMENT_COLOR[type].slice(3, 5), 16), parseInt(ELEMENT_COLOR[type].slice(5, 7), 16));

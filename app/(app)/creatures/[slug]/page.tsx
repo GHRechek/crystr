@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { requireMe, isCreatureEditor } from "@/lib/data";
+import { requireMe, isCreatureEditor, getCatalogue } from "@/lib/data";
 import { createClient } from "@/lib/supabase/server";
 import { saveCreature, swapCopy } from "@/lib/actions";
 import { Creature, Stats } from "@/components/encounter";
@@ -14,6 +14,8 @@ const row: React.CSSProperties = { display: "flex", gap: 8, alignItems: "center"
 /** One creature in the creature editor: its words, numbers and flags to change, and who holds it (with a way to
  *  turn any held copy into another creature). */
 export default async function CreatureEditPage({ params }: { params: Promise<{ slug: string }> }) {
+  // The editor's changes to the catalogue, before any creature is read: the layout fetches them too, but in parallel with this page.
+  await getCatalogue();
   await requireMe();
   if (!(await isCreatureEditor())) notFound();
   const { slug } = await params;
