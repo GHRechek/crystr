@@ -112,6 +112,9 @@ export default async function CreatureEditPage({ params }: { params: Promise<{ s
               <input type="checkbox" name={n} defaultChecked={on} /> {text}
             </label>
           ))}
+          <label className="px" style={{ ...row, fontSize: 10, lineHeight: 1.5, color: "var(--mag-soft)" }}>
+            <input type="checkbox" name="retint" /> REDO ITS PICTURE IN ITS FIRST TYPE&apos;S COLOUR (from the original art; a rough cut to touch up in the sprite editor)
+          </label>
         </fieldset>
         <button type="submit" className="btn" style={{ background: "#e0398a", color: "#fff" }}>SAVE</button>
       </form>

@@ -71,6 +71,9 @@ export async function saveSpriteOverride(supabase: SupabaseClient, path: string,
 }
 
 /** The sprite as it stands: the edit if there is one, else the shipped file. */
+function shippedSprite(path: string): PNG | null {
+  try { return PNG.sync.read(readFileSync(join(process.cwd(), "public", path))); } catch { return null; }
+}
 async function currentSprite(supabase: SupabaseClient, path: string): Promise<PNG | null> {
   try {
     const { data: over } = await supabase.from("sprite_overrides").select("updated_at").eq("path", path).maybeSingle();
@@ -124,15 +127,15 @@ function dress(type: Element, h: number, s: number, v: number): [number, number,
 /** Every pixel that wears the old type's colour takes the new one, at its own depth. When the picture does not
  *  really wear that colour (a spirit creature drawn in purple, say), the sprite's dominant hue family is what
  *  changes instead: the costume, whatever colour the artist gave it. */
-export function redress(png: PNG, from: Element, to: Element): number {
+export function redress(png: PNG, from: Element | null, to: Element): number {
   const d = png.data;
   const px: [number, number, number, number][] = [];
   for (let i = 0; i < d.length; i += 4) if (d[i + 3]) px.push([i, ...rgbToHsv(d[i], d[i + 1], d[i + 2])]);
-  const wearing = px.filter(([, h, s, v]) => wears(from, h, s, v));
+  const wearing = from ? px.filter(([, h, s, v]) => wears(from, h, s, v)) : [];
   let chosen = wearing;
   // Spirit and ward are "colourless" types, and pale or grey pixels are more often skin and highlights than
   // the type's colour: for those, go by the dominant hue whenever the sprite has one.
-  if (from === "spirit" || from === "ward" || wearing.length < Math.max(12, px.length * 0.08)) {
+  if (!from || from === "spirit" || from === "ward" || wearing.length < Math.max(12, px.length * 0.08)) {
     // Dominant hue: the fullest of twelve hue bins among coloured pixels, with its neighbours.
     // Skin and hat leather (peach and tan) are not a costume: they sit out the vote, unless nothing else is coloured.
     const skinLike = (h: number, s: number, v: number) => h >= 12 && h <= 48 && s >= 0.18 && s <= 0.55 && v >= 0.45;
@@ -158,11 +161,11 @@ export function redress(png: PNG, from: Element, to: Element): number {
 /** The creature's pictures (both frames) re-dressed from one first type to another: every pixel that wore the
  *  old type's colour takes the new one, at its own depth. A rough cut, saved as an edit a witch can touch up
  *  or reset in the sprite editor. Creatures that roll their type have a picture per type already. */
-export async function retintCreature(supabase: SupabaseClient, slug: string, from: Element, to: Element, by: string): Promise<string | null> {
+export async function retintCreature(supabase: SupabaseClient, slug: string, from: Element | null, to: Element, by: string, opts?: { /** Start from the shipped picture, not the current edit: a redo, which must not compound. */ fresh?: boolean }): Promise<string | null> {
   if (from === to) return null;
   for (const file of [`${slug}.png`, `${slug}-2.png`]) {
     const path = `creatures/${file}`;
-    const png = await currentSprite(supabase, path);
+    const png = opts?.fresh ? shippedSprite(path) : await currentSprite(supabase, path);
     if (!png) continue;
     redress(png, from, to);
     const why = await saveSpriteOverride(supabase, path, PNG.sync.write(png), by);
