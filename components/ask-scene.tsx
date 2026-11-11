@@ -2,13 +2,13 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { BadgeArt } from "@/components/badges";
+import { audioContext } from "@/lib/babble";
 
 /** A short, original 8-bit fanfare: a rising arpeggio and a held chord, square waves. Plays once. */
 export function playFanfare() {
   try {
-    const AC = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-    if (!AC) return;
-    const ctx = new AC();
+    const ctx = audioContext();
+    if (!ctx) return;
     const notes: [number, number, number][] = [
       [392.0, 0.0, 0.12], [523.25, 0.13, 0.12], [659.25, 0.26, 0.12], [783.99, 0.39, 0.12],
       [698.46, 0.6, 0.12], [880.0, 0.73, 0.12], [1046.5, 0.86, 0.7],
@@ -26,7 +26,6 @@ export function playFanfare() {
       o.start(ctx.currentTime + t);
       o.stop(ctx.currentTime + t + len + 0.05);
     }
-    window.setTimeout(() => void ctx.close(), 2200);
   } catch {
     // No sound is fine.
   }
@@ -36,9 +35,8 @@ export function playFanfare() {
  *  triangle drone, ending on a held note that wants to resolve (the fanfare resolves it). About 1.6s. */
 export function playBuildUp() {
   try {
-    const AC = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-    if (!AC) return;
-    const ctx = new AC();
+    const ctx = audioContext();
+    if (!ctx) return;
     const now = ctx.currentTime;
     const note = (f: number, t: number, len: number, vol: number, type: OscillatorType = "square") => {
       const o = ctx.createOscillator(), g = ctx.createGain();
@@ -71,16 +69,14 @@ export function playBuildUp() {
     });
     // The held note at the top, trembling.
     for (let i = 0; i < 6; i++) note(i % 2 ? 493.88 : 523.25, t + i * 0.05, 0.06, 0.05);
-    window.setTimeout(() => void ctx.close(), 2200);
   } catch {}
 }
 
 /** The lid giving way: a low wooden clack, then a short upward pop. Deeper and rounder than the lock's click. */
 export function playLidOpen() {
   try {
-    const AC = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-    if (!AC) return;
-    const ctx = new AC();
+    const ctx = audioContext();
+    if (!ctx) return;
     const n = Math.floor(ctx.sampleRate * 0.09), buf = ctx.createBuffer(1, n, ctx.sampleRate), d = buf.getChannelData(0);
     for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 2);
     const src = ctx.createBufferSource(), f = ctx.createBiquadFilter(), g = ctx.createGain();
@@ -100,16 +96,14 @@ export function playLidOpen() {
     o.connect(og).connect(ctx.destination);
     o.start(t + 0.03);
     o.stop(t + 0.2);
-    window.setTimeout(() => void ctx.close(), 500);
   } catch {}
 }
 
 /** A lock turning over, for the key going in: a sharp noise tick, then a lower clunk. */
 export function playClick() {
   try {
-    const AC = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-    if (!AC) return;
-    const ctx = new AC();
+    const ctx = audioContext();
+    if (!ctx) return;
     const tick = (at: number, freq: number, len: number, vol: number) => {
       const n = Math.floor(ctx.sampleRate * len), buf = ctx.createBuffer(1, n, ctx.sampleRate), d = buf.getChannelData(0);
       for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 3);
@@ -124,16 +118,14 @@ export function playClick() {
     };
     tick(0, 3200, 0.03, 0.9);
     tick(0.07, 900, 0.06, 0.8);
-    window.setTimeout(() => void ctx.close(), 600);
   } catch {}
 }
 
 /** A whoosh, for a key thrown away. */
 export function playWhoosh() {
   try {
-    const AC = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-    if (!AC) return;
-    const ctx = new AC();
+    const ctx = audioContext();
+    if (!ctx) return;
     const o = ctx.createOscillator();
     const g = ctx.createGain();
     o.type = "square";
@@ -144,7 +136,6 @@ export function playWhoosh() {
     o.connect(g).connect(ctx.destination);
     o.start();
     o.stop(ctx.currentTime + 0.45);
-    window.setTimeout(() => void ctx.close(), 800);
   } catch {}
 }
 
@@ -245,9 +236,8 @@ export function Rays({ bg = [30, 50, 128], ray = [58, 100, 204], viaBlack = fals
  *  about thirteen seconds, once. */
 export function playMythicDirge() {
   try {
-    const AC = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-    if (!AC) return;
-    const ctx = new AC();
+    const ctx = audioContext();
+    if (!ctx) return;
     const note = (f: number, when: number, dur: number, type: OscillatorType, gain: number, vib = false) => {
       const o = ctx.createOscillator(), g = ctx.createGain();
       o.type = type; o.frequency.value = f;
@@ -267,7 +257,6 @@ export function playMythicDirge() {
     for (let b = 0; b < 4; b++) { const w = t + b * 4 * beat; note(bass[b], w, 4 * beat, "square", 0.09); for (const f of chords[b]) note(f, w, 4 * beat, "triangle", 0.06); drum(w); drum(w + 2 * beat); drum(w + 3.5 * beat); }
     let lt = t + 0.5 * beat; for (const [f, n] of lead) { note(f, lt, n * beat * 0.95, "sawtooth", 0.07, true); lt += n * beat; }
     note(36.71, t + 0.8, 3, "sawtooth", 0.12); note(146.83, t + 1, 2.6, "square", 0.05, true);
-    window.setTimeout(() => void ctx.close(), 16 * beat * 1000 + 1500);
   } catch {
     // No sound is fine.
   }

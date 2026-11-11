@@ -153,19 +153,22 @@ export function BlendScene({ offers, onDone, onClose }: {
     let raf = 0;
     const CX = W / 2, CY = H / 2;
     const spr = document.getElementById("bl-sprite") as HTMLElement | null;
+    // The speech bubble rides with the creature, just over its head.
+    const follow = (x: number, y: number) => { const b = document.getElementById("bl-bubble"); if (b) { b.style.left = `${x + 10}px`; b.style.top = `${y - 40}px`; b.style.margin = "0"; } };
     const tick = () => {
       const a = anim.current; const cv = dust.current;
       if (!a || !cv) {
         // Not under way yet (the server is still being asked): hold the creature where it was and keep ticking.
         if (spr) { spr.style.opacity = "1"; spr.style.filter = ""; spr.style.transform = `translate(${CX}px, ${H - 120}px)`; }
+        follow(CX, H - 120);
         raf = requestAnimationFrame(tick); return;
       }
       const g2 = cv.getContext("2d")!; g2.clearRect(0, 0, W, H);
       const u = (performance.now() - a.t0) / 1000;
       const t = performance.now() / 1000;
       if (spr) {
-        if (u < 3.0) { const v = u / 3.0, e = v * v * (3 - 2 * v); spr.style.opacity = "1"; spr.style.filter = ""; spr.style.transform = `translate(${CX - 10 + 10 * e + Math.sin(v * 6) * (1 - v) * 6}px, ${CY + 130 - 130 * e}px)`; }
-        else if (u < 3.8) { const f = Math.floor((u - 3.0) / 0.1) % 2; spr.style.transform = `translate(${CX}px, ${CY}px)`; spr.style.filter = f ? "brightness(0) invert(1)" : "brightness(0) invert(1) sepia(1) saturate(9) hue-rotate(295deg)"; }
+        if (u < 3.0) { const v = u / 3.0, e = v * v * (3 - 2 * v); const x = CX - 10 + 10 * e + Math.sin(v * 6) * (1 - v) * 6, y = CY + 130 - 130 * e; spr.style.opacity = "1"; spr.style.filter = ""; spr.style.transform = `translate(${x}px, ${y}px)`; follow(x, y); }
+        else if (u < 3.8) { const f = Math.floor((u - 3.0) / 0.1) % 2; spr.style.transform = `translate(${CX}px, ${CY}px)`; spr.style.filter = f ? "brightness(0) invert(1)" : "brightness(0) invert(1) sepia(1) saturate(9) hue-rotate(295deg)"; follow(CX, CY); }
         else spr.style.opacity = "0";
       }
       if (u >= 3.0 && !a.cried) { a.cried = true; playBuildUp(); const c = offers[i]; if (c) playCry(cryFor(c.slug), creatureVoice(c.slug, HISTORIKAL.get(c.slug)?.hearts ?? 3)); }

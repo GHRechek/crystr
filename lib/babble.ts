@@ -209,6 +209,9 @@ export function cadenceLength(beats: Beat[]): number {
 }
 
 let shared: AudioContext | null = null;
+/** The one AudioContext every sound shares. iOS allows only a few at once and silences the older ones, so a
+ *  scene that opened one per effect could mute the voices and cries halfway through. */
+export function audioContext(): AudioContext | null { const c = context(); if (c) { try { void c.resume?.(); } catch { /* not yet */ } } return c; }
 function context(): AudioContext | null {
   try {
     if (shared && shared.state !== "closed") return shared;
@@ -375,10 +378,11 @@ export function playCry(kind: "roar" | "squeak" | "wail" | "scream", voice?: Bab
   vib.connect(vg); vg.connect(osc.frequency);
   let dur = 0.6;
   if (kind === "roar") {
+    // Kept above ~110 Hz: a phone speaker cannot put out the octave below it, and the roar would go unheard.
     osc.type = "sawtooth"; dur = 0.75;
-    osc.frequency.setValueAtTime(Math.max(50, base * 0.45), t);
-    osc.frequency.exponentialRampToValueAtTime(Math.max(40, base * 0.3), t + dur);
-    vib.frequency.value = 23; vg.gain.value = base * 0.08;
+    osc.frequency.setValueAtTime(Math.max(130, base * 1.1), t);
+    osc.frequency.exponentialRampToValueAtTime(Math.max(110, base * 0.7), t + dur);
+    vib.frequency.value = 23; vg.gain.value = base * 0.1;
   } else if (kind === "squeak") {
     osc.type = "triangle"; dur = 0.32;
     osc.frequency.setValueAtTime(base * 5, t);
@@ -399,8 +403,8 @@ export function playCry(kind: "roar" | "squeak" | "wail" | "scream", voice?: Bab
     vib.frequency.value = 14; vg.gain.value = base * 0.25;
   }
   gain.gain.setValueAtTime(0, t);
-  gain.gain.linearRampToValueAtTime(LEVEL * 1.6, t + 0.03);
-  gain.gain.setValueAtTime(LEVEL * 1.6, t + dur * 0.6);
+  gain.gain.linearRampToValueAtTime(LEVEL * 2.2, t + 0.03);
+  gain.gain.setValueAtTime(LEVEL * 2.2, t + dur * 0.6);
   gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
   osc.connect(lid); lid.connect(gain); gain.connect(audio.destination);
   vib.start(t); osc.start(t); osc.stop(t + dur + 0.02); vib.stop(t + dur + 0.02);
@@ -412,7 +416,7 @@ export function playCry(kind: "roar" | "squeak" | "wail" | "scream", voice?: Bab
     for (let j = 0; j < frames; j++) d[j] = (Math.random() * 2 - 1) * (1 - j / frames) * 0.7;
     const src = audio.createBufferSource(); src.buffer = buf;
     const bp = audio.createBiquadFilter(); bp.type = "bandpass"; bp.frequency.value = kind === "roar" ? 420 : 1900; bp.Q.value = 0.8;
-    const ng = audio.createGain(); ng.gain.value = LEVEL * (kind === "roar" ? 0.9 : 0.5);
+    const ng = audio.createGain(); ng.gain.value = LEVEL * (kind === "roar" ? 1.4 : 0.6);
     src.connect(bp); bp.connect(ng); ng.connect(audio.destination); src.start(t);
   }
 }
