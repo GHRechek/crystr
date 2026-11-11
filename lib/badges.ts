@@ -159,7 +159,7 @@ export type ShownBadge = {
   /** Handed out by the system itself, not by a witch's like: marked with a star. */
   auto?: boolean;
   /** A witch-approved badge's own fields, for a witch to edit. */
-  edit?: { slug: string; title: string; how: string; blurb: string; art: number; custom?: string; /** A long-term goal: only its name and picture may change. */ fixed?: boolean; peer?: boolean; target?: string };
+  edit?: { slug: string; title: string; how: string; blurb: string; art: number; custom?: string; /** A picture from the icon pack, as "<category>-<n>". */ pack?: string; /** A long-term goal: only its name and picture may change. */ fixed?: boolean; peer?: boolean; target?: string };
 };
 
 /** How each achievement reads once it is on show: what its owner did, in the past tense (the
@@ -231,7 +231,7 @@ export function achievementGrid(badges: BadgeRow[]): ShownBadge[] {
     locked: !b.earned_at,
     auto: !b.witch_approved && !b.peer_approved,
     again: again(b),
-    edit: { slug: b.slug, title: b.title, how: b.how, blurb: b.blurb, art: Number(/(\d+)\.png$/.exec(b.art ?? "")?.[1] ?? 1), custom: b.art?.startsWith("token:") ? b.art.slice(6) : undefined, fixed: b.kind === "goal", peer: b.witch_approved || b.peer_approved ? !!b.peer_approved : undefined, target: b.peer_target ?? undefined },
+    edit: { slug: b.slug, title: b.title, how: b.how, blurb: b.blurb, art: Number(/(\d+)\.png$/.exec(b.art ?? "")?.[1] ?? 1), custom: b.art?.startsWith("token:") ? b.art.slice(6) : undefined, pack: b.art?.startsWith("pack/") ? b.art.slice(5).replace(/\.png$/, "") : undefined, fixed: b.kind === "goal", peer: b.witch_approved || b.peer_approved ? !!b.peer_approved : undefined, target: b.peer_target ?? undefined },
   });
   return [...badges.filter((b) => b.earned_at), ...badges.filter((b) => !b.earned_at)].map(cell);
 }

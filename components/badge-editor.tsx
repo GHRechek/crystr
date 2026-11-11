@@ -21,16 +21,20 @@ function startingDesign(custom?: string) {
 }
 import { TARGETS } from "@/lib/species";
 import { PICTURE_CATEGORIES, pictureCategory, SET_COUNT, SET_NUMBERS } from "@/lib/badges";
+import { PACK_CATEGORIES } from "@/lib/pack-icons";
 import { deleteBadge, saveBadge } from "@/lib/actions";
 
-export type BadgeDraft = { slug?: string; title: string; how: string; blurb: string; art: number; /** A picture made in the token maker, as its packed design. */ custom?: string; /** A long-term goal: only its name and picture may change. */ fixed?: boolean; /** How a badge a witch makes is approved: true when someone you ask says yes, false when a witch likes a post. Undefined for the system's own. */ peer?: boolean; /** For a quest someone confirms: who it has to be. */ target?: string };
+export type BadgeDraft = { slug?: string; title: string; how: string; blurb: string; art: number; /** A picture made in the token maker, as its packed design. */ custom?: string; /** A picture from the icon pack, as "<category>-<n>". */ pack?: string; /** A long-term goal: only its name and picture may change. */ fixed?: boolean; /** How a badge a witch makes is approved: true when someone you ask says yes, false when a witch likes a post. Undefined for the system's own. */ peer?: boolean; /** For a quest someone confirms: who it has to be. */ target?: string };
 
 /** The form a witch edits a badge in: its title, how to earn it, the line once earned, and its
  *  picture. It covers whatever it sits in. A new badge has no slug. Delete asks first. */
 export function BadgeEditor({ draft, setDraft, used = [] }: { draft: BadgeDraft; setDraft: (d: BadgeDraft | null) => void; /** Picture numbers other badges already wear. */ used?: number[] }) {
   const [picking, setPicking] = useState(false);
   const [making, setMaking] = useState(false);
-  const [cat, setCat] = useState(() => (draft.custom ? 0 : pictureCategory(draft.art)));
+  // The tabs: the badge set's five groups, then the icon pack's categories.
+  const [cat, setCat] = useState(() => (draft.pack ? PICTURE_CATEGORIES.length + Math.max(0, PACK_CATEGORIES.findIndex((c) => draft.pack!.startsWith(c.slug + "-"))) : draft.custom ? 0 : pictureCategory(draft.art)));
+  const packCat = cat >= PICTURE_CATEGORIES.length ? PACK_CATEGORIES[cat - PICTURE_CATEGORIES.length] : null;
+  const artSrc = draft.custom ? `/token/${draft.custom}.png?a=${TOKEN_ART_VERSION}` : draft.pack ? `/badges/pack/${draft.pack}.png` : `/badges/set/${draft.art}.png`;
   const own = useRef(draft.custom ? 0 : draft.art).current;
   const taken = new Set(used);
   return (
@@ -90,9 +94,10 @@ export function BadgeEditor({ draft, setDraft, used = [] }: { draft: BadgeDraft;
           <span className="px" style={{ fontSize: 11, color: "var(--blu-soft)" }}>PICTURE</span>
           <input type="hidden" name="art" value={draft.art} />
           {draft.custom ? <input type="hidden" name="art_custom" value={draft.custom} /> : null}
+          {draft.pack ? <input type="hidden" name="art_pack" value={draft.pack} /> : null}
           <button type="button" className="btn" onClick={() => setPicking(true)} style={{ minHeight: 64, justifyContent: "flex-start", gap: 12 }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={draft.custom ? `/token/${draft.custom}.png?a=${TOKEN_ART_VERSION}` : `/badges/set/${draft.art}.png`} alt="" width={46} height={46} style={{ imageRendering: "pixelated", display: "block" }} />
+            <img src={artSrc} alt="" width={46} height={46} style={{ imageRendering: "pixelated", display: "block" }} />
             <span className="px" style={{ fontSize: 11 }}>PICK A PICTURE</span>
           </button>
         </div>
@@ -118,25 +123,40 @@ export function BadgeEditor({ draft, setDraft, used = [] }: { draft: BadgeDraft;
             <button type="button" className="btn btn-sm" onClick={() => setPicking(false)} aria-label="Close" style={{ minHeight: 40, padding: "0 9px", marginLeft: 6 }}>✕</button>
           </div>
           <div style={{ display: "flex", gap: 6, padding: "0 16px 8px", overflowX: "auto" }}>
-            {PICTURE_CATEGORIES.map((c, i) => (
+            {[...PICTURE_CATEGORIES, ...PACK_CATEGORIES].map((c, i) => (
               <button key={c.label} type="button" aria-pressed={cat === i} onClick={() => setCat(i)} className={`btn btn-sm${cat === i ? " btn-purple" : ""}`} style={{ flex: "none", minHeight: 36, fontSize: 10 }}>
                 {c.label}
               </button>
             ))}
           </div>
           <div style={{ flex: 1, minHeight: 0, overflowY: "auto", padding: "4px 16px 20px", display: "flex", flexWrap: "wrap", gap: 8, alignContent: "flex-start" }}>
-            {SET_NUMBERS.filter((n) => pictureCategory(n) === cat).map((n) => (
+            {packCat ? Array.from({ length: packCat.count }, (_, i) => `${packCat.slug}-${i + 1}`).map((key) => (
+              <button
+                key={key}
+                type="button"
+                aria-label={`Picture ${key}`}
+                aria-pressed={key === draft.pack}
+                onClick={() => {
+                  setDraft({ ...draft, pack: key, custom: undefined });
+                  setPicking(false);
+                }}
+                style={{ flex: "none", width: 52, height: 52, padding: 0, display: "grid", placeItems: "center", background: key === draft.pack ? "rgba(145,132,217,.25)" : "none", border: `1px solid ${key === draft.pack ? "var(--pur)" : "transparent"}`, borderRadius: "var(--px-r)", cursor: "pointer" }}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={`/badges/pack/${key}.png`} alt="" loading="lazy" width={48} height={48} style={{ imageRendering: "pixelated", display: "block" }} />
+              </button>
+            )) : SET_NUMBERS.filter((n) => pictureCategory(n) === cat).map((n) => (
               <button
                 key={n}
                 type="button"
                 aria-label={taken.has(n) && n !== own ? `Picture ${n}, already used` : `Picture ${n}`}
-                aria-pressed={!draft.custom && n === draft.art}
+                aria-pressed={!draft.custom && !draft.pack && n === draft.art}
                 disabled={taken.has(n) && n !== own}
                 onClick={() => {
-                  setDraft({ ...draft, art: n, custom: undefined });
+                  setDraft({ ...draft, art: n, custom: undefined, pack: undefined });
                   setPicking(false);
                 }}
-                style={{ flex: "none", width: 52, height: 52, padding: 0, display: "grid", placeItems: "center", background: !draft.custom && n === draft.art ? "rgba(145,132,217,.25)" : "none", border: `1px solid ${!draft.custom && n === draft.art ? "var(--pur)" : "transparent"}`, borderRadius: "var(--px-r)", cursor: taken.has(n) && n !== own ? "not-allowed" : "pointer", opacity: taken.has(n) && n !== own ? 0.25 : 1, filter: taken.has(n) && n !== own ? "grayscale(1)" : "none" }}
+                style={{ flex: "none", width: 52, height: 52, padding: 0, display: "grid", placeItems: "center", background: !draft.custom && !draft.pack && n === draft.art ? "rgba(145,132,217,.25)" : "none", border: `1px solid ${!draft.custom && !draft.pack && n === draft.art ? "var(--pur)" : "transparent"}`, borderRadius: "var(--px-r)", cursor: taken.has(n) && n !== own ? "not-allowed" : "pointer", opacity: taken.has(n) && n !== own ? 0.25 : 1, filter: taken.has(n) && n !== own ? "grayscale(1)" : "none" }}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={`/badges/set/${n}.png`} alt="" loading="lazy" style={{ height: 46, width: "auto", maxWidth: 50, objectFit: "contain", imageRendering: "pixelated", display: "block" }} />
@@ -159,7 +179,7 @@ export function BadgeEditor({ draft, setDraft, used = [] }: { draft: BadgeDraft;
               try {
                 localStorage.setItem(LAST_KEY, packed);
               } catch {}
-              setDraft({ ...draft, custom: packed });
+              setDraft({ ...draft, custom: packed, pack: undefined });
               setMaking(false);
               setPicking(false);
             }}

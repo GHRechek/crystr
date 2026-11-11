@@ -1,5 +1,6 @@
 "use server";
 
+import { isPackPicture } from "@/lib/pack-icons";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { cookies, headers } from "next/headers";
@@ -1144,6 +1145,8 @@ export async function saveBadge(fd: FormData) {
       const c = str(fd, "art_custom");
       return c && unpackToken(c) ? c : null;
     })(),
+    // Only sent when set, so saving a set picture keeps working until the database function knows the argument.
+    ...(isPackPicture(str(fd, "art_pack")) ? { p_art_pack: str(fd, "art_pack") } : {}),
   });
   if (!r.ok) {
     if (r.code === "forbidden") await setFlash("WITCHES ONLY", "Only witches make and edit badges.", EDGE.mag);
