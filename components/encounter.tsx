@@ -191,21 +191,6 @@ const HEART = [".##.##.", "#######", "#######", ".#####.", "..###..", "...#..."]
 const HEART_LOST = [".##.##.", "#..#..#", "#.....#", ".#...#.", "..#.#..", "...#..."];
 /** Half a heart: the left half full, the right an outline. */
 const HEART_HALF = [".##.##.", "####..#", "####..#", ".###.#.", "..##...", "...#..."];
-const MOVE: Record<"sword" | "spell" | "armor", string[]> = {
-  // Drawn at about 22 cells with a dark outline (o), so they carry real detail; MoveIcon scales them to the row.
-  sword: [".....................ooo", "...................ooo#o", "..................oo###o", ".................oo####o", "................oo####oo", "...............oo####oo.", "..............oo####oo..", ".............oo####oo...", "............oo####oo....", "...........oo####oo.....", ".....oooo.oo####oo......", ".....o##ooo####oo.......", ".....oo##o####oo........", "......oo#####oo.........", ".......oo##ooo..........", ".....ooooo##oo..........", "....oo###oo##oo.........", "...oo##ooooo##o.........", "..oo###o...oooo.........", ".oo##ooo................", "oo###o..................", "o####o..................", "o###oo..................", "ooooo..................."],
-  spell: ["..........ooo.........", ".........oo#oooo......", ".......ooo##oo#o......", "......oo#o##o##o......", "......o##o##o##oooo...", "......o##o##o##oo#o...", ".ooo..o##o##o##o##o...", "oo#oo.o##o##o##o##o...", "o###ooo##o##o##o##o...", "oo###oo##o##o##o##o...", ".oo###o##o##o##o##o...", "..oo##############o...", "...oo#############o...", "....oo############o...", ".....oo###########o...", "......o###########o...", "......o###########o...", "......o###########o...", "......o###########o...", "......oo#########oo...", ".......o#########o....", ".......oo#######oo....", "........o#######o.....", "........ooooooooo....."],
-  armor: ["......................", "......................", "......................", "......oooooooooooo....", ".....oo#oo#oo#oo#oo...", ".....o##o##o##o###o...", "....oo##o##o##o###o...", ".oooo###o##o##o###o...", ".o##oo##o##o##o###oo..", ".o####oo###########o..", ".o######o##########o..", ".ooo#####oo########o..", "...oo######o#######o..", "....o######o######oo..", "....oo#####o######o...", ".....o############o...", ".....oo##########oo...", "......o##########o....", "......oo########oo....", ".......o########o....."],
-};
-const TYPE: Record<Element, string[]> = {
-  fire: ["...#...", "..##...", "..###..", ".####.#", ".######", "#######", ".#####."],
-  tide: ["...#...", "..###..", "..###..", ".#####.", "#######", "#######", ".#####."],
-  nature: ["....###", "..#####", ".######", "######.", "#####..", "####...", "#......"],
-  ward: ["#######", "##...##", "#.....#", "#.....#", ".#...#.", "..#.#..", "...#..."],
-  feral: ["#..#..#", "#..#..#", "#..#..#", ".#..#.#", ".#..#.#", "..#..#.", "..#..#."],
-  dark: ["..####.", ".###...", "###....", "###....", "###....", ".###...", "..####."],
-  spirit: ["#..#..#", ".#...#.", "..###..", "#.###.#", "..###..", ".#...#.", "#..#..#"],
-};
 const QMARK = [".###.", "#...#", "...#.", "..#..", "..#..", ".....", "..#.."];
 const SWORDS = ["#.......#", ".#.....#.", "..#...#..", "...#.#...", "....#....", "...#.#...", ".##...##.", ".##...##.", "#.......#"];
 const TRADE_ARROWS = ["......#..", ".......#.", "#########", ".......#.", "......#..", ".........", "..#......", ".#.......", "#########", ".#.......", "..#......"];
@@ -213,13 +198,25 @@ const UNDO = ["..#.......", ".##.......", "#######...", ".##....#..", "..#.....#
 const SWAP = ["...#...", "....#..", "#######", "....#..", "..#.#..", ".#.....", "#######"];
 
 const BOLT = ["..##.", ".##..", "####.", "..##.", ".#...", "#...."];
-/** A move's kind as its little pixel icon (sword, spell or armor) in its element's colour, split down the
- *  middle when it has two; a charge adds a bolt. */
-export function MoveIcon({ kind, k = 2, fill = "#fff", el, charge }: { kind: MoveKind; k?: number; fill?: string; el?: Element[]; charge?: boolean }) {
-  const c1 = el?.[0] ? ELEMENT_COLOR[el[0]] : fill;
-  const c2 = el?.[1] ? ELEMENT_COLOR[el[1]] : undefined;
-  // k is the step of the old 7-cell icons; these are 22 cells, scaled to the same height.
-  const base = <Pix rows={MOVE[kind] ?? MOVE.sword} k={(k * 7) / 22} fill={c1} fill2={c2} />;
+/** Pixels across for an icon from the pack (16px art) at the old 7-cell step k: whole multiples where it can. */
+const packPx = (k: number) => (k >= 3 ? 24 : k >= 1.5 ? 16 : 12);
+/** One of the pack's 16px icons, as an image. */
+function PackImg({ src, px, style }: { src: string; px: number; style?: React.CSSProperties }) {
+  // eslint-disable-next-line @next/next/no-img-element
+  return <img src={src} alt="" width={px} height={px} draggable={false} style={{ display: "block", imageRendering: "pixelated", flex: "none", ...style }} />;
+}
+
+/** A move's kind (a knife, an open hand or a fist, from the icon pack) hue-shifted onto its element's colour, the
+ *  right half in the second element's when it has two; a charge adds a bolt. */
+export function MoveIcon({ kind, k = 2, fill: _fill, el, charge }: { kind: MoveKind; k?: number; /** Unused now the icons are pictures; kept for callers. */ fill?: string; el?: Element[]; charge?: boolean }) {
+  const px = packPx(k);
+  const src = (e?: Element) => `/icons/move-${kind}${e ? `-${e}` : ""}.png`;
+  const base = el?.[1] ? (
+    <span style={{ position: "relative", display: "inline-block", width: px, height: px, flex: "none" }}>
+      <PackImg src={src(el[0])} px={px} />
+      <PackImg src={src(el[1])} px={px} style={{ position: "absolute", left: 0, top: 0, clipPath: "inset(0 0 0 50%)" }} />
+    </span>
+  ) : <PackImg src={src(el?.[0])} px={px} />;
   if (!charge) return base;
   return <span style={{ display: "inline-flex", gap: Math.max(1, Math.round(k)), alignItems: "center" }}>{base}<Pix rows={BOLT} k={k} fill="#fff" /></span>;
 }
@@ -240,9 +237,9 @@ export function ChargeAura({ el, size, children }: { el: Element[]; size: number
   );
 }
 
-/** One type's icon, in its colour. */
-export function TypeIcon({ type, k = 2, grad }: { type: Element; k?: number; /** In the CRYSTR gradient instead of its own colour: the chosen one in a filter. */ grad?: boolean }) {
-  return <Pix rows={TYPE[type]} k={k} fill={ELEMENT_COLOR[type]} grad={grad} />;
+/** One type's icon, from the pack. */
+export function TypeIcon({ type, k = 2, grad: _grad }: { type: Element; k?: number; /** Unused now the icons are pictures; kept for callers. */ grad?: boolean }) {
+  return <PackImg src={`/icons/type-${type}.png`} px={packPx(k)} />;
 }
 
 /** Its types (each in its colour, or ? until you know them) then white hearts. */
@@ -251,7 +248,7 @@ export function Stats({ h, hp, k = 3, known = true, only, fav }: { h: HK; hp?: n
   return (
     <span className="en-stats">
       {/* Only its primary type up front; its hearts carry both. */}
-      {only === "hearts" ? null : known && h.types?.length ? <Pix rows={TYPE[h.types[0]]} k={k} fill={ELEMENT_COLOR[h.types[0]]} /> : <Pix rows={QMARK} k={k} fill="#d2cefd" />}
+      {only === "hearts" ? null : known && h.types?.length ? <TypeIcon type={h.types[0]} k={k} /> : <Pix rows={QMARK} k={k} fill="#d2cefd" />}
       {/* Each heart a gradient of its two types, primary to secondary; a single type's hearts are solid in that colour. */}
       {only === "type" ? null : Array.from({ length: h.hearts }, (_, i) => <Pix key={i} rows={i + 1 <= left ? HEART : i < left ? HEART_HALF : HEART_LOST} k={k} fill={h.types?.[0] ? ELEMENT_COLOR[h.types[0]] : "#fff"} to={h.types?.[1] ? ELEMENT_COLOR[h.types[1]] : undefined} />)}
     </span>
