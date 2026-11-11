@@ -82,9 +82,9 @@ export default async function CreatureEditPage({ params }: { params: Promise<{ s
             <div key={i} style={row}>
               <input name={`move${i}`} className="input" defaultValue={m?.name ?? ""} maxLength={24} aria-label={`Move ${i + 1} name`} placeholder={i === 3 ? "Fourth move (epic and mythic)" : i === 2 ? "Third move (uncommon and up)" : "Move name"} style={{ flex: 2, minWidth: 0 }} />
               <select name={`kind${i}`} className="input" defaultValue={m?.kind ?? (["sword", "spell", "armor", "sword"][i])} aria-label={`Move ${i + 1} kind`} style={{ flex: 1 }}>
-                <option value="sword">SWORD</option>
-                <option value="spell">SPELL</option>
-                <option value="armor">ARMOR</option>
+                <option value="sword">PIERCE</option>
+                <option value="spell">SOFT</option>
+                <option value="armor">HARD</option>
               </select>
               <select name={`el${i}`} className="input" defaultValue={m?.el?.[0] ?? (i === 2 ? h.types[1] ?? h.types[0] : i === 3 ? TYPES.find((t) => !h.types.includes(t)) : h.types[0])} aria-label={`Move ${i + 1} element`} style={{ flex: 1 }}>
                 {TYPES.map((t) => <option key={t} value={t}>{t.toUpperCase()}</option>)}

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Creature, MoveIcon, Stats } from "@/components/encounter";
+import { Creature, KIND_NAME, MoveIcon, Stats } from "@/components/encounter";
 import { favoriteHistorikal, healHistorikal } from "@/lib/actions";
 import { useDecay } from "@/components/decay";
 import { corrupt } from "@/lib/crystr";
@@ -84,7 +84,7 @@ export function HistorikalCard({
           {own ? (
             h.moves.map((m) => (
               <div key={m.name} className="px" style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 11 }}>
-                <MoveIcon kind={m.kind} el={m.el} charge={m.charge} /> {eat(up(m.name))} <span style={{ color: "var(--muted)", fontSize: 9 }}>{up(m.kind)}{m.charge ? " · CHARGE" : ""}</span>
+                <MoveIcon kind={m.kind} el={m.el} charge={m.charge} /> {eat(up(m.name))} <span style={{ color: "var(--muted)", fontSize: 9 }}>{KIND_NAME[m.kind]}{m.charge ? " · CHARGE" : ""}</span>
               </div>
             ))
           ) : (

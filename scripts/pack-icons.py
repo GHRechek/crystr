@@ -54,7 +54,7 @@ def tint(img, hex_):
             h, l, s = colorsys.rgb_to_hls(r / 255, g / 255, b / 255)
             if (r, g, b) == OUTLINE_TO or l < 0.2: continue  # outline and deep shadow stay
             if ts < 0.15: s2 = s * 0.25  # a grey element (ward): wash the colour out instead
-            else: s2 = max(s, min(0.85, ts + 0.15)) if s >= 0.15 else min(0.7, ts)  # grey steel takes the colour too
+            else: s2 = (max(s, min(0.85, ts + 0.15)) if s >= 0.15 else min(0.7, ts)) * 0.82  # grey steel takes the colour too; a touch under full
             r2, g2, b2 = colorsys.hls_to_rgb(th, l, s2)
             px[x, y] = (round(r2 * 255), round(g2 * 255), round(b2 * 255), a)
     return out
