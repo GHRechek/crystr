@@ -200,18 +200,6 @@ const SWAP = ["...#...", "....#..", "#######", "....#..", "..#.#..", ".#.....", 
 const BOLT = ["..##.", ".##..", "####.", "..##.", ".#...", "#...."];
 /** What the three kinds of move are called: hard beats pierce, pierce beats soft, soft beats hard. */
 export const KIND_NAME: Record<MoveKind, string> = { sword: "PIERCE", spell: "SOFT", armor: "HARD" };
-/** Soft and hard as the cursor-style open hand and grab fist (o: the dark outline), filled in the element's colour. */
-const HANDS: Record<"spell" | "armor", string[]> = {
-  spell: ["..........ooo.........", ".........oo#oooo......", ".......ooo##oo#o......", "......oo#o##o##o......", "......o##o##o##oooo...", "......o##o##o##oo#o...", ".ooo..o##o##o##o##o...", "oo#oo.o##o##o##o##o...", "o###ooo##o##o##o##o...", "oo###oo##o##o##o##o...", ".oo###o##o##o##o##o...", "..oo##############o...", "...oo#############o...", "....oo############o...", ".....oo###########o...", "......o###########o...", "......o###########o...", "......o###########o...", "......o###########o...", "......oo#########oo...", ".......o#########o....", ".......oo#######oo....", "........o#######o.....", "........ooooooooo....."],
-  armor: ["......................", "......................", "......................", "......oooooooooooo....", ".....oo#oo#oo#oo#oo...", ".....o##o##o##o###o...", "....oo##o##o##o###o...", ".oooo###o##o##o###o...", ".o##oo##o##o##o###oo..", ".o####oo###########o..", ".o######o##########o..", ".ooo#####oo########o..", "...oo######o#######o..", "....o######o######oo..", "....oo#####o######o...", ".....o############o...", ".....oo##########oo...", "......o##########o....", "......oo########oo....", ".......o########o....."],
-};
-/** An element's colour taken down a touch for a move icon, so the row does not shout. */
-function soften(hex: string) {
-  const n = (i: number) => parseInt(hex.slice(1 + i * 2, 3 + i * 2), 16);
-  const r = n(0), g = n(1), b = n(2), grey = 0.299 * r + 0.587 * g + 0.114 * b;
-  const c = (v: number) => Math.round(v + (grey - v) * 0.18).toString(16).padStart(2, "0");
-  return `#${c(r)}${c(g)}${c(b)}`;
-}
 /** Pixels across for an icon from the pack (16px art) at the old 7-cell step k: whole multiples where it can. */
 const packPx = (k: number) => (k >= 3 ? 24 : k >= 1.5 ? 16 : 12);
 /** One of the pack's 16px icons, as an image. */
@@ -220,14 +208,12 @@ function PackImg({ src, px, style }: { src: string; px: number; style?: React.CS
   return <img src={src} alt="" width={px} height={px} draggable={false} style={{ display: "block", imageRendering: "pixelated", flex: "none", ...style }} />;
 }
 
-/** A move's kind in its element's colour (the right half in the second element's when it has two): pierce is the
- *  pack's sword hue-shifted, soft and hard the open hand and fist. A charge adds a bolt. */
-export function MoveIcon({ kind, k = 2, fill = "#fff", el, charge }: { kind: MoveKind; k?: number; /** The hands' colour with no element. */ fill?: string; el?: Element[]; charge?: boolean }) {
+/** A move's kind from the icon pack (pierce a sword, soft an open hand, hard a fist) hue-shifted onto its element's
+ *  colour, the right half in the second element's when it has two. A charge adds a bolt. */
+export function MoveIcon({ kind, k = 2, fill: _fill, el, charge }: { kind: MoveKind; k?: number; /** Unused now the icons are pictures; kept for callers. */ fill?: string; el?: Element[]; charge?: boolean }) {
   const px = packPx(k);
   const src = (e?: Element) => `/icons/move-${kind}${e ? `-${e}` : ""}.png`;
-  const base = kind !== "sword" ? (
-    <Pix rows={HANDS[kind] ?? HANDS.spell} k={(k * 7) / 22} fill={el?.[0] ? soften(ELEMENT_COLOR[el[0]]) : fill} fill2={el?.[1] ? soften(ELEMENT_COLOR[el[1]]) : undefined} />
-  ) : el?.[1] ? (
+  const base = el?.[1] ? (
     <span style={{ position: "relative", display: "inline-block", width: px, height: px, flex: "none" }}>
       <PackImg src={src(el[0])} px={px} />
       <PackImg src={src(el[1])} px={px} style={{ position: "absolute", left: 0, top: 0, clipPath: "inset(0 0 0 50%)" }} />

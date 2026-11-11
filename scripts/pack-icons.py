@@ -12,7 +12,7 @@ PACK = sys.argv[1]
 OUT = os.path.join(os.path.dirname(__file__), "..", "public", "icons")
 ELEMENT_COLOR = {"fire": "#ff6a3d", "tide": "#3fa9f5", "nature": "#6fa86a", "ward": "#a7abb6", "feral": "#b0865f", "dark": "#8a6fd9", "spirit": "#f2e2a2"}
 TYPES = {"fire": ("Nature", 8), "tide": ("Nature", 20), "nature": ("Nature", 101), "ward": ("Weapons", 71), "feral": ("Animals", 1), "dark": ("Symbols", 158), "spirit": ("Nature", 6)}
-MOVES = {"sword": ("Weapons", 3), "spell": ("Smileys & People", 153), "armor": ("Smileys & People", 170)}
+MOVES = {"sword": ("Weapons", 3), "spell": ("Smileys & People", 152), "armor": ("Smileys & People", 165)}
 
 # The pack outlines everything in a dusky purple (#442434); the app wants it darker.
 OUTLINE_FROM, OUTLINE_TO = (0x44, 0x24, 0x34), (0x16, 0x0a, 0x1e)
