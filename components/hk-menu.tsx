@@ -142,6 +142,8 @@ export function HkMenu({ shown, tradable, items, startOn = "menu", onClose }: {
     if (!b?.hk) return;
     if (lineup.includes(key)) { setNote({ title: "IN YOUR LINEUP", body: "Take it off your lineup first." }); return; }
     if (b.hk.favorite) { setNote({ title: "A FAVOURITE", body: "Un-favourite it first, if you mean it." }); return; }
+    const rar = HISTORIKAL.get(b.hk.slug)?.rarity;
+    if (rar === "epic" || rar === "legendary") { setNote({ title: "TOO RARE", body: `${RARITY_NAME[rar].toUpperCase()}S can't be recycled. Commons, uncommons and rares only.` }); return; }
     setBin((cur) => { const next = cur.map((k) => (k === key ? null : k)); next[spot] = key; return next; });
   };
   const binned = bin.map((k) => (k ? byKey.get(k) ?? null : null));
@@ -150,13 +152,13 @@ export function HkMenu({ shown, tradable, items, startOn = "menu", onClose }: {
     if (busy) return;
     const held = binned.filter((b): b is ShownBadge => !!b?.hk);
     if (held.length < 4) {
-      setNote({ title: "RECYCLE", body: "Drop four Historikals of one rarity into the auras and they become one of the next rarity up, chosen by chance. Now and then one evolves instead. Mythics are the top and can't go in." });
+      setNote({ title: "RECYCLE", body: "Drop four Historikals of one rarity into the auras and they become one of the next rarity up, chosen by chance. Now and then one evolves instead. Commons, uncommons and rares only: epics and mythics can't go in." });
       return;
     }
     const rars = new Set(held.map((b) => HISTORIKAL.get(b.hk!.slug)?.rarity));
     if (rars.size > 1) { setNote({ title: "ONE RARITY", body: "All four must share a rarity. Swap one out." }); return; }
     const rar = [...rars][0] as Rarity;
-    if (rar === "legendary") { setNote({ title: "THE TOP", body: "Mythics can't be recycled. There is nothing above them." }); return; }
+    if (rar === "epic" || rar === "legendary") { setNote({ title: "TOO RARE", body: "Epics and mythics can't be recycled." }); return; }
     const up = (["common", "uncommon", "rare", "epic", "legendary"] as Rarity[])[["common", "uncommon", "rare", "epic"].indexOf(rar) + 1];
     setNote({
       title: "ARE YOU SURE?",
@@ -167,7 +169,7 @@ export function HkMenu({ shown, tradable, items, startOn = "menu", onClose }: {
           const r = await recycleHistorikals(binIds);
           setBusy(false);
           if (!r.ok) {
-            const why: Record<string, string> = { mixed: "All four must share a rarity.", top: "Mythics can't be recycled.", favorite: "One of them is a favourite.", lineup: "One of them is in your lineup.", in_battle: "One of them is in a battle.", not_yours: "One of them has moved on.", none: "There is nothing to be had just now." };
+            const why: Record<string, string> = { mixed: "All four must share a rarity.", top: "Epics and mythics can't be recycled.", favorite: "One of them is a favourite.", lineup: "One of them is in your lineup.", in_battle: "One of them is in a battle.", not_yours: "One of them has moved on.", none: "There is nothing to be had just now." };
             setNote({ title: "NOT THIS TIME", body: why[r.code] ?? "Something went wrong. Try again." });
             return;
           }

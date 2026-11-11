@@ -1,6 +1,6 @@
 -- RECYCLE: four Historikals of one rarity become one of the next rarity up, picked at random from the
 -- ones that drop; one time in eight, when one of the four has a known evolution a tier up, it becomes that.
--- Mythics are the top and can't go in. Nothing in the lineup, nothing favourited, nothing mid-battle.
+-- Epics and mythics can't go in: commons, uncommons and rares only. Nothing in the lineup, nothing favourited, nothing mid-battle.
 
 create table if not exists public.historikal_evolutions (
   from_slug text not null references public.badge_kinds(slug) on delete cascade,
@@ -40,7 +40,7 @@ begin
   select min(k.rarity), max(k.rarity) into v_rar, v_next
     from public.badge_items i join public.badge_kinds k on k.slug = i.kind_slug where i.id = any(v_ids);
   if v_rar <> v_next then return jsonb_build_object('ok', false, 'code', 'mixed'); end if;
-  if v_rar = 'legendary' then return jsonb_build_object('ok', false, 'code', 'top'); end if;
+  if v_rar in ('epic', 'legendary') then return jsonb_build_object('ok', false, 'code', 'top'); end if;
   -- Not a favourite, not in the lineup, not fighting.
   if exists (select 1 from public.badge_items where id = any(v_ids) and favorite) then return jsonb_build_object('ok', false, 'code', 'favorite'); end if;
   select shown_badges into v_shown from public.profiles where id = auth.uid();
@@ -50,7 +50,7 @@ begin
     return jsonb_build_object('ok', false, 'code', 'in_battle');
   end if;
 
-  v_next := case v_rar when 'common' then 'uncommon' when 'uncommon' then 'rare' when 'rare' then 'epic' else 'legendary' end;
+  v_next := case v_rar when 'common' then 'uncommon' when 'uncommon' then 'rare' else 'epic' end;
 
   -- One time in eight: an evolution of one of the four, when it has one a tier up.
   if random() < 0.125 then
