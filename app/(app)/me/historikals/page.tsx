@@ -26,7 +26,7 @@ export default async function HistorikalsPage() {
       {hurt ? <div className="px" style={{ fontSize: 11, color: "#ff5a7a" }}>{hurt} HURT · TAP ONE TO HEAL IT · YOU HAVE {profile.mana} MANA</div> : null}
       <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
         <div className="px" style={{ fontSize: 10, color: "var(--muted)", lineHeight: 1.6, flex: 1, minWidth: 200 }}>
-          <MoveIcon kind="sword" /> PIERCE CUTS <MoveIcon kind="spell" /> SOFT · <MoveIcon kind="spell" /> SOFT WRAPS <MoveIcon kind="armor" /> HARD · <MoveIcon kind="armor" /> HARD BLOCKS <MoveIcon kind="sword" /> PIERCE
+          <MoveIcon kind="sword" /> PIERCE THROUGH <MoveIcon kind="spell" /> SOFT · <MoveIcon kind="spell" /> SOFT COVERS <MoveIcon kind="armor" /> HARD · <MoveIcon kind="armor" /> HARD BREAKS <MoveIcon kind="sword" /> PIERCE
         </div>
       </div>
       {list.length === 0 ? <div className="empty">NO HISTORIKALS YET</div> : <HistorikalCollection list={list} />}

@@ -198,7 +198,7 @@ const UNDO = ["..#.......", ".##.......", "#######...", ".##....#..", "..#.....#
 const SWAP = ["...#...", "....#..", "#######", "....#..", "..#.#..", ".#.....", "#######"];
 
 const BOLT = ["..##.", ".##..", "####.", "..##.", ".#...", "#...."];
-/** What the three kinds of move are called: hard beats pierce, pierce beats soft, soft beats hard. */
+/** What the three kinds of move are called: pierce through soft, soft covers hard, hard breaks pierce. */
 export const KIND_NAME: Record<MoveKind, string> = { sword: "PIERCE", spell: "SOFT", armor: "HARD" };
 /** Pixels across for an icon from the pack (16px art) at the old 7-cell step k: whole multiples where it can. */
 const packPx = (k: number) => (k >= 3 ? 24 : k >= 1.5 ? 16 : 12);
