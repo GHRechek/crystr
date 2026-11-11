@@ -78,7 +78,7 @@ export function BlendScene({ offers, onDone, onClose }: {
   onDone: (got: { item: number; slug: string; name: string; types: Element[]; rarity: Rarity } | null) => void;
   onClose: () => void;
 }) {
-  const [stage, setStage] = useState<"confirm" | "offer" | "going" | "abandon" | "result" | "error">("confirm");
+  const [stage, setStage] = useState<"confirm" | "offer" | "going" | "abandon" | "result" | "error">("offer");
   const [i, setI] = useState(0);
   const [fed, setFed] = useState(0);
   const [got, setGot] = useState<{ item: number; slug: string; name: string; types: Element[]; rarity: Rarity; evolved: boolean } | null>(null);
