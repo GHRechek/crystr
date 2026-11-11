@@ -11,7 +11,7 @@ from PIL import Image
 PACK = sys.argv[1]
 OUT = os.path.join(os.path.dirname(__file__), "..", "public", "icons")
 ELEMENT_COLOR = {"fire": "#ff6a3d", "tide": "#3fa9f5", "nature": "#6fa86a", "ward": "#a7abb6", "feral": "#b0865f", "dark": "#8a6fd9", "spirit": "#f2e2a2"}
-TYPES = {"fire": ("Nature", 8), "tide": ("Nature", 20), "nature": ("Nature", 101), "ward": ("Weapons", 71), "feral": ("Animals", 1), "dark": ("Symbols", 158), "spirit": ("Nature", 6)}
+TYPES = {"fire": ("Nature", 8), "tide": ("Nature", 20), "nature": ("Nature", 101), "ward": ("Weapons", 71), "feral": ("Animals", 1), "dark": ("Symbols", 158), "spirit": ("Nature", 7)}
 MOVES = {"sword": ("Weapons", 3), "spell": ("Smileys & People", 152), "armor": ("Smileys & People", 165)}
 
 # The pack outlines everything in a dusky purple (#442434); the app wants it darker.
