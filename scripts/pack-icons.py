@@ -14,8 +14,16 @@ ELEMENT_COLOR = {"fire": "#ff6a3d", "tide": "#3fa9f5", "nature": "#6fa86a", "war
 TYPES = {"fire": ("Nature", 8), "tide": ("Nature", 20), "nature": ("Nature", 101), "ward": ("Weapons", 71), "feral": ("Animals", 1), "dark": ("Symbols", 158), "spirit": ("Nature", 6)}
 MOVES = {"sword": ("Weapons", 34), "spell": ("Smileys & People", 152), "armor": ("Smileys & People", 170)}
 
+# The pack outlines everything in a dusky purple (#442434); the app wants it darker.
+OUTLINE_FROM, OUTLINE_TO = (0x44, 0x24, 0x34), (0x16, 0x0a, 0x1e)
+
 def pick(cat, n):
-    return Image.open(os.path.join(PACK, cat, "16x16px", f"{cat} {n}.png")).convert("RGBA")
+    im = Image.open(os.path.join(PACK, cat, "16x16px", f"{cat} {n}.png")).convert("RGBA"); px = im.load()
+    for y in range(im.height):
+        for x in range(im.width):
+            r, g, b, a = px[x, y]
+            if (r, g, b) == OUTLINE_FROM: px[x, y] = (*OUTLINE_TO, a)
+    return im
 
 def tint(img, hex_):
     r, g, b = (int(hex_[i:i + 2], 16) / 255 for i in (1, 3, 5))
