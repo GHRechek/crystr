@@ -136,7 +136,9 @@ export function BlendScene({ offers, onDone, onClose }: {
     stop.current = () => undefined;
     playWhoosh();
     const src = historikalSrc(cur.slug, 1, cur.types[0]);
-    const [px, r] = await Promise.all([pixelsOf(src), feedBlend(cur.id)]);
+    let px: Px[] = [], r: BlendFeed;
+    try { [px, r] = await Promise.all([pixelsOf(src), feedBlend(cur.id)]); }
+    catch { r = { ok: false, code: "error" }; }
     if (!r.ok) {
       const why: Record<string, string> = { mixed: `The void already holds ${r.count ?? 0} ${RARITY_NAME[(r.rarity as Rarity) ?? "common"]}${(r.count ?? 0) === 1 ? "" : "s"}. Only that rarity can follow.`, top: "Epics and mythics can't go in.", favorite: "A favourite can't go in.", lineup: "It is in your lineup.", in_battle: "It is in a battle.", not_yours: "It has moved on.", none: "The void gave nothing back. Tell a witch." };
       setErr(why[r.code] ?? "Something went wrong."); setStage("error"); return;
@@ -152,7 +154,12 @@ export function BlendScene({ offers, onDone, onClose }: {
     const CX = W / 2, CY = H / 2;
     const spr = document.getElementById("bl-sprite") as HTMLElement | null;
     const tick = () => {
-      const a = anim.current; const cv = dust.current; if (!a || !cv) return;
+      const a = anim.current; const cv = dust.current;
+      if (!a || !cv) {
+        // Not under way yet (the server is still being asked): hold the creature where it was and keep ticking.
+        if (spr) { spr.style.opacity = "1"; spr.style.filter = ""; spr.style.transform = `translate(${CX}px, ${H - 120}px)`; }
+        raf = requestAnimationFrame(tick); return;
+      }
       const g2 = cv.getContext("2d")!; g2.clearRect(0, 0, W, H);
       const u = (performance.now() - a.t0) / 1000;
       const t = performance.now() / 1000;
