@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { BodyPortal } from "@/components/portal";
 import { Rays, playBuildUp, playClick, playFanfare, playLidOpen, playWhoosh } from "@/components/ask-scene";
 import { BadgeArt } from "@/components/badges";
 import { askLines } from "@/lib/ask-lines";
@@ -97,6 +98,7 @@ function Asked({ v, close, answer, end }: { v: QuestView; close: () => void; ans
   useEffect(() => { if (!said && (v.stage === "off" || v.stage === "done")) close(); }, [v.stage, said, close]);
 
   return (
+    <BodyPortal>
     <div role="dialog" aria-label={question} className="ask-scene qa-scene">
       <Rays bg={[52, 24, 96]} ray={[118, 52, 150]} />
       <div className="px ask-question">{said === "yes" ? `${up(v.asker.handle)} GOT THE KEY!` : said === "late" ? "TOO LATE" : up(question)}</div>
@@ -150,6 +152,7 @@ function Asked({ v, close, answer, end }: { v: QuestView; close: () => void; ans
         )}
       </div>
     </div>
+    </BodyPortal>
   );
 }
 
@@ -193,6 +196,7 @@ function Asker({ v, close, end }: { v: QuestView; close: () => void; end: () => 
   const shutOut = v.stage === "no" || v.stage === "off" || timedOut;
 
   return (
+    <BodyPortal>
     <div ref={scene} role="dialog" aria-label={v.title ?? "Quest"} className="ask-scene dr-scene">
       <Rays bg={[52, 94, 200]} ray={[196, 44, 118]} />
       <div className={`ask-dim${lock === "unlocking" ? " is-on" : lock === "open" ? " is-after" : ""}`} aria-hidden />
@@ -263,5 +267,6 @@ function Asker({ v, close, end }: { v: QuestView; close: () => void; end: () => 
         )}
       </div>
     </div>
+    </BodyPortal>
   );
 }

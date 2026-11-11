@@ -1,6 +1,7 @@
 "use client";
 
 import { useLayoutEffect, useRef, useState } from "react";
+import { BodyPortal } from "@/components/portal";
 import { Rays, playBuildUp, playClick, playFanfare, playLidOpen } from "@/components/ask-scene";
 import { BadgeArt } from "@/components/badges";
 import { KeyImg, useKey } from "@/components/quest-ask";
@@ -49,6 +50,7 @@ export function BadgeReveal({ list }: { list: UnseenBadge[] }) {
   const title = b.tiers > 1 ? `${b.title} ${ROMAN[b.tier] ?? ""}`.trim() : b.title;
 
   return (
+    <BodyPortal>
     <div ref={scene} role="dialog" aria-label={title} className="ask-scene dr-scene">
       <Rays bg={[52, 94, 200]} ray={[196, 44, 118]} />
       <div className={`ask-dim${lock === "unlocking" ? " is-on" : lock === "open" ? " is-after" : ""}`} aria-hidden />
@@ -104,5 +106,6 @@ export function BadgeReveal({ list }: { list: UnseenBadge[] }) {
         ) : null}
       </div>
     </div>
+    </BodyPortal>
   );
 }

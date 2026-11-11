@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { BodyPortal } from "@/components/portal";
 import { createClient } from "@/lib/supabase/client";
 import { Rays, playBuildUp, playClick, playFanfare, playLidOpen } from "@/components/ask-scene";
 import { Creature, Stats, type HK } from "@/components/encounter";
@@ -127,6 +128,7 @@ export function DrawScene({ kind, count, onClose, drawWith = drawFromDb }: { kin
   const keyReady = left > 0 && state !== "unlocking";
 
   return (
+    <BodyPortal>
     <div ref={sceneRef} role="dialog" aria-label={t.title} className="ask-scene dr-scene">
       <Rays bg={t.bg} ray={t.ray} />
       <div className={`ask-dim${state === "unlocking" ? " is-on" : state === "open" ? " is-after" : ""}`} aria-hidden />
@@ -195,5 +197,6 @@ export function DrawScene({ kind, count, onClose, drawWith = drawFromDb }: { kin
         ) : null}
       </div>
     </div>
+    </BodyPortal>
   );
 }
