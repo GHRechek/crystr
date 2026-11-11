@@ -172,7 +172,7 @@ function Pix({ rows, k, fill, dim, grad, fill2, to }: { rows: string[]; k: numbe
   const id = `g${useId().replace(/:/g, "")}`;
   const half = Math.ceil(rows[0].length / 2);
   return (
-    <svg width={rows[0].length * k} height={rows.length * k} viewBox={`0 0 ${rows[0].length} ${rows.length}`} shapeRendering="crispEdges" fill={grad ? `url(#${id})` : fill} aria-hidden opacity={dim ? 0.18 : 1} style={{ flex: "none", filter: `drop-shadow(${k}px ${k}px 0 #0a0616)` }}>
+    <svg width={rows[0].length * k} height={rows.length * k} viewBox={`0 0 ${rows[0].length} ${rows.length}`} shapeRendering="crispEdges" fill={grad ? `url(#${id})` : fill} aria-hidden opacity={dim ? 0.18 : 1} style={{ flex: "none", filter: `drop-shadow(${Math.max(1, Math.round(k))}px ${Math.max(1, Math.round(k))}px 0 #0a0616)` }}>
       {grad ? (
         <defs>
           <linearGradient id={id} x1="0" y1="0" x2="1" y2="0">
@@ -192,10 +192,10 @@ const HEART_LOST = [".##.##.", "#..#..#", "#.....#", ".#...#.", "..#.#..", "...#
 /** Half a heart: the left half full, the right an outline. */
 const HEART_HALF = [".##.##.", "####..#", "####..#", ".###.#.", "..##...", "...#..."];
 const MOVE: Record<"sword" | "spell" | "armor", string[]> = {
-  sword: ["......#", ".....##", "....##.", "#..##..", ".###...", "..#....", ".#.#..."],
-  // An open hand, fingers spread, thumb out to the left: a spell. A fist, thumb curled over the top, four fingers down the right: armor. Drawn finer than the others (more cells, a smaller step).
-  spell: ["..#.#.#", "..#.#.#", "#.#.#.#", ".######", ".######", ".#####.", "..###.."],
-  armor: [".......####....", ".....########..", "...##########..", "..#########....", ".##############", "###############", "###############", "############...", "###############", "###############", "############...", "###############", "###############", "############...", "###############", ".#############.", "...##########..", ".....#######..."],
+  // Drawn at 22 cells, so they carry real detail; MoveIcon scales them down to the row's size.
+  sword: [".....................#", "...................###", "..................####", ".................#.##.", "................#.##..", "...............#.##...", "..............#.##....", ".............#.##.....", "............#.##......", "...........#.##.......", ".....##...#.##........", "......##.####.........", ".......#####..........", "........##............", ".........##...........", ".....###..##..........", "....##.....##.........", "...###................", "..##..................", ".###..................", "####..................", "###..................."],
+  spell: ["......................", ".........#............", "........###..#........", ".....#..###.###.......", "....###.###.###.......", "....###.###.###..#....", "....###.###.###.###...", "....###.###.###.###...", "....###.###.###.###...", "....###.###.###.###...", "..#####.###.###.###...", ".######.###.###.###...", "#######.###.###.###...", "###################...", "###################...", ".##################...", "..#################...", "....###############...", "....###############...", ".....#############....", "......###########.....", "........#######......."],
+  armor: ["...........###........", ".........######.......", ".......#########......", ".....############.....", "...#########..........", ".####################.", "#####################.", "#####################.", "##################....", "######################", "######################", "######################", "##################....", "#####################.", "#####################.", "#####################.", "##################....", "####################..", ".###################..", "...################...", ".....#############...."],
 };
 const TYPE: Record<Element, string[]> = {
   fire: ["...#...", "..##...", "..###..", ".####.#", ".######", "#######", ".#####."],
@@ -218,7 +218,8 @@ const BOLT = ["..##.", ".##..", "####.", "..##.", ".#...", "#...."];
 export function MoveIcon({ kind, k = 2, fill = "#fff", el, charge }: { kind: MoveKind; k?: number; fill?: string; el?: Element[]; charge?: boolean }) {
   const c1 = el?.[0] ? ELEMENT_COLOR[el[0]] : fill;
   const c2 = el?.[1] ? ELEMENT_COLOR[el[1]] : undefined;
-  const base = <Pix rows={MOVE[kind] ?? MOVE.sword} k={kind === "armor" ? Math.max(1, k - 1) : k} fill={c1} fill2={c2} />;
+  // k is the step of the old 7-cell icons; these are 22 cells, scaled to the same height.
+  const base = <Pix rows={MOVE[kind] ?? MOVE.sword} k={(k * 7) / 22} fill={c1} fill2={c2} />;
   if (!charge) return base;
   return <span style={{ display: "inline-flex", gap: Math.max(1, Math.round(k)), alignItems: "center" }}>{base}<Pix rows={BOLT} k={k} fill="#fff" /></span>;
 }
