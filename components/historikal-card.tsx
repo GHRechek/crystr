@@ -96,7 +96,8 @@ export function HistorikalCard({
           {own && hurt ? (
             hk.id ? (
               // Two mana a heart, from your own.
-              <form action={healHistorikal}>
+              // The card closes once it has been done, so the new hearts and the toast show.
+              <form action={async (fd: FormData) => { await healHistorikal(fd); onClose(); }}>
                 <input type="hidden" name="item" value={hk.id} />
                 <button type="submit" className="btn btn-sm" style={{ background: "#e0398a", color: "#fff" }}>{ko ? "REVIVE" : "HEAL"} · {2 * (h.hearts - hk.hp)} MANA</button>
               </form>
