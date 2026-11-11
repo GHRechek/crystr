@@ -129,7 +129,8 @@ export function AboutBadges({
     : { position: "relative", flex: "none", width: px, height: px, display: "grid", placeItems: "center", background: "none", border: 0, borderRadius: "var(--px-r)", color: "var(--muted)", cursor: "pointer", textDecoration: "none" };
   const tipBadge = tip ? shown.find((b) => b.key === tip.key) : undefined;
   const iconPx = compact ? Math.round(endPx * 0.5) : 22;
-  const leadBtn: React.CSSProperties = leads ? { ...endBtn, marginLeft: EVEN - PORTRAIT_GAP } : endBtn;
+  // At the right end of the row now, past the lineup; any slack goes before it.
+  const leadBtn: React.CSSProperties = leads ? { ...endBtn, marginLeft: "auto" } : endBtn;
   const tradeEl = tradeHref && scan ? (
         <>
           <button type="button" aria-label="Historikals: trade, battle, or edit your lineup" aria-haspopup="menu" aria-expanded={!!menu} title="Historikals" onClick={() => setMenu((m) => (m ? false : "menu"))} style={leadBtn}>
@@ -210,7 +211,6 @@ export function AboutBadges({
 
   return (
     <div ref={box} style={{ position: "relative", display: "flex", flexWrap: compact ? "nowrap" : "wrap", alignItems: "center", gap: compact ? EVEN : 6 }}>
-      {compact ? tradeEl : null}
       {token ? (
         <button
           type="button"
@@ -254,7 +254,7 @@ export function AboutBadges({
           {editable ? "✎" : <EyeIcon />}
         </button>
       ) : null}
-      {compact ? null : tradeEl}
+      {tradeEl}
       {compact && !editable && (earned.length || tradable.length) ? (
         <button
           type="button"

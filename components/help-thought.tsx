@@ -39,9 +39,6 @@ export function HelpThought({ text, muted, face = 104, onClick, label, onCode, h
   const style: React.CSSProperties = { position: "absolute", left: 16 + face * 0.75, right: 16, top: 22, transform: "translateY(-100%)", zIndex: 2 };
   return (
     <span className="helpcall" style={style}>
-      <button type="button" onClick={onClick} aria-label={label} style={{ flex: 1, minWidth: 0, background: "none", border: 0, padding: 0, color: "inherit", font: "inherit", textAlign: "left", cursor: "pointer" }}>
-        <span ref={words} className="helpcall-words" style={{ opacity: muted ? 0.75 : 1 }}>{text}</span>
-      </button>
       <button type="button" onClick={onCode ?? onClick} aria-label={helped ? "I helped them: scan their code" : "Your code: show it to be scanned"} title={helped ? "I helped them" : "Your code"} style={{ position: "relative", width: side, height: side, flex: "none", display: "grid", placeItems: "center", background: "#fff", border: 0, padding: 0, cursor: "pointer" }}>
         <QrGlyph size={Math.round(side * 0.9)} />
         {helped ? (
@@ -49,6 +46,9 @@ export function HelpThought({ text, muted, face = 104, onClick, label, onCode, h
             <HelpMark size={Math.round(side * 0.5)} fill="#fff" edge />
           </span>
         ) : null}
+      </button>
+      <button type="button" onClick={onClick} aria-label={label} style={{ flex: 1, minWidth: 0, background: "none", border: 0, padding: 0, color: "inherit", font: "inherit", textAlign: "left", cursor: "pointer" }}>
+        <span ref={words} className="helpcall-words" style={{ opacity: muted ? 0.75 : 1 }}>{text}</span>
       </button>
     </span>
   );
