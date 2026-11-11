@@ -63,7 +63,7 @@ export function PostCard({
           </div>
           {post.badge_how ? <div style={{ fontSize: 13, lineHeight: 1.5, color: "var(--text)", marginTop: 3 }}>{post.badge_how}</div> : null}
           <div className="px" style={{ fontSize: 10, color: "var(--muted)", marginTop: 4 }}>
-            IF THE POST DOES THIS, LIKE IT TO APPROVE.
+            IF THE POST DOES THIS, LIKE IT TO APPROVE. TEN LIKES FROM ANYONE APPROVES IT TOO.
           </div>
         </div>
       ) : null}
