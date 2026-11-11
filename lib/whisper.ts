@@ -1,7 +1,7 @@
 /** The reactions a whisper can get. Six, and the database accepts only these. */
 export const REACTIONS = ["❤️", "😂", "😮", "😢", "👍", "🔥"] as const;
 
-/** Pixel emoji reactions (the Pixel Emojis Set, from Figma Community): stored as "pm-<n>", drawn from
+/** Pixel emoji reactions: stored as "pm-<n>" (the pictures now mostly from the icon pack, see scripts/pack-emoji.py), drawn from
  *  /emoji/pm-<n>.png. The quick row under a held whisper shows six; + opens all seventy. */
 export const PIXEL_EMOJI = Array.from({ length: 70 }, (_, i) => `pm-${i + 1}`);
 export const QUICK_PIXEL = ["pm-41", "pm-6", "pm-5", "pm-3", "pm-54", "pm-59"];

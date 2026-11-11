@@ -7,9 +7,14 @@ const YELLOW_ANCHOR = "#ffd248";
 const YELLOW_2 = ["#ffe18f", "#ffd563", "#f8c877", "#f8bd43", "#f3aa29", "#fb8d28"];
 const YELLOW_2_ANCHOR = "#ffd563";
 
-/** The emoji with yellow skin: the faces and the hands. Only their yellow pixels change. */
+/** The pack's yellow skin: the face, its shade, and the deep shade under a hand or a chin. Its outline and
+ *  features are a separate dark colour that never changes, so they stay crisp on any skin. */
+const PACK_SKIN = "#f0c541", PACK_SHADE = "#e76a3a", PACK_DEEP = "#8e3d3a";
+
+/** The emoji with yellow skin: the faces and the hands (pm-: the reactions; pk-: the pack's own numbers, its faces
+ *  1-114 and hands 149-211). Only their yellow pixels change. */
 const SKINNED = new Set([...Array.from({ length: 28 }, (_, i) => i + 1), ...Array.from({ length: 11 }, (_, i) => i + 45)]);
-export const hasSkin = (e: string) => e.startsWith("pm-") && SKINNED.has(Number(e.slice(3)));
+export const hasSkin = (e: string) => (e.startsWith("pm-") && SKINNED.has(Number(e.slice(3)))) || (e.startsWith("pk-") && (() => { const n = Number(e.slice(3)); return n <= 114 || (n >= 149 && n <= 211); })());
 
 /** The skin someone chose in the face maker (or the one their face was given). */
 export function skinOf(person: { id: string; avatar_config?: unknown } | null | undefined): string | null {
@@ -34,6 +39,12 @@ export function skinRamp(skin: string): Record<string, string> {
     m["#ffecb9"] = hslToHex(h, sat * 0.35, Math.max(0.88, l + 0.1));
     m["#fff4d4"] = hslToHex(h, sat * 0.25, 0.95);
     m["#fb8d28"] = hslToHex(h, Math.min(1, sat * 0.9 + 0.1), l > 0.4 ? Math.max(0.12, l - 0.4) : Math.max(0.04, l * 0.35));
+    // The pack's three: the skin itself, then its shading. On a light skin the shade steps darker; on a dark
+    // one darker steps would sink into the outline and go muddy, so the shading turns into highlights instead.
+    const ps = Math.min(1, sat * 0.9 + 0.08);
+    m[PACK_SKIN] = key;
+    if (l >= 0.42) { m[PACK_SHADE] = hslToHex(h, ps, Math.max(0.22, l * 0.74)); m[PACK_DEEP] = hslToHex(h, ps, Math.max(0.17, l * 0.52)); }
+    else { m[PACK_SHADE] = hslToHex(h, ps, Math.min(0.9, l + 0.14)); m[PACK_DEEP] = hslToHex(h, ps, Math.min(0.95, l + 0.27)); }
     cache.set(key, m);
   }
   return m;
