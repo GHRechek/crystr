@@ -237,23 +237,14 @@ export function TypeIcon({ type, k = 2, grad }: { type: Element; k?: number; /**
   return <Pix rows={TYPE[type]} k={k} fill={ELEMENT_COLOR[type]} grad={grad} />;
 }
 
-/** A point along the CRYSTR gradient, pink (0) through purple to blue (1), as a solid colour: a favourite's hearts
- *  each take their own, so the row reads as one sweep in every browser, iOS included, which svg gradients do not. */
-function ramp(t: number) {
-  const stops: [number, [number, number, number]][] = [[0, [0xe0, 0x39, 0x8a]], [0.52, [0x91, 0x84, 0xd9]], [1, [0x4c, 0x7d, 0xf0]]];
-  const j = t <= 0.52 ? 0 : 1;
-  const [a, ca] = stops[j], [b, cb] = stops[j + 1];
-  const u = (t - a) / (b - a);
-  return `rgb(${ca.map((c, i) => Math.round(c + (cb[i] - c) * u)).join(",")})`;
-}
-
 /** Its types (each in its colour, or ? until you know them) then white hearts. */
-export function Stats({ h, hp, k = 3, known = true, only, fav }: { h: HK; hp?: number; k?: number; known?: boolean; only?: "type" | "hearts"; /** A favourite: its hearts in the CRYSTR gradient. */ fav?: boolean }) {
+export function Stats({ h, hp, k = 3, known = true, only, fav }: { h: HK; hp?: number; k?: number; known?: boolean; only?: "type" | "hearts"; /** Kept for callers; hearts no longer change for a favourite. */ fav?: boolean }) {
   const left = hp ?? h.hearts;
   return (
     <span className="en-stats">
       {only === "hearts" ? null : known && h.types?.length ? h.types.map((t) => <Pix key={t} rows={TYPE[t]} k={k} fill={ELEMENT_COLOR[t]} />) : <Pix rows={QMARK} k={k} fill="#d2cefd" />}
-      {only === "type" ? null : Array.from({ length: h.hearts }, (_, i) => <Pix key={i} rows={i + 1 <= left ? HEART : i < left ? HEART_HALF : HEART_LOST} k={k} fill={fav ? ramp(h.hearts > 1 ? i / (h.hearts - 1) : 0) : "#fff"} />)}
+      {/* Hearts in the second type's colour: the second type is what it defends with. White with no second type. */}
+      {only === "type" ? null : Array.from({ length: h.hearts }, (_, i) => <Pix key={i} rows={i + 1 <= left ? HEART : i < left ? HEART_HALF : HEART_LOST} k={k} fill={h.types?.[1] ? ELEMENT_COLOR[h.types[1]] : "#fff"} />)}
     </span>
   );
 }
