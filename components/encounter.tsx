@@ -158,13 +158,18 @@ export function EncounterHost() {
 const up = (s: string) => s.toUpperCase();
 
 /** A little pixel picture from rows of # and . */
-function Pix({ rows, k, fill, dim, grad }: { rows: string[]; k: number; fill: string; dim?: boolean; /** Filled with the CRYSTR gradient instead (defined inside, so every browser finds it). */ grad?: boolean }) {
+function Pix({ rows, k, fill, dim, grad, span }: { rows: string[]; k: number; fill: string; dim?: boolean; /** Filled with the CRYSTR gradient instead (defined inside, so every browser finds it). */ grad?: boolean; /** This glyph is the i-th of n in a row that shares ONE gradient, pink at the first and blue at the last; gap in px. */ span?: { i: number; n: number; gap: number } }) {
   const id = `g${useId().replace(/:/g, "")}`;
+  // In glyph units: a row of n glyphs with gaps between runs from -i*step to (n-i)*step - gap, where this one sits at 0..w.
+  const w = rows[0].length;
+  const step = w + (span ? span.gap / k : 0);
+  const x1 = span ? -span.i * step : 0;
+  const x2 = span ? (span.n - span.i) * step - span.gap / k : w;
   return (
     <svg width={rows[0].length * k} height={rows.length * k} viewBox={`0 0 ${rows[0].length} ${rows.length}`} shapeRendering="crispEdges" fill={grad ? `url(#${id})` : fill} aria-hidden opacity={dim ? 0.18 : 1} style={{ flex: "none", filter: `drop-shadow(${k}px ${k}px 0 #0a0616)` }}>
       {grad ? (
         <defs>
-          <linearGradient id={id} gradientUnits="userSpaceOnUse" x1="0" y1="0" x2={rows[0].length} y2="0">
+          <linearGradient id={id} gradientUnits="userSpaceOnUse" x1={x1} y1="0" x2={x2} y2="0">
             <stop offset="0" stopColor="#e0398a" />
             <stop offset="0.52" stopColor="#9184d9" />
             <stop offset="1" stopColor="#4c7df0" />
@@ -218,7 +223,7 @@ export function Stats({ h, hp, k = 3, known = true, only, fav }: { h: HK; hp?: n
   return (
     <span className="en-stats">
       {only === "hearts" ? null : known && h.types?.length ? h.types.map((t) => <Pix key={t} rows={TYPE[t]} k={k} fill={ELEMENT_COLOR[t]} />) : <Pix rows={QMARK} k={k} fill="#d2cefd" />}
-      {only === "type" ? null : Array.from({ length: h.hearts }, (_, i) => <Pix key={i} rows={i + 1 <= left ? HEART : i < left ? HEART_HALF : HEART_LOST} k={k} fill="#fff" grad={fav} />)}
+      {only === "type" ? null : Array.from({ length: h.hearts }, (_, i) => <Pix key={i} rows={i + 1 <= left ? HEART : i < left ? HEART_HALF : HEART_LOST} k={k} fill="#fff" grad={fav} span={fav ? { i, n: h.hearts, gap: 6 } : undefined} />)}
     </span>
   );
 }
