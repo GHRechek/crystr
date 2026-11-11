@@ -164,7 +164,7 @@ function Pix({ rows, k, fill, dim, grad }: { rows: string[]; k: number; fill: st
     <svg width={rows[0].length * k} height={rows.length * k} viewBox={`0 0 ${rows[0].length} ${rows.length}`} shapeRendering="crispEdges" fill={grad ? `url(#${id})` : fill} aria-hidden opacity={dim ? 0.18 : 1} style={{ flex: "none", filter: `drop-shadow(${k}px ${k}px 0 #0a0616)` }}>
       {grad ? (
         <defs>
-          <linearGradient id={id} x1="0" y1="0" x2="1" y2="0">
+          <linearGradient id={id} gradientUnits="userSpaceOnUse" x1="0" y1="0" x2={rows[0].length} y2="0">
             <stop offset="0" stopColor="#e0398a" />
             <stop offset="0.52" stopColor="#9184d9" />
             <stop offset="1" stopColor="#4c7df0" />
