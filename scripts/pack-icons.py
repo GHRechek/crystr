@@ -2,7 +2,7 @@
 
     python3 scripts/pack-icons.py /path/to/1000-Pixel-Art-Icons
 
-Writes public/icons/type-<element>.png (as drawn) and public/icons/move-<kind>[-<element>].png, the move icons
+Writes public/icons/type-<element>.png (in the element's colour) and public/icons/move-<kind>[-<element>].png, the move icons
 hue-shifted onto the element's colour (lightness kept, so the drawing survives; the dark outline is left alone).
 """
 import colorsys, os, sys
@@ -12,7 +12,7 @@ PACK = sys.argv[1]
 OUT = os.path.join(os.path.dirname(__file__), "..", "public", "icons")
 ELEMENT_COLOR = {"fire": "#ff6a3d", "tide": "#3fa9f5", "nature": "#6fa86a", "ward": "#a7abb6", "feral": "#b0865f", "dark": "#8a6fd9", "spirit": "#f2e2a2"}
 TYPES = {"fire": ("Nature", 8), "tide": ("Nature", 20), "nature": ("Nature", 101), "ward": ("Weapons", 71), "feral": ("Animals", 1), "dark": ("Symbols", 158), "spirit": ("Nature", 6)}
-MOVES = {"sword": ("Weapons", 34), "spell": ("Smileys & People", 152), "armor": ("Smileys & People", 170)}
+MOVES = {"sword": ("Weapons", 3), "spell": ("Smileys & People", 153), "armor": ("Smileys & People", 170)}
 
 # The pack outlines everything in a dusky purple (#442434); the app wants it darker.
 OUTLINE_FROM, OUTLINE_TO = (0x44, 0x24, 0x34), (0x16, 0x0a, 0x1e)
@@ -24,6 +24,24 @@ def pick(cat, n):
             r, g, b, a = px[x, y]
             if (r, g, b) == OUTLINE_FROM: px[x, y] = (*OUTLINE_TO, a)
     return im
+
+def tint_type(img, hex_):
+    """A type icon in its element's colour: every pixel but the outline takes the hue, and the very dark ones
+    (the paw print) come up to a middle lightness so the colour shows."""
+    r, g, b = (int(hex_[i:i + 2], 16) / 255 for i in (1, 3, 5))
+    th, tl, ts = colorsys.rgb_to_hls(r, g, b)
+    out = img.copy(); px = out.load()
+    for y in range(out.height):
+        for x in range(out.width):
+            r, g, b, a = px[x, y]
+            if not a or (r, g, b) == OUTLINE_TO: continue
+            h, l, s = colorsys.rgb_to_hls(r / 255, g / 255, b / 255)
+            if l > 0.92 and s < 0.2: continue  # white glints stay white
+            l2 = max(l, 0.36) if l < 0.2 else l
+            s2 = s * 0.3 if ts < 0.15 else max(min(s, 0.95), min(0.9, ts))
+            r2, g2, b2 = colorsys.hls_to_rgb(th, l2, s2)
+            px[x, y] = (round(r2 * 255), round(g2 * 255), round(b2 * 255), a)
+    return out
 
 def tint(img, hex_):
     r, g, b = (int(hex_[i:i + 2], 16) / 255 for i in (1, 3, 5))
@@ -42,7 +60,7 @@ def tint(img, hex_):
     return out
 
 os.makedirs(OUT, exist_ok=True)
-for el, (c, n) in TYPES.items(): pick(c, n).save(os.path.join(OUT, f"type-{el}.png"))
+for el, (c, n) in TYPES.items(): tint_type(pick(c, n), ELEMENT_COLOR[el]).save(os.path.join(OUT, f"type-{el}.png"))
 for kind, (c, n) in MOVES.items():
     im = pick(c, n); im.save(os.path.join(OUT, f"move-{kind}.png"))
     for el, col in ELEMENT_COLOR.items(): tint(im, col).save(os.path.join(OUT, f"move-{kind}-{el}.png"))
