@@ -193,9 +193,9 @@ const HEART_LOST = [".##.##.", "#..#..#", "#.....#", ".#...#.", "..#.#..", "...#
 const HEART_HALF = [".##.##.", "####..#", "####..#", ".###.#.", "..##...", "...#..."];
 const MOVE: Record<"sword" | "spell" | "armor", string[]> = {
   sword: ["......#", ".....##", "....##.", "#..##..", ".###...", "..#....", ".#.#..."],
-  // An open hand, fingers spread, thumb out to the left: a spell. A fist, knuckles up: armor.
+  // An open hand, fingers spread, thumb out to the left: a spell. A fist, side on, punching right from its forearm: armor.
   spell: ["..#.#.#", "..#.#.#", "#.#.#.#", ".######", ".######", ".#####.", "..###.."],
-  armor: [".#.#.#.", "#######", "#######", "#######", "######.", ".#####.", "..###.."],
+  armor: ["....####.", "...#.#.##", "#########", "####.#.##", "#########", "...#.#.##", "....#####", ".....###."],
 };
 const TYPE: Record<Element, string[]> = {
   fire: ["...#...", "..##...", "..###..", ".####.#", ".######", "#######", ".#####."],
