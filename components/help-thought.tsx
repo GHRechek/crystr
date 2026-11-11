@@ -43,7 +43,7 @@ export function HelpThought({ text, muted, face = 104, onClick, label, onCode, h
         <span ref={words} className="helpcall-words" style={{ opacity: muted ? 0.75 : 1 }}>{text}</span>
       </button>
       <button type="button" onClick={onCode ?? onClick} aria-label={helped ? "I helped them: scan their code" : "Your code: show it to be scanned"} title={helped ? "I helped them" : "Your code"} style={{ position: "relative", width: side, height: side, flex: "none", display: "grid", placeItems: "center", background: "#fff", border: 0, padding: 0, cursor: "pointer" }}>
-        <QrGlyph size={Math.round(side * 0.82)} />
+        <QrGlyph size={Math.round(side * 0.9)} />
         {helped ? (
           <span style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center" }}>
             <HelpMark size={Math.round(side * 0.5)} fill="#fff" edge />

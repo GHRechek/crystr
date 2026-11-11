@@ -303,28 +303,25 @@ function EyeIcon() {
 /** A little QR code in the CRYSTR gradient: three finder squares and a scatter of modules, as the eye expects one. */
 export function QrGlyph({ size = 22 }: { size?: number }) {
   const id = `qr${useId().replace(/:/g, "")}`;
+  // Thirteen cells across: fewer, fatter squares than a real code, so it reads at button size.
   const rows = [
-    "#######.#.#######",
-    "#.....#.#.#.....#",
-    "#.###.#...#.###.#",
-    "#.###.#.#.#.###.#",
-    "#.###.#...#.###.#",
-    "#.....#.#.#.....#",
-    "#######.#.#######",
-    "........#........",
-    ".######.##...#.#.",
-    "........####.#..#",
-    "#######..###.##..",
-    "#.....#.#..#....#",
-    "#.###.#..##.#.#..",
-    "#.###.#...#......",
-    "#.###.#...#....##",
-    "#.....#..#.###.##",
-    "#######.#.##....#",
+    "#####.#.#####",
+    "#...#...#...#",
+    "#.#.#.#.#.#.#",
+    "#...#...#...#",
+    "#####.#.#####",
+    "......#......",
+    "#.#.#.##.#.#.",
+    "......#..#..#",
+    "#####..##.##.",
+    "#...#.#..#..#",
+    "#.#.#..#.#.##",
+    "#...#.#...#..",
+    "#####.##.#..#",
   ];
   return (
-    <svg width={size} height={size} viewBox="0 0 17 17" shapeRendering="crispEdges" aria-hidden>
-      <defs><linearGradient id={id} x1="0" y1="0" x2="17" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stopColor="#e0398a" /><stop offset=".52" stopColor="#9184d9" /><stop offset="1" stopColor="#4c7df0" /></linearGradient></defs>
+    <svg width={size} height={size} viewBox="0 0 13 13" shapeRendering="crispEdges" aria-hidden>
+      <defs><linearGradient id={id} x1="0" y1="0" x2="13" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stopColor="#e0398a" /><stop offset=".52" stopColor="#9184d9" /><stop offset="1" stopColor="#4c7df0" /></linearGradient></defs>
       {rows.flatMap((r, y) => [...r].map((c, x) => (c === "#" ? <rect key={`${x}${y}`} x={x} y={y} width={1} height={1} fill={`url(#${id})`} /> : null)))}
     </svg>
   );
