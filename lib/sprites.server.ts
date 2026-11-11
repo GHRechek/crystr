@@ -116,8 +116,9 @@ function dress(type: Element, h: number, s: number, v: number): [number, number,
   // Its hue, with the colour no stronger than the type's own swatch allows: a fire orange made green
   // would otherwise glow neon.
   const [th, ts] = rgbToHsv(parseInt(ELEMENT_COLOR[type].slice(1, 3), 16), parseInt(ELEMENT_COLOR[type].slice(3, 5), 16), parseInt(ELEMENT_COLOR[type].slice(5, 7), 16));
-  // The shadow side comes up a little: a dark purple shade turned brown reads as mud at the same depth.
-  return hsvToRgb(th, Math.min(Math.max(s, 0.25), Math.max(0.45, ts + 0.15)), v < 0.45 ? v + (0.45 - v) * 0.35 : v);
+  // The shadow side comes up a little (a dark purple shade turned brown reads as mud at the same depth), but
+  // only the shades: anything darker than that is linework and keeps its depth.
+  return hsvToRgb(th, Math.min(Math.max(s, 0.25), Math.max(0.45, ts + 0.15)), v >= 0.27 && v < 0.45 ? v + (0.45 - v) * 0.25 : v);
 }
 
 /** Every pixel that wears the old type's colour takes the new one, at its own depth. When the picture does not
