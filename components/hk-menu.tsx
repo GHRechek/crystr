@@ -152,7 +152,7 @@ export function HkMenu({ shown, tradable, items, startOn = "menu", onClose }: {
     if (busy) return;
     const held = binned.filter((b): b is ShownBadge => !!b?.hk);
     if (held.length < 4) {
-      setNote({ title: "RECYCLE", body: "Drop four Historikals of one rarity into the auras and they become one of the next rarity up, chosen by chance. Now and then one evolves instead. Commons, uncommons and rares only: epics and mythics can't go in." });
+      setNote({ title: "MANA BLEND", body: "Combine four Historikals of the same quality and get a new one from the next tier. Commons, uncommons and rares only." });
       return;
     }
     const rars = new Set(held.map((b) => HISTORIKAL.get(b.hk!.slug)?.rarity));
@@ -179,7 +179,7 @@ export function HkMenu({ shown, tradable, items, startOn = "menu", onClose }: {
           const types = h ? (rolled ? [...new Set([rolled, ...h.types.slice(1)])] : h.types) : [];
           router.refresh();
           if (h) setCard({ id: r.item, slug: r.slug, name: h.name, rarity: h.rarity, types, hearts: h.hearts, hp: h.hearts, favorite: false });
-          setNote({ title: r.evolved ? "IT EVOLVED!" : "RECYCLED!", body: `${r.name.toUpperCase()} joins your Historikals.` });
+          setNote({ title: r.evolved ? "IT EVOLVED!" : "BLENDED!", body: `${r.name.toUpperCase()} joins your Historikals.` });
         });
       },
     });
@@ -272,8 +272,8 @@ export function HkMenu({ shown, tradable, items, startOn = "menu", onClose }: {
       {note ? (
         <div role="alertdialog" aria-label={note.title} onClick={() => setNote(null)} style={{ position: "fixed", inset: 0, zIndex: 96, background: "rgba(5,3,12,.7)", display: "grid", placeItems: "center", padding: 20 }}>
           <div onClick={(e) => e.stopPropagation()} style={{ width: "min(80vw, 300px)", background: "var(--blk-pur)", boxShadow: "4px 4px 0 #0a0616", padding: "18px 16px 16px", display: "flex", flexDirection: "column", gap: 12 }}>
-            <span className="px crystr-text" style={{ fontSize: 13, letterSpacing: ".06em" }}>{note.title}</span>
-            <span className="px" style={{ fontSize: 9.5, lineHeight: 1.8, color: "#fff", letterSpacing: ".03em" }}>{note.body}</span>
+            <span className="px crystr-text" style={{ fontSize: 13, letterSpacing: ".06em", textAlign: "center" }}>{note.title}</span>
+            <span className="px" style={{ fontSize: 9.5, lineHeight: 1.8, color: "#fff", letterSpacing: ".03em", textAlign: "center" }}>{note.body}</span>
             {note.yes ? (
               <div style={{ display: "flex", gap: 8 }}>
                 <button type="button" className="px" onClick={note.yes} style={{ flex: 1, minHeight: 40, border: 0, cursor: "pointer", background: "#e0398a", color: "#fff", fontSize: 10, letterSpacing: ".06em", boxShadow: "3px 3px 0 #0a0616" }}>YES, I&apos;M SURE</button>

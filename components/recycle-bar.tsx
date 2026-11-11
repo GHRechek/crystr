@@ -190,7 +190,7 @@ export function RecycleBar({ spots, onClear, onRecycle }: {
     <div style={{ flex: "none", padding: "8px 14px 8px", backgroundImage: GRAD, backgroundSize: "100% 1px", backgroundRepeat: "no-repeat", backgroundPosition: "top" }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-evenly" }}>
         {spot(0)}{spot(1)}
-        <button type="button" className="hk-recycle" onClick={onRecycle} aria-label="Recycle these four into one of the next rarity up" style={{ background: "none", border: 0, padding: 0, cursor: "pointer", lineHeight: 0 }}><RecycleIcon /></button>
+        <button type="button" className="hk-recycle" onClick={onRecycle} aria-label="Mana Blend: these four become one of the next tier" style={{ background: "none", border: 0, padding: 0, cursor: "pointer", lineHeight: 0 }}><RecycleIcon /></button>
         {spot(2)}{spot(3)}
       </div>
     </div>
