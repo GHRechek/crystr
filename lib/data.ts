@@ -113,6 +113,8 @@ export type FeedPost = {
   quest_title: string | null;
   /** Set on a badge request: the title of the badge the post asks a witch to approve. */
   badge_title?: string | null;
+  /** What that badge asks of the person, in its own words: what a witch checks the post against. */
+  badge_how?: string | null;
   /** On the timeline: the newest reply, shown under the post. */
   latest_reply?: { id: number; author: Author; body: string; created_at: string } | null;
 };
@@ -156,7 +158,7 @@ export async function getFeed(userId: string): Promise<FeedItem[]> {
   const [{ data: posts }, { data: dispatches }] = await Promise.all([
     supabase
       .from("posts")
-      .select(`id, body, has_image, cost, created_at, proof_path, quest:quests!posts_quest_slug_fkey(title), badge:badges!posts_badge_slug_fkey(title), author:profiles!posts_author_id_fkey(${AUTHOR_COLS}), likes:post_likes(count))`)
+      .select(`id, body, has_image, cost, created_at, proof_path, quest:quests!posts_quest_slug_fkey(title), badge:badges!posts_badge_slug_fkey(title, how), author:profiles!posts_author_id_fkey(${AUTHOR_COLS}), likes:post_likes(count))`)
       .is("parent_id", null)
       .order("created_at", { ascending: false })
       .limit(50),
@@ -176,7 +178,7 @@ export async function getFeed(userId: string): Promise<FeedItem[]> {
     created_at: string;
     proof_path: string | null;
     quest: { title: string } | null;
-    badge: { title: string } | null;
+    badge: { title: string; how: string } | null;
     author: Author;
     likes: { count: number }[];
   }>;
@@ -223,6 +225,7 @@ export async function getFeed(userId: string): Promise<FeedItem[]> {
     image_url: p.proof_path ? (signed.get(p.proof_path) ?? null) : null,
     quest_title: p.quest?.title ?? null,
     badge_title: p.badge?.title ?? null,
+    badge_how: p.badge?.how ?? null,
     latest_reply: latest.get(p.id) ?? null,
   }));
 
@@ -566,12 +569,12 @@ export async function getPostThread(
   const [{ data: top }, { data: kids }] = await Promise.all([
     supabase
       .from("posts")
-      .select(`id, body, has_image, cost, created_at, parent_id, proof_path, quest:quests!posts_quest_slug_fkey(title), badge:badges!posts_badge_slug_fkey(title), author:profiles!posts_author_id_fkey(${AUTHOR_COLS}), likes:post_likes(count)`)
+      .select(`id, body, has_image, cost, created_at, parent_id, proof_path, quest:quests!posts_quest_slug_fkey(title), badge:badges!posts_badge_slug_fkey(title, how), author:profiles!posts_author_id_fkey(${AUTHOR_COLS}), likes:post_likes(count)`)
       .eq("id", id)
       .maybeSingle(),
     supabase
       .from("posts")
-      .select(`id, body, has_image, cost, created_at, parent_id, proof_path, quest:quests!posts_quest_slug_fkey(title), badge:badges!posts_badge_slug_fkey(title), author:profiles!posts_author_id_fkey(${AUTHOR_COLS}), likes:post_likes(count)`)
+      .select(`id, body, has_image, cost, created_at, parent_id, proof_path, quest:quests!posts_quest_slug_fkey(title), badge:badges!posts_badge_slug_fkey(title, how), author:profiles!posts_author_id_fkey(${AUTHOR_COLS}), likes:post_likes(count)`)
       .eq("parent_id", id)
       .order("created_at", { ascending: true })
       .limit(200),
@@ -587,7 +590,7 @@ export async function getPostThread(
     created_at: string;
     proof_path: string | null;
     quest: { title: string } | null;
-    badge: { title: string } | null;
+    badge: { title: string; how: string } | null;
     author: Author;
     likes: { count: number }[];
   };
@@ -615,6 +618,7 @@ export async function getPostThread(
     image_url: r.proof_path ? (signed.get(r.proof_path) ?? null) : null,
     quest_title: r.quest?.title ?? null,
     badge_title: r.badge?.title ?? null,
+    badge_how: r.badge?.how ?? null,
   });
 
   return {

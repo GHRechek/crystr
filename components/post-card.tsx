@@ -56,6 +56,17 @@ export function PostCard({
 
   return (
     <div className={line ? "tpost tpost-chain" : "tpost"}>
+      {witch && post.badge_title && !mine ? (
+        <div className="tpost-banner" role="note">
+          <div className="px" style={{ fontSize: 11, color: "var(--pur-pale)" }}>
+            QUEST TO APPROVE · {post.badge_title.toUpperCase()}
+          </div>
+          {post.badge_how ? <div style={{ fontSize: 13, lineHeight: 1.5, color: "var(--text)", marginTop: 3 }}>{post.badge_how}</div> : null}
+          <div className="px" style={{ fontSize: 10, color: "var(--muted)", marginTop: 4 }}>
+            IF THE POST DOES THIS, LIKE IT TO APPROVE.
+          </div>
+        </div>
+      ) : null}
       <div className="tpost-side">
         <Link href={`/u/${post.author.handle}`} aria-label={`${post.author.handle}'s profile`}>
           <Avatar person={post.author} size={40} />
