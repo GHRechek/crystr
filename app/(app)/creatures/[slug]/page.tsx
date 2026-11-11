@@ -77,17 +77,20 @@ export default async function CreatureEditPage({ params }: { params: Promise<{ s
           </div>
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-          <span className="px" style={label}>MOVES · COMMONS USE TWO, UNCOMMONS AND RARES THREE, EPICS AND MYTHICS ALL FOUR (THE FOURTH A COMBINATION)</span>
+          <span className="px" style={label}>MOVES · COMMONS USE TWO, UNCOMMONS AND RARES THREE, EPICS AND MYTHICS ALL FOUR (THE FOURTH CHARGES, AS ITS OWN ELEMENT)</span>
           {moves.map((m, i) => (
             <div key={i} style={row}>
               <input name={`move${i}`} className="input" defaultValue={m?.name ?? ""} maxLength={24} aria-label={`Move ${i + 1} name`} placeholder={i === 3 ? "Fourth move (epic and mythic)" : i === 2 ? "Third move (uncommon and up)" : "Move name"} style={{ flex: 2, minWidth: 0 }} />
-              <select name={`kind${i}`} className="input" defaultValue={m?.kind ?? (["sword", "spell", "armor", "sword+armor"][i])} aria-label={`Move ${i + 1} kind`} style={{ flex: 1 }}>
+              <select name={`kind${i}`} className="input" defaultValue={m?.kind ?? (["sword", "spell", "armor", "sword"][i])} aria-label={`Move ${i + 1} kind`} style={{ flex: 1 }}>
                 <option value="sword">SWORD</option>
                 <option value="spell">SPELL</option>
                 <option value="armor">ARMOR</option>
-                <option value="sword+armor">SWORD & ARMOR</option>
-                <option value="spell+armor">SPELL & ARMOR</option>
               </select>
+              {i === 3 ? (
+                <select name="charge3" className="input" defaultValue={m?.charge ?? TYPES.find((t) => !h.types.includes(t))} aria-label="Charge element" style={{ flex: 1 }}>
+                  {TYPES.filter((t) => !h.types.includes(t)).map((t) => <option key={t} value={t}>CHARGE · {t.toUpperCase()}</option>)}
+                </select>
+              ) : null}
             </div>
           ))}
         </div>

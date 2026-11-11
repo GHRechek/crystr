@@ -15,7 +15,7 @@ const lines = rows
   .filter((r) => r[10] !== false || r[9] === false)
   .sort((a, b) => a[11] - b[11] || a[0].localeCompare(b[0]))
   .map(([slug, t, rarity, types, hearts, moves, rnd, shift, hover, droppable]) =>
-    `  { slug: ${q(slug)}, name: ${q(nameOf(slug, t))}, rarity: ${q(rarity)}, types: [${types.map(q).join(", ")}], hearts: ${hearts}, moves: [${moves.map((m) => `{ name: ${q(m.name)}, kind: ${q(m.kind)} }`).join(", ")}]${rnd ? ", rnd: true" : ""}${shift ? ", shift: true" : ""}${hover ? ", hover: true" : ""}${droppable ? "" : ", retired: true"} },`);
+    `  { slug: ${q(slug)}, name: ${q(nameOf(slug, t))}, rarity: ${q(rarity)}, types: [${types.map(q).join(", ")}], hearts: ${hearts}, moves: [${moves.map((m) => `{ name: ${q(m.name)}, kind: ${q(m.kind)}${m.charge ? `, charge: ${q(m.charge)}` : ""} }`).join(", ")}]${rnd ? ", rnd: true" : ""}${shift ? ", shift: true" : ""}${hover ? ", hover: true" : ""}${droppable ? "" : ", retired: true"} },`);
 const p = "lib/historikals.ts";
 const src = fs.readFileSync(p, "utf8");
 const a = src.indexOf("export const HISTORIKALS: Historikal[] = [\n") + "export const HISTORIKALS: Historikal[] = [\n".length;

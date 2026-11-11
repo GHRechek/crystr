@@ -2169,3 +2169,8 @@ select.input { border: 0; }
 .bl-ask-box { width: 300px; background: var(--blk-pur); box-shadow: 4px 4px 0 #0a0616; padding: 18px 16px 16px; display: flex; flex-direction: column; gap: 12px; }
 .bl-btn { flex: 1; min-height: 40px; border: 0; cursor: pointer; background: rgba(255,255,255,.12); color: #fff; font-size: 10px; letter-spacing: .06em; box-shadow: 3px 3px 0 #0a0616; }
 .bl-btn.is-yes { background: #e0398a; }
+
+/* A charging Historikal: flakes in its charge's colour rising off it, most behind, a few in front. */
+.en-aura { position: relative; display: inline-block; line-height: 0; }
+.en-aura i { position: absolute; display: block; opacity: 0; animation: en-aura-rise linear infinite; pointer-events: none; }
+@keyframes en-aura-rise { 0% { transform: translate(0, 4px) scale(1); opacity: 0; } 8% { opacity: 1; } 55% { opacity: .95; } 100% { transform: translate(var(--dx, 0), var(--h, -50px)) scale(.25); opacity: 0; } }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useCallback, useEffect, useRef, useState } from "react";
+import { useId, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { spriteUrl } from "@/lib/sprites";
 import { createClient } from "@/lib/supabase/client";
 import { QuestAskScreen, type QuestView } from "@/components/quest-ask";
@@ -15,8 +15,8 @@ import { RarityGlow } from "@/components/rarity-glow";
    phones, and keeps it fresh about once a second while it is open. */
 
 /** `types` (one or two, the first leads) is missing until you know it. `element` is the old single type: unused. */
-export type HK = { id: number; slug: string; name: string; rarity: Rarity; element?: string; types?: Element[]; hearts: number; moves?: { name: string; kind: MoveKind }[]; hp?: number; seen?: string[] };
-type Side = { swap: boolean; from: string; to: string; move: string | null; hit: number };
+export type HK = { id: number; slug: string; name: string; rarity: Rarity; element?: string; types?: Element[]; hearts: number; moves?: { name: string; kind: MoveKind; charge?: Element }[]; hp?: number; seen?: string[] };
+type Side = { swap: boolean; from: string; to: string; move: string | null; hit: number; charge?: boolean; unleash?: Element | null };
 type View = {
   ok: boolean; id: number; kind: "trade" | "battle"; stage: string; seq: number; me: "a" | "b";
   them: { handle: string; name: string | null }; off_by: "me" | "them" | null;
@@ -24,6 +24,10 @@ type View = {
   team?: HK[]; ready?: boolean; their_ready?: boolean; pick?: number | null; their_picked?: boolean; lock?: boolean; their_lock?: boolean;
   swapped?: boolean; turn?: number; quiet?: number; move?: { m?: number; swap?: number } | null; their_moved?: boolean; need?: boolean; their_need?: boolean;
   shadow?: string; left?: number; their_pips?: { ko: boolean; cur: boolean; slug?: string | null }[]; theirs?: HK; last?: { turn: number; line: string; extra: string; a: Side; b: Side } | null;
+  /** Your creature charged last round: this round its charge comes out, whatever you do. */
+  charging?: { item: number; m: number; el: Element } | null;
+  /** Theirs is charging: next round it comes out as this element. */
+  their_charging?: { el: Element } | null;
   alive?: number; their_alive?: number;
   epic?: "token" | "historikal" | null; ask?: boolean; token_ok?: boolean; my_token?: unknown; want_epic?: boolean; lineup_ok?: boolean; lineup?: number[];
   stake?: { token?: boolean; item?: number } | null; their_stake?: { token?: unknown; item?: HK } | null;
@@ -200,11 +204,28 @@ const TRADE_ARROWS = ["......#..", ".......#.", "#########", ".......#.", ".....
 const UNDO = ["..#.......", ".##.......", "#######...", ".##....#..", "..#.....#.", ".........#", ".........#", "........#.", "...#####.."];
 const SWAP = ["...#...", "....#..", "#######", "....#..", "..#.#..", ".#.....", "#######"];
 
-/** A move's kind as its little pixel icon: sword, spell or armor; a combination shows both, side by side. */
-export function MoveIcon({ kind, k = 2, fill = "#fff" }: { kind: MoveKind; k?: number; fill?: string }) {
-  const parts = kind.split("+") as ("sword" | "spell" | "armor")[];
-  if (parts.length === 1) return <Pix rows={MOVE[parts[0]]} k={k} fill={fill} />;
-  return <span style={{ display: "inline-flex", gap: Math.max(1, Math.round(k)), alignItems: "center" }}>{parts.map((p) => <Pix key={p} rows={MOVE[p]} k={k} fill={fill} />)}</span>;
+const BOLT = ["..##.", ".##..", "####.", "..##.", ".#...", "#...."];
+/** A move's kind as its little pixel icon: sword, spell or armor; a charge move adds a bolt in its element's colour. */
+export function MoveIcon({ kind, k = 2, fill = "#fff", charge }: { kind: MoveKind; k?: number; fill?: string; charge?: Element }) {
+  const base = <Pix rows={MOVE[kind] ?? MOVE.sword} k={k} fill={fill} />;
+  if (!charge) return base;
+  return <span style={{ display: "inline-flex", gap: Math.max(1, Math.round(k)), alignItems: "center" }}>{base}<Pix rows={BOLT} k={k} fill={ELEMENT_COLOR[charge]} /></span>;
+}
+
+/** The charging aura: flakes in the charge's element colour rising off the creature, most behind it, a few in front. */
+export function ChargeAura({ el, size, children }: { el: Element; size: number; children: React.ReactNode }) {
+  const c = ELEMENT_COLOR[el];
+  const flakes = useMemo(() => {
+    let a = 9;
+    const r = () => { a = (a * 1103515245 + 12345) & 0x7fffffff; return a / 0x7fffffff; };
+    return Array.from({ length: 70 }, (_, i) => { const ang = r() * Math.PI * 2, rr = 0.5 + r() * 0.5; return { x: 0.5 + Math.cos(ang) * 0.42 * rr, y: 0.62 + Math.sin(ang) * 0.36 * rr, sz: [3, 3, 4, 4, 5][Math.floor(r() * 5)] * (size / 96), front: i >= 58, dx: (r() * 20 - 10) * (size / 96), h: (40 + r() * 50) * (size / 96), d: -(r() * 1.6), dur: 0.9 + r() * 0.8 }; });
+  }, [size]);
+  return (
+    <span className="en-aura" style={{ width: size, height: size }}>
+      {flakes.map((f, i) => <i key={i} style={{ left: f.x * size, top: f.y * size, width: f.sz, height: f.sz, background: c, zIndex: f.front ? 3 : 1, ["--dx" as string]: `${f.dx}px`, ["--h" as string]: `-${f.h}px`, animationDelay: `${f.d}s`, animationDuration: `${f.dur}s` }} />)}
+      <span style={{ position: "relative", zIndex: 2, display: "block", lineHeight: 0 }}>{children}</span>
+    </span>
+  );
 }
 
 /** One type's icon, in its colour. */
@@ -486,6 +507,14 @@ export function TradeScreen({ v, act, close }: { v: View; act: (a: Record<string
 export function BattleScreen({ v, act, close }: { v: View; act: (a: Record<string, unknown>) => void; close: () => void }) {
   const mid = useRef<HTMLDivElement>(null);
   const [swapping, setSwapping] = useState(false);
+  // Charged last round: this round is spoken for, and the move goes in on its own.
+  const sentCharge = useRef<number | null>(null);
+  useEffect(() => {
+    if (v.stage !== "fight" || !v.charging || v.move) return;
+    if (sentCharge.current === v.turn) return;
+    sentCharge.current = v.turn ?? null;
+    act({ do: "move", m: v.charging.m });
+  }, [v.stage, v.charging, v.move, v.turn]);   // eslint-disable-line react-hooks/exhaustive-deps
   const [revealing, setRevealing] = useState(false);
   const shown = useRef<number | null>(null); // the turn whose clash we've played
   const [lunge, setLunge] = useState(false);
@@ -612,7 +641,7 @@ export function BattleScreen({ v, act, close }: { v: View; act: (a: Record<strin
 
       {fighting && me && v.theirs ? (
         <>
-          <div className="px en-q">{v.stage === "end" ? "" : v.stage === "replace" ? "KNOCKED OUT!" : `TURN ${v.turn}`}</div>
+          <div className="px en-q">{v.stage === "end" ? "" : v.stage === "replace" ? "KNOCKED OUT!" : v.their_charging ? `${up(v.theirs.name)} IS CHARGING UP, GET READY!` : `TURN ${v.turn}`}</div>
           {/* What they have left to send out, as silhouettes, above the one that is up. */}
           {(v.their_pips ?? []).some((p) => p.slug) ? (
             <div className="en-left" aria-label="Still to come">
@@ -620,7 +649,7 @@ export function BattleScreen({ v, act, close }: { v: View; act: (a: Record<strin
             </div>
           ) : null}
           <div className={`en-them${(v.theirs.hp ?? 0) <= 0 ? " down" : ""}`} style={lunge ? { transform: "translateY(110px)" } : undefined}>
-            {theirMythic && entrance === "fade" ? null : theirMythic && entrance === "dark" ? <Creature slug={v.theirs.slug} size={102} shadow aura /> : <Creature slug={v.theirs.slug} el={v.theirs.types?.[0]} size={102} ko={(v.theirs.hp ?? 0) <= 0} />}
+            {theirMythic && entrance === "fade" ? null : theirMythic && entrance === "dark" ? <Creature slug={v.theirs.slug} size={102} shadow aura /> : v.their_charging && (v.theirs.hp ?? 0) > 0 ? <ChargeAura el={v.their_charging.el} size={102}><Creature slug={v.theirs.slug} el={v.theirs.types?.[0]} size={102} /></ChargeAura> : <Creature slug={v.theirs.slug} el={v.theirs.types?.[0]} size={102} ko={(v.theirs.hp ?? 0) <= 0} />}
           </div>
           <div className="en-tag en-tag-them" style={theirMythic && entrance === "fade" ? { visibility: "hidden" } : undefined}>
             {theirIsMythic ? <span className="px en-mythtag">MYTHIC</span> : null}
@@ -631,11 +660,11 @@ export function BattleScreen({ v, act, close }: { v: View; act: (a: Record<strin
           </div>
           {v.last && v.stage !== "end" ? (
             <div className="px en-say-big" key={v.last.turn}>
-              <span className="en-vs">{v.last[mySide].swap ? `${up(v.last[mySide].from)} → ${up(v.last[mySide].to)}` : up(v.last[mySide].move ?? "")} <i>vs</i> {v.last[theirSide].swap ? "SWAP" : up(v.last[theirSide].move ?? "")}</span>
+              <span className="en-vs">{v.last[mySide].swap ? `${up(v.last[mySide].from)} → ${up(v.last[mySide].to)}` : v.last[mySide].charge ? "CHARGING UP" : v.last[mySide].unleash ? `${up(v.last[mySide].unleash)} CHARGE · ${up(v.last[mySide].move ?? "")}` : up(v.last[mySide].move ?? "")} <i>vs</i> {v.last[theirSide].swap ? "SWAP" : v.last[theirSide].charge ? "CHARGING UP" : v.last[theirSide].unleash ? `${up(v.last[theirSide].unleash)} CHARGE · ${up(v.last[theirSide].move ?? "")}` : up(v.last[theirSide].move ?? "")}</span>
               <span>{v.last.line}</span>{v.last.extra ? <b>{v.last.extra}</b> : null}
             </div>
           ) : null}
-          <div className={`en-me${(me.hp ?? 0) <= 0 ? " down" : ""}`} style={lunge ? { transform: "translateY(-110px)" } : undefined}><Creature slug={me.slug} el={me.types?.[0]} size={84} ko={(me.hp ?? 0) <= 0} /></div>
+          <div className={`en-me${(me.hp ?? 0) <= 0 ? " down" : ""}`} style={lunge ? { transform: "translateY(-110px)" } : undefined}>{v.charging && (me.hp ?? 0) > 0 ? <ChargeAura el={v.charging.el} size={84}><Creature slug={me.slug} el={me.types?.[0]} size={84} /></ChargeAura> : <Creature slug={me.slug} el={me.types?.[0]} size={84} ko={(me.hp ?? 0) <= 0} />}</div>
           <div className="en-tag en-tag-fme">
             <span className="px en-name">{up(me.name)}</span>
             <Stats h={me} hp={me.hp} />
@@ -662,12 +691,14 @@ export function BattleScreen({ v, act, close }: { v: View; act: (a: Record<strin
               ))}
               <button type="button" className="px en-back" onClick={() => setSwapping(false)}>BACK</button>
             </div></div>
+          ) : v.charging ? (
+            <div className="px en-status" style={{ color: ELEMENT_COLOR[v.charging.el] }}>CHARGING {up(v.charging.el)}… IT COMES OUT THIS ROUND{v.move ? <><br />WAITING ON {up(v.them.handle)}<Dots /></> : null}</div>
           ) : (
             <>
               <div className="en-moves">
                 {(me.moves ?? []).map((m, i) => (
-                  <button key={i} type="button" className={`px en-move${v.move?.m === i ? " on" : ""}`} disabled={!!v.move} onClick={() => { playClick(); act({ do: "move", m: i }); }} aria-label={`${m.name}, ${m.kind}`}>
-                    <MoveIcon kind={m.kind} k={3} /><span>{up(m.name)}</span>
+                  <button key={i} type="button" className={`px en-move${v.move?.m === i ? " on" : ""}`} disabled={!!v.move} onClick={() => { playClick(); act({ do: "move", m: i }); }} aria-label={`${m.name}, ${m.kind}${m.charge ? `, charges as ${m.charge}` : ""}`}>
+                    <MoveIcon kind={m.kind} k={3} charge={m.charge} /><span>{up(m.name)}</span>{m.charge ? <small style={{ color: ELEMENT_COLOR[m.charge], fontSize: 7, letterSpacing: ".06em" }}>CHARGE · {up(m.charge)}</small> : null}
                   </button>
                 ))}
                 {bench.length ? (

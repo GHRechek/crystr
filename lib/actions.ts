@@ -1368,7 +1368,7 @@ export async function saveCreature(fd: FormData) {
   const slug = String(fd.get("slug") ?? "");
   const rarity = String(fd.get("rarity") ?? "");
   const n = rarity === "common" ? 2 : rarity === "uncommon" || rarity === "rare" ? 3 : 4;
-  const moves = [0, 1, 2, 3].slice(0, n).map((i) => ({ name: String(fd.get(`move${i}`) ?? "").trim(), kind: String(fd.get(`kind${i}`) ?? "") }));
+  const moves = [0, 1, 2, 3].slice(0, n).map((i) => ({ name: String(fd.get(`move${i}`) ?? "").trim(), kind: String(fd.get(`kind${i}`) ?? ""), ...(i === 3 && fd.get("charge3") ? { charge: String(fd.get("charge3")) } : {}) }));
   const types = [String(fd.get("type1") ?? ""), String(fd.get("type2") ?? "")].filter(Boolean);
   // Its first type before the change: a new one re-dresses the picture (below).
   const supabase = createClient();
