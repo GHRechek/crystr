@@ -11,8 +11,8 @@ from PIL import Image
 PACK = sys.argv[1]
 OUT = os.path.join(os.path.dirname(__file__), "..", "public", "icons")
 ELEMENT_COLOR = {"fire": "#ff6a3d", "tide": "#3fa9f5", "nature": "#6fa86a", "ward": "#a7abb6", "feral": "#b0865f", "dark": "#8a6fd9", "spirit": "#f2e2a2"}
-TYPES = {"fire": ("Nature", 31), "tide": ("Nature", 19), "nature": ("Nature", 86), "ward": ("Weapons", 74), "feral": ("Animals", 3), "dark": ("Nature", 5), "spirit": ("Smileys & People", 118)}
-MOVES = {"sword": ("Objects", 299), "spell": ("Smileys & People", 152), "armor": ("Smileys & People", 165)}
+TYPES = {"fire": ("Nature", 8), "tide": ("Nature", 20), "nature": ("Nature", 101), "ward": ("Weapons", 71), "feral": ("Animals", 1), "dark": ("Symbols", 158), "spirit": ("Nature", 6)}
+MOVES = {"sword": ("Weapons", 34), "spell": ("Smileys & People", 152), "armor": ("Smileys & People", 169)}
 
 def pick(cat, n):
     return Image.open(os.path.join(PACK, cat, "16x16px", f"{cat} {n}.png")).convert("RGBA")
