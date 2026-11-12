@@ -142,16 +142,17 @@ export function HkMenu({ shown, tradable, items, startOn = "menu", onClose }: {
     dragged.current = true;
     if (x === null || y === null) return;
     const under = document.elementsFromPoint(x, y);
-    const hit = under.map((el) => (el as HTMLElement).closest?.("[data-slot]") as HTMLElement | null).find(Boolean);
-    // The spots are small and a thumb is not: the nearest spot within reach counts, not only the one dead under the finger.
-    const aura = under.map((el) => (el as HTMLElement).closest?.("[data-spot]") as HTMLElement | null).find(Boolean) ?? nearestSpot(x, y, 56);
+    // Slots and spots are small and a thumb is not: the nearest within reach counts, not only the one dead under the finger.
+    const hit = under.map((el) => (el as HTMLElement).closest?.("[data-slot]") as HTMLElement | null).find(Boolean) ?? nearest("[data-slot]", x, y, 56);
+    const aura = hit ? null : under.map((el) => (el as HTMLElement).closest?.("[data-spot]") as HTMLElement | null).find(Boolean) ?? nearest("[data-spot]", x, y, 56);
     if (hit) place(p.key, Number(hit.dataset.slot));
     else if (aura) toBin(p.key, Number(aura.dataset.spot));
     else if (p.from !== "grid") takeOff(p.from);
   };
-  const nearestSpot = (x: number, y: number, within: number) => {
+  /** The nearest slot or spot within reach of the point: a thumb covers more than the target does. */
+  const nearest = (sel: string, x: number, y: number, within: number) => {
     let best: HTMLElement | null = null, bd = within;
-    for (const el of Array.from(document.querySelectorAll<HTMLElement>("[data-spot]"))) {
+    for (const el of Array.from(document.querySelectorAll<HTMLElement>(sel))) {
       const r = el.getBoundingClientRect(); const d = Math.hypot(x - (r.left + r.width / 2), y - (r.top + r.height / 2));
       if (d < bd) { bd = d; best = el; }
     }
