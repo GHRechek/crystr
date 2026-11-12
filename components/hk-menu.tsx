@@ -124,7 +124,8 @@ export function HkMenu({ shown, tradable, items, startOn = "menu", onClose }: {
       dragged.current = true;
       const under = document.elementsFromPoint(e.clientX, e.clientY);
       const hit = under.map((el) => (el as HTMLElement).closest?.("[data-slot]") as HTMLElement | null).find(Boolean);
-      const aura = under.map((el) => (el as HTMLElement).closest?.("[data-spot]") as HTMLElement | null).find(Boolean);
+      // The spots are small and a thumb is not: the nearest spot within reach counts, not only the one dead under the finger.
+      const aura = under.map((el) => (el as HTMLElement).closest?.("[data-spot]") as HTMLElement | null).find(Boolean) ?? nearestSpot(e.clientX, e.clientY, 56);
       if (hit) place(p.key, Number(hit.dataset.slot));
       else if (aura) toBin(p.key, Number(aura.dataset.spot));
       else if (p.from !== "grid") takeOff(p.from);
@@ -135,6 +136,14 @@ export function HkMenu({ shown, tradable, items, startOn = "menu", onClose }: {
     onDragStart: (e: React.DragEvent) => e.preventDefault(),
   });
   const dragged = useRef(false);
+  const nearestSpot = (x: number, y: number, within: number) => {
+    let best: HTMLElement | null = null, bd = within;
+    for (const el of Array.from(document.querySelectorAll<HTMLElement>("[data-spot]"))) {
+      const r = el.getBoundingClientRect(); const d = Math.hypot(x - (r.left + r.width / 2), y - (r.top + r.height / 2));
+      if (d < bd) { bd = d; best = el; }
+    }
+    return best;
+  };
   const badgeOf = (h: HeldHk) => byKey.get(`i:${h.id}`);
 
   // Into an aura: not from the lineup, not a favourite (the database refuses both too).

@@ -1395,7 +1395,7 @@ export async function saveCreature(fd: FormData) {
     const redo = fd.get("retint") === "on" && !was?.rnd && fd.get("rnd") !== "on";
     if (redo || (before && after && before !== after && !was?.rnd && fd.get("rnd") !== "on")) {
       const { data: { user } } = await supabase.auth.getUser();
-      const why = user ? await retintCreature(supabase, slug, redo ? null : (before as HkElement), after as HkElement, user.id, { fresh: redo }) : "no user";
+      const why = user ? await retintCreature(supabase, slug, redo ? null : (before as HkElement), after as HkElement, user.id, { fresh: redo, second: (types[1] as HkElement | undefined) ?? null }) : "no user";
       note = why ? `The creature is changed everywhere, but its picture kept its colours (${why}).` : "The creature is changed everywhere, and its picture wears the new type. Touch it up in the sprite editor if it needs it.";
     }
     await setFlash("SAVED", note, EDGE.blue);

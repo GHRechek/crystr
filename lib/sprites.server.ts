@@ -127,7 +127,7 @@ function dress(type: Element, h: number, s: number, v: number): [number, number,
 /** Every pixel that wears the old type's colour takes the new one, at its own depth. When the picture does not
  *  really wear that colour (a spirit creature drawn in purple, say), the sprite's dominant hue family is what
  *  changes instead: the costume, whatever colour the artist gave it. */
-export function redress(png: PNG, from: Element | null, to: Element): number {
+export function redress(png: PNG, from: Element | null, to: Element, to2?: Element | null): number {
   const d = png.data;
   const px: [number, number, number, number][] = [];
   for (let i = 0; i < d.length; i += 4) if (d[i + 3]) px.push([i, ...rgbToHsv(d[i], d[i + 1], d[i + 2])]);
@@ -136,18 +136,18 @@ export function redress(png: PNG, from: Element | null, to: Element): number {
   // Spirit and ward are "colourless" types, and pale or grey pixels are more often skin and highlights than
   // the type's colour: for those, go by the dominant hue whenever the sprite has one.
   if (!from || from === "spirit" || from === "ward" || wearing.length < Math.max(12, px.length * 0.08)) {
-    // Dominant hue: the fullest of twelve hue bins among coloured pixels, with its neighbours.
+    // Dominant hue: the fullest of twenty-four hue bins among coloured pixels, with its two neighbours (a 45° family).
     // Skin and hat leather (peach and tan) are not a costume: they sit out the vote, unless nothing else is coloured.
     const skinLike = (h: number, s: number, v: number) => h >= 12 && h <= 48 && s >= 0.18 && s <= 0.55 && v >= 0.45;
     const vote = (allowSkin: boolean) => {
-      const bins = new Array(12).fill(0);
-      for (const [, h, s, v] of px) if (s >= 0.25 && v >= 0.15 && (allowSkin || !skinLike(h, s, v))) bins[Math.floor(h / 30) % 12]++;
+      const bins = new Array(24).fill(0);
+      for (const [, h, s, v] of px) if (s >= 0.25 && v >= 0.15 && (allowSkin || !skinLike(h, s, v))) bins[Math.floor(h / 15) % 24]++;
       return [bins.indexOf(Math.max(...bins)), Math.max(...bins), allowSkin] as const;
     };
     let [top, n, allowSkin] = vote(false);
     if (n < Math.max(8, px.length * 0.06)) [top, n, allowSkin] = vote(true);
     if (n < Math.max(8, px.length * 0.06)) { if (!wearing.length) return 0; } else {
-      const near = (h: number) => { const b = Math.floor(h / 30) % 12; return b === top || b === (top + 1) % 12 || b === (top + 11) % 12; };
+      const near = (h: number) => { const b = Math.floor(h / 15) % 24; return b === top || b === (top + 1) % 24 || b === (top + 23) % 24; };
       chosen = px.filter(([, h, s, v]) => s >= 0.2 && v >= 0.12 && near(h) && (allowSkin || !skinLike(h, s, v)));
     }
   }
@@ -155,19 +155,36 @@ export function redress(png: PNG, from: Element | null, to: Element): number {
     const [r, g, b] = dress(to, h, s, v);
     d[i] = r; d[i + 1] = g; d[i + 2] = b;
   }
+  // The second type takes the next colour family: whatever else the artist coloured (trim, a cloak, a gem),
+  // skin aside, when there is enough of it to be a part rather than a speck.
+  if (to2 && to2 !== to) {
+    const taken = new Set(chosen.map(([i]) => i));
+    const skinLike2 = (h: number, s: number, v: number) => h >= 12 && h <= 48 && s >= 0.18 && s <= 0.55 && v >= 0.45;
+    const bins = new Array(24).fill(0);
+    for (const [i, h, s, v] of px) if (!taken.has(i) && s >= 0.25 && v >= 0.15 && !skinLike2(h, s, v)) bins[Math.floor(h / 15) % 24]++;
+    const top = bins.indexOf(Math.max(...bins));
+    if (bins[top] >= Math.max(5, px.length * 0.02)) {
+      const near = (h: number) => { const b = Math.floor(h / 15) % 24; return b === top || b === (top + 1) % 24 || b === (top + 23) % 24; };
+      for (const [i, h, s, v] of px) {
+        if (taken.has(i) || s < 0.2 || v < 0.12 || !near(h) || skinLike2(h, s, v)) continue;
+        const [r, g, b] = dress(to2, h, s, v);
+        d[i] = r; d[i + 1] = g; d[i + 2] = b;
+      }
+    }
+  }
   return chosen.length;
 }
 
 /** The creature's pictures (both frames) re-dressed from one first type to another: every pixel that wore the
  *  old type's colour takes the new one, at its own depth. A rough cut, saved as an edit a witch can touch up
  *  or reset in the sprite editor. Creatures that roll their type have a picture per type already. */
-export async function retintCreature(supabase: SupabaseClient, slug: string, from: Element | null, to: Element, by: string, opts?: { /** Start from the shipped picture, not the current edit: a redo, which must not compound. */ fresh?: boolean }): Promise<string | null> {
+export async function retintCreature(supabase: SupabaseClient, slug: string, from: Element | null, to: Element, by: string, opts?: { /** Start from the shipped picture, not the current edit: a redo, which must not compound. */ fresh?: boolean; /** Its second type, for the picture's second colour family. */ second?: Element | null }): Promise<string | null> {
   if (from === to) return null;
   for (const file of [`${slug}.png`, `${slug}-2.png`]) {
     const path = `creatures/${file}`;
     const png = opts?.fresh ? shippedSprite(path) : await currentSprite(supabase, path);
     if (!png) continue;
-    redress(png, from, to);
+    redress(png, from, to, opts?.second ?? null);
     const why = await saveSpriteOverride(supabase, path, PNG.sync.write(png), by);
     if (why) return why;
   }
