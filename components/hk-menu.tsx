@@ -93,19 +93,26 @@ export function HkMenu({ shown, tradable, items, startOn = "menu", onClose }: {
 
   // Drag: hold a creature (a third of a second, still) to pick it up; let go over a slot to drop it there.
   // A tap opens its card and a quick swipe scrolls, as they would anywhere.
-  const press = useRef<{ key: string; from: number | "grid"; x: number; y: number; dragging: boolean; timer: ReturnType<typeof setTimeout> | null } | null>(null);
+  const press = useRef<{ key: string; from: number | "grid"; x: number; y: number; dragging: boolean; timer: ReturnType<typeof setTimeout> | null; off?: () => void } | null>(null);
   const [ghost, setGhost] = useState<{ b: ShownBadge; x: number; y: number } | null>(null);
   const handlers = (b: ShownBadge, from: number | "grid") => ({
     onPointerDown: (e: React.PointerEvent) => {
       const el = e.currentTarget as HTMLElement;
       const id = e.pointerId;
-      const p = { key: b.key, from, x: e.clientX, y: e.clientY, dragging: false, timer: null as ReturnType<typeof setTimeout> | null };
+      const p = { key: b.key, from, x: e.clientX, y: e.clientY, dragging: false, timer: null as ReturnType<typeof setTimeout> | null, off: undefined as (() => void) | undefined };
       p.timer = setTimeout(() => {
         if (press.current !== p) return;
         p.dragging = true;
-        el.setPointerCapture?.(id);
+        try { el.setPointerCapture?.(id); } catch { /* the pointer may be gone */ }
         try { navigator.vibrate?.(12); } catch { /* no buzz, no matter */ }
         setGhost({ b, x: p.x, y: p.y });
+        // The release is heard at the window too: once its row is hidden under the ghost, the element's own
+        // pointer-up can go missing, and the creature would hang enlarged with nowhere to land.
+        const done = (ev: PointerEvent) => { if (ev.pointerId === id) drop(ev.clientX, ev.clientY); };
+        const gone = (ev?: Event) => { if (!(ev instanceof PointerEvent) || ev.pointerId === id) drop(null, null); };
+        window.addEventListener("pointerup", done, true); window.addEventListener("pointercancel", gone, true);
+        window.addEventListener("blur", gone); document.addEventListener("visibilitychange", gone);
+        p.off = () => { window.removeEventListener("pointerup", done, true); window.removeEventListener("pointercancel", gone, true); window.removeEventListener("blur", gone); document.removeEventListener("visibilitychange", gone); };
       }, 320);
       press.current = p;
     },
@@ -116,26 +123,32 @@ export function HkMenu({ shown, tradable, items, startOn = "menu", onClose }: {
       // Moved before the hold was up: a scroll, not a drag.
       if (Math.hypot(e.clientX - p.x, e.clientY - p.y) > 8) { if (p.timer) clearTimeout(p.timer); press.current = null; }
     },
-    onPointerUp: (e: React.PointerEvent) => {
-      const p = press.current; press.current = null; setGhost(null);
-      if (!p) return;
-      if (p.timer) clearTimeout(p.timer);
-      if (!p.dragging) return;   // a tap: the button's own click opens the card
-      dragged.current = true;
-      const under = document.elementsFromPoint(e.clientX, e.clientY);
-      const hit = under.map((el) => (el as HTMLElement).closest?.("[data-slot]") as HTMLElement | null).find(Boolean);
-      // The spots are small and a thumb is not: the nearest spot within reach counts, not only the one dead under the finger.
-      const aura = under.map((el) => (el as HTMLElement).closest?.("[data-spot]") as HTMLElement | null).find(Boolean) ?? nearestSpot(e.clientX, e.clientY, 56);
-      if (hit) place(p.key, Number(hit.dataset.slot));
-      else if (aura) toBin(p.key, Number(aura.dataset.spot));
-      else if (p.from !== "grid") takeOff(p.from);
-    },
-    onPointerCancel: () => { const p = press.current; if (p?.timer) clearTimeout(p.timer); press.current = null; setGhost(null); },
+    onPointerUp: (e: React.PointerEvent) => drop(e.clientX, e.clientY),
+    onPointerCancel: () => drop(null, null),
     onClickCapture: (e: React.MouseEvent) => { if (dragged.current) { dragged.current = false; e.preventDefault(); e.stopPropagation(); } },
     onContextMenu: (e: React.MouseEvent) => e.preventDefault(),
     onDragStart: (e: React.DragEvent) => e.preventDefault(),
   });
   const dragged = useRef(false);
+  /** Let go: over a slot it moves there, over a spot it goes into the blend, anywhere else it goes back where
+   *  it was (off the lineup, if it came from there and was dragged clear). With no point (a cancel), it just
+   *  goes back. Safe to call twice: the second finds nothing held. */
+  const drop = (x: number | null, y: number | null) => {
+    const p = press.current; press.current = null; setGhost(null);
+    if (!p) return;
+    if (p.timer) clearTimeout(p.timer);
+    p.off?.();
+    if (!p.dragging) return;   // a tap: the button's own click opens the card
+    dragged.current = true;
+    if (x === null || y === null) return;
+    const under = document.elementsFromPoint(x, y);
+    const hit = under.map((el) => (el as HTMLElement).closest?.("[data-slot]") as HTMLElement | null).find(Boolean);
+    // The spots are small and a thumb is not: the nearest spot within reach counts, not only the one dead under the finger.
+    const aura = under.map((el) => (el as HTMLElement).closest?.("[data-spot]") as HTMLElement | null).find(Boolean) ?? nearestSpot(x, y, 56);
+    if (hit) place(p.key, Number(hit.dataset.slot));
+    else if (aura) toBin(p.key, Number(aura.dataset.spot));
+    else if (p.from !== "grid") takeOff(p.from);
+  };
   const nearestSpot = (x: number, y: number, within: number) => {
     let best: HTMLElement | null = null, bd = within;
     for (const el of Array.from(document.querySelectorAll<HTMLElement>("[data-spot]"))) {
